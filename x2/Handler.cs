@@ -32,7 +32,8 @@ namespace x2 {
       }
     }
 
-    public static Handler Create<TTarget, TEvent>(TTarget target, HandlerMethod<TEvent> handler)
+    public static Handler Create<TTarget, TEvent>(TTarget target,
+                                                  HandlerMethod<TEvent> handler)
         where TTarget : class
         where TEvent : Event {
       return new IMH<TTarget, TEvent>(target, handler);
@@ -87,7 +88,8 @@ namespace x2 {
 
     public IMH(TTarget target, HandlerMethod<TEvent> handler)
         : base(handler.Method) {
-      this.handler = (IHM<TTarget, TEvent>)Delegate.CreateDelegate(typeof(IHM<TTarget, TEvent>), handler.Method);
+      this.handler = (IHM<TTarget, TEvent>)Delegate.CreateDelegate(
+          typeof(IHM<TTarget, TEvent>), handler.Method);
       weakReference = new WeakReference(target);
     }
 
@@ -106,7 +108,8 @@ namespace x2 {
 
     public InstanceMethodHandler(HandlerMethod<TEvent> handler)
         : base(handler.Method) {
-      this.handler = (InstanceHandlerMethod<TEvent>)Delegate.CreateDelegate(typeof(InstanceHandlerMethod<TEvent>), handler.Method);
+      this.handler = (InstanceHandlerMethod<TEvent>)Delegate.CreateDelegate(
+          typeof(InstanceHandlerMethod<TEvent>), handler.Method);
       this.target = handler.Target;
     }
 
