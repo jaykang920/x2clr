@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2net", "x2net.csproj", "{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xpiler", "xpiler\xpiler.csproj", "{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
