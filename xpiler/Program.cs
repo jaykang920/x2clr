@@ -4,8 +4,6 @@
 using System;
 using System.IO;
 
-using x2;
-
 namespace x2.xpiler {
   class Program {
     static int Main(string[] args) {
