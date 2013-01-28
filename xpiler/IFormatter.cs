@@ -5,7 +5,7 @@ using System;
 
 namespace x2.xpiler {
   interface IFormatter {
-    bool IsUpToDate(string path);
+    bool IsUpToDate(Document doc);
     bool Format(Document doc);
   }
 }

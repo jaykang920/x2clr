@@ -52,7 +52,7 @@ namespace x2.xpiler {
         switch (getopt.Opt) {
           case 's':
             spec = getopt.OptArg.ToLower();
-            if (spec != "cs") {
+            if (!Xpiler.Formatters.ContainsKey(spec)) {
               Console.Error.WriteLine("Unknown target language specified: {0}",
                                       spec);
               System.Environment.Exit(1);

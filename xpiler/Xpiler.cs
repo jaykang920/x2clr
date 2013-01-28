@@ -14,6 +14,10 @@ namespace x2.xpiler {
     private readonly IFormatter formatter;
     private bool error;
 
+    public static Dictionary<string, IFormatter> Formatters {
+      get { return formatters; }
+    }
+
     public Options Options {
       get { return options; }
     }
@@ -74,9 +78,18 @@ namespace x2.xpiler {
 
       Console.WriteLine(filename);
 
-      Document doc = handler.Handle(path);
-      if (doc == null) {
+      Document doc;
+      if (handler.Handle(path, out doc) == false) {
         error = true;
+      }
+      if (error == true || doc == null) {
+        return;
+      }
+
+      doc.Path = path;
+
+      if (!options.Force && formatter.IsUpToDate(doc)) {
+        Console.WriteLine("up to date!");
         return;
       }
       if (formatter.Format(doc) == false) {

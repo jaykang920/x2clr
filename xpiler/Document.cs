@@ -3,39 +3,42 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace x2.xpiler {
-  abstract class Def {
-    public const int Namespace = 0;
-    public const int EnumType = 1;
-    public const int CellType = 2;
-    public const int EventType = 3;
+  abstract class Definition {
+    public const int EnumType = 0;
+    public const int CellType = 1;
+    public const int EventType = 2;
 
-    public string name;
+    private string name;
+
+    public string Name {
+      get { return name; }
+      set { name = value; }
+    }
 
     public abstract int Type { get; }
 
-    public Def() {
+    public Definition() {
       name = null;
     }
   }
 
-  class Namespace : Def {
-    public bool opening;
-
-    public override int Type {
-      get { return Namespace; }
-    }
-
-    public Namespace() {
-      opening = false;
-    }
-  }
-
-  class EnumDef : Def {
+  class EnumDef : Definition {
     public class Element {
-      public string name;
-      public string value;
+      private string name;
+      private string value;
+
+      public string Name {
+        get { return name; }
+        set { name = value; }
+      }
+
+      public string Value {
+        get { return value; }
+        set { this.value = value; }
+      }
 
       public Element() {
         name = null;
@@ -43,7 +46,11 @@ namespace x2.xpiler {
       }
     }
 
-    public readonly List<Element> elements;
+    private readonly List<Element> elements;
+
+    public List<Element> Elements {
+      get { return elements; }
+    }
 
     public override int Type {
       get { return EnumType; }
@@ -54,14 +61,39 @@ namespace x2.xpiler {
     }
   }
 
-  class CellDef : Def {
+  class CellDef : Definition {
     public class Property {
-      public string name;
-      public string type;
-      public string defaultValue;
+      private string name;
+      private string type;
+      private string defaultValue;
 
-      public string nativeName;
-      public string nativeType;
+      private string nativeName;
+      private string nativeType;
+
+      public string Name {
+        get { return name; }
+        set { name = value; }
+      }
+
+      public string Type {
+        get { return type; }
+        set { type = value; }
+      }
+
+      public string DefaultValue {
+        get { return defaultValue; }
+        set { defaultValue = value; }
+      }
+
+      public string NativeName {
+        get { return nativeName; }
+        set { nativeName = value; }
+      }
+
+      public string NativeType {
+        get { return nativeType; }
+        set { nativeType = value; }
+      }
 
       public Property() {
         name = null;
@@ -73,21 +105,35 @@ namespace x2.xpiler {
       }
     }
 
-    public string inheritee;
-    public readonly List<Property> properties;
+    private readonly List<Property> properties;
+    private string inheritee;
+
+    public List<Property> Properties {
+      get { return properties; }
+    }
+
+    public string Inheritee {
+      get { return inheritee; }
+      set { inheritee = value; }
+    }
 
     public override int Type {
       get { return CellType; }
     }
 
     public CellDef() {
-      inheritee = null;
       properties = new List<Property>();
+      inheritee = null;
     }
   }
 
   class EventDef : CellDef {
-    public string id;
+    private string id;
+
+    public string Id {
+      get { return id; }
+      set { id = value; }
+    }
 
     public override int Type {
       get { return EventType; }
@@ -99,20 +145,46 @@ namespace x2.xpiler {
   }
 
   class Document {
-    public readonly List<Def> defs;
+    private readonly List<Definition> definitions;
+    private string ns;
 
-    public string path;
-    public string dirname;
-    public string basename;
-    public string rootNamespace;
+    private string path;
+    private string dirName;
+    private string baseName;
 
-    public Document(string path) {
-      defs = new List<Def>();
+    public List<Definition> Definitions {
+      get { return definitions; }
+    }
 
-      this.path = path;
-      dirname = null;
-      basename = null;
-      rootNamespace = null;
+    public string Namespace {
+      get { return ns; }
+      set { ns = value; }
+    }
+
+    public string Path {
+      get { return path; }
+      set {
+        path = value;
+        dirName = System.IO.Path.GetDirectoryName(path);
+        baseName = System.IO.Path.GetFileNameWithoutExtension(path);
+      }
+    }
+
+    public string DirName {
+      get { return dirName; }
+    }
+
+    public string BaseName {
+      get { return baseName; }
+    }
+
+    public Document() {
+      definitions = new List<Definition>();
+      ns = null;
+
+      path = null;
+      dirName = null;
+      baseName = null;
     }
   }
 }

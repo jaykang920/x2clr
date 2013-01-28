@@ -5,6 +5,6 @@ using System;
 
 namespace x2.xpiler {
   interface IHandler {
-    Document Handle(string path);
+    bool Handle(string path, out Document doc);
   }
 }
