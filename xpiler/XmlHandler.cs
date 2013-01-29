@@ -53,20 +53,20 @@ namespace x2.xpiler {
       }
       EnumDef def = new EnumDef();
       def.Name = name;
-      XmlElement element = (XmlElement)elem.FirstChild;
-      for (; element != null; element = (XmlElement)element.NextSibling) {
-        if (element.Name != "element") {
-          continue;
-        }
-        name = element.GetAttribute("name");
-        if (name == null) {
-          continue;
-        }
-        EnumDef.Element e = new EnumDef.Element();
-        e.Name = name;
-        e.Value = element.InnerText;
 
-        def.Elements.Add(e);
+      XmlElement node = (XmlElement)elem.FirstChild;
+      for ( ; node != null; node = (XmlElement)node.NextSibling) {
+        if (node.Name != "element") {
+          continue;
+        }
+        name = node.GetAttribute("name");
+        if (name == null) {
+          return false;
+        }
+        EnumDef.Element element = new EnumDef.Element();
+        element.Name = name;
+        element.Value = node.InnerText;
+        def.Elements.Add(element);
       }
       doc.Definitions.Add(def);
       return true;
@@ -85,23 +85,25 @@ namespace x2.xpiler {
       CellDef def = (isEvent ? new EventDef() : new CellDef());
       def.Name = name;
       if (isEvent) {
-        //def.id = id;
+        ((EventDef)def).Id = id;
       }
+      def.Inheritee = elem.GetAttribute("extends");
 
-      XmlElement element = (XmlElement)elem.FirstChild;
-      for (; element != null; element = (XmlElement)element.NextSibling) {
-        if (element.Name != "element") {
+      XmlElement node = (XmlElement)elem.FirstChild;
+      for ( ; node != null; node = (XmlElement)node.NextSibling) {
+        if (node.Name != "element") {
           continue;
         }
-        name = element.GetAttribute("name");
-        if (name == null) {
-          continue;
+        name = node.GetAttribute("name");
+        string type = node.GetAttribute("type");
+        if (name == null || type == null) {
+          return false;
         }
-        CellDef.Property e = new CellDef.Property();
-        e.Name = name;
-        e.DefaultValue = element.InnerText;
-
-        def.Properties.Add(e);
+        CellDef.Property property = new CellDef.Property();
+        property.Name = name;
+        property.Type = type;
+        property.DefaultValue = node.InnerText;
+        def.Properties.Add(property);
       }
       doc.Definitions.Add(def);
       return true;
