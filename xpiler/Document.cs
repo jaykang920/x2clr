@@ -146,7 +146,7 @@ namespace x2.xpiler {
 
   class Document {
     private readonly List<Definition> definitions;
-    private string ns;
+    private string @namespace;
 
     private string path;
     private string dirName;
@@ -157,8 +157,8 @@ namespace x2.xpiler {
     }
 
     public string Namespace {
-      get { return ns; }
-      set { ns = value; }
+      get { return @namespace; }
+      set { @namespace = value; }
     }
 
     public string Path {
@@ -180,7 +180,7 @@ namespace x2.xpiler {
 
     public Document() {
       definitions = new List<Definition>();
-      ns = null;
+      @namespace = null;
 
       path = null;
       dirName = null;

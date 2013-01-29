@@ -2,11 +2,14 @@
 // See the file COPYING for license details.
 
 using System;
+using System.Collections.Generic;
 
 using x2;
 
 namespace x2.xpiler {
   class Options {
+    private const string DefaultSpec = "cs";
+
     private string spec;
     private bool recursive;
     private bool force;
@@ -24,7 +27,7 @@ namespace x2.xpiler {
     }
 
     public Options() {
-      spec = "cs";
+      spec = DefaultSpec;
       recursive = false;
       force = false;
     }
@@ -33,7 +36,13 @@ namespace x2.xpiler {
       Console.WriteLine("usage: xpiler (options) [path...]");
       Console.WriteLine(" options:");
       Console.WriteLine("  -s (--spec) lang : specifies the target language");
-      Console.WriteLine("                cs : C# (default)");
+      foreach (KeyValuePair<string, IFormatter> pair in Xpiler.Formatters) {
+        Console.Write("{0,18} : {1}", pair.Key, pair.Value.Description);
+        if (pair.Key == DefaultSpec) {
+          Console.Write(" (default)");
+          Console.WriteLine();
+        }
+      }
       Console.WriteLine("  -r (--recursive) : process subdirectories recursively");
       Console.WriteLine("  -f (--force)     : force all to be recompiled");
       Console.WriteLine("  -h (--help)      : print this message and quit");

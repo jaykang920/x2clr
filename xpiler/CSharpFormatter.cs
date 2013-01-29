@@ -11,6 +11,10 @@ namespace x2.xpiler {
 
     private static readonly Dictionary<string, string> nativeTypes;
 
+    public string Description {
+      get { return "C#"; }
+    }
+
     static CSharpFormatter() {
       nativeTypes = new Dictionary<string, string>();
 
