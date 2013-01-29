@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -41,33 +41,33 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="x2\Binder.cs" />
-    <Compile Include="x2\Buffer.cs" />
-    <Compile Include="x2\Case.cs" />
-    <Compile Include="x2\Cell.cs" />
-    <Compile Include="x2\Event.cs" />
-    <Compile Include="x2\EventSink.cs" />
-    <Compile Include="x2\Events\BuiltinType.cs" />
-    <Compile Include="x2\Events\FlowShutdownEvent.cs" />
-    <Compile Include="x2\Events\FlowStartupEvent.cs" />
-    <Compile Include="x2\Events\LinkConnectedEvent.cs" />
-    <Compile Include="x2\Events\LinkDisconnectedEvent.cs" />
-    <Compile Include="x2\Fingerprint.cs" />
-    <Compile Include="x2\Flow.cs" />
-    <Compile Include="x2\Flows\MultiThreadedFlow.cs" />
-    <Compile Include="x2\Flows\SingleThreadedFlow.cs" />
-    <Compile Include="x2\Flows\ThreadlessFlow.cs" />
-    <Compile Include="x2\Getopt.cs" />
-    <Compile Include="x2\Handler.cs" />
-    <Compile Include="x2\Hash.cs" />
-    <Compile Include="x2\Hub.cs" />
-    <Compile Include="x2\IBlockingQueue.cs" />
-    <Compile Include="x2\Links\TcpClient.cs" />
-    <Compile Include="x2\Links\TcpLink.cs" />
-    <Compile Include="x2\Links\TcpServer.cs" />
-    <Compile Include="x2\Pool.cs" />
-    <Compile Include="x2\Process.cs" />
-    <Compile Include="x2\Queues\UnboundedQueue.cs" />
+    <Compile Include="Binder.cs" />
+    <Compile Include="Buffer.cs" />
+    <Compile Include="Case.cs" />
+    <Compile Include="Cell.cs" />
+    <Compile Include="Event.cs" />
+    <Compile Include="EventSink.cs" />
+    <Compile Include="Events\BuiltinType.cs" />
+    <Compile Include="Events\FlowShutdownEvent.cs" />
+    <Compile Include="Events\FlowStartupEvent.cs" />
+    <Compile Include="Events\LinkConnectedEvent.cs" />
+    <Compile Include="Events\LinkDisconnectedEvent.cs" />
+    <Compile Include="Fingerprint.cs" />
+    <Compile Include="Flow.cs" />
+    <Compile Include="Flows\MultiThreadedFlow.cs" />
+    <Compile Include="Flows\SingleThreadedFlow.cs" />
+    <Compile Include="Flows\ThreadlessFlow.cs" />
+    <Compile Include="Getopt.cs" />
+    <Compile Include="Handler.cs" />
+    <Compile Include="Hash.cs" />
+    <Compile Include="Hub.cs" />
+    <Compile Include="IBlockingQueue.cs" />
+    <Compile Include="Links\TcpClient.cs" />
+    <Compile Include="Links\TcpLink.cs" />
+    <Compile Include="Links\TcpServer.cs" />
+    <Compile Include="Pool.cs" />
+    <Compile Include="Process.cs" />
+    <Compile Include="Queues\UnboundedQueue.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

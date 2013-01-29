@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace x2.xpiler {
+namespace xpiler {
   class Xpiler {
     private static readonly Dictionary<string, IHandler> handlers;
     private static readonly Dictionary<string, IFormatter> formatters;

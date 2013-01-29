@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 using x2;
 
-namespace x2.xpiler {
+namespace xpiler {
   class Options {
     private const string DefaultSpec = "cs";
 

@@ -3,7 +3,7 @@
 
 using System;
 
-namespace x2.xpiler {
+namespace xpiler {
   interface IFormatter {
     string Description { get; }
     bool IsUpToDate(Document doc);

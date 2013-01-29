@@ -8,7 +8,7 @@
     <ProjectGuid>{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>x2</RootNamespace>
+    <RootNamespace>xpiler</RootNamespace>
     <AssemblyName>xpiler</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -49,7 +49,7 @@
     <Compile Include="Xpiler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\x2net.csproj">
+    <ProjectReference Include="..\x2\x2net.csproj">
       <Project>{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}</Project>
       <Name>x2net</Name>
     </ProjectReference>

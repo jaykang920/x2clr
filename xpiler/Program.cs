@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 
-namespace x2.xpiler {
+namespace xpiler {
   class Program {
     static int Main(string[] args) {
       Options options = new Options();

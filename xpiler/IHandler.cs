@@ -3,7 +3,7 @@
 
 using System;
 
-namespace x2.xpiler {
+namespace xpiler {
   interface IHandler {
     bool Handle(string path, out Document doc);
   }

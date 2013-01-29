@@ -4,7 +4,7 @@
 using System;
 using System.Xml;
 
-namespace x2.xpiler {
+namespace xpiler {
   class XmlHandler : IHandler {
     public bool Handle(string path, out Document doc) {
       doc = null;

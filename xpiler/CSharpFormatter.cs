@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace x2.xpiler {
+namespace xpiler {
   class CSharpFormatter : IFormatter {
     private const string Extension = ".cs";
 

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace x2.xpiler {
+namespace xpiler {
   abstract class Definition {
     public const int EnumType = 0;
     public const int CellType = 1;
