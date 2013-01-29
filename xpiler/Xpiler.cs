@@ -89,7 +89,6 @@ namespace xpiler {
       doc.Path = path;
 
       if (!options.Force && formatter.IsUpToDate(doc)) {
-        Console.WriteLine("up to date!");
         return;
       }
       if (formatter.Format(doc) == false) {

@@ -6,7 +6,7 @@ using System;
 namespace xpiler {
   interface IFormatter {
     string Description { get; }
-    bool IsUpToDate(Document doc);
     bool Format(Document doc);
+    bool IsUpToDate(Document doc);
   }
 }

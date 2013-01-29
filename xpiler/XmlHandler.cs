@@ -21,7 +21,10 @@ namespace xpiler {
         return false;
       }
       doc = new Document();
-      doc.Namespace = rootElem.GetAttribute("namespace");
+      string @namespace = rootElem.GetAttribute("namespace");
+      if (@namespace != null) {
+        doc.Namespaces = @namespace.Split('/');
+      }
 
       XmlElement elem = (XmlElement)rootElem.FirstChild;
       for ( ; elem != null; elem = (XmlElement)elem.NextSibling) {
@@ -41,7 +44,6 @@ namespace xpiler {
             }
             break;
         }
-        Console.WriteLine(elem.Name);
       }
       return true;
     }
@@ -65,7 +67,7 @@ namespace xpiler {
         }
         EnumDef.Element element = new EnumDef.Element();
         element.Name = name;
-        element.Value = node.InnerText;
+        element.Value = node.InnerText.Trim();
         def.Elements.Add(element);
       }
       doc.Definitions.Add(def);
@@ -91,7 +93,7 @@ namespace xpiler {
 
       XmlElement node = (XmlElement)elem.FirstChild;
       for ( ; node != null; node = (XmlElement)node.NextSibling) {
-        if (node.Name != "element") {
+        if (node.Name != "property") {
           continue;
         }
         name = node.GetAttribute("name");
@@ -102,7 +104,7 @@ namespace xpiler {
         CellDef.Property property = new CellDef.Property();
         property.Name = name;
         property.Type = type;
-        property.DefaultValue = node.InnerText;
+        property.DefaultValue = node.InnerText.Trim();
         def.Properties.Add(property);
       }
       doc.Definitions.Add(def);

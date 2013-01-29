@@ -63,12 +63,18 @@ namespace xpiler {
 
   class CellDef : Definition {
     public class Property {
+      private int index;
       private string name;
       private string type;
       private string defaultValue;
 
       private string nativeName;
       private string nativeType;
+
+      public int Index {
+        get { return index; }
+        set { index = value; }
+      }
 
       public string Name {
         get { return name; }
@@ -146,7 +152,7 @@ namespace xpiler {
 
   class Document {
     private readonly List<Definition> definitions;
-    private string @namespace;
+    private string[] namespaces;
 
     private string path;
     private string dirName;
@@ -156,9 +162,9 @@ namespace xpiler {
       get { return definitions; }
     }
 
-    public string Namespace {
-      get { return @namespace; }
-      set { @namespace = value; }
+    public string[] Namespaces {
+      get { return namespaces; }
+      set { namespaces = value; }
     }
 
     public string Path {
@@ -180,7 +186,7 @@ namespace xpiler {
 
     public Document() {
       definitions = new List<Definition>();
-      @namespace = null;
+      namespaces = null;
 
       path = null;
       dirName = null;
