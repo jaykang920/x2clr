@@ -112,15 +112,15 @@ namespace xpiler {
     }
 
     private readonly List<Property> properties;
-    private string inheritee;
+    private string @base;
 
     public List<Property> Properties {
       get { return properties; }
     }
 
-    public string Inheritee {
-      get { return inheritee; }
-      set { inheritee = value; }
+    public string Base {
+      get { return @base; }
+      set { @base = value; }
     }
 
     public override int Type {
@@ -129,7 +129,7 @@ namespace xpiler {
 
     public CellDef() {
       properties = new List<Property>();
-      inheritee = null;
+      @base = null;
     }
   }
 

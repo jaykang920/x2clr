@@ -18,7 +18,7 @@ namespace xpiler {
 
       XmlElement rootElem = xml.DocumentElement;
       if (rootElem.Name != "x2") {
-        return false;
+        return true;
       }
       doc = new Document();
       string @namespace = rootElem.GetAttribute("namespace");
@@ -26,8 +26,12 @@ namespace xpiler {
         doc.Namespaces = @namespace.Split('/');
       }
 
-      XmlElement elem = (XmlElement)rootElem.FirstChild;
-      for ( ; elem != null; elem = (XmlElement)elem.NextSibling) {
+      XmlNode node = rootElem.FirstChild;
+      for ( ; node != null; node = node.NextSibling) {
+        if (node.NodeType != XmlNodeType.Element) {
+          continue;
+        }
+        XmlElement elem = (XmlElement)node;
         if (elem.IsEmpty) {
           continue;
         }
@@ -56,18 +60,22 @@ namespace xpiler {
       EnumDef def = new EnumDef();
       def.Name = name;
 
-      XmlElement node = (XmlElement)elem.FirstChild;
-      for ( ; node != null; node = (XmlElement)node.NextSibling) {
-        if (node.Name != "element") {
+      XmlNode node = elem.FirstChild;
+      for ( ; node != null; node = node.NextSibling) {
+        if (node.NodeType != XmlNodeType.Element) {
           continue;
         }
-        name = node.GetAttribute("name");
+        XmlElement child = (XmlElement)node;
+        if (child.Name != "element") {
+          continue;
+        }
+        name = child.GetAttribute("name");
         if (String.IsNullOrEmpty(name)) {
           return false;
         }
         EnumDef.Element element = new EnumDef.Element();
         element.Name = name;
-        element.Value = node.InnerText.Trim();
+        element.Value = child.InnerText.Trim();
         def.Elements.Add(element);
       }
       doc.Definitions.Add(def);
@@ -89,22 +97,26 @@ namespace xpiler {
       if (isEvent) {
         ((EventDef)def).Id = id;
       }
-      def.Inheritee = elem.GetAttribute("extends");
+      def.Base = elem.GetAttribute("extends");
 
-      XmlElement node = (XmlElement)elem.FirstChild;
-      for ( ; node != null; node = (XmlElement)node.NextSibling) {
-        if (node.Name != "property") {
+      XmlNode node = elem.FirstChild;
+      for ( ; node != null; node = node.NextSibling) {
+        if (node.NodeType != XmlNodeType.Element) {
           continue;
         }
-        name = node.GetAttribute("name");
-        string type = node.GetAttribute("type");
+        XmlElement child = (XmlElement)node;
+        if (child.Name != "property") {
+          continue;
+        }
+        name = child.GetAttribute("name");
+        string type = child.GetAttribute("type");
         if (String.IsNullOrEmpty(name) || String.IsNullOrEmpty(type)) {
           return false;
         }
         CellDef.Property property = new CellDef.Property();
         property.Name = name;
         property.Type = type;
-        property.DefaultValue = node.InnerText.Trim();
+        property.DefaultValue = child.InnerText.Trim();
         def.Properties.Add(property);
       }
       doc.Definitions.Add(def);
