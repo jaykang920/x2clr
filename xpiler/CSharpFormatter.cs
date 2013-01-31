@@ -168,9 +168,19 @@ namespace xpiler {
     }
 
     private void FormatMethods(Context context) {
+      FormatStaticConstructor(context);
+      context.@out.WriteLine("    // methods...");
+    }
+
+    private void FormatStaticConstructor(Context context) {
       StreamWriter @out = context.@out;
       CellDef def = (CellDef)context.def;
-      @out.WriteLine("    // methods...");
+      @out.WriteLine("    static {0}() {{", def.Name);
+      /*
+      @out.WriteLine("      tag = new Tag({0}.tag, typeof({1}), {2}, {3});",
+                     def.Inheritee, def.Name, );
+      */
+      @out.WriteLine("    }");
     }
 
     private void PreprocessProperties(Context context) {

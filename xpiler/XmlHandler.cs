@@ -50,7 +50,7 @@ namespace xpiler {
 
     private bool ParseEnum(Document doc, XmlElement elem) {
       string name = elem.GetAttribute("name");
-      if (name == null) {
+      if (String.IsNullOrEmpty(name)) {
         return false;
       }
       EnumDef def = new EnumDef();
@@ -62,7 +62,7 @@ namespace xpiler {
           continue;
         }
         name = node.GetAttribute("name");
-        if (name == null) {
+        if (String.IsNullOrEmpty(name)) {
           return false;
         }
         EnumDef.Element element = new EnumDef.Element();
@@ -76,12 +76,12 @@ namespace xpiler {
 
     private bool ParseCell(Document doc, XmlElement elem) {
       string name = elem.GetAttribute("name");
-      if (name == null) {
+      if (String.IsNullOrEmpty(name)) {
         return false;
       }
       bool isEvent = (elem.Name == "event");
       string id = elem.GetAttribute("id");
-      if (isEvent && id == null) {
+      if (isEvent && String.IsNullOrEmpty(id)) {
         return false;
       }
       CellDef def = (isEvent ? new EventDef() : new CellDef());
@@ -98,7 +98,7 @@ namespace xpiler {
         }
         name = node.GetAttribute("name");
         string type = node.GetAttribute("type");
-        if (name == null || type == null) {
+        if (String.IsNullOrEmpty(name) || String.IsNullOrEmpty(type)) {
           return false;
         }
         CellDef.Property property = new CellDef.Property();
