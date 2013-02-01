@@ -223,12 +223,12 @@ namespace xpiler {
     private void FormatConstructor(Context context) {
       StreamWriter @out = context.@out;
       CellDef def = (CellDef)context.def;
-      @out.WriteLine("    public {0}() {{", def.Name);
+      @out.WriteLine("    public {0}()", def.Name);
       @out.WriteLine("        : base(tag.NumProps) {");
       @out.WriteLine("      Initialize();");
       @out.WriteLine("    }");
       @out.WriteLine();
-      @out.WriteLine("    protected {0}(int length) {{", def.Name);
+      @out.WriteLine("    protected {0}(int length)", def.Name);
       @out.WriteLine("        : base(length + tag.NumProps) {");
       @out.WriteLine("      Initialize();");
       @out.WriteLine("    }");
