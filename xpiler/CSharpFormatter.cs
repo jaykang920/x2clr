@@ -222,8 +222,15 @@ namespace xpiler {
       @out.Write("      tag = new Tag({0}, typeof({1}), {2}",
                  baseTag, def.Name, def.Properties.Count);
       if (context.isEvent) {
+        int i;
+        string s = ((EventDef)def).Id;
         @out.WriteLine(",");
-        @out.Write("                    {0}", ((EventDef)def).Id);
+        @out.Write("                    ");
+        int id;
+        if (!Int32.TryParse(s, out i)) {
+          @out.Write("(int)");
+        }
+        @out.Write("{0}", s);
       }
       @out.WriteLine(");");
       @out.WriteLine("    }");
@@ -250,11 +257,13 @@ namespace xpiler {
       @out.WriteLine("      if (!base.EqualsTo(other)) {");
       @out.WriteLine("        return false;");
       @out.WriteLine("      }");
-      @out.WriteLine("      {0} o = ({0})other;", def.Name);
-      foreach (CellDef.Property property in def.Properties) {
-        @out.WriteLine("      if ({0} != o.{0}) {{", property.NativeName);
-        @out.WriteLine("        return false;");
-        @out.WriteLine("      }");
+      if (def.Properties.Count != 0) {
+        @out.WriteLine("      {0} o = ({0})other;", def.Name);
+        foreach (CellDef.Property property in def.Properties) {
+          @out.WriteLine("      if ({0} != o.{0}) {{", property.NativeName);
+          @out.WriteLine("        return false;");
+          @out.WriteLine("      }");
+        }
       }
       @out.WriteLine("      return true;");
       @out.WriteLine("    }");
@@ -265,12 +274,14 @@ namespace xpiler {
       CellDef def = (CellDef)context.def;
       @out.WriteLine("    public override int GetHashCode(Fingerprint fingerprint) {");
       @out.WriteLine("      Hash hash = new Hash(base.GetHashCode(fingerprint));");
-      @out.WriteLine("      Fingerprint.View fingerprintView = ");
-      @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
-      foreach (CellDef.Property property in def.Properties) {
-        @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
-        @out.WriteLine("        hash.Update({0});", property.NativeName);
-        @out.WriteLine("      }");
+      if (def.Properties.Count != 0) {
+        @out.WriteLine("      Fingerprint.View fingerprintView = ");
+        @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
+        foreach (CellDef.Property property in def.Properties) {
+          @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
+          @out.WriteLine("        hash.Update({0});", property.NativeName);
+          @out.WriteLine("      }");
+        }
       }
       @out.WriteLine("      return hash.Code;");
       @out.WriteLine("    }");
@@ -296,15 +307,17 @@ namespace xpiler {
       @out.WriteLine("      if (!base.IsEquivalent(other)) {");
       @out.WriteLine("        return false;");
       @out.WriteLine("      }");
-      @out.WriteLine("      {0} o = ({0})other;", def.Name);
-      @out.WriteLine("      Fingerprint.View fingerprintView = ");
-      @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
-      foreach (CellDef.Property property in def.Properties) {
-        @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
-        @out.WriteLine("        if ({0} != o.{0}) {{", property.NativeName);
-        @out.WriteLine("          return false;");
-        @out.WriteLine("        }");
-        @out.WriteLine("      }");
+      if (def.Properties.Count != 0) {
+        @out.WriteLine("      {0} o = ({0})other;", def.Name);
+        @out.WriteLine("      Fingerprint.View fingerprintView = ");
+        @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
+        foreach (CellDef.Property property in def.Properties) {
+          @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
+          @out.WriteLine("        if ({0} != o.{0}) {{", property.NativeName);
+          @out.WriteLine("          return false;");
+          @out.WriteLine("        }");
+          @out.WriteLine("      }");
+        }
       }
       @out.WriteLine("      return true;");
       @out.WriteLine("    }");
@@ -315,12 +328,14 @@ namespace xpiler {
       CellDef def = (CellDef)context.def;
       @out.WriteLine("    public override void Load(x2.Buffer buffer) {");
       @out.WriteLine("      base.Load(buffer);");
-      @out.WriteLine("      Fingerprint.View fingerprintView = ");
-      @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
-      foreach (CellDef.Property property in def.Properties) {
-        @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
-        @out.WriteLine("        buffer.Read(out {0});", property.NativeName);
-        @out.WriteLine("      }");
+      if (def.Properties.Count != 0) {
+        @out.WriteLine("      Fingerprint.View fingerprintView = ");
+        @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
+        foreach (CellDef.Property property in def.Properties) {
+          @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
+          @out.WriteLine("        buffer.Read(out {0});", property.NativeName);
+          @out.WriteLine("      }");
+        }
       }
       @out.WriteLine("    }");
     }
@@ -338,12 +353,14 @@ namespace xpiler {
       CellDef def = (CellDef)context.def;
       @out.WriteLine("    protected override void Dump(x2.Buffer buffer) {");
       @out.WriteLine("      base.Dump(buffer);");
-      @out.WriteLine("      Fingerprint.View fingerprintView = ");
-      @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
-      foreach (CellDef.Property property in def.Properties) {
-        @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
-        @out.WriteLine("        buffer.Write({0});", property.NativeName);
-        @out.WriteLine("      }");
+      if (def.Properties.Count != 0) {
+        @out.WriteLine("      Fingerprint.View fingerprintView = ");
+        @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
+        foreach (CellDef.Property property in def.Properties) {
+          @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
+          @out.WriteLine("        buffer.Write({0});", property.NativeName);
+          @out.WriteLine("      }");
+        }
       }
       @out.WriteLine("    }");
     }
