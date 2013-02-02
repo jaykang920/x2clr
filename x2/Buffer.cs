@@ -146,6 +146,10 @@ namespace x2 {
       }
     }
 
+    public void Read(out bool value) {
+      value = (ReadByte() != 0);
+    }
+
     public void Read(out byte value) {
       value = ReadByte();
     }
@@ -350,6 +354,12 @@ namespace x2 {
         }
       }
       Position = front;
+    }
+
+    public void Write(bool value) {
+      EnsureCapacityToWrite(1);
+      byte b = (byte)(value ? 1 : 0);
+      PutByte(b);
     }
 
     public void Write(byte value) {
