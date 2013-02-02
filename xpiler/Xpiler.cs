@@ -75,7 +75,9 @@ namespace xpiler {
       if (handlers.TryGetValue(extension.ToLower(), out handler) == false) {
         return;
       }
-
+      if (!options.Force && formatter.IsUpToDate(path)) {
+        return;
+      }
       Console.WriteLine(filename);
 
       Document doc;
@@ -87,10 +89,6 @@ namespace xpiler {
       }
 
       doc.Path = path;
-
-      if (!options.Force && formatter.IsUpToDate(doc)) {
-        return;
-      }
       if (formatter.Format(doc) == false) {
         error = true;
       }

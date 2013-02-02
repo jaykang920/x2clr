@@ -44,9 +44,11 @@ namespace xpiler {
 
     public bool Format(Document doc) {
       try {
+        string dirName = Path.GetDirectoryName(doc.Path);
+        string baseName = Path.GetFileNameWithoutExtension(doc.Path);
         Context context = new Context();
         context.doc = doc;
-        context.target = Path.Combine(doc.DirName, doc.BaseName + Extension);
+        context.target = Path.Combine(dirName, baseName + Extension);
         using (StreamWriter file = new StreamWriter(context.target)) {
           context.@out = file;
           FormatHeader(context);
@@ -65,10 +67,12 @@ namespace xpiler {
       return true;
     }
 
-    public bool IsUpToDate(Document doc) {
-      string target = Path.Combine(doc.DirName, doc.BaseName + Extension);
+    public bool IsUpToDate(string path) {
+      string dirName = Path.GetDirectoryName(path);
+      string baseName = Path.GetFileNameWithoutExtension(path);
+      string target = Path.Combine(dirName, baseName + Extension);
       return (File.Exists(target) &&
-              File.GetLastWriteTime(target) >= File.GetLastWriteTime(doc.Path));
+              File.GetLastWriteTime(target) >= File.GetLastWriteTime(path));
     }
 
     private void FormatHeader(Context context) {

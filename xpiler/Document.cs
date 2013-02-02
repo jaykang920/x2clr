@@ -155,8 +155,6 @@ namespace xpiler {
     private string[] namespaces;
 
     private string path;
-    private string dirName;
-    private string baseName;
 
     public List<Definition> Definitions {
       get { return definitions; }
@@ -169,19 +167,7 @@ namespace xpiler {
 
     public string Path {
       get { return path; }
-      set {
-        path = value;
-        dirName = System.IO.Path.GetDirectoryName(path);
-        baseName = System.IO.Path.GetFileNameWithoutExtension(path);
-      }
-    }
-
-    public string DirName {
-      get { return dirName; }
-    }
-
-    public string BaseName {
-      get { return baseName; }
+      set { path = value; }
     }
 
     public Document() {
@@ -189,8 +175,6 @@ namespace xpiler {
       namespaces = null;
 
       path = null;
-      dirName = null;
-      baseName = null;
     }
   }
 }
