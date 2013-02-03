@@ -12,6 +12,7 @@ namespace xpiler {
 
     private readonly Options options;
     private readonly IFormatter formatter;
+    private readonly Stack<string> subDirs;
     private bool error;
 
     public static Dictionary<string, IFormatter> Formatters {
@@ -37,6 +38,7 @@ namespace xpiler {
     public Xpiler(Options options) {
       this.options = options;
       formatter = formatters[options.Spec];
+      subDirs = new Stack<string>();
       error = false;
     }
 
@@ -59,7 +61,9 @@ namespace xpiler {
         string pathname = Path.Combine(path, entry.Name);
         if ((entry.Attributes & FileAttributes.Directory) != 0) {
           if (options.Recursive) {
+            subDirs.Push(entry.Name);
             ProcessDir(pathname);
+            subDirs.Pop();
           }
         } else {
           ProcessFile(pathname);
@@ -70,14 +74,19 @@ namespace xpiler {
     private void ProcessFile(string path) {
       string filename = Path.GetFileName(path);
       string extension = Path.GetExtension(path);
-
+      string outDir;
+      if (options.OutDir == null) {
+        outDir = Path.GetDirectoryName(path);
+      } else {
+        outDir = Path.Combine(options.OutDir, String.Join(
+            Path.DirectorySeparatorChar.ToString(), subDirs.ToArray()));
+      }
       IHandler handler;
-      if (handlers.TryGetValue(extension.ToLower(), out handler) == false) {
+      if (handlers.TryGetValue(extension.ToLower(), out handler) == false ||
+          (!options.Force && formatter.IsUpToDate(path, outDir))) {
         return;
       }
-      if (!options.Force && formatter.IsUpToDate(path)) {
-        return;
-      }
+
       Console.WriteLine(filename);
 
       Document doc;
@@ -87,8 +96,11 @@ namespace xpiler {
       if (error == true || doc == null) {
         return;
       }
-
       doc.Path = path;
+      doc.OutDir = outDir;
+      if (!Directory.Exists(outDir)) {
+        Directory.CreateDirectory(outDir);
+      }
       if (formatter.Format(doc) == false) {
         error = true;
       }

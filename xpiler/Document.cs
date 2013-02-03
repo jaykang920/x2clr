@@ -155,6 +155,7 @@ namespace xpiler {
     private string[] namespaces;
 
     private string path;
+    private string outDir;
 
     public List<Definition> Definitions {
       get { return definitions; }
@@ -168,6 +169,11 @@ namespace xpiler {
     public string Path {
       get { return path; }
       set { path = value; }
+    }
+
+    public string OutDir {
+      get { return outDir; }
+      set { outDir = value; }
     }
 
     public Document() {

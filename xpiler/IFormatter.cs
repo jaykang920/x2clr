@@ -7,6 +7,6 @@ namespace xpiler {
   interface IFormatter {
     string Description { get; }
     bool Format(Document doc);
-    bool IsUpToDate(string path);
+    bool IsUpToDate(string path, string outDir);
   }
 }

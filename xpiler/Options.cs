@@ -11,11 +11,16 @@ namespace xpiler {
     private const string DefaultSpec = "cs";
 
     private string spec;
+    private string outDir;
     private bool recursive;
     private bool force;
 
     public string Spec {
       get { return spec; }
+    }
+
+    public string OutDir {
+      get { return outDir; }
     }
 
     public bool Recursive {
@@ -28,6 +33,7 @@ namespace xpiler {
 
     public Options() {
       spec = DefaultSpec;
+      outDir = null;
       recursive = false;
       force = false;
     }
@@ -43,6 +49,7 @@ namespace xpiler {
           Console.WriteLine();
         }
       }
+      Console.WriteLine("  -o (--out-dir)   : output root directory");
       Console.WriteLine("  -r (--recursive) : process subdirectories recursively");
       Console.WriteLine("  -f (--force)     : force all to be recompiled");
       Console.WriteLine("  -h (--help)      : print this message and quit");
@@ -51,12 +58,13 @@ namespace xpiler {
     public int Parse(string[] args) {
       Getopt.Option[] longopts = new Getopt.Option[] {
         new Getopt.Option("spec", Getopt.REQUIRED_ARGUMENT, 's'),
+        new Getopt.Option("out-dir", Getopt.REQUIRED_ARGUMENT, 'o'),
         new Getopt.Option("recursive", Getopt.NO_ARGUMENT, 'r'),
         new Getopt.Option("force", Getopt.NO_ARGUMENT, 'f'),
         new Getopt.Option("help", Getopt.NO_ARGUMENT, 'h')
       };
 
-      Getopt getopt = new Getopt(args, "s:rfh", longopts);
+      Getopt getopt = new Getopt(args, "s:o:rfh", longopts);
       while (getopt.Next() != -1) {
         switch (getopt.Opt) {
           case 's':
@@ -66,6 +74,9 @@ namespace xpiler {
                                       spec);
               System.Environment.Exit(1);
             }
+            break;
+          case 'o':
+            outDir = getopt.OptArg;
             break;
           case 'r':
             recursive = true;
