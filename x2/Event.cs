@@ -19,6 +19,7 @@ namespace x2 {
     new protected static readonly Tag tag;
 
     private static Factory factory = new Factory();
+    public long handle;
 
     static Event() {
       tag = new Tag(null, typeof(Event), 0, 0);

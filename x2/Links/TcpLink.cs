@@ -56,6 +56,7 @@ namespace x2.Links {
           asyncState.Buffer.ReadUInt29(out typeId);
           Event e = Event.Create(typeId);
           e.Load(asyncState.Buffer);
+          e.handle = asyncState.Session.socket.Handle.ToInt64();
           PublishAway(e);
 
           asyncState.Buffer.Trim();
