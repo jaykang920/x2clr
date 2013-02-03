@@ -119,7 +119,7 @@ namespace xpiler {
     private void FormatEnum(Context context) {
       StreamWriter @out = context.@out;
       EnumDef def = (EnumDef)context.def;
-      @out.WriteLine("  enum {0} {{", def.Name);
+      @out.WriteLine("  public enum {0} {{", def.Name);
       foreach (EnumDef.Element element in def.Elements) {
         @out.Write("    {0}", element.Name);
         if (!String.IsNullOrEmpty(element.Value)) {
@@ -142,7 +142,7 @@ namespace xpiler {
       }
       PreprocessProperties(context);
 
-      @out.WriteLine("  class {0} : {1} {{", def.Name, @base);
+      @out.WriteLine("  public class {0} : {1} {{", def.Name, @base);
       @out.WriteLine("    new protected static readonly Tag tag;");
       @out.WriteLine();
       FormatFields(context);
