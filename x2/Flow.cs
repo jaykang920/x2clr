@@ -18,7 +18,7 @@ namespace x2 {
 
     private readonly HubSet hubSet;
 
-    internal static Flow CurrentFlow {
+    public/*internal*/ static Flow CurrentFlow {
       get { return currentFlow; }
       set { currentFlow = value; }
     }

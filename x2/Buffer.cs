@@ -150,6 +150,10 @@ namespace x2 {
       value = (ReadByte() != 0);
     }
 
+    public void Read(out sbyte value) {
+      value = (sbyte)ReadByte();
+    }
+
     public void Read(out byte value) {
       value = ReadByte();
     }
@@ -360,6 +364,11 @@ namespace x2 {
       EnsureCapacityToWrite(1);
       byte b = (byte)(value ? 1 : 0);
       PutByte(b);
+    }
+
+    public void Write(sbyte value) {
+      EnsureCapacityToWrite(1);
+      PutByte((byte)value);
     }
 
     public void Write(byte value) {
