@@ -66,6 +66,7 @@ namespace xpiler {
       private int index;
       private string name;
       private string type;
+      private string subtype;
       private string defaultValue;
 
       private string nativeName;
@@ -86,6 +87,11 @@ namespace xpiler {
         set { type = value; }
       }
 
+      public string Subtype {
+        get { return subtype; }
+        set { subtype = value; }
+      }
+
       public string DefaultValue {
         get { return defaultValue; }
         set { defaultValue = value; }
@@ -104,6 +110,7 @@ namespace xpiler {
       public Property() {
         name = null;
         type = null;
+        subtype = null;
         defaultValue = null;
 
         nativeName = null;

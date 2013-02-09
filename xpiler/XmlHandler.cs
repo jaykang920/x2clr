@@ -116,6 +116,7 @@ namespace xpiler {
         CellDef.Property property = new CellDef.Property();
         property.Name = name;
         property.Type = type;
+        property.Subtype = child.GetAttribute("subtype");
         property.DefaultValue = child.InnerText.Trim();
         def.Properties.Add(property);
       }

@@ -334,7 +334,11 @@ namespace xpiler {
         @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
         foreach (CellDef.Property property in def.Properties) {
           @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
-          @out.WriteLine("        buffer.Read(out {0});", property.NativeName);
+          if (IsPrimitiveType(property.Type)) {
+            @out.WriteLine("        buffer.Read(out {0});", property.NativeName);
+          } else {
+            @out.WriteLine("        {0}.Load(buffer);", property.NativeName);
+          }
           @out.WriteLine("      }");
         }
       }
@@ -359,7 +363,11 @@ namespace xpiler {
         @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
         foreach (CellDef.Property property in def.Properties) {
           @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
-          @out.WriteLine("        buffer.Write({0});", property.NativeName);
+          if (IsPrimitiveType(property.Type)) {
+            @out.WriteLine("        buffer.Write({0});", property.NativeName);
+          } else {
+            @out.WriteLine("        {0}.Serialize(buffer);", property.NativeName);
+          }
           @out.WriteLine("      }");
         }
       }
@@ -392,16 +400,33 @@ namespace xpiler {
       int index = 0;
       foreach (CellDef.Property property in def.Properties) {
         property.Index = index++;
+        
         property.NativeName = FirstToLower(property.Name);
-        property.NativeType = nativeTypes[property.Type];
         property.Name = FirstToUpper(property.Name);
-        if (String.IsNullOrEmpty(property.DefaultValue)) {
-          property.DefaultValue = defaultValues[property.Type];
+
+        if (defaultValues.ContainsKey(property.Type)) {
+          if (String.IsNullOrEmpty(property.DefaultValue)) {
+            property.DefaultValue = defaultValues[property.Type];
+          }
+          if (property.Type == "string") {
+            property.DefaultValue = "\"" + property.DefaultValue + "\"";
+          }
+        } else {
+          property.DefaultValue = "null";
         }
-        if (property.Type == "string") {
-          property.DefaultValue = "\"" + property.DefaultValue + "\"";
+
+        if (nativeTypes.ContainsKey(property.Type)) {
+          property.NativeType = nativeTypes[property.Type];
+        } else {
+          if (property.Type.ToLower() == "list") {
+            property.NativeType = String.Format("ListCell<{0}>", property.Subtype);
+          }
         }
       }
+    }
+
+    private static bool IsPrimitiveType(string type) {
+      return nativeTypes.ContainsKey(type);
     }
 
     private static string FirstToLower(string s) {

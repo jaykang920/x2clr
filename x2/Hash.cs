@@ -81,5 +81,9 @@ namespace x2 {
     public void Update(string value) {
       code = Update(code, value);
     }
+
+    public void Update<T>(T obj) {
+      code = obj.GetHashCode();
+    }
   }
 }

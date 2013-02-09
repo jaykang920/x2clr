@@ -111,7 +111,7 @@ namespace x2 {
       base.Load(buffer);
     }
 
-    public virtual void Serialize(Buffer buffer) {
+    public override void Serialize(Buffer buffer) {
       buffer.WriteUInt29(tag.TypeId);
       this.Dump(buffer);
     }

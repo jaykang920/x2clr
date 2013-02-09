@@ -2,6 +2,8 @@
 // See the file COPYING for license details.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace x2 {
@@ -169,6 +171,10 @@ namespace x2 {
       fingerprint.Load(buffer);
     }
 
+    public virtual void Serialize(Buffer buffer) {
+      this.Dump(buffer);
+    }
+
     /// <summary>
     /// Returns a string that describes the current object.
     /// </summary>
@@ -258,4 +264,27 @@ namespace x2 {
       }
     }
   }
+
+  public class ListCell<T> : Cell, IEnumerable<T> {
+    private readonly List<T> list;
+
+    public ListCell()
+        : base(0) {
+      list = new System.Collections.Generic.List<T>();
+    }
+
+    public void Add(T item) {
+      list.Add(item);
+    }
+
+    public IEnumerator<T> GetEnumerator() {
+      return list.GetEnumerator();
+    }
+
+    // Explicit implementation for non-generic System.Collections.IEnumerable
+    IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+      return GetEnumerator();
+    }
+  }
+
 }
