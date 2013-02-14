@@ -285,6 +285,17 @@ namespace x2 {
     IEnumerator System.Collections.IEnumerable.GetEnumerator() {
       return GetEnumerator();
     }
+
+    protected override void Describe(StringBuilder stringBuilder) {
+      Type itemType = typeof(T);
+      stringBuilder.Append(" {");
+      foreach (T item in list) {
+        stringBuilder.Append(" ");
+        stringBuilder.Append(item.ToString());
+      }
+      stringBuilder.Append(" }");
+      return;
+    }
   }
 
 }
