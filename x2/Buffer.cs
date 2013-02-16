@@ -24,6 +24,8 @@ namespace x2 {
     private int back;
     private int front;
 
+    private int marker;
+
     public int Length {
       get { return (back - front); }
     }
@@ -69,9 +71,22 @@ namespace x2 {
       position = 0;
       back = 0;
       front = 0;
+
+      marker = -1;
     }
 
     ~Buffer() {}
+
+    public static int Write(byte[] buffer, int value) {
+      if (buffer.Length < 4) {
+        throw new ArgumentException();
+      }
+      buffer[0] = (byte)(value >> 24);
+      buffer[1] = (byte)(value >> 16);
+      buffer[2] = (byte)(value >> 8);
+      buffer[3] = (byte)value;
+      return 4;
+    }
 
     public static int WriteUInt29(byte[] buffer, int value) {
       if ((value & 0xFFFFFF80) == 0) {
@@ -336,6 +351,10 @@ namespace x2 {
 
     public void Trim() {
       int index, count;
+      if (marker >= 0 && position < marker) {
+        position = marker;
+        marker = -1;
+      }
       if (position == back) {
         index = 1;
         count = blocks.Count - 1;
@@ -358,6 +377,13 @@ namespace x2 {
         }
       }
       Position = front;
+    }
+
+    public void MarkToRead(int lengthToRead) {
+      if ((front + lengthToRead) > back) {
+        throw new IndexOutOfRangeException();
+      }
+      marker = front + lengthToRead;
     }
 
     public void Write(bool value) {
@@ -497,7 +523,8 @@ namespace x2 {
     }
 
     private void CheckLengthToRead(int numBytes) {
-      if ((position + numBytes) > back) {
+      int limit = (marker >= 0 ? marker : back);
+      if ((position + numBytes) > limit) {
         throw new IndexOutOfRangeException();
       }
     }

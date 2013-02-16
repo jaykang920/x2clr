@@ -51,13 +51,16 @@ namespace x2.Links {
           }
 
           // pre-process
+          asyncState.Buffer.MarkToRead(asyncState.length);
 
           int typeId;
           asyncState.Buffer.ReadUInt29(out typeId);
           Event e = Event.Create(typeId);
-          e.Load(asyncState.Buffer);
-          e.handle = asyncState.Session.socket.Handle.ToInt64();
-          PublishAway(e);
+          if (e != null) {
+            e.Load(asyncState.Buffer);
+            e.handle = asyncState.Session.socket.Handle.ToInt64();
+            PublishAway(e);
+          }
 
           asyncState.Buffer.Trim();
           asyncState.Session.BeginReceive(true);
