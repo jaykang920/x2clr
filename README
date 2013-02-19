@@ -1,10 +1,12 @@
 x2net : .NET (C#) port of x2
 ============================
 
+_Under development now_
+
 https://github.com/jaykang920/x2net
 
 Requirements
 ------------
 
-  * Visual Studio 2008 (9.0) or newer equivalent to build.
-  * .NET (compace) framework 2.0 / XNA 1.0 or newer to run.
+* Visual Studio 2008 (9.0) or newer equivalent to build.
+* .NET (compace) framework 2.0 / XNA 1.0 or newer to run.
