@@ -8,5 +8,5 @@ https://github.com/jaykang920/x2net
 Requirements
 ------------
 
-* Visual Studio 2008 (9.0) or newer equivalent to build.
+* Visual Studio 2008 (9.0) or newer equivalent to build C# 3.0.
 * .NET (compact) framework 2.0 / XNA 1.0 or newer to run.
