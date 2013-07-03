@@ -38,7 +38,7 @@ namespace xpiler {
 
     private readonly List<Property> properties = new List<Property>();
 
-    public override void Format(Formatter.Context context) {
+    public override void Format(FormatterContext context) {
       context.FormatCell(this);
     }
   }

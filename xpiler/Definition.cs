@@ -10,6 +10,6 @@ namespace xpiler {
   public abstract class Definition {
     public string Name { get; set; }
 
-    public abstract void Format(Formatter.Context context);
+    public abstract void Format(FormatterContext context);
   }
 }

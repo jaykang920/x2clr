@@ -23,7 +23,7 @@ namespace xpiler {
 
     private readonly List<Element> elements = new List<Element>();
 
-    public override void Format(Formatter.Context context) {
+    public override void Format(FormatterContext context) {
       context.FormatEnum(this);
     }
   }

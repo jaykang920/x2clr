@@ -4,21 +4,26 @@
 using System;
 using System.IO;
 
-namespace xpiler {
-  public class Program {
-    public static int Main(string[] args) {
-      int index = Xpiler.Options.Parse(args);
-      if (index >= args.Length) {
-        Console.WriteLine("{0}: missing arguments", Path.GetFileName(
-            System.Reflection.Assembly.GetEntryAssembly().Location));
-        return 2;
-      }
+namespace xpiler
+{
+    class Program
+    {
+        public static int Main(string[] args)
+        {
+            var index = Xpiler.Options.Parse(args);
+            if (index >= args.Length)
+            {
+                Console.WriteLine("{0}: missing arguments", Path.GetFileName(
+                    System.Reflection.Assembly.GetEntryAssembly().Location));
+                return 2;
+            }
 
-      Xpiler xpiler = new Xpiler();
-      while (index < args.Length) {
-        xpiler.Process(args[index++]);
-      }
-      return (xpiler.Error ? 1 : 0);
+            Xpiler xpiler = new Xpiler();
+            while (index < args.Length)
+            {
+                xpiler.Process(args[index++]);
+            }
+            return (xpiler.Error ? 1 : 0);
+        }
     }
-  }
 }

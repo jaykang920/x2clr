@@ -5,22 +5,23 @@ using System;
 using System.IO;
 
 namespace xpiler {
-  /// <summary>
-  /// Output file formatter interface.
-  /// </summary>
-  public abstract class Formatter {
-    public abstract class Context {
-      public Document Doc { get; set; }
-      public StreamWriter Out { get; set; }
+    /// <summary>
+    /// Abstract base class for concrete output file formatters.
+    /// </summary>
+    public abstract class Formatter {
+        public abstract string Description { get; }
 
-      public abstract void FormatEnum(EnumDef def);
-      public abstract void FormatCell(CellDef def);
+        public abstract bool Format(Document doc, String outDir);
+
+        public abstract bool IsUpToDate(string path, string outDir);
     }
 
-    public abstract string Description { get; }
+    public abstract class FormatterContext
+    {
+        public Document Doc { get; set; }
+        public StreamWriter Out { get; set; }
 
-    public abstract bool Format(Document doc, String outDir);
-
-    public abstract bool IsUpToDate(string path, string outDir);
-  }
+        public abstract void FormatEnum(EnumDef def);
+        public abstract void FormatCell(CellDef def);
+    }
 }
