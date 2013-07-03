@@ -41,8 +41,8 @@ namespace xpiler {
     static void PrintUsage() {
       Console.WriteLine("usage: xpiler (options) [path...]");
       Console.WriteLine(" options:");
-      Console.WriteLine("  -s (--spec) lang : specifies the target language");
-      foreach (KeyValuePair<string, IFormatter> pair in Xpiler.Formatters) {
+      Console.WriteLine("  -s (--spec) spec : specifies the target formatter");
+      foreach (KeyValuePair<string, Formatter> pair in Xpiler.Formatters) {
         Console.Write("{0,18} : {1}", pair.Key, pair.Value.Description);
         if (pair.Key == DefaultSpec) {
           Console.Write(" (default)");
@@ -70,7 +70,7 @@ namespace xpiler {
           case 's':
             spec = getopt.OptArg.ToLower();
             if (!Xpiler.Formatters.ContainsKey(spec)) {
-              Console.Error.WriteLine("Unknown target language specified: {0}",
+              Console.Error.WriteLine("Unknown target formatter specified: {0}",
                                       spec);
               System.Environment.Exit(1);
             }

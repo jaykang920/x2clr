@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 
 namespace xpiler {
-  class CSharpFormatter : IFormatter {
-    class Context {
+  class CSharpFormatter : Formatter {
+    new class Context : Formatter.Context {
       public StreamWriter @out;
       public Document doc;
       public Definition def;
@@ -20,7 +20,7 @@ namespace xpiler {
     private static readonly Dictionary<string, string> nativeTypes;
     private static readonly Dictionary<string, string> defaultValues;
 
-    public string Description {
+    public override string Description {
       get { return "C#"; }
     }
 
@@ -42,22 +42,16 @@ namespace xpiler {
       defaultValues.Add("string", "");
     }
 
-    public bool Format(Document doc) {
+    public override bool Format(Document doc, string outDir) {
       try {
-        string baseName = Path.GetFileNameWithoutExtension(doc.Path);
+        string baseName = doc.BaseName;
         Context context = new Context();
         context.doc = doc;
-        context.target = Path.Combine(doc.OutDir, baseName + Extension);
+        context.target = Path.Combine(outDir, baseName + Extension);
         using (StreamWriter file = new StreamWriter(context.target)) {
           context.@out = file;
           FormatHeader(context);
-          if (doc.Namespaces != null) {
-            BeginNamespace(context);
-          }
           FormatBody(context);
-          if (doc.Namespaces != null) {
-            EndNamespace(context);
-          }
         }
       } catch (Exception e) {
         Console.Error.WriteLine(e.Message);
@@ -66,7 +60,7 @@ namespace xpiler {
       return true;
     }
 
-    public bool IsUpToDate(string path, string outDir) {
+    public override bool IsUpToDate(string path, string outDir) {
       string baseName = Path.GetFileNameWithoutExtension(path);
       string target = Path.Combine(outDir, baseName + Extension);
       return (File.Exists(target) &&
@@ -85,13 +79,9 @@ namespace xpiler {
     }
 
     private void BeginNamespace(Context context) {
-      string joined = String.Join(".", context.doc.Namespaces);
-      context.@out.WriteLine("namespace {0} {{", joined);
     }
 
     private void EndNamespace(Context context) {
-      string joined = String.Join(".", context.doc.Namespaces);
-      context.@out.WriteLine("}}  // namespace {0}", joined);
     }
 
     private void FormatBody(Context context) {
@@ -99,20 +89,7 @@ namespace xpiler {
         if (def != context.doc.Definitions[0]) {
           context.@out.WriteLine();
         }
-        switch (def.Type) {
-          case Definition.EnumType:
-            context.def = def;
-            FormatEnum(context);
-            break;
-          case Definition.CellType:
-          case Definition.EventType:
-            context.def = def;
-            context.isEvent = (def.Type == Definition.EventType);
-            FormatCell(context);
-            break;
-          default:
-            break;
-        }
+        def.Format(context);
       }
     }
 

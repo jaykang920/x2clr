@@ -5,7 +5,7 @@ using System;
 using System.Xml;
 
 namespace xpiler {
-  class XmlHandler : IHandler {
+  class XmlHandler : Handler {
     public bool Handle(string path, out Document doc) {
       doc = null;
       XmlDocument xml = new XmlDocument();
@@ -22,9 +22,6 @@ namespace xpiler {
       }
       doc = new Document();
       string @namespace = rootElem.GetAttribute("namespace");
-      if (@namespace != null) {
-        doc.Namespaces = @namespace.Split('/');
-      }
 
       XmlNode node = rootElem.FirstChild;
       for ( ; node != null; node = node.NextSibling) {

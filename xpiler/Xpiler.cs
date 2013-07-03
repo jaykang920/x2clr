@@ -7,19 +7,19 @@ using System.IO;
 
 namespace xpiler {
   class Xpiler {
-    private static readonly Dictionary<string, IHandler> handlers;
-    private static readonly Dictionary<string, IFormatter> formatters;
+    private static readonly Options options;
+    private static readonly Dictionary<string, Handler> handlers;
+    private static readonly Dictionary<string, Formatter> formatters;
 
-    private readonly Options options;
-    private readonly IFormatter formatter;
+    private readonly Formatter formatter;
     private readonly Stack<string> subDirs;
     private bool error;
 
-    public static Dictionary<string, IFormatter> Formatters {
+    public static Dictionary<string, Formatter> Formatters {
       get { return formatters; }
     }
 
-    public Options Options {
+    public static Options Options {
       get { return options; }
     }
 
@@ -28,15 +28,16 @@ namespace xpiler {
     }
 
     static Xpiler() {
-      handlers = new Dictionary<string, IHandler>();
+      options = new Options();
+
+      handlers = new Dictionary<string, Handler>();
       handlers.Add(".xml", new XmlHandler());
 
-      formatters = new Dictionary<string, IFormatter>();
+      formatters = new Dictionary<string, Formatter>();
       formatters.Add("cs", new CSharpFormatter());
     }
 
-    public Xpiler(Options options) {
-      this.options = options;
+    public Xpiler() {
       formatter = formatters[options.Spec];
       subDirs = new Stack<string>();
       error = false;
@@ -81,7 +82,7 @@ namespace xpiler {
         outDir = Path.Combine(options.OutDir, String.Join(
             Path.DirectorySeparatorChar.ToString(), subDirs.ToArray()));
       }
-      IHandler handler;
+      Handler handler;
       if (handlers.TryGetValue(extension.ToLower(), out handler) == false ||
           (!options.Force && formatter.IsUpToDate(path, outDir))) {
         return;
@@ -96,12 +97,14 @@ namespace xpiler {
       if (error == true || doc == null) {
         return;
       }
-      doc.Path = path;
-      doc.OutDir = outDir;
+
+      doc.BaseName = Path.GetFileNameWithoutExtension(path);
+
       if (!Directory.Exists(outDir)) {
         Directory.CreateDirectory(outDir);
       }
-      if (formatter.Format(doc) == false) {
+
+      if (formatter.Format(doc, outDir) == false) {
         error = true;
       }
     }

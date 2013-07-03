@@ -5,17 +5,16 @@ using System;
 using System.IO;
 
 namespace xpiler {
-  class Program {
-    static int Main(string[] args) {
-      Options options = new Options();
-      int index = options.Parse(args);
+  public class Program {
+    public static int Main(string[] args) {
+      int index = Xpiler.Options.Parse(args);
       if (index >= args.Length) {
         Console.WriteLine("{0}: missing arguments", Path.GetFileName(
             System.Reflection.Assembly.GetEntryAssembly().Location));
         return 2;
       }
 
-      Xpiler xpiler = new Xpiler(options);
+      Xpiler xpiler = new Xpiler();
       while (index < args.Length) {
         xpiler.Process(args[index++]);
       }
