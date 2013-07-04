@@ -4,11 +4,10 @@
 using System;
 using System.IO;
 
-namespace xpiler {
-    /// <summary>
-    /// Abstract base class for concrete output file formatters.
-    /// </summary>
-    public abstract class Formatter {
+namespace xpiler
+{
+    abstract class Formatter
+    {
         public abstract string Description { get; }
 
         public abstract bool Format(Document doc, String outDir);
@@ -16,7 +15,7 @@ namespace xpiler {
         public abstract bool IsUpToDate(string path, string outDir);
     }
 
-    public abstract class FormatterContext
+    abstract class FormatterContext
     {
         public Document Doc { get; set; }
         public StreamWriter Out { get; set; }

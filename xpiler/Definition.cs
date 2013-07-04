@@ -3,13 +3,12 @@
 
 using System;
 
-namespace xpiler {
-  /// <summary>
-  /// Represents a single abstract definition.
-  /// </summary>
-  public abstract class Definition {
-    public string Name { get; set; }
+namespace xpiler
+{
+    abstract class Definition
+    {
+        public string Name { get; set; }
 
-    public abstract void Format(FormatterContext context);
-  }
+        public abstract void Format(FormatterContext context);
+    }
 }

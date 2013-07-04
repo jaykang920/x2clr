@@ -3,15 +3,12 @@
 
 using System;
 
-namespace xpiler {
-  /// <summary>
-  /// Represetns a single event definition.
-  /// </summary>
-  public class EventDef : CellDef {
-    public string Id { get; set; }
+namespace xpiler
+{
+    class EventDef : CellDef
+    {
+        public string Id { get; set; }
 
-    public override bool IsEvent {
-      get { return true; }
+        public override bool IsEvent { get { return true; } }
     }
-  }
 }

@@ -7,7 +7,7 @@ using System.IO;
 
 namespace xpiler
 {
-    public class CSharpFormatter : Formatter
+    class CSharpFormatter : Formatter
     {
         private const string Extension = ".cs";
 
@@ -51,7 +51,10 @@ namespace xpiler
 
         private void FormatBody(FormatterContext context)
         {
+            var @out = context.Out;
             var leading = true;
+            @out.WriteLine("namespace {0}", context.Doc.Namespace.Replace('/', '.'));
+            @out.WriteLine("{");
             foreach (var def in context.Doc.Definitions)
             {
                 if (leading)
@@ -64,6 +67,7 @@ namespace xpiler
                 }
                 def.Format(context);
             }
+            @out.WriteLine("}");
         }
 
         public override bool IsUpToDate(string path, string outDir)
@@ -77,370 +81,449 @@ namespace xpiler
 
     class CSharpFormatterContext : FormatterContext
     {
-        public Definition Def { get; set; }
+        private const string Tab = "    ";
+
+        private static readonly Dictionary<string, string> nativeTypes;
+        private static readonly Dictionary<string, string> defaultValues;
+
+        static CSharpFormatterContext()
+        {
+            nativeTypes = new Dictionary<string, string>();
+            nativeTypes.Add("bool", "bool");
+            nativeTypes.Add("int8", "sbyte");
+            nativeTypes.Add("int16", "short");
+            nativeTypes.Add("int32", "int");
+            nativeTypes.Add("int64", "long");
+            nativeTypes.Add("string", "string");
+
+            defaultValues = new Dictionary<string, string>();
+            defaultValues.Add("bool", "false");
+            defaultValues.Add("int8", "0");
+            defaultValues.Add("int16", "0");
+            defaultValues.Add("int32", "0");
+            defaultValues.Add("int64", "0");
+            defaultValues.Add("string", "");
+        }
+
         public string Target { get; set; }
 
-        public override void FormatEnum(EnumDef def) { }
-        public override void FormatCell(CellDef def) { }
-    }
-
-/*
-  class CSharpFormatter : Formatter {
-    private static readonly Dictionary<string, string> nativeTypes;
-    private static readonly Dictionary<string, string> defaultValues;
-
-    static CSharpFormatter() {
-      nativeTypes = new Dictionary<string, string>();
-      nativeTypes.Add("bool", "bool");
-      nativeTypes.Add("int8", "sbyte");
-      nativeTypes.Add("int16", "short");
-      nativeTypes.Add("int32", "int");
-      nativeTypes.Add("int64", "long");
-      nativeTypes.Add("string", "string");
-
-      defaultValues = new Dictionary<string, string>();
-      defaultValues.Add("bool", "false");
-      defaultValues.Add("int8", "0");
-      defaultValues.Add("int16", "0");
-      defaultValues.Add("int32", "0");
-      defaultValues.Add("int64", "0");
-      defaultValues.Add("string", "");
-    }
-
-    private void FormatEnum(Context context) {
-      StreamWriter @out = context.@out;
-      EnumDef def = (EnumDef)context.def;
-      @out.WriteLine("  public enum {0} {{", def.Name);
-      foreach (EnumDef.Element element in def.Elements) {
-        @out.Write("    {0}", element.Name);
-        if (!String.IsNullOrEmpty(element.Value)) {
-          @out.Write(" = {0}", element.Value);
-        }
-        if (element != def.Elements[def.Elements.Count - 1]) {
-          @out.Write(",");
-        }
-        @out.WriteLine();
-      }
-      @out.WriteLine("  }");
-    }
-
-    private void FormatCell(Context context) {
-      StreamWriter @out = context.@out;
-      CellDef def = (CellDef)context.def;
-      string @base = def.Base;
-      if (String.IsNullOrEmpty(@base)) {
-        @base = (context.isEvent ? "Event" : "Cell");
-      }
-      PreprocessProperties(context);
-
-      @out.WriteLine("  public class {0} : {1} {{", def.Name, @base);
-      @out.WriteLine("    new protected static readonly Tag tag;");
-      @out.WriteLine();
-      FormatFields(context);
-      if (def.Properties.Count != 0) {
-        @out.WriteLine();
-      }
-      FormatProperties(context);
-      if (def.Properties.Count != 0) {
-        @out.WriteLine();
-      }
-      FormatMethods(context);
-      @out.WriteLine("  }");
-    }
-
-    private void FormatFields(Context context) {
-      CellDef def = (CellDef)context.def;
-      foreach (CellDef.Property property in def.Properties) {
-        context.@out.WriteLine("    private {0} {1};",
-                               property.NativeType, property.NativeName);
-      }
-    }
-
-    private void FormatProperties(Context context) {
-      StreamWriter @out = context.@out;
-      CellDef def = (CellDef)context.def;
-      foreach (CellDef.Property property in def.Properties) {
-        if (property != def.Properties[0]) {
-          @out.WriteLine();
-        }
-        @out.WriteLine("    public {0} {1} {{",
-                       property.NativeType, property.Name);
-        @out.WriteLine("      get {{ return {0}; }}", property.NativeName);
-        @out.WriteLine("      set {");
-        @out.WriteLine("        fingerprint.Touch(tag.Offset + {0});",
-                       property.Index);
-        @out.WriteLine("        {0} = value;", property.NativeName);
-        @out.WriteLine("      }");
-        @out.WriteLine("    }");
-      }
-    }
-
-    private void FormatMethods(Context context) {
-      StreamWriter @out = context.@out;
-      FormatStaticConstructor(context);
-      @out.WriteLine();
-      FormatConstructor(context);
-      @out.WriteLine();
-      FormatEqualsTo(context);
-      @out.WriteLine();
-      FormatGetHashCode(context);
-      @out.WriteLine();
-      FormatGetType(context);
-      @out.WriteLine();
-      FormatIsEquivalent(context);
-      @out.WriteLine();
-      FormatLoad(context);
-      if (context.isEvent) {
-        @out.WriteLine();
-        FormatSerialize(context);
-      }
-      @out.WriteLine();
-      FormatDump(context);
-      @out.WriteLine();
-      FormatDescribe(context);
-      @out.WriteLine();
-      FormatInitializer(context);
-    }
-
-    private void FormatStaticConstructor(Context context) {
-      StreamWriter @out = context.@out;
-      CellDef def = (CellDef)context.def;
-      string baseTag = def.Base;
-      if (String.IsNullOrEmpty(baseTag)) {
-        baseTag = (context.isEvent ? "Event.tag" : "null");
-      } else {
-        baseTag += ".tag";
-      }
-      @out.WriteLine("    static {0}() {{", def.Name);
-      @out.Write("      tag = new Tag({0}, typeof({1}), {2}",
-                 baseTag, def.Name, def.Properties.Count);
-      if (context.isEvent) {
-        int i;
-        string s = ((EventDef)def).Id;
-        @out.WriteLine(",");
-        @out.Write("                    ");
-        if (!Int32.TryParse(s, out i)) {
-          @out.Write("(int)");
-        }
-        @out.Write("{0}", s);
-      }
-      @out.WriteLine(");");
-      @out.WriteLine("    }");
-    }
-
-    private void FormatConstructor(Context context) {
-      StreamWriter @out = context.@out;
-      CellDef def = (CellDef)context.def;
-      @out.WriteLine("    public {0}()", def.Name);
-      @out.WriteLine("        : base(tag.NumProps) {");
-      @out.WriteLine("      Initialize();");
-      @out.WriteLine("    }");
-      @out.WriteLine();
-      @out.WriteLine("    protected {0}(int length)", def.Name);
-      @out.WriteLine("        : base(length + tag.NumProps) {");
-      @out.WriteLine("      Initialize();");
-      @out.WriteLine("    }");
-    }
-
-    private void FormatEqualsTo(Context context) {
-      StreamWriter @out = context.@out;
-      CellDef def = (CellDef)context.def;
-      @out.WriteLine("    public override bool EqualsTo(Cell other) {");
-      @out.WriteLine("      if (!base.EqualsTo(other)) {");
-      @out.WriteLine("        return false;");
-      @out.WriteLine("      }");
-      if (def.Properties.Count != 0) {
-        @out.WriteLine("      {0} o = ({0})other;", def.Name);
-        foreach (CellDef.Property property in def.Properties) {
-          @out.WriteLine("      if ({0} != o.{0}) {{", property.NativeName);
-          @out.WriteLine("        return false;");
-          @out.WriteLine("      }");
-        }
-      }
-      @out.WriteLine("      return true;");
-      @out.WriteLine("    }");
-    }
-
-    private void FormatGetHashCode(Context context) {
-      StreamWriter @out = context.@out;
-      CellDef def = (CellDef)context.def;
-      @out.WriteLine("    public override int GetHashCode(Fingerprint fingerprint) {");
-      @out.WriteLine("      Hash hash = new Hash(base.GetHashCode(fingerprint));");
-      if (def.Properties.Count != 0) {
-        @out.WriteLine("      Fingerprint.View fingerprintView = ");
-        @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
-        foreach (CellDef.Property property in def.Properties) {
-          @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
-          @out.WriteLine("        hash.Update({0});", property.NativeName);
-          @out.WriteLine("      }");
-        }
-      }
-      @out.WriteLine("      return hash.Code;");
-      @out.WriteLine("    }");
-    }
-
-    private void FormatGetType(Context context) {
-      StreamWriter @out = context.@out;
-      if (context.isEvent) {
-        @out.WriteLine("    public override int GetTypeId() {");
-        @out.WriteLine("      return tag.TypeId;");
-        @out.WriteLine("    }");
-        @out.WriteLine();
-      }
-      @out.WriteLine("    public override Cell.Tag GetTypeTag() {");
-      @out.WriteLine("      return tag;");
-      @out.WriteLine("    }");
-    }
-
-    private void FormatIsEquivalent(Context context) {
-      StreamWriter @out = context.@out;
-      CellDef def = (CellDef)context.def;
-      @out.WriteLine("    public override bool IsEquivalent(Cell other) {");
-      @out.WriteLine("      if (!base.IsEquivalent(other)) {");
-      @out.WriteLine("        return false;");
-      @out.WriteLine("      }");
-      if (def.Properties.Count != 0) {
-        @out.WriteLine("      {0} o = ({0})other;", def.Name);
-        @out.WriteLine("      Fingerprint.View fingerprintView = ");
-        @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
-        foreach (CellDef.Property property in def.Properties) {
-          @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
-          @out.WriteLine("        if ({0} != o.{0}) {{", property.NativeName);
-          @out.WriteLine("          return false;");
-          @out.WriteLine("        }");
-          @out.WriteLine("      }");
-        }
-      }
-      @out.WriteLine("      return true;");
-      @out.WriteLine("    }");
-    }
-
-    private void FormatLoad(Context context) {
-      StreamWriter @out = context.@out;
-      CellDef def = (CellDef)context.def;
-      @out.WriteLine("    public override void Load(x2.Buffer buffer) {");
-      @out.WriteLine("      base.Load(buffer);");
-      if (def.Properties.Count != 0) {
-        @out.WriteLine("      Fingerprint.View fingerprintView = ");
-        @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
-        foreach (CellDef.Property property in def.Properties) {
-          @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
-          if (IsPrimitiveType(property.Type)) {
-            @out.WriteLine("        buffer.Read(out {0});", property.NativeName);
-          } else {
-            @out.WriteLine("        {0}.Load(buffer);", property.NativeName);
-          }
-          @out.WriteLine("      }");
-        }
-      }
-      @out.WriteLine("    }");
-    }
-
-    private void FormatSerialize(Context context) {
-      StreamWriter @out = context.@out;
-      @out.WriteLine("    public override void Serialize(x2.Buffer buffer) {");
-      @out.WriteLine("      buffer.WriteUInt29(tag.TypeId);");
-      @out.WriteLine("      this.Dump(buffer);");
-      @out.WriteLine("    }");
-    }
-
-    private void FormatDump(Context context) {
-      StreamWriter @out = context.@out;
-      CellDef def = (CellDef)context.def;
-      @out.WriteLine("    protected override void Dump(x2.Buffer buffer) {");
-      @out.WriteLine("      base.Dump(buffer);");
-      if (def.Properties.Count != 0) {
-        @out.WriteLine("      Fingerprint.View fingerprintView = ");
-        @out.WriteLine("          new Fingerprint.View(fingerprint, tag.Offset);");
-        foreach (CellDef.Property property in def.Properties) {
-          @out.WriteLine("      if (fingerprintView[{0}]) {{", property.Index);
-          if (IsPrimitiveType(property.Type)) {
-            @out.WriteLine("        buffer.Write({0});", property.NativeName);
-          } else {
-            @out.WriteLine("        {0}.Serialize(buffer);", property.NativeName);
-          }
-          @out.WriteLine("      }");
-        }
-      }
-      @out.WriteLine("    }");
-    }
-
-    private void FormatDescribe(Context context) {
-      StreamWriter @out = context.@out;
-      CellDef def = (CellDef)context.def;
-      @out.WriteLine("    protected override void Describe(StringBuilder stringBuilder) {");
-      @out.WriteLine("      base.Describe(stringBuilder);");
-      foreach (CellDef.Property property in def.Properties) {
-        @out.WriteLine("      stringBuilder.AppendFormat(\" {0} = {{0}}\", {1});", property.Name, property.NativeName);
-      }
-      @out.WriteLine("    }");
-    }
-
-    private void FormatInitializer(Context context) {
-      StreamWriter @out = context.@out;
-      CellDef def = (CellDef)context.def;
-      @out.WriteLine("    private void Initialize() {");
-      foreach (CellDef.Property property in def.Properties) {
-        @out.WriteLine("      {0} = {1};", property.NativeName, property.DefaultValue);
-      }
-      @out.WriteLine("    }");
-    }
-
-    private void PreprocessProperties(Context context) {
-      CellDef def = (CellDef)context.def;
-      int index = 0;
-      foreach (CellDef.Property property in def.Properties) {
-        property.Index = index++;
-        
-        property.NativeName = FirstToLower(property.Name);
-        property.Name = FirstToUpper(property.Name);
-
-        if (defaultValues.ContainsKey(property.Type)) {
-          if (String.IsNullOrEmpty(property.DefaultValue)) {
-            property.DefaultValue = defaultValues[property.Type];
-          }
-          if (property.Type == "string") {
-            property.DefaultValue = "\"" + property.DefaultValue + "\"";
-          }
-        } else {
-          property.DefaultValue = "null";
+        public override void FormatEnum(EnumDef def)
+        {
+            Indent(1); Out.WriteLine("public enum {0}", def.Name);
+            Indent(1); Out.WriteLine("{");
+            foreach (var element in def.Elements)
+            {
+                Indent(2);
+                Out.Write("{0}", element.Name);
+                if (!String.IsNullOrEmpty(element.Value))
+                {
+                    Out.Write(" = {0}", element.Value);
+                }
+                if (element != def.Elements[def.Elements.Count - 1])
+                {
+                    Out.Write(",");
+                }
+                Out.WriteLine();
+            }
+            Indent(1); Out.WriteLine("}");
         }
 
-        if (nativeTypes.ContainsKey(property.Type)) {
-          property.NativeType = nativeTypes[property.Type];
-        } else {
-          if (property.Type.ToLower() == "list") {
-            property.NativeType = String.Format("ListCell<{0}>", property.Subtype);
-          }
-        }
-      }
-    }
+        public override void FormatCell(CellDef def)
+        {
+            var super = def.Base;
+            if (String.IsNullOrEmpty(super))
+            {
+                super = (def.IsEvent ? "Event" : "Cell");
+            }
+            PreprocessProperties(def);
 
-    private static bool IsPrimitiveType(string type) {
-      return nativeTypes.ContainsKey(type);
-    }
-
-    private static string FirstToLower(string s) {
-      if (!String.IsNullOrEmpty(s)) {
-        char[] chars = s.ToCharArray();
-        if (Char.IsUpper(chars[0])) {
-          chars[0] = Char.ToLower(chars[0]);
-          return new string(chars);
+            Indent(1); Out.WriteLine("public class {0} : {1}", def.Name, super);
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("new protected static readonly Tag tag;");
+            Out.WriteLine();
+            FormatFields(def);
+            if (def.HasProperties)
+            {
+                Out.WriteLine();
+            }
+            FormatProperties(def);
+            if (def.HasProperties)
+            {
+                Out.WriteLine();
+            }
+            FormatMethods(def);
+            Indent(1); Out.WriteLine("}");
         }
-      }
-      return s;
-    }
 
-    private static string FirstToUpper(string s) {
-      if (!String.IsNullOrEmpty(s)) {
-        char[] chars = s.ToCharArray();
-        if (Char.IsLower(chars[0])) {
-          chars[0] = Char.ToUpper(chars[0]);
-          return new string(chars);
+        private void FormatFields(CellDef def)
+        {
+            foreach (var property in def.Properties)
+            {
+                Indent(2);
+                Out.WriteLine("private {0} {1};", property.NativeType, property.NativeName);
+            }
         }
-      }
-      return s;
+
+        private void FormatProperties(CellDef def)
+        {
+            var leading = true;
+            foreach (var property in def.Properties)
+            {
+                if (leading)
+                {
+                    leading = false;
+                }
+                else
+                {
+                    Out.WriteLine();
+                }
+                Indent(2); Out.WriteLine("public {0} {1}", property.NativeType, property.Name);
+                Indent(2); Out.WriteLine("{");
+                Indent(3); Out.WriteLine("get {{ return {0}; }}", property.NativeName);
+                Indent(3); Out.WriteLine("set");
+                Indent(3); Out.WriteLine("{");
+                Indent(4); Out.WriteLine("fingerprint.Touch(tag.Offset + {0});", property.Index);
+                Indent(4); Out.WriteLine("{0} = value;", property.NativeName);
+                Indent(3); Out.WriteLine("}");
+                Indent(2); Out.WriteLine("}");
+            }
+        }
+
+        private void FormatMethods(CellDef def)
+        {
+            FormatStaticConstructor(def);
+            Out.WriteLine();
+            FormatConstructor(def);
+            Out.WriteLine();
+            FormatEqualsTo(def);
+            Out.WriteLine();
+            FormatGetHashCode(def);
+            Out.WriteLine();
+            FormatGetType(def);
+            Out.WriteLine();
+            FormatIsEquivalent(def);
+            Out.WriteLine();
+            FormatLoad(def);
+            if (def.IsEvent)
+            {
+                Out.WriteLine();
+                FormatSerialize(def);
+            }
+            Out.WriteLine();
+            FormatDump(def);
+            Out.WriteLine();
+            FormatDescribe(def);
+            Out.WriteLine();
+            FormatInitializer(def);
+        }
+
+        private void FormatStaticConstructor(CellDef def)
+        {
+            string baseTag = def.Base;
+            if (String.IsNullOrEmpty(baseTag))
+            {
+                baseTag = (def.IsEvent ? "Event.tag" : "null");
+            }
+            else
+            {
+                baseTag += ".tag";
+            }
+            Indent(2); Out.WriteLine("static {0}()", def.Name);
+            Indent(2); Out.WriteLine("{");
+            Indent(3);
+            Out.Write("tag = new Tag({0}, typeof({1}), {2}", baseTag, def.Name,
+                def.Properties.Count);
+            if (def.IsEvent)
+            {
+                int i;
+                string s = ((EventDef)def).Id;
+                Out.WriteLine(",");
+                Out.Write("                    ");
+                if (!Int32.TryParse(s, out i))
+                {
+                    Out.Write("(int)");
+                }
+                Out.Write("{0}", s);
+            }
+            Out.WriteLine(");");
+            Indent(2); Out.WriteLine("}");
+        }
+
+        private void FormatConstructor(CellDef def)
+        {
+            Indent(2); Out.WriteLine("public {0}()", def.Name);
+            Indent(3); Out.WriteLine(": base(tag.NumProps) {");
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("Initialize();");
+            Indent(2); Out.WriteLine("}");
+            Out.WriteLine();
+            Indent(2); Out.WriteLine("protected {0}(int length)", def.Name);
+            Indent(3); Out.WriteLine(": base(length + tag.NumProps)");
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("Initialize();");
+            Indent(2); Out.WriteLine("}");
+        }
+
+        private void FormatEqualsTo(CellDef def)
+        {
+            Indent(2); Out.WriteLine("public override bool EqualsTo(Cell other)");
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("if (!base.EqualsTo(other))");
+            Indent(3); Out.WriteLine("{");
+            Indent(4); Out.WriteLine("return false;");
+            Indent(3); Out.WriteLine("}");
+            if (def.HasProperties)
+            {
+                Indent(3); Out.WriteLine("{0} o = ({0})other;", def.Name);
+                foreach (var property in def.Properties)
+                {
+                    Indent(3); Out.WriteLine("if ({0} != o.{0})", property.NativeName);
+                    Indent(3); Out.WriteLine("{");
+                    Indent(4); Out.WriteLine("return false;");
+                    Indent(3); Out.WriteLine("}");
+                }
+            }
+            Indent(3); Out.WriteLine("return true;");
+            Indent(2); Out.WriteLine("}");
+        }
+
+        private void FormatGetHashCode(CellDef def)
+        {
+            Indent(2); Out.WriteLine("public override int GetHashCode(Fingerprint fingerprint)");
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("Hash hash = new Hash(base.GetHashCode(fingerprint));");
+            if (def.HasProperties)
+            {
+                Indent(3); Out.WriteLine("Fingerprint.View fingerprintView = ");
+                Indent(4); Out.WriteLine("new Fingerprint.View(fingerprint, tag.Offset);");
+                foreach (var property in def.Properties)
+                {
+                    Indent(3); Out.WriteLine("if (fingerprintView[{0}])", property.Index);
+                    Indent(3); Out.WriteLine("{");
+                    Indent(4); Out.WriteLine("hash.Update({0});", property.NativeName);
+                    Indent(3); Out.WriteLine("}");
+                }
+            }
+            Indent(3); Out.WriteLine("return hash.Code;");
+            Indent(2); Out.WriteLine("}");
+        }
+
+        private void FormatGetType(CellDef def)
+        {
+            if (def.IsEvent)
+            {
+                Indent(2); Out.WriteLine("public override int GetTypeId()");
+                Indent(2); Out.WriteLine("{");
+                Indent(3); Out.WriteLine("return tag.TypeId;");
+                Indent(2); Out.WriteLine("}");
+                Out.WriteLine();
+            }
+            Indent(2); Out.WriteLine("public override Cell.Tag GetTypeTag() ");
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("return tag;");
+            Indent(2); Out.WriteLine("}");
+        }
+
+        private void FormatIsEquivalent(CellDef def)
+        {
+            Indent(2); Out.WriteLine("public override bool IsEquivalent(Cell other)");
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("if (!base.IsEquivalent(other))");
+            Indent(3); Out.WriteLine("{");
+            Indent(4); Out.WriteLine("return false;");
+            Indent(3); Out.WriteLine("}");
+            if (def.HasProperties)
+            {
+                Indent(3); Out.WriteLine("{0} o = ({0})other;", def.Name);
+                Indent(3); Out.WriteLine("Fingerprint.View fingerprintView = ");
+                Indent(4); Out.WriteLine("new Fingerprint.View(fingerprint, tag.Offset);");
+                foreach (var property in def.Properties)
+                {
+                    Indent(3); Out.WriteLine("if (fingerprintView[{0}])", property.Index);
+                    Indent(3); Out.WriteLine("{");
+                    Indent(4); Out.WriteLine("if ({0} != o.{0})", property.NativeName);
+                    Indent(4); Out.WriteLine("{");
+                    Indent(5); Out.WriteLine("return false;");
+                    Indent(4); Out.WriteLine("}");
+                    Indent(3); Out.WriteLine("}");
+                }
+            }
+            Indent(3); Out.WriteLine("return true;");
+            Indent(2); Out.WriteLine("}");
+        }
+
+        private void FormatLoad(CellDef def)
+        {
+            Indent(2); Out.WriteLine("public override void Load(x2.Buffer buffer)");
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("base.Load(buffer);");
+            if (def.HasProperties)
+            {
+                Indent(3); Out.WriteLine("Fingerprint.View fingerprintView = ");
+                Indent(4); Out.WriteLine("new Fingerprint.View(fingerprint, tag.Offset);");
+                foreach (var property in def.Properties)
+                {
+                    Indent(3); Out.WriteLine("if (fingerprintView[{0}])", property.Index);
+                    Indent(3); Out.WriteLine("{");
+                    if (IsPrimitiveType(property.Type))
+                    {
+                        Indent(4); Out.WriteLine("buffer.Read(out {0});", property.NativeName);
+                    }
+                    else
+                    {
+                        Indent(4); Out.WriteLine("{0}.Load(buffer);", property.NativeName);
+                    }
+                    Indent(3); Out.WriteLine("}");
+                }
+            }
+            Indent(2); Out.WriteLine("}");
+        }
+
+        private void FormatSerialize(CellDef def)
+        {
+            Indent(2); Out.WriteLine("public override void Serialize(x2.Buffer buffer)");
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("buffer.WriteUInt29(tag.TypeId);");
+            Indent(3); Out.WriteLine("this.Dump(buffer);");
+            Indent(2); Out.WriteLine("}");
+        }
+
+        private void FormatDump(CellDef def)
+        {
+            Indent(2); Out.WriteLine("protected override void Dump(x2.Buffer buffer)");
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("base.Dump(buffer);");
+            if (def.HasProperties)
+            {
+                Indent(3); Out.WriteLine("Fingerprint.View fingerprintView = ");
+                Indent(4); Out.WriteLine("new Fingerprint.View(fingerprint, tag.Offset);");
+                foreach (var property in def.Properties)
+                {
+                    Indent(3); Out.WriteLine("if (fingerprintView[{0}])", property.Index);
+                    Indent(3); Out.WriteLine("{");
+                    if (IsPrimitiveType(property.Type))
+                    {
+                        Indent(4); Out.WriteLine("buffer.Write({0});", property.NativeName);
+                    }
+                    else
+                    {
+                        Indent(4); Out.WriteLine("{0}.Serialize(buffer);", property.NativeName);
+                    }
+                    Indent(3); Out.WriteLine("}");
+                }
+            }
+            Indent(2); Out.WriteLine("}");
+        }
+
+        private void FormatDescribe(CellDef def)
+        {
+            Indent(2); Out.WriteLine("protected override void Describe(StringBuilder stringBuilder)");
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("base.Describe(stringBuilder);");
+            foreach (var property in def.Properties)
+            {
+                Indent(3);
+                Out.WriteLine("stringBuilder.AppendFormat(\" {0} = {{0}}\", {1});",
+                    property.Name, property.NativeName);
+            }
+            Indent(2); Out.WriteLine("}");
+        }
+
+        private void FormatInitializer(CellDef def)
+        {
+            Indent(2); Out.WriteLine("private void Initialize()");
+            Indent(2); Out.WriteLine("{");
+            foreach (var property in def.Properties)
+            {
+                Indent(3);
+                Out.WriteLine("{0} = {1};", property.NativeName, property.DefaultValue);
+            }
+            Indent(2); Out.WriteLine("}");
+        }
+
+        private void Indent(int level)
+        {
+            for (int i = 0; i < level; ++i)
+            {
+                Out.Write(Tab);
+            }
+        }
+
+        private static void PreprocessProperties(CellDef def)
+        {
+            int index = 0;
+            foreach (var property in def.Properties)
+            {
+                property.Index = index++;
+
+                property.NativeName = FirstToLower(property.Name);
+                property.Name = FirstToUpper(property.Name);
+
+                if (defaultValues.ContainsKey(property.Type))
+                {
+                    if (String.IsNullOrEmpty(property.DefaultValue))
+                    {
+                        property.DefaultValue = defaultValues[property.Type];
+                    }
+                    if (property.Type == "string")
+                    {
+                        property.DefaultValue = "\"" + property.DefaultValue + "\"";
+                    }
+                }
+                else
+                {
+                    property.DefaultValue = "null";
+                }
+
+                if (nativeTypes.ContainsKey(property.Type))
+                {
+                    property.NativeType = nativeTypes[property.Type];
+                }
+                else
+                {
+                    if (property.Type.ToLower() == "list")
+                    {
+                        property.NativeType = String.Format("ListCell<{0}>", property.Subtype);
+                    }
+                    else
+                    {
+                        property.NativeType = property.Type;
+                    }
+                }
+            }
+        }
+
+        private static bool IsPrimitiveType(string type)
+        {
+            return nativeTypes.ContainsKey(type);
+        }
+
+        private static string FirstToLower(string s)
+        {
+            if (!String.IsNullOrEmpty(s))
+            {
+                var chars = s.ToCharArray();
+                if (Char.IsUpper(chars[0]))
+                {
+                    chars[0] = Char.ToLower(chars[0]);
+                    return new string(chars);
+                }
+            }
+            return s;
+        }
+
+        private static string FirstToUpper(string s)
+        {
+            if (!String.IsNullOrEmpty(s))
+            {
+                var chars = s.ToCharArray();
+                if (Char.IsLower(chars[0]))
+                {
+                    chars[0] = Char.ToUpper(chars[0]);
+                    return new string(chars);
+                }
+            }
+            return s;
+        }
     }
-  }
-*/
 }
