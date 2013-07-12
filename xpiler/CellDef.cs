@@ -20,12 +20,9 @@ namespace xpiler
         }
 
         public string Base { get; set; }
-
-        public bool HasProperties { get { return (properties.Count != 0); } }
-
         public virtual bool IsEvent { get { return false; } }
-
         public List<Property> Properties { get { return properties; } }
+        public bool HasProperties { get { return (properties.Count != 0); } }
 
         private readonly List<Property> properties = new List<Property>();
 
