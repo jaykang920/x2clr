@@ -34,8 +34,7 @@ namespace x2.Links {
       try {
         Socket clientSocket = socket.EndAccept(asyncResult);
 
-        Session session = new Session();
-        session.socket = clientSocket;
+        Session session = new Session(clientSocket);
         LinkConnectedEvent e = new LinkConnectedEvent();
         e.Context = session;
         Feed(e);

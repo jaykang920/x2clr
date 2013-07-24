@@ -28,8 +28,7 @@ namespace x2.Links {
       try {
         socket.EndConnect(asyncResult);
 
-        Session session = new Session();
-        session.socket = socket;
+        Session session = new Session(socket);
         LinkConnectedEvent e = new LinkConnectedEvent();
         e.Context = session;
         Feed(e);
