@@ -11,13 +11,12 @@ using x2.Flows;
 using x2.Queues;
 
 namespace x2.Links {
-  public abstract class TcpLink : SingleThreadedFlow {
-    protected const byte sentinel = 0x55;
+  public abstract class TcpLink : Link {
     protected Socket socket;
 
-    protected TcpLink() : base(new UnboundedQueue<Event>()) {}
+    protected TcpLink() {}
 
-    public void Close() {
+    public override void Close() {
       if (socket != null) {
         socket.Close();
         //socket = null;
@@ -111,7 +110,7 @@ namespace x2.Links {
       Close();
     }
 
-    public class Session : TransportSession<long>
+    public class Session : Link.Session<long>
     {
         public static AsyncCallback receiveCallback;
         public static AsyncCallback sendCallback;
