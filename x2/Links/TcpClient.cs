@@ -26,14 +26,20 @@ namespace x2.Links {
 
     private void OnConnect(IAsyncResult asyncResult) {
       try {
-        socket.EndConnect(asyncResult);
+          socket.EndConnect(asyncResult);
 
-        Session session = new Session(socket);
-        LinkConnectedEvent e = new LinkConnectedEvent();
-        e.Context = session;
-        Feed(e);
+          LinkConnectedEvent e = new LinkConnectedEvent();
+          e.Result = asyncResult.IsCompleted;
 
-        session.BeginReceive(true);
+          if (e.Result)
+          {
+              Session session = new Session(socket);
+              e.Context = session;
+
+              session.BeginReceive(true);
+          }
+
+          Feed(e);
       }
       catch (Exception e) {
         Console.WriteLine(e.Message);

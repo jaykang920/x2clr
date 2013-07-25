@@ -5,9 +5,10 @@ using System;
 
 namespace x2.Events {
   public class LinkConnectedEvent : Event {
-    new private static readonly Tag tag;
+      new private static readonly Tag tag;
 
-    public object Context;
+    public bool Result { get; set; }
+    public object Context { get; set; }
 
     static LinkConnectedEvent() {
       tag = new Tag(Event.tag, typeof(LinkConnectedEvent), 0,
