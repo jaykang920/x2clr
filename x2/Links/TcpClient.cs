@@ -7,44 +7,61 @@ using System.Net.Sockets;
 
 using x2.Events;
 
-namespace x2.Links {
-  public class TcpClient : TcpLink {
-    public TcpClient() {}
+namespace x2.Links
+{
+    public class TcpClient : TcpLink
+    {
+        protected void Connect(string ip, int port)
+        {
+            Connect(IPAddress.Parse(ip), port);
+        }
 
-    protected void Connect(IPAddress ip, int port) {
-      if (socket != null) {
-        throw new InvalidOperationException();
-      }
-      socket = new Socket(ip.AddressFamily,
-        SocketType.Stream, ProtocolType.Tcp);
-      socket.BeginConnect(ip, port, this.OnConnect, null);
+        protected void Connect(IPAddress ip, int port)
+        {
+            if (socket != null)
+            {
+                throw new InvalidOperationException();
+            }
+            socket = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            var endpoint = new IPEndPoint(ip, port);
+            socket.BeginConnect(endpoint, this.OnConnect, endpoint);
+        }
+
+        protected void Reconnect(EndPoint endpoint)
+        {
+            if (socket == null)
+            {
+                throw new InvalidOperationException();
+            }
+            socket.BeginConnect(endpoint, this.OnConnect, endpoint);
+        }
+
+        private void OnConnect(IAsyncResult asyncResult)
+        {
+            LinkConnectedEvent e = new LinkConnectedEvent();
+            try
+            {
+                socket.EndConnect(asyncResult);
+                e.Result = true;
+            }
+            catch (SocketException se)
+            {
+                // socket error
+            }
+
+            if (e.Result)
+            {
+                Session session = new Session(socket);
+                e.Result = true;
+                e.Context = session;
+
+                session.BeginReceive(true);
+            }
+            else
+            {
+                e.Context = asyncResult.AsyncState;  // remote endpoint
+            }
+            Feed(e);
+        }
     }
-
-    protected void Connect(string ip, int port) {
-      Connect(IPAddress.Parse(ip), port);
-    }
-
-    private void OnConnect(IAsyncResult asyncResult) {
-      try {
-          socket.EndConnect(asyncResult);
-
-          LinkConnectedEvent e = new LinkConnectedEvent();
-          e.Result = asyncResult.IsCompleted;
-
-          if (e.Result)
-          {
-              Session session = new Session(socket);
-              e.Context = session;
-
-              session.BeginReceive(true);
-          }
-
-          Feed(e);
-      }
-      catch (Exception e) {
-        Console.WriteLine(e.Message);
-        throw e;
-      }
-    }
-  }
 }

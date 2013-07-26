@@ -19,7 +19,7 @@ namespace x2.Links {
     public override void Close() {
       if (socket != null) {
         socket.Close();
-        //socket = null;
+        socket = null;
       }
     }
 
