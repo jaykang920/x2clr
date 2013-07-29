@@ -63,11 +63,10 @@
     <Compile Include="Handler.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="Hub.cs" />
-    <Compile Include="IBlockingQueue.cs" />
+    <Compile Include="IQueue.cs" />
     <Compile Include="Links\TcpClient.cs" />
     <Compile Include="Links\TcpLink.cs" />
     <Compile Include="Links\TcpServer.cs" />
-    <Compile Include="Pool.cs" />
     <Compile Include="Process.cs" />
     <Compile Include="Queues\UnboundedQueue.cs" />
   </ItemGroup>

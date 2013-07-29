@@ -3,11 +3,13 @@
 
 using System;
 
-namespace x2.Events {
-  public enum BuiltinType {
-    FlowStartupEvent = -1,
-    FlowShutdownEvent = -2,
-    LinkConnectedEvent = -3,
-    LinkDisconnectedEvent = -4,
-  }
+namespace x2.Events
+{
+    public enum BuiltinType
+    {
+        FlowStartupEvent = -1,
+        FlowShutdownEvent = -2,
+        LinkConnectedEvent = -3,
+        LinkDisconnectedEvent = -4,
+    }
 }
