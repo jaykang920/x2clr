@@ -8,12 +8,10 @@ using System.Text;
 namespace x2
 {
     /// <summary>
-    /// A variable-length byte buffer class that provides methods to read/write 
-    /// primitive data types as byte sequences in a platform-independent way.
+    /// A variable-length (though it's limited to a multiple of a power of 2)
+    /// byte buffer class that provides methods to read/write primitive data
+    /// types as byte sequences in a platform-independent way.
     /// </summary>
-    /// <remarks>
-    /// All the members of this class are not thread-safe.
-    /// </remarks>
     public class Buffer
     {
         private readonly List<byte[]> blocks;
@@ -27,6 +25,16 @@ namespace x2
         private int front;
 
         private int marker;
+
+        private int BlockSize
+        {
+            get { return (1 << blockSizeExponent); }
+        }
+
+        private int Capacity
+        {
+            get { return (BlockSize * blocks.Count); }
+        }
 
         public int Length
         {
@@ -56,16 +64,6 @@ namespace x2
             }
         }
 
-        private int BlockSize
-        {
-            get { return (1 << blockSizeExponent); }
-        }
-
-        private int Capacity
-        {
-            get { return (BlockSize * blocks.Count); }
-        }
-
         public Buffer(int blockSizeExponent)
         {
             if (blockSizeExponent < 0 || 31 < blockSizeExponent)
@@ -86,8 +84,6 @@ namespace x2
 
             marker = -1;
         }
-
-        ~Buffer() { }
 
         public static int Write(byte[] buffer, int value)
         {
