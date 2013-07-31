@@ -28,7 +28,27 @@ namespace x2
         public static void Bind<T>(T e, HandlerMethod<T> handler)
             where T : Event
         {
-            Bind(e, handler, 0);
+            currentFlow.Subscribe(e, handler);
+        }
+
+        public static void Bind<T, U>(T e, U target, HandlerMethod<T> handler)
+            where T : Event
+            where U : class
+        {
+            currentFlow.Subscribe(e, target, handler);
+        }
+
+        public static void Unbind<T, U>(T e, HandlerMethod<T> handler)
+            where T : Event
+        {
+            currentFlow.Unsubscribe(e, handler);
+        }
+
+        public static void Unbind<T, U, V>(T e, U target, HandlerMethod<T> handler)
+            where T : Event
+            where U : class
+        {
+            currentFlow.Unsubscribe(e, target, handler);
         }
 
         protected Flow(Binder binder)
@@ -70,6 +90,32 @@ namespace x2
         protected void PublishAway(Event e)
         {
             hubSet.Post(e, currentFlow);
+        }
+
+        protected void Subscribe<T>(T e, HandlerMethod<T> handler)
+            where T : Event
+        {
+            binder.Bind(e, Handler.Create(handler));
+        }
+
+        public void Subscribe<T, U>(T e, U target, HandlerMethod<T> handler)
+            where T : Event
+            where U : class
+        {
+            binder.Bind(e, Handler.Create(target, handler));
+        }
+
+        protected void Unsubscribe<T>(T e, HandlerMethod<T> handler)
+            where T : Event
+        {
+            binder.Unbind(e, Handler.Create(handler));
+        }
+
+        public void Unsubscribe<T, U>(T e, U target, HandlerMethod<T> handler)
+            where T : Event
+            where U : class
+        {
+            binder.Unbind(e, Handler.Create(target, handler));
         }
 
         public abstract void StartUp();

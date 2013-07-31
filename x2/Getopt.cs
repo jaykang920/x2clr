@@ -10,11 +10,11 @@ namespace x2
     public class Getopt
     {
         /// <summary>Indicates that the option does not take an argument.</summary>
-        public const int NO_ARGUMENT = 0;
+        public const int NoArgument = 0;
         /// <summary>Indicates that the option requires an argument.</summary>
-        public const int REQUIRED_ARGUMENT = 1;
+        public const int RequiredArgument = 1;
         /// <summary>Indicates that the option takes an optional argument.</summary>
-        public const int OPTIONAL_ARGUMENT = 2;
+        public const int OptionalArgument = 2;
 
         public class Option
         {
@@ -36,9 +36,9 @@ namespace x2
 
         private enum Ordering
         {
-            kPermute = 0,
-            kReturnInOrder,
-            kRequireOrder
+            Permute = 0,
+            ReturnInOrder,
+            RequireOrder
         }
 
         private string[] args;
@@ -232,27 +232,27 @@ namespace x2
 
             if (optstring.StartsWith("-"))
             {
-                ordering = Ordering.kReturnInOrder;
+                ordering = Ordering.ReturnInOrder;
                 optstring = optstring.Substring(1);
             }
             else if (optstring.StartsWith("+"))
             {
-                ordering = Ordering.kRequireOrder;
+                ordering = Ordering.RequireOrder;
                 optstring = optstring.Substring(1);
             }
             else if (posixlyCorrect)
             {
-                ordering = Ordering.kRequireOrder;
+                ordering = Ordering.RequireOrder;
             }
             else
             {
-                ordering = Ordering.kPermute;
+                ordering = Ordering.Permute;
             }
         }
 
         private bool LocateNext()
         {
-            if (ordering == Ordering.kPermute)
+            if (ordering == Ordering.Permute)
             {
                 if (lastNonopt != optind)
                 {
@@ -302,7 +302,7 @@ namespace x2
             // Handle a non-option for non-permute ordering.
             if (!args[optind].StartsWith("-") || args[optind].Length == 1)
             {
-                if (ordering == Ordering.kRequireOrder)
+                if (ordering == Ordering.RequireOrder)
                 {
                     opt = -1;
                     return true;
@@ -378,7 +378,7 @@ namespace x2
                         return true;
                     }
                 }
-                else if (option.HasArg == REQUIRED_ARGUMENT)
+                else if (option.HasArg == RequiredArgument)
                 {
                     if (optind < args.Length)
                     {
@@ -502,8 +502,7 @@ namespace x2
                             System.Console.Error.WriteLine(
                                 "{0}: option requires an argument -- {1}",
                                 Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location),
-                                c
-                                );
+                                c);
                         }
                         optopt = c;
                         return (optstring.StartsWith(":") ? ':' : '?');

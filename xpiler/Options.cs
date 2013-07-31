@@ -46,11 +46,11 @@ namespace xpiler
         {
             var longopts = new Getopt.Option[]
             {
-                new Getopt.Option("spec", Getopt.REQUIRED_ARGUMENT, 's'),
-                new Getopt.Option("out-dir", Getopt.REQUIRED_ARGUMENT, 'o'),
-                new Getopt.Option("recursive", Getopt.NO_ARGUMENT, 'r'),
-                new Getopt.Option("force", Getopt.NO_ARGUMENT, 'f'),
-                new Getopt.Option("help", Getopt.NO_ARGUMENT, 'h')
+                new Getopt.Option("spec", Getopt.RequiredArgument, 's'),
+                new Getopt.Option("out-dir", Getopt.RequiredArgument, 'o'),
+                new Getopt.Option("recursive", Getopt.NoArgument, 'r'),
+                new Getopt.Option("force", Getopt.NoArgument, 'f'),
+                new Getopt.Option("help", Getopt.NoArgument, 'h')
             };
 
             var getopt = new Getopt(args, "s:o:rfh", longopts);
