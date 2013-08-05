@@ -252,7 +252,7 @@ namespace xpiler
         private void FormatConstructor(CellDef def)
         {
             Indent(2); Out.WriteLine("public {0}()", def.Name);
-            Indent(3); Out.WriteLine(": base(tag.NumProps) {");
+            Indent(3); Out.WriteLine(": base(tag.NumProps)");
             Indent(2); Out.WriteLine("{");
             Indent(3); Out.WriteLine("Initialize();");
             Indent(2); Out.WriteLine("}");
