@@ -68,7 +68,6 @@
     <Compile Include="Links\TcpClient.cs" />
     <Compile Include="Links\TcpLink.cs" />
     <Compile Include="Links\TcpServer.cs" />
-    <Compile Include="Process.cs" />
     <Compile Include="Queues\UnboundedQueue.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

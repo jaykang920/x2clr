@@ -22,6 +22,12 @@ namespace x2
             get { return name; }
         }
 
+        static Hub()
+        {
+            // Create the default(anonymous) hub.
+            Create();
+        }
+
         private Hub(string name)
         {
             this.name = name;

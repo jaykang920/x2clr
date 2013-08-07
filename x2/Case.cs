@@ -21,7 +21,7 @@ namespace x2
         public CaseStack()
         {
             cases = new List<ICase>();
-            activated = true;
+            activated = false;
         }
 
         public void Add(ICase c)
@@ -87,26 +87,6 @@ namespace x2
             {
                 c.TearDown();
             }
-        }
-    }
-
-    public class CaseHolder
-    {
-        protected readonly CaseStack caseStack;
-
-        public CaseHolder()
-        {
-            caseStack = new CaseStack();
-        }
-
-        public void Add(ICase c)
-        {
-            caseStack.Add(c);
-        }
-
-        public void Remove(ICase c)
-        {
-            caseStack.Remove(c);
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace x2
 {
-    public abstract class Flow : CaseHolder
+    public abstract class Flow
     {
         [ThreadStatic]
         protected static Flow currentFlow;
@@ -15,7 +15,9 @@ namespace x2
         [ThreadStatic]
         protected static List<Handler> handlerChain;
 
-        public/*protected*/ readonly Binder binder;
+        protected readonly Binder binder;
+
+        protected readonly CaseStack caseStack;
 
         private readonly HubSet hubSet;
 
@@ -54,6 +56,7 @@ namespace x2
         protected Flow(Binder binder)
         {
             this.binder = binder;
+            caseStack = new CaseStack();
             hubSet = new HubSet();
         }
 
@@ -140,6 +143,16 @@ namespace x2
         public void DetachFromAll()
         {
             hubSet.Clear(this);
+        }
+
+        public void Add(ICase c)
+        {
+            caseStack.Add(c);
+        }
+
+        public void Remove(ICase c)
+        {
+            caseStack.Remove(c);
         }
 
         protected internal abstract void Feed(Event e);

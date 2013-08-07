@@ -38,6 +38,10 @@ namespace x2.Flows
                 {
                     return;
                 }
+
+                // Workaround to support Flow.Bind/Unbind
+                currentFlow = this;
+
                 SetUp();
                 caseStack.SetUp();
                 for (int i = 0; i < numThreads; ++i)
@@ -67,6 +71,10 @@ namespace x2.Flows
                     }
                 }
                 threads.Clear();
+
+                // Workaround to support Flow.Bind/Unbind
+                currentFlow = this;
+
                 caseStack.TearDown();
                 TearDown();
             }

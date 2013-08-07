@@ -36,6 +36,10 @@ namespace x2.Flows
                 {
                     return;
                 }
+
+                // Workaround to support Flow.Bind/Unbind
+                currentFlow = this;
+
                 SetUp();
                 caseStack.SetUp();
                 thread = new Thread(this.Run);
@@ -55,6 +59,10 @@ namespace x2.Flows
                 queue.Close(new FlowShutdownEvent());
                 thread.Join();
                 thread = null;
+
+                // Workaround to support Flow.Bind/Unbind
+                currentFlow = this;
+
                 caseStack.TearDown();
                 TearDown();
             }
