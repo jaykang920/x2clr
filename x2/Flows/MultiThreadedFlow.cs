@@ -50,7 +50,7 @@ namespace x2.Flows
                     threads.Add(thread);
                     thread.Start();
                 }
-                queue.Enqueue(new FlowStartupEvent());
+                queue.Enqueue(new FlowStart());
             }
         }
 
@@ -62,7 +62,7 @@ namespace x2.Flows
                 {
                     return;
                 }
-                queue.Close(new FlowShutdownEvent());
+                queue.Close(new FlowStop());
                 foreach (Thread thread in threads)
                 {
                     if (thread != null)

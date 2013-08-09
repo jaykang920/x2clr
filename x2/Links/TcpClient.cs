@@ -38,7 +38,7 @@ namespace x2.Links
 
         private void OnConnect(IAsyncResult asyncResult)
         {
-            LinkConnectedEvent e = new LinkConnectedEvent();
+            SessionConnected e = new SessionConnected();
             try
             {
                 socket.EndConnect(asyncResult);

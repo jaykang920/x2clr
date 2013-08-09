@@ -78,20 +78,20 @@ namespace x2.Links
                 else
                 {
                     // connection reset by peer
-                    LinkDisconnectedEvent e = new LinkDisconnectedEvent();
+                    SessionDisconnected e = new SessionDisconnected();
                     e.Context = asyncState.Session;
                     Feed(e);
                 }
             }
             catch (SocketException)
             { // socket error
-                LinkDisconnectedEvent e = new LinkDisconnectedEvent();
+                SessionDisconnected e = new SessionDisconnected();
                 e.Context = asyncState.Session;
                 Feed(e);
             }
             catch (ObjectDisposedException)
             { // socket closed
-                LinkDisconnectedEvent e = new LinkDisconnectedEvent();
+                SessionDisconnected e = new SessionDisconnected();
                 e.Context = asyncState.Session;
                 Feed(e);
             }
@@ -107,13 +107,13 @@ namespace x2.Links
             }
             catch (SocketException)
             { // socket error
-                LinkDisconnectedEvent e = new LinkDisconnectedEvent();
+                SessionDisconnected e = new SessionDisconnected();
                 e.Context = asyncState.Session;
                 Feed(e);
             }
             catch (ObjectDisposedException)
             { // socket closed
-                LinkDisconnectedEvent e = new LinkDisconnectedEvent();
+                SessionDisconnected e = new SessionDisconnected();
                 e.Context = asyncState.Session;
                 Feed(e);
             }

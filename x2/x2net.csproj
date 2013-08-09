@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Links\Link.cs" />
+    <Compile Include="Link.cs" />
     <Compile Include="Pool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Binder.cs" />
@@ -50,10 +50,10 @@
     <Compile Include="Event.cs" />
     <Compile Include="EventSink.cs" />
     <Compile Include="Events\BuiltinType.cs" />
-    <Compile Include="Events\FlowShutdownEvent.cs" />
-    <Compile Include="Events\FlowStartupEvent.cs" />
-    <Compile Include="Events\LinkConnectedEvent.cs" />
-    <Compile Include="Events\LinkDisconnectedEvent.cs" />
+    <Compile Include="Events\FlowStart.cs" />
+    <Compile Include="Events\FlowStop.cs" />
+    <Compile Include="Events\SessionConnected.cs" />
+    <Compile Include="Events\SessionDisconnected.cs" />
     <Compile Include="Fingerprint.cs" />
     <Compile Include="Flow.cs" />
     <Compile Include="Flows\MultiThreadedFlow.cs" />

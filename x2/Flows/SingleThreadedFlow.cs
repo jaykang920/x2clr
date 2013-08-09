@@ -44,7 +44,7 @@ namespace x2.Flows
                 caseStack.SetUp();
                 thread = new Thread(this.Run);
                 thread.Start();
-                queue.Enqueue(new FlowStartupEvent());
+                queue.Enqueue(new FlowStart());
             }
         }
 
@@ -56,7 +56,7 @@ namespace x2.Flows
                 {
                     return;
                 }
-                queue.Close(new FlowShutdownEvent());
+                queue.Close(new FlowStop());
                 thread.Join();
                 thread = null;
 

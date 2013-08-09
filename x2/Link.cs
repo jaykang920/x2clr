@@ -6,7 +6,7 @@ using System;
 using x2.Flows;
 using x2.Queues;
 
-namespace x2.Links
+namespace x2
 {
     public abstract class Link : SingleThreadedFlow
     {

@@ -7,9 +7,10 @@ namespace x2.Events
 {
     public enum BuiltinType
     {
-        FlowStartupEvent = -1,
-        FlowShutdownEvent = -2,
-        LinkConnectedEvent = -3,
-        LinkDisconnectedEvent = -4,
+        // Internal event types
+        FlowStart = -1,
+        FlowStop = -2,
+        SessionConnected = -3,
+        SessionDisconnected = -4,
     }
 }

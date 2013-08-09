@@ -15,7 +15,7 @@ namespace x2.Links
         private int backlog;
 
         /// <summary>
-        /// Gets or sets The maximum length of the pending connections queue.
+        /// Gets or sets the maximum length of the pending connections queue.
         /// </summary>
         public int Backlog
         {
@@ -42,7 +42,7 @@ namespace x2.Links
                 Socket clientSocket = socket.EndAccept(asyncResult);
 
                 Session session = new Session(clientSocket);
-                LinkConnectedEvent e = new LinkConnectedEvent();
+                SessionConnected e = new SessionConnected();
                 e.Context = session;
                 Feed(e);
 

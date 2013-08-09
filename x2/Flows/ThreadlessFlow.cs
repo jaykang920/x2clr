@@ -45,7 +45,7 @@ namespace x2.Flows
 
                 running = true;
 
-                queue.Enqueue(new FlowStartupEvent());
+                queue.Enqueue(new FlowStart());
             }
         }
 
@@ -57,7 +57,7 @@ namespace x2.Flows
                 {
                     return;
                 }
-                queue.Close(new FlowShutdownEvent());
+                queue.Close(new FlowStop());
                 running = false;
 
                 handlerChain = null;
