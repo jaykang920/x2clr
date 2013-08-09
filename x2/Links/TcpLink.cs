@@ -130,7 +130,7 @@ namespace x2.Links
             Close();
         }
 
-        public class Session : Link.Session<long>
+        public class Session : Link.Session<IntPtr>
         {
             public static AsyncCallback receiveCallback;
             public static AsyncCallback sendCallback;
@@ -141,7 +141,7 @@ namespace x2.Links
             public Socket Socket { get { return socket; } }
 
             public Session(Socket socket)
-                : base(socket.Handle.ToInt64())
+                : base(socket.Handle)
             {
                 this.socket = socket;
                 receiveState = new AsyncRxState();
