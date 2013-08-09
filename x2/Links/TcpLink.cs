@@ -173,8 +173,10 @@ namespace x2.Links
                 socket.BeginSend(asyncState.ArraySegments, SocketFlags.None, sendCallback, asyncState);
             }
 
-            public override void Send(Buffer buffer)
+            public override void Send(Event e)
             {
+                var buffer = new Buffer(12);
+                e.Serialize(buffer);
                 BeginSend(buffer);
             }
         }

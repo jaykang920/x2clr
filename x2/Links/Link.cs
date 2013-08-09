@@ -27,7 +27,7 @@ namespace x2.Links
                 this.handle = handle;
             }
 
-            public abstract void Send(x2.Buffer buffer);
+            public abstract void Send(x2.Event e);
         }
     }
 }
