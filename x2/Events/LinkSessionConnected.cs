@@ -3,8 +3,6 @@
 
 using System;
 
-using x2;
-
 namespace x2.Events
 {
     public sealed class LinkSessionConnected : Event
