@@ -9,7 +9,7 @@ namespace x2.Events
     {
         new private static readonly Tag tag;
 
-        public object Context;
+        public object Context { get; set; }
 
         static LinkSessionDisconnected()
         {
