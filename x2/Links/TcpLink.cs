@@ -22,6 +22,7 @@ namespace x2.Links
         {
             if (socket != null && socket.Connected)
             {
+                socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
 
                 // Setting socket as null here causes NullReferenceException
