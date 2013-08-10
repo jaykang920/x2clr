@@ -41,12 +41,12 @@ namespace x2.Links
             {
                 Socket clientSocket = socket.EndAccept(asyncResult);
 
-                Session session = new Session(this, clientSocket);
+                Session session = new Session(clientSocket);
                 LinkSessionConnected e = new LinkSessionConnected();
                 e.Context = session;
                 Feed(e);
 
-                session.BeginReceive(true);
+                session.BeginReceive(this, true);
 
                 socket.BeginAccept(this.OnAccept, null);
             }

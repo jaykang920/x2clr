@@ -51,11 +51,11 @@ namespace x2.Links
 
             if (e.Result)
             {
-                Session session = new Session(this, socket);
+                Session session = new Session(socket);
                 e.Result = true;
                 e.Context = session;
 
-                session.BeginReceive(true);
+                session.BeginReceive(this, true);
             }
             else
             {

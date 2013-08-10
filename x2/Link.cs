@@ -59,7 +59,7 @@ namespace x2
                 this.handle = handle;
             }
 
-            public abstract void Send(x2.Event e);
+            public abstract void Send(Link link, x2.Event e);
         }
     }
 }

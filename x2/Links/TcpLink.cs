@@ -51,7 +51,7 @@ namespace x2.Links
 
                     if (asyncState.Buffer.Length < asyncState.length)
                     {
-                        asyncState.Session.BeginReceive(false);
+                        asyncState.Session.BeginReceive(this, false);
                         return;
                     }
 
@@ -75,7 +75,7 @@ namespace x2.Links
                     }
 
                     asyncState.Buffer.Trim();
-                    asyncState.Session.BeginReceive(true);
+                    asyncState.Session.BeginReceive(this, true);
                 }
                 else
                 {
@@ -143,23 +143,21 @@ namespace x2.Links
             public static AsyncCallback receiveCallback;
             public static AsyncCallback sendCallback;
 
-            private readonly TcpLink link;
             private readonly Socket socket;
             AsyncRxState receiveState;
 
             public Socket Socket { get { return socket; } }
 
-            public Session(TcpLink link, Socket socket)
+            public Session(Socket socket)
                 : base(socket.Handle)
             {
-                this.link = link;
                 this.socket = socket;
                 receiveState = new AsyncRxState();
                 receiveState.Session = this;
                 receiveState.Buffer = new Buffer(12);
             }
 
-            public void BeginReceive(bool beginning)
+            public void BeginReceive(TcpLink link, bool beginning)
             {
                 receiveState.beginning = beginning;
                 receiveState.ArraySegments.Clear();
@@ -167,7 +165,7 @@ namespace x2.Links
                 socket.BeginReceive(receiveState.ArraySegments, SocketFlags.None, link.OnReceive, receiveState);
             }
 
-            public void BeginSend(Buffer buffer)
+            public void BeginSend(TcpLink link, Buffer buffer)
             {
                 // pre-process
                 buffer.Write(sentinel);
@@ -183,11 +181,11 @@ namespace x2.Links
                 socket.BeginSend(asyncState.ArraySegments, SocketFlags.None, link.OnSend, asyncState);
             }
 
-            public override void Send(Event e)
+            public override void Send(Link link, Event e)
             {
                 var buffer = new Buffer(12);
                 e.Serialize(buffer);
-                BeginSend(buffer);
+                BeginSend((TcpLink)link, buffer);
             }
         }
 
