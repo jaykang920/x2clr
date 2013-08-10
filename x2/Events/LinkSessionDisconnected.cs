@@ -5,7 +5,7 @@ using System;
 
 namespace x2.Events
 {
-    public class LinkSessionDisconnected : Event
+    public sealed class LinkSessionDisconnected : Event
     {
         new private static readonly Tag tag;
 

@@ -7,7 +7,7 @@ using x2;
 
 namespace x2.Events
 {
-    public class LinkSessionConnected : Event
+    public sealed class LinkSessionConnected : Event
     {
         new private static readonly Tag tag;
 
