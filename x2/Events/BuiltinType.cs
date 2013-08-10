@@ -10,7 +10,7 @@ namespace x2.Events
         // Internal event types
         FlowStart = -1,
         FlowStop = -2,
-        SessionConnected = -3,
-        SessionDisconnected = -4,
+        LinkSessionConnected = -3,
+        LinkSessionDisconnected = -4,
     }
 }

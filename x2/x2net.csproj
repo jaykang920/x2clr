@@ -52,8 +52,8 @@
     <Compile Include="Events\BuiltinType.cs" />
     <Compile Include="Events\FlowStart.cs" />
     <Compile Include="Events\FlowStop.cs" />
-    <Compile Include="Events\SessionConnected.cs" />
-    <Compile Include="Events\SessionDisconnected.cs" />
+    <Compile Include="Events\LinkSessionConnected.cs" />
+    <Compile Include="Events\LinkSessionDisconnected.cs" />
     <Compile Include="Fingerprint.cs" />
     <Compile Include="Flow.cs" />
     <Compile Include="Flows\MultiThreadedFlow.cs" />

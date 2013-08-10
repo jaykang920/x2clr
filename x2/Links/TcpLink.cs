@@ -20,10 +20,12 @@ namespace x2.Links
 
         public override void Close()
         {
-            if (socket != null)
+            if (socket != null && socket.Connected)
             {
                 socket.Close();
-                socket = null;
+
+                // Setting socket as null here causes NullReferenceException
+                // later trying to complete asynchronous jobs.
             }
         }
 
@@ -78,20 +80,20 @@ namespace x2.Links
                 else
                 {
                     // connection reset by peer
-                    SessionDisconnected e = new SessionDisconnected();
+                    LinkSessionDisconnected e = new LinkSessionDisconnected();
                     e.Context = asyncState.Session;
                     Feed(e);
                 }
             }
             catch (SocketException)
             { // socket error
-                SessionDisconnected e = new SessionDisconnected();
+                LinkSessionDisconnected e = new LinkSessionDisconnected();
                 e.Context = asyncState.Session;
                 Feed(e);
             }
             catch (ObjectDisposedException)
             { // socket closed
-                SessionDisconnected e = new SessionDisconnected();
+                LinkSessionDisconnected e = new LinkSessionDisconnected();
                 e.Context = asyncState.Session;
                 Feed(e);
             }
@@ -107,13 +109,13 @@ namespace x2.Links
             }
             catch (SocketException)
             { // socket error
-                SessionDisconnected e = new SessionDisconnected();
+                LinkSessionDisconnected e = new LinkSessionDisconnected();
                 e.Context = asyncState.Session;
                 Feed(e);
             }
             catch (ObjectDisposedException)
             { // socket closed
-                SessionDisconnected e = new SessionDisconnected();
+                LinkSessionDisconnected e = new LinkSessionDisconnected();
                 e.Context = asyncState.Session;
                 Feed(e);
             }
@@ -121,6 +123,8 @@ namespace x2.Links
 
         protected override void SetUp()
         {
+            base.SetUp();
+
             Session.receiveCallback = new AsyncCallback(this.OnReceive);
             Session.sendCallback = new AsyncCallback(this.OnSend);
         }
@@ -128,6 +132,11 @@ namespace x2.Links
         protected override void TearDown()
         {
             Close();
+
+            Session.sendCallback = null;
+            Session.receiveCallback = null;
+
+            base.TearDown();
         }
 
         public class Session : Link.Session<IntPtr>

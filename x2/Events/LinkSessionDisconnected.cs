@@ -5,23 +5,19 @@ using System;
 
 namespace x2.Events
 {
-    public class SessionConnected : Event
+    public class LinkSessionDisconnected : Event
     {
         new private static readonly Tag tag;
 
-        public bool Result { get; set; }
-        public object Context { get; set; }
+        public object Context;
 
-        static SessionConnected()
+        static LinkSessionDisconnected()
         {
-            tag = new Tag(Event.tag, typeof(SessionConnected), 0,
-                          (int)BuiltinType.SessionConnected);
+            tag = new Tag(Event.tag, typeof(LinkSessionDisconnected), 0,
+                          (int)BuiltinType.LinkSessionDisconnected);
         }
 
-        public SessionConnected()
-            : base(tag.NumProps)
-        {
-        }
+        public LinkSessionDisconnected() : base(tag.NumProps) { }
 
         public override int GetHashCode()
         {

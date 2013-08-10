@@ -3,21 +3,27 @@
 
 using System;
 
+using x2;
+
 namespace x2.Events
 {
-    public class SessionDisconnected : Event
+    public class LinkSessionConnected : Event
     {
         new private static readonly Tag tag;
 
-        public object Context;
+        public bool Result { get; set; }
+        public object Context { get; set; }
 
-        static SessionDisconnected()
+        static LinkSessionConnected()
         {
-            tag = new Tag(Event.tag, typeof(SessionDisconnected), 0,
-                          (int)BuiltinType.SessionDisconnected);
+            tag = new Tag(Event.tag, typeof(LinkSessionConnected), 0,
+                          (int)BuiltinType.LinkSessionConnected);
         }
 
-        public SessionDisconnected() : base(tag.NumProps) { }
+        public LinkSessionConnected()
+            : base(tag.NumProps)
+        {
+        }
 
         public override int GetHashCode()
         {

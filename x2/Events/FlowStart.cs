@@ -12,7 +12,7 @@ namespace x2.Events
         static FlowStart()
         {
             tag = new Tag(Event.tag, typeof(FlowStart), 0,
-                          (int)BuiltinType.FlowStop);
+                          (int)BuiltinType.FlowStart);
         }
 
         public FlowStart() : base(tag.NumProps) { }

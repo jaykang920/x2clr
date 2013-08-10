@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
+using x2.Events;
+
 namespace x2
 {
     public abstract class Flow
@@ -174,10 +176,28 @@ namespace x2
 
         protected virtual void SetUp()
         {
+            Subscribe(new FlowStart(), this, OnFlowStart);
+            Subscribe(new FlowStop(), this, OnFlowStop);
         }
 
         protected virtual void TearDown()
         {
+            Unsubscribe(new FlowStop(), this, OnFlowStop);
+            Unsubscribe(new FlowStart(), this, OnFlowStart);
+        }
+
+        protected virtual void OnStart() {}
+
+        protected virtual void OnStop() {}
+
+        private void OnFlowStart(FlowStart e)
+        {
+            OnStart();
+        }
+
+        private void OnFlowStop(FlowStop e)
+        {
+            OnStop();
         }
 
         private class HubSet
