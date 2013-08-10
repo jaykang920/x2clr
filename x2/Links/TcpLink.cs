@@ -121,6 +121,7 @@ namespace x2.Links
             }
         }
 
+        /*
         protected override void SetUp()
         {
             base.SetUp();
@@ -128,13 +129,11 @@ namespace x2.Links
             Session.receiveCallback = new AsyncCallback(this.OnReceive);
             Session.sendCallback = new AsyncCallback(this.OnSend);
         }
+         */
 
         protected override void TearDown()
         {
             Close();
-
-            Session.sendCallback = null;
-            Session.receiveCallback = null;
 
             base.TearDown();
         }
@@ -144,14 +143,16 @@ namespace x2.Links
             public static AsyncCallback receiveCallback;
             public static AsyncCallback sendCallback;
 
+            private readonly TcpLink link;
             private readonly Socket socket;
             AsyncRxState receiveState;
 
             public Socket Socket { get { return socket; } }
 
-            public Session(Socket socket)
+            public Session(TcpLink link, Socket socket)
                 : base(socket.Handle)
             {
+                this.link = link;
                 this.socket = socket;
                 receiveState = new AsyncRxState();
                 receiveState.Session = this;
@@ -163,7 +164,7 @@ namespace x2.Links
                 receiveState.beginning = beginning;
                 receiveState.ArraySegments.Clear();
                 receiveState.Buffer.ListAvailableSegments(receiveState.ArraySegments);
-                socket.BeginReceive(receiveState.ArraySegments, SocketFlags.None, receiveCallback, receiveState);
+                socket.BeginReceive(receiveState.ArraySegments, SocketFlags.None, link.OnReceive, receiveState);
             }
 
             public void BeginSend(Buffer buffer)
@@ -179,7 +180,7 @@ namespace x2.Links
                 asyncState.ArraySegments.Add(new ArraySegment<byte>(asyncState.lengthBytes, 0, numLengthBytes));
 
                 buffer.ListOccupiedSegments(asyncState.ArraySegments);
-                socket.BeginSend(asyncState.ArraySegments, SocketFlags.None, sendCallback, asyncState);
+                socket.BeginSend(asyncState.ArraySegments, SocketFlags.None, link.OnSend, asyncState);
             }
 
             public override void Send(Event e)
