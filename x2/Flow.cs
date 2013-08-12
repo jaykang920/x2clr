@@ -48,7 +48,7 @@ namespace x2
             currentFlow.Unsubscribe(e, handler);
         }
 
-        public static void Unbind<T, U, V>(T e, U target, HandlerMethod<T> handler)
+        public static void Unbind<T, U>(T e, U target, HandlerMethod<T> handler)
             where T : Event
             where U : class
         {
