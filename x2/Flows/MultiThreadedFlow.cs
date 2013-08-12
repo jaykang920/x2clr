@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 
 using x2.Events;
+using x2.Queues;
 
 namespace x2.Flows
 {
@@ -16,6 +17,11 @@ namespace x2.Flows
         protected readonly List<Thread> threads;
         protected int numThreads;
 
+        public MultiThreadedFlow(int numThreads)
+            : this(new UnboundedQueue<Event>(), numThreads)
+        {
+        }
+        
         public MultiThreadedFlow(IQueue<Event> queue, int numThreads)
             : base(new SynchronizedBinding())
         {
