@@ -71,7 +71,7 @@ namespace x2.Links
                     if (e != null)
                     {
                         e.Load(asyncState.Buffer);
-                        e.handle = asyncState.Session.Socket.Handle.ToInt64();
+                        e.SessionHandle = asyncState.Session.Socket.Handle.ToInt64();
                         PublishAway(e);
                     }
 

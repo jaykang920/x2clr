@@ -21,11 +21,22 @@ namespace x2
         new protected static readonly Tag tag;
 
         private static Factory factory = new Factory();
-        public long handle;
+
+        private long sessionHandle;
+
+        public long SessionHandle
+        {
+            get { return sessionHandle; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                sessionHandle = value;
+            }
+        }
 
         static Event()
         {
-            tag = new Tag(null, typeof(Event), 0, 0);
+            tag = new Tag(null, typeof(Event), 1, 0);
         }
 
         /// <summary>
