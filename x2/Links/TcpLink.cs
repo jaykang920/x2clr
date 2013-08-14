@@ -139,7 +139,7 @@ namespace x2.Links
             base.TearDown();
         }
 
-        public class Session : Link.Session<IntPtr>
+        public new class Session : Link.Session
         {
             public static AsyncCallback receiveCallback;
             public static AsyncCallback sendCallback;

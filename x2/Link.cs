@@ -13,8 +13,6 @@ namespace x2
     {
         protected const byte sentinel = 0x55;
 
-        protected Link() : base(new UnboundedQueue<Event>()) {}
-
         public abstract void Close();
 
         protected override void SetUp()
@@ -48,15 +46,13 @@ namespace x2
         }
 
 
-        public abstract class Session<T>
+        public abstract class Session
         {
-            private readonly T handle;
+            public IntPtr Handle { get; private set; }
 
-            public T Handle { get { return handle; } }
-
-            public Session(T handle)
+            public Session(IntPtr handle)
             {
-                this.handle = handle;
+                Handle = handle;
             }
 
             public abstract void Send(Link link, x2.Event e);
