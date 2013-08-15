@@ -33,69 +33,85 @@ namespace x2.Links
         public void OnReceive(IAsyncResult asyncResult)
         {
             AsyncRxState asyncState = (AsyncRxState)asyncResult.AsyncState;
+            Buffer buffer = asyncState.Buffer;
+            Session session = asyncState.Session;
             try
             {
-                int numBytes = asyncState.Session.Socket.EndReceive(asyncResult);
+                int numBytes = session.Socket.EndReceive(asyncResult);
 
                 if (numBytes > 0)
                 {
-                    asyncState.Buffer.Stretch(numBytes);
+                    buffer.Stretch(numBytes);
 
                     if (asyncState.beginning)
                     {
-                        asyncState.Buffer.Rewind();
+                        buffer.Rewind();
                         int payloadLength;
-                        int numLengthBytes = asyncState.Buffer.ReadUInt29(out payloadLength);
-                        asyncState.Buffer.Shrink(numLengthBytes);
+                        int numLengthBytes = buffer.ReadUInt29(out payloadLength);
+                        buffer.Shrink(numLengthBytes);
                         asyncState.length = payloadLength;
                     }
 
-                    if (asyncState.Buffer.Length < asyncState.length)
+                    if (buffer.Length < asyncState.length)
                     {
-                        asyncState.Session.BeginReceive(this, false);
+                        session.BeginReceive(this, false);
                         return;
                     }
 
                     // end sentinel check
-                    if (asyncState.Buffer[asyncState.length - 1] != sentinel)
+                    if (buffer[asyncState.length - 1] != sentinel)
                     {
                         // protocol format error
                     }
 
                     // pre-process
-                    asyncState.Buffer.MarkToRead(asyncState.length);
+                    buffer.MarkToRead(asyncState.length);
 
                     int typeId;
-                    asyncState.Buffer.ReadUInt29(out typeId);
+                    buffer.ReadUInt29(out typeId);
                     Event e = Event.Create(typeId);
-                    if (e != null)
+                    if (e == null)
                     {
-                        e.Load(asyncState.Buffer);
-                        e.SessionHandle = asyncState.Session.Socket.Handle.ToInt64();
-                        PublishAway(e);
+                        // error
+                    }
+                    else
+                    {
+                        e.Load(buffer);
+                        e.SessionHandle = session.Socket.Handle.ToInt64();
+
+                        // Post up the retrieved event to the hubs to which this
+                        // link is attached.
+                        if (IsSelfPublishingEnabled)
+                        {
+                            Publish(e);
+                        }
+                        else
+                        {
+                            PublishAway(e);
+                        }
                     }
 
-                    asyncState.Buffer.Trim();
-                    asyncState.Session.BeginReceive(this, true);
+                    buffer.Trim();
+                    session.BeginReceive(this, true);
                 }
                 else
                 {
                     // connection reset by peer
                     LinkSessionDisconnected e = new LinkSessionDisconnected();
-                    e.Context = asyncState.Session;
+                    e.Context = session;
                     Feed(e);
                 }
             }
             catch (SocketException)
             { // socket error
                 LinkSessionDisconnected e = new LinkSessionDisconnected();
-                e.Context = asyncState.Session;
+                e.Context = session;
                 Feed(e);
             }
             catch (ObjectDisposedException)
             { // socket closed
                 LinkSessionDisconnected e = new LinkSessionDisconnected();
-                e.Context = asyncState.Session;
+                e.Context = session;
                 Feed(e);
             }
         }

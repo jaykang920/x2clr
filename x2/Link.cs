@@ -13,6 +13,12 @@ namespace x2
     {
         protected const byte sentinel = 0x55;
 
+        /// <summary>
+        /// Gets or sets whether this link itself is included as a target when
+        /// publishing remote events. Default value is false.
+        /// </summary>
+        public bool IsSelfPublishingEnabled { get; set; }
+
         public abstract void Close();
 
         protected override void SetUp()
