@@ -106,7 +106,6 @@ namespace x2.Links
             try
             {
                 int numBytes = asyncState.Session.Socket.EndSend(asyncResult);
-
             }
             catch (SocketException)
             { // socket error
@@ -163,7 +162,22 @@ namespace x2.Links
                 receiveState.beginning = beginning;
                 receiveState.ArraySegments.Clear();
                 receiveState.Buffer.ListAvailableSegments(receiveState.ArraySegments);
-                socket.BeginReceive(receiveState.ArraySegments, SocketFlags.None, link.OnReceive, receiveState);
+                try
+                {
+                    socket.BeginReceive(receiveState.ArraySegments, SocketFlags.None, link.OnReceive, receiveState);
+                }
+                catch (SocketException)
+                { // socket error
+                    LinkSessionDisconnected e = new LinkSessionDisconnected();
+                    e.Context = receiveState.Session;
+                    link.Feed(e);
+                }
+                catch (ObjectDisposedException)
+                { // socket closed
+                    LinkSessionDisconnected e = new LinkSessionDisconnected();
+                    e.Context = receiveState.Session;
+                    link.Feed(e);
+                }
             }
 
             public void BeginSend(TcpLink link, Buffer buffer)
@@ -179,7 +193,22 @@ namespace x2.Links
                 asyncState.ArraySegments.Add(new ArraySegment<byte>(asyncState.lengthBytes, 0, numLengthBytes));
 
                 buffer.ListOccupiedSegments(asyncState.ArraySegments);
-                socket.BeginSend(asyncState.ArraySegments, SocketFlags.None, link.OnSend, asyncState);
+                try
+                {
+                    socket.BeginSend(asyncState.ArraySegments, SocketFlags.None, link.OnSend, asyncState);
+                }
+                catch (SocketException)
+                { // socket error
+                    LinkSessionDisconnected e = new LinkSessionDisconnected();
+                    e.Context = asyncState.Session;
+                    link.Feed(e);
+                }
+                catch (ObjectDisposedException)
+                { // socket closed
+                    LinkSessionDisconnected e = new LinkSessionDisconnected();
+                    e.Context = asyncState.Session;
+                    link.Feed(e);
+                }
             }
 
             public override void Send(Link link, Event e)
