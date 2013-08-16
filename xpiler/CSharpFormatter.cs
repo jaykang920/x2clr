@@ -141,6 +141,8 @@ namespace xpiler
             Indent(1); Out.WriteLine("{");
             Indent(2); Out.WriteLine("new protected static readonly Tag tag;");
             Out.WriteLine();
+            Indent(2); Out.WriteLine("new public static int TypeId { get { return tag.TypeId; } }");
+            Out.WriteLine();
             FormatFields(def);
             if (def.HasProperties)
             {
@@ -246,6 +248,12 @@ namespace xpiler
                 Out.Write("{0}", s);
             }
             Out.WriteLine(");");
+            Indent(2); Out.WriteLine("}");
+
+            Out.WriteLine();
+            Indent(2); Out.WriteLine("new public static {0} New()", def.Name);
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("return new {0}();", def.Name);
             Indent(2); Out.WriteLine("}");
         }
 

@@ -22,6 +22,8 @@ namespace x2
 
         private static Factory factory = new Factory();
 
+        public static int TypeId { get { return tag.TypeId; } }
+
         private long sessionHandle;
 
         public long SessionHandle
@@ -65,9 +67,45 @@ namespace x2
             return factory.Create(typeId);
         }
 
+        public static Event New()
+        {
+            return new Event();
+        }
+
         public static void Register(int typeId, CreatorDelegate creator)
         {
             factory.Register(typeId, creator);
+        }
+
+        public static void Register<T>() where T : Event
+        {
+            Register(typeof(T));
+        }
+
+        private static void Register(Type type)
+        {
+            PropertyInfo prop = type.GetProperty("TypeId", BindingFlags.Public | BindingFlags.Static);
+            Console.WriteLine(type.Name);
+            int id = (int)prop.GetValue(null, null);
+
+            MethodInfo method = type.GetMethod("New", BindingFlags.Public | BindingFlags.Static);
+            CreatorDelegate creator = (CreatorDelegate)Delegate.CreateDelegate(typeof(CreatorDelegate), method);
+
+            Register(id, creator);
+        }
+
+        public static void RegisterAssembly(string assemblyName)
+        {
+            Assembly assembly = System.Reflection.Assembly.Load(assemblyName);
+            Type eventType = typeof(Event);
+            foreach (var type in assembly.GetTypes())
+            {
+                if (!eventType.IsAssignableFrom(type))
+                {
+                    continue;
+                }
+                Register(type);
+            }
         }
 
         /// <summary>
@@ -120,11 +158,6 @@ namespace x2
         public override bool IsEquivalent(Cell other)
         {
             return base.IsEquivalent(other);
-        }
-
-        public Event New()
-        {
-            return new Event();
         }
 
         /// <summary>
@@ -205,22 +238,6 @@ namespace x2
             {
                 register[typeId] = creator;
             }
-
-            /* consider supporting auto-registration with reflection
-            public void Scan(params Assembly[] assemblies)
-            {
-              Type eventType = typeof(Event);
-              foreach (Assembly assembly in assemblies) {
-                foreach (Type type in assembly.GetTypes()) {
-                  if (!eventType.IsAssignableFrom(type)) {
-                    continue;
-                  }
-                  FieldInfotype.GetField("tag", BindingFlags.Static);
-                  register.Add(type.Name, type);
-                }
-              }
-            }
-            */
         }
     }
 
