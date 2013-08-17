@@ -72,6 +72,8 @@ namespace x2
             return new Event();
         }
 
+        #region Factory registration methods
+
         public static void Register(int typeId, CreatorDelegate creator)
         {
             factory.Register(typeId, creator);
@@ -82,31 +84,33 @@ namespace x2
             Register(typeof(T));
         }
 
-        private static void Register(Type type)
+        public static void Register(Assembly assembly)
         {
-            PropertyInfo prop = type.GetProperty("TypeId", BindingFlags.Public | BindingFlags.Static);
-            Console.WriteLine(type.Name);
-            int id = (int)prop.GetValue(null, null);
-
-            MethodInfo method = type.GetMethod("New", BindingFlags.Public | BindingFlags.Static);
-            CreatorDelegate creator = (CreatorDelegate)Delegate.CreateDelegate(typeof(CreatorDelegate), method);
-
-            Register(id, creator);
-        }
-
-        public static void RegisterAssembly(string assemblyName)
-        {
-            Assembly assembly = System.Reflection.Assembly.Load(assemblyName);
             Type eventType = typeof(Event);
             foreach (var type in assembly.GetTypes())
             {
-                if (!eventType.IsAssignableFrom(type))
+                if (eventType.IsAssignableFrom(type))
                 {
-                    continue;
+                    Register(type);
                 }
-                Register(type);
             }
         }
+
+        private static void Register(Type type)
+        {
+            PropertyInfo prop = type.GetProperty("TypeId",
+                BindingFlags.Public | BindingFlags.Static);
+            MethodInfo method = type.GetMethod("New",
+                BindingFlags.Public | BindingFlags.Static);
+
+            int typeId = (int)prop.GetValue(null, null);
+            CreatorDelegate creator = (CreatorDelegate)
+                Delegate.CreateDelegate(typeof(CreatorDelegate), method);
+
+            factory.Register(typeId, creator);
+        }
+
+        #endregion
 
         /// <summary>
         /// Describes the immediate property values into the specified
@@ -215,7 +219,7 @@ namespace x2
             }
         }
 
-        private class Factory
+        public class Factory
         {
             private IDictionary<int, CreatorDelegate> register;
 
