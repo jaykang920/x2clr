@@ -8,13 +8,12 @@ using System.Threading;
 namespace x2
 {
     /// <summary>
-    /// Simple grow-only generic pool.
+    /// Minimal generic object pool.
     /// </summary>
     /// <typeparam name="T">
-    /// Specifies the type of elements in the pool.
+    /// Specifies the type of objects in the pool.
     /// </typeparam>
-    public class Pool<T>
-        where T : new()
+    public class Pool<T> where T : class
     {
         private readonly Stack<T> store;
 
@@ -35,7 +34,7 @@ namespace x2
                     return store.Pop();
                 }
             }
-            return new T();
+            return null;
         }
 
         public void Release(T item)
