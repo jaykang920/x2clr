@@ -14,6 +14,8 @@ namespace x2
     /// </summary>
     public class Buffer
     {
+        private static readonly BlockPool blockPool = new BlockPool();
+
         private readonly List<byte[]> blocks;
         private readonly int blockSizeExponent;
         private readonly int remainderMask;
@@ -74,7 +76,7 @@ namespace x2
             this.blockSizeExponent = blockSizeExponent;
             remainderMask = ~(~0 << blockSizeExponent);
 
-            blocks.Add(AcquireBlock(BlockSize));
+            blocks.Add(blockPool.Acquire(blockSizeExponent));
 
             currentBlockIndex = 0;
             currentBlock = blocks[currentBlockIndex];
@@ -83,6 +85,14 @@ namespace x2
             front = 0;
 
             marker = -1;
+        }
+
+        /// <summary>
+        /// Destructor to return blocks to the pool
+        /// </summary>
+        ~Buffer()
+        {
+            CleanUp();
         }
 
         public static int Write(byte[] buffer, int value)
@@ -176,7 +186,7 @@ namespace x2
         {
             if ((Capacity - back) < BlockSize)
             {
-                blocks.Add(AcquireBlock(BlockSize));
+                blocks.Add(blockPool.Acquire(blockSizeExponent));
             }
             int backIndex = back >> blockSizeExponent;
             int backOffset = back & remainderMask;
@@ -413,7 +423,7 @@ namespace x2
             int index, count;
             if (marker >= 0 && position < marker)
             {
-                position = marker;
+                Position = marker;
                 marker = -1;
             }
             if (position == back)
@@ -439,7 +449,7 @@ namespace x2
                 blocks.RemoveRange(index, count);
                 foreach (byte[] block in blocksToRemove)
                 {
-                    ReleaseBlock(block);
+                    blockPool.Release(blockSizeExponent, block);
                 }
             }
             Position = front;
@@ -605,17 +615,6 @@ namespace x2
             }
         }
 
-        private static byte[] AcquireBlock(int blockSize)
-        {
-            // No pooling at this point
-            return new byte[blockSize];
-        }
-
-        private static void ReleaseBlock(byte[] block)
-        {
-            // No pooling at this point
-        }
-
         private void CheckLengthToRead(int numBytes)
         {
             int limit = (marker >= 0 ? marker : back);
@@ -630,7 +629,7 @@ namespace x2
             int required = position + numBytes;
             while (required > Capacity)
             {
-                blocks.Add(AcquireBlock(BlockSize));
+                blocks.Add(blockPool.Acquire(blockSizeExponent));
             }
             if (required > back)
             {
@@ -656,6 +655,48 @@ namespace x2
                 ((position & ~remainderMask) != 0))
             {
                 currentBlock = blocks[++currentBlockIndex];
+            }
+        }
+
+        private void CleanUp()
+        {
+            if (blocks.Count == 0)
+            {
+                return;
+            }
+            foreach (var block in blocks)
+            {
+                blockPool.Release(blockSizeExponent, block);
+            }
+            blocks.Clear();
+            currentBlock = null;
+        }
+
+        class BlockPool
+        {
+            private readonly Pool<byte[]>[] pools = new Pool<byte[]>[32];
+
+            internal BlockPool()
+            {
+                for (int i = 0; i < 32; ++i)
+                {
+                    pools[i] = new Pool<byte[]>();
+                }
+            }
+
+            public byte[] Acquire(int blockSizeExponent)
+            {
+                byte[] block = pools[blockSizeExponent].Acquire();
+                if (block == null)
+                {
+                    block = new byte[1 << blockSizeExponent];
+                }
+                return block;
+            }
+
+            public void Release(int blockSizeExponent, byte[] block)
+            {
+                pools[blockSizeExponent].Release(block);
             }
         }
     }
