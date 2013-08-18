@@ -91,7 +91,7 @@ namespace x2
 
         internal bool Attach(Flow flow)
         {
-            if (name == null)
+            if (flow == null)
             {
                 throw new NullReferenceException();
             }
@@ -100,7 +100,7 @@ namespace x2
 
         internal bool Detach(Flow flow)
         {
-            if (name == null)
+            if (flow == null)
             {
                 throw new NullReferenceException();
             }
