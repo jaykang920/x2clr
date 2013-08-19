@@ -128,7 +128,7 @@ namespace x2
 
         public void AttachTo(Hub hub)
         {
-            if (hub.Attach(this))
+            if (hub.AttachInternal(this))
             {
                 hubSet.Add(hub);
             }
@@ -136,7 +136,7 @@ namespace x2
 
         public void DetachFrom(Hub hub)
         {
-            if (hub.Detach(this))
+            if (hub.DetachInternal(this))
             {
                 hubSet.Remove(hub);
             }

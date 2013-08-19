@@ -7,6 +7,21 @@ using System.Threading;
 
 namespace x2
 {
+    public class RefCounted
+    {
+        private int refCount;
+
+        protected void IncrementRefCount()
+        {
+            Interlocked.Increment(ref refCount);
+        }
+
+        protected int DecrementRefCount()
+        {
+            return Interlocked.Decrement(ref refCount);
+        }
+    }
+
     /// <summary>
     /// Minimal generic object pool.
     /// </summary>

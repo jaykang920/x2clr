@@ -89,7 +89,25 @@ namespace x2
             hubMap.StopAllFlows();
         }
 
-        internal bool Attach(Flow flow)
+        /// <summary>
+        /// Attach the specified flow to this hub.
+        /// </summary>
+        public Hub Attach(Flow flow)
+        {
+            flow.AttachTo(this);
+            return this;
+        }
+
+        /// <summary>
+        /// Detach the specified flow from this hub.
+        /// </summary>
+        public Hub Detach(Flow flow)
+        {
+            flow.DetachFrom(this);
+            return this;
+        }
+
+        internal bool AttachInternal(Flow flow)
         {
             if (flow == null)
             {
@@ -98,7 +116,7 @@ namespace x2
             return flowSet.Add(flow);
         }
 
-        internal bool Detach(Flow flow)
+        internal bool DetachInternal(Flow flow)
         {
             if (flow == null)
             {
