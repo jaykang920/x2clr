@@ -7,18 +7,37 @@ using System.Threading;
 
 namespace x2
 {
-    public class RefCounted
+    /// <summary>
+    /// Common base class for any pooled object with custom lifecycle based on
+    /// reference counting.
+    /// </summary>
+    public abstract class PooledObject
     {
         private int refCount;
 
-        protected void IncrementRefCount()
+        /// <summary>
+        /// Releases this object and returns it to the pool.
+        /// </summary>
+        public abstract void Release();
+
+        /// <summary>
+        /// Increases the reference count to this object.
+        /// </summary>
+        public void AcquireReference()
         {
             Interlocked.Increment(ref refCount);
         }
 
-        protected int DecrementRefCount()
+        /// <summary>
+        /// Decreases the reference count to this object, and releases this
+        /// object if the reference count reached zero.
+        /// </summary>
+        public void ReleaseReference()
         {
-            return Interlocked.Decrement(ref refCount);
+            if (Interlocked.Decrement(ref refCount) <= 0)
+            {
+                Release();
+            }
         }
     }
 
@@ -65,7 +84,7 @@ namespace x2
         #region Diagnostics
 
         /// <summary>
-        /// Gets the Diagnostics object for this Pool.
+        /// Gets the diagnostics object for this Pool.
         /// </summary>
         public Diagnostics Diag { get; private set; }
 
