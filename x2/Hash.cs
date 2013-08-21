@@ -5,20 +5,18 @@ using System;
 
 namespace x2
 {
-    public class Hash
+    /// <summary>
+    /// Hash Code generation unitily struct.
+    /// </summary>
+    public struct Hash
     {
         public const int Seed = 17;
 
-        private int code;
-
-        public int Code
-        {
-            get { return code; }
-        }
+        public int Code;
 
         public Hash(int seed)
         {
-            code = seed;
+            Code = seed;
         }
 
         public static int Update(int seed, bool value)
@@ -64,47 +62,47 @@ namespace x2
 
         public void Update(bool value)
         {
-            code = Update(code, value);
+            Code = Update(Code, value);
         }
 
         public void Update(int value)
         {
-            code = Update(code, value);
+            Code = Update(Code, value);
         }
 
         public void Update(uint value)
         {
-            code = Update(code, value);
+            Code = Update(Code, value);
         }
 
         public void Update(long value)
         {
-            code = Update(code, value);
+            Code = Update(Code, value);
         }
 
         public void Update(ulong value)
         {
-            code = Update(code, value);
+            Code = Update(Code, value);
         }
 
         public void Update(float value)
         {
-            code = Update(code, value);
+            Code = Update(Code, value);
         }
 
         public void Update(double value)
         {
-            code = Update(code, value);
+            Code = Update(Code, value);
         }
 
         public void Update(string value)
         {
-            code = Update(code, value);
+            Code = Update(Code, value);
         }
 
         public void Update<T>(T obj)
         {
-            code = obj.GetHashCode();
+            Code = Update(Code, obj.GetHashCode());
         }
     }
 }
