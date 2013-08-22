@@ -12,7 +12,7 @@ namespace x2.Tests
         [Test]
         public void TestCreation()
         {
-            // One-arg constructor With new
+            // One-arg constructor with new
             Hash hash1 = new Hash(Hash.Seed);
             Assert.NotNull(hash1);
             Assert.AreEqual(hash1.Code, Hash.Seed);
