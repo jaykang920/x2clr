@@ -51,11 +51,15 @@ namespace x2
 
         public static int Update(int seed, double value)
         {
-            long bits = System.BitConverter.DoubleToInt64Bits(value);
-            return ((seed << 5) + seed) ^ (int)((ulong)bits >> 20);
+            return Update(seed, System.BitConverter.DoubleToInt64Bits(value));
         }
 
         public static int Update(int seed, string value)
+        {
+            return ((seed << 5) + seed) ^ (value != null ? value.GetHashCode() : 0);
+        }
+
+        public static int Update<T>(int seed, T value) where T : class
         {
             return ((seed << 5) + seed) ^ (value != null ? value.GetHashCode() : 0);
         }
@@ -100,9 +104,9 @@ namespace x2
             Code = Update(Code, value);
         }
 
-        public void Update<T>(T obj)
+        public void Update<T>(T value) where T : class
         {
-            Code = Update(Code, obj.GetHashCode());
+            Code = Update(Code, value);
         }
     }
 }
