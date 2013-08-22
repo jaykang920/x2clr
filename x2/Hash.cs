@@ -6,7 +6,7 @@ using System;
 namespace x2
 {
     /// <summary>
-    /// Hash Code generation unitily struct.
+    /// Hash code generation unitily struct.
     /// </summary>
     public struct Hash
     {
@@ -46,7 +46,7 @@ namespace x2
 
         public static int Update(int seed, float value)
         {
-            return Update(seed, (double)value);
+            return Update(seed, System.BitConverter.DoubleToInt64Bits((double)value));
         }
 
         public static int Update(int seed, double value)
