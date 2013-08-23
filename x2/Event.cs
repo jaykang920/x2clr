@@ -139,11 +139,6 @@ namespace x2
             return base.EqualsTo(other);
         }
 
-        public override int GetHashCode()
-        {
-            return Hash.Update(base.GetHashCode(), tag.TypeId);
-        }
-
         public override int GetHashCode(Fingerprint fingerprint)
         {
             return Hash.Update(base.GetHashCode(fingerprint), tag.TypeId);

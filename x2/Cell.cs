@@ -107,7 +107,7 @@ namespace x2
 
         public override int GetHashCode()
         {
-            return Hash.Update(Hash.Seed, fingerprint.GetHashCode());
+            return GetHashCode(fingerprint);
         }
 
         public virtual int GetHashCode(Fingerprint fingerprint)
