@@ -9,8 +9,8 @@ namespace x2
 {
     public interface ICase
     {
-        void SetUp();
-        void TearDown();
+        void SetUp(Flow holder);
+        void TearDown(Flow holder);
     }
 
     public class CaseStack : ICase
@@ -38,7 +38,7 @@ namespace x2
                     return;
                 }
             }
-            c.SetUp();
+            //c.SetUp();
         }
 
         public void Remove(ICase c)
@@ -50,10 +50,10 @@ namespace x2
                     return;
                 }
             }
-            c.TearDown();
+            //c.TearDown();
         }
 
-        public void SetUp()
+        public void SetUp(Flow holder)
         {
             IEnumerable<ICase> snapshot;
             lock (cases)
@@ -67,11 +67,11 @@ namespace x2
             }
             foreach (ICase c in snapshot)
             {
-                c.SetUp();
+                c.SetUp(holder);
             }
         }
 
-        public void TearDown()
+        public void TearDown(Flow holder)
         {
             IEnumerable<ICase> snapshot;
             lock (cases)
@@ -85,7 +85,7 @@ namespace x2
             }
             foreach (ICase c in snapshot)
             {
-                c.TearDown();
+                c.TearDown(holder);
             }
         }
     }

@@ -43,11 +43,8 @@ namespace x2.Flows
                     return;
                 }
 
-                // Workaround to support Flow.Bind/Unbind
-                currentFlow = this;
-
                 SetUp();
-                caseStack.SetUp();
+                caseStack.SetUp(this);
                 thread = new Thread(this.Run);
                 thread.Start();
                 queue.Enqueue(new FlowStart());
@@ -66,10 +63,7 @@ namespace x2.Flows
                 thread.Join();
                 thread = null;
 
-                // Workaround to support Flow.Bind/Unbind
-                currentFlow = this;
-
-                caseStack.TearDown();
+                caseStack.TearDown(this);
                 TearDown();
             }
         }

@@ -97,7 +97,7 @@ namespace x2
             hubSet.Post(e, currentFlow);
         }
 
-        protected void Subscribe<T>(T e, HandlerMethod<T> handler)
+        public void Subscribe<T>(T e, HandlerMethod<T> handler)
             where T : Event
         {
             binder.Bind(e, Handler.Create(handler));
@@ -110,7 +110,7 @@ namespace x2
             binder.Bind(e, Handler.Create(target, handler));
         }
 
-        protected void Unsubscribe<T>(T e, HandlerMethod<T> handler)
+        public void Unsubscribe<T>(T e, HandlerMethod<T> handler)
             where T : Event
         {
             binder.Unbind(e, Handler.Create(handler));

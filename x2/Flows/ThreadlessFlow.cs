@@ -43,11 +43,11 @@ namespace x2.Flows
                     return;
                 }
 
-                currentFlow = this;
-
                 SetUp();
-                caseStack.SetUp();
+                caseStack.SetUp(this);
                 handlerChain = new List<Handler>();
+
+                currentFlow = this;
 
                 running = true;
 
@@ -68,13 +68,10 @@ namespace x2.Flows
 
                 handlerChain = null;
 
-                // Workaround to support Flow.Bind/Unbind
-                currentFlow = this;
-
-                caseStack.TearDown();
-                TearDown();
-
                 currentFlow = null;
+
+                caseStack.TearDown(this);
+                TearDown();
             }
         }
 
