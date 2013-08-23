@@ -13,8 +13,6 @@ namespace x2
     /// </summary>
     public class Event : Cell
     {
-        public delegate Event CreatorDelegate();
-
         /// <summary>
         /// Per-class type tag to support custom type hierarchy.
         /// </summary>
@@ -74,9 +72,9 @@ namespace x2
 
         #region Factory registration methods
 
-        public static void Register(int typeId, CreatorDelegate creator)
+        public static void Register(int typeId, Func<Event> factoryMethod)
         {
-            factory.Register(typeId, creator);
+            factory.Register(typeId, factoryMethod);
         }
 
         public static void Register<T>() where T : Event
@@ -104,10 +102,10 @@ namespace x2
                 BindingFlags.Public | BindingFlags.Static);
 
             int typeId = (int)prop.GetValue(null, null);
-            CreatorDelegate creator = (CreatorDelegate)
-                Delegate.CreateDelegate(typeof(CreatorDelegate), method);
+            Func<Event> factoryMethod = (Func<Event>)
+                Delegate.CreateDelegate(typeof(Func<Event>), method);
 
-            factory.Register(typeId, creator);
+            factory.Register(typeId, factoryMethod);
         }
 
         #endregion
@@ -216,26 +214,26 @@ namespace x2
 
         public class Factory
         {
-            private IDictionary<int, CreatorDelegate> register;
+            private IDictionary<int, Func<Event>> register;
 
             public Factory()
             {
-                register = new Dictionary<int, CreatorDelegate>();
+                register = new Dictionary<int, Func<Event>>();
             }
 
             public Event Create(int typeId)
             {
-                CreatorDelegate creator;
-                if (!register.TryGetValue(typeId, out creator))
+                Func<Event> factoryMethod;
+                if (!register.TryGetValue(typeId, out factoryMethod))
                 {
                     return null;
                 }
-                return creator();
+                return factoryMethod();
             }
 
-            public void Register(int typeId, CreatorDelegate creator)
+            public void Register(int typeId, Func<Event> factoryMethod)
             {
-                register[typeId] = creator;
+                register[typeId] = factoryMethod;
             }
         }
     }
