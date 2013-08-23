@@ -78,12 +78,21 @@ namespace x2.Flows
             }
         }
 
+        public void Dispatch()
+        {
+            Event e = queue.Dequeue();
+            if (e != null)
+            {
+                Dispatch(e);
+            }
+        }
+
         public void TryDispatch()
         {
             Event e;
             if (queue.TryDequeue(out e))
             {
-                base.Dispatch(e);
+                Dispatch(e);
             }
         }
     }
