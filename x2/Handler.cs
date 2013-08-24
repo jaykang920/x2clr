@@ -7,63 +7,40 @@ using System.Reflection;
 
 namespace x2
 {
-    public delegate void HandlerMethod<TEvent>(TEvent e)
-        where TEvent : Event;
-
-    internal delegate void IHM<TTarget, TEvent>(TTarget target, TEvent e)
-        where TEvent : Event;
-
-    public delegate void InstanceHandlerMethod<TEvent>(object target, TEvent e)
-        where TEvent : Event;
-
-    public abstract class Handler : IComparable<Handler>
+    public interface IHandler : IComparable<IHandler>
     {
-        protected readonly MethodInfo methodInfo;
+        MethodInfo Method { get; }
+        int Token { get; }
 
-        protected Handler(MethodInfo methodInfo)
+        void Invoke(Event e);
+    }
+
+    public struct MethodHandler<T> : IHandler
+        where T : Event
+    {
+        private readonly Action<T> action;
+        private readonly int token;
+
+        public MethodInfo Method { get { return action.Method; } }
+        public int Token { get { return token; } }
+
+        public MethodHandler(Action<T> action)
         {
-            this.methodInfo = methodInfo;
+            this.action = action;
+            token = action.Method.MetadataToken;
         }
 
-        public static Handler Create<TEvent>(HandlerMethod<TEvent> handler)
-            where TEvent : Event
+        public int CompareTo(IHandler other)
         {
-            if (handler.Target == null)
-            {
-                return new StaticMethodHandler<TEvent>(handler);
-            }
-            else
-            {
-                return new InstanceMethodHandler<TEvent>(handler);
-            }
-        }
-
-        public static Handler Create<TTarget, TEvent>(TTarget target,
-                                                      HandlerMethod<TEvent> handler)
-            where TTarget : class
-            where TEvent : Event
-        {
-            return new IMH<TTarget, TEvent>(target, handler);
-        }
-
-        public int CompareTo(Handler other)
-        {
-            long token = GetToken();
-            long otherToken = other.GetToken();
-            if (token == otherToken)
+            if (Token == other.Token)
             {
                 return 0;
             }
-            else if (token < otherToken)
+            else if (Token < other.Token)
             {
                 return -1;
             }
             return 1;
-        }
-
-        private long GetToken()
-        {
-            return (long)methodInfo.Module.MetadataToken << 32 + methodInfo.MetadataToken;
         }
 
         public override bool Equals(object obj)
@@ -72,90 +49,77 @@ namespace x2
             {
                 return true;
             }
-            if (obj == null || GetType() != obj.GetType())
+            if (obj == null || typeof(IHandler).IsAssignableFrom(obj.GetType()))
             {
                 return false;
             }
-            Handler other = (Handler)obj;
-            return methodInfo.Equals(other.methodInfo);
+            IHandler other = (IHandler)obj;
+            return Method.Equals(other.Method);
         }
 
         public override int GetHashCode()
         {
-            return methodInfo.GetHashCode();
+            return Method.GetHashCode();
         }
 
-        public void Combine(Handler other)
+        public void Invoke(Event e)
         {
-        }
-
-        public abstract void Invoke(Event e);
-
-        public bool Remove(Handler other)
-        {
-            return true;
+            action((T)e);
         }
     }
 
-    public class IMH<TTarget, TEvent> : Handler
-        where TTarget : class
-        where TEvent : Event
+    public struct InstanceMethodHandler<T, U> : IHandler
+        where T : Event
+        where U : class
     {
-        private IHM<TTarget, TEvent> handler;
-        private readonly WeakReference weakReference;
+        private readonly Action<T> action;
+        private readonly int token;
 
-        public IMH(TTarget target, HandlerMethod<TEvent> handler)
-            : base(handler.Method)
+        public MethodInfo Method { get { return action.Method; } }
+        public int Token { get { return token; } }
+
+        public InstanceMethodHandler(Action<T> action, U target)
         {
-            this.handler = (IHM<TTarget, TEvent>)Delegate.CreateDelegate(
-                typeof(IHM<TTarget, TEvent>), handler.Method);
-            weakReference = new WeakReference(target);
+            this.action = (Action<T>)Delegate.CreateDelegate(
+                typeof(Action<T>), target, action.Method.Name);
+            token = action.Method.MetadataToken;
         }
 
-        public override void Invoke(Event e)
+        public int CompareTo(IHandler other)
         {
-            TTarget target = weakReference.Target as TTarget;
-            if (target != null)
+            if (Token == other.Token)
             {
-                handler(target, (TEvent)e);
+                return 0;
             }
-        }
-    }
-
-    public class InstanceMethodHandler<TEvent> : Handler
-        where TEvent : Event
-    {
-        private InstanceHandlerMethod<TEvent> handler;
-        private object target;
-
-        public InstanceMethodHandler(HandlerMethod<TEvent> handler)
-            : base(handler.Method)
-        {
-            this.handler = (InstanceHandlerMethod<TEvent>)Delegate.CreateDelegate(
-                typeof(InstanceHandlerMethod<TEvent>), handler.Method);
-            this.target = handler.Target;
+            else if (Token < other.Token)
+            {
+                return -1;
+            }
+            return 1;
         }
 
-        public override void Invoke(Event e)
+        public override bool Equals(object obj)
         {
-            handler(target, (TEvent)e);
-        }
-    }
-
-    public class StaticMethodHandler<TEvent> : Handler
-        where TEvent : Event
-    {
-        private HandlerMethod<TEvent> handler;
-
-        public StaticMethodHandler(HandlerMethod<TEvent> handler)
-            : base(handler.Method)
-        {
-            this.handler = handler;
+            if (Object.ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj == null || typeof(IHandler).IsAssignableFrom(obj.GetType()))
+            {
+                return false;
+            }
+            IHandler other = (IHandler)obj;
+            return Method.Equals(other.Method);
         }
 
-        public override void Invoke(Event e)
+        public override int GetHashCode()
         {
-            handler((TEvent)e);
+            return Method.GetHashCode();
+        }
+
+        public void Invoke(Event e)
+        {
+            action((T)e);
         }
     }
 }

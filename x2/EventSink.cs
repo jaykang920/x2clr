@@ -8,7 +8,7 @@ namespace x2
 {
     public class EventSink : IDisposable
     {
-        private readonly List<KeyValuePair<Event, Handler>> bindings;
+        private readonly List<KeyValuePair<Event, IHandler>> bindings;
         /// An EventSink-derived class should be instantiated in a thread of a single
         /// specific Flow. And an object instance of any EventSink-derived class 
         /// should not be shared by two or more different flows. These are 
@@ -17,7 +17,7 @@ namespace x2
 
         public EventSink()
         {
-            bindings = new List<KeyValuePair<Event, Handler>>();
+            bindings = new List<KeyValuePair<Event, IHandler>>();
             flow = new WeakReference(Flow.CurrentFlow);
         }
 
@@ -26,14 +26,14 @@ namespace x2
             UnbindAll();
         }
 
-        internal void AddBinding(Event e, Handler handler)
+        internal void AddBinding(Event e, IHandler handler)
         {
-            bindings.Add(new KeyValuePair<Event, Handler>(e, handler));
+            bindings.Add(new KeyValuePair<Event, IHandler>(e, handler));
         }
 
-        internal void RemoveBinding(Event e, Handler handler)
+        internal void RemoveBinding(Event e, IHandler handler)
         {
-            bindings.Remove(new KeyValuePair<Event, Handler>(e, handler));
+            bindings.Remove(new KeyValuePair<Event, IHandler>(e, handler));
         }
 
         protected void UnbindAll()
@@ -43,7 +43,7 @@ namespace x2
             {
                 return;
             }
-            foreach (KeyValuePair<Event, Handler> binding in bindings)
+            foreach (var binding in bindings)
             {
                 owner.Unbind(binding.Key, binding.Value);
             }

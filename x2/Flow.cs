@@ -15,7 +15,7 @@ namespace x2
         protected static Flow currentFlow;
 
         [ThreadStatic]
-        protected static List<Handler> handlerChain;
+        protected static List<IHandler> handlerChain;
 
         protected readonly Binder binder;
 
@@ -29,26 +29,26 @@ namespace x2
             set { currentFlow = value; }
         }
 
-        public static void Bind<T>(T e, HandlerMethod<T> handler)
+        public static void Bind<T>(T e, Action<T> handler)
             where T : Event
         {
             currentFlow.Subscribe(e, handler);
         }
 
-        public static void Bind<T, U>(T e, U target, HandlerMethod<T> handler)
+        public static void Bind<T, U>(T e, U target, Action<T> handler)
             where T : Event
             where U : class
         {
             currentFlow.Subscribe(e, target, handler);
         }
 
-        public static void Unbind<T, U>(T e, HandlerMethod<T> handler)
+        public static void Unbind<T, U>(T e, Action<T> handler)
             where T : Event
         {
             currentFlow.Unsubscribe(e, handler);
         }
 
-        public static void Unbind<T, U>(T e, U target, HandlerMethod<T> handler)
+        public static void Unbind<T, U>(T e, U target, Action<T> handler)
             where T : Event
             where U : class
         {
@@ -62,7 +62,7 @@ namespace x2
             hubSet = new HubSet();
         }
 
-        public static void Bind<T>(T e, HandlerMethod<T> handler, int order)
+        public static void Bind<T>(T e, Action<T> handler, int order)
             where T : Event
         {
             //currentFlow.binder.BindGeneric11(e, EventHandler.C(handler));
@@ -78,12 +78,12 @@ namespace x2
             currentFlow.hubSet.Post(e, currentFlow);
         }
 
-        public static void Unbind<T>(T t, HandlerMethod<T> handler)
+        public static void Unbind<T>(T t, Action<T> handler)
             where T : Event
         {
         }
 
-        public void Unbind(Event e, Handler handler)
+        public void Unbind(Event e, IHandler handler)
         {
         }
 
@@ -97,30 +97,30 @@ namespace x2
             hubSet.Post(e, currentFlow);
         }
 
-        public void Subscribe<T>(T e, HandlerMethod<T> handler)
+        public void Subscribe<T>(T e, Action<T> handler)
             where T : Event
         {
-            binder.Bind(e, Handler.Create(handler));
+            binder.Bind(e, new MethodHandler<T>(handler));
         }
 
-        public void Subscribe<T, U>(T e, U target, HandlerMethod<T> handler)
+        public void Subscribe<T, U>(T e, U target, Action<T> handler)
             where T : Event
             where U : class
         {
-            binder.Bind(e, Handler.Create(target, handler));
+            binder.Bind(e, new InstanceMethodHandler<T, U>(handler, target));
         }
 
-        public void Unsubscribe<T>(T e, HandlerMethod<T> handler)
+        public void Unsubscribe<T>(T e, Action<T> handler)
             where T : Event
         {
-            binder.Unbind(e, Handler.Create(handler));
+            binder.Unbind(e, new MethodHandler<T>(handler));
         }
 
-        public void Unsubscribe<T, U>(T e, U target, HandlerMethod<T> handler)
+        public void Unsubscribe<T, U>(T e, U target, Action<T> handler)
             where T : Event
             where U : class
         {
-            binder.Unbind(e, Handler.Create(target, handler));
+            binder.Unbind(e, new InstanceMethodHandler<T, U>(handler, target));
         }
 
         public abstract void StartUp();
@@ -167,7 +167,7 @@ namespace x2
                 // unhandled event
                 return;
             }
-            foreach (Handler handler in handlerChain)
+            foreach (var handler in handlerChain)
             {
                 handler.Invoke(e);
             }

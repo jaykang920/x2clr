@@ -18,27 +18,27 @@ namespace x2
             filter = new Filter();
         }
 
-        public void BindGeneric1<T>(T e, HandlerMethod<T> handler)
+        public void BindGeneric1<T>(T e, Action<T> handler)
             where T : Event
         {
-            Bind(e, Handler.Create(handler));
+            Bind(e, new MethodHandler<T>(handler));
         }
 
-        public void BindGeneric11<T, U>(T e, U target, HandlerMethod<T> handler)
+        public void BindGeneric11<T, U>(T e, U target, Action<T> handler)
             where T : Event
             where U : class
         {
-            Bind(e, Handler.Create(target, handler));
+            Bind(e, new InstanceMethodHandler<T, U>(handler, target));
         }
 
-        public void BindGeneric2<T, U>(T e, HandlerMethod<U> handler)
+        public void BindGeneric2<T, U>(T e, Action<U> handler)
             where T : Event
             where U : Event
         {
-            Bind(e, Handler.Create(handler));
+            Bind(e, new MethodHandler<U>(handler));
         }
 
-        public virtual void Bind(Event e, Handler handler)
+        public virtual void Bind(Event e, IHandler handler)
         {
             filter.Add(e.GetTypeId(), e.GetFingerprint());
             HandlerSet handlers;
@@ -50,7 +50,7 @@ namespace x2
             handlers.Add(handler);
         }
 
-        public virtual int BuildHandlerChain(Event e, List<Handler> handlerChain)
+        public virtual int BuildHandlerChain(Event e, List<IHandler> handlerChain)
         {
             Event.Tag tag = (Event.Tag)e.GetTypeTag();
             Fingerprint fingerprint = e.GetFingerprint();
@@ -79,7 +79,7 @@ namespace x2
             return handlerChain.Count;
         }
 
-        public virtual void Unbind(Event e, Handler handler)
+        public virtual void Unbind(Event e, IHandler handler)
         {
             HandlerSet handlers;
             if (handlerMap.TryGetValue(e, out handlers))
@@ -136,19 +136,19 @@ namespace x2
 
         private class HandlerSet
         {
-            private readonly List<Handler> handlers;
+            private readonly List<IHandler> handlers;
 
             public HandlerSet()
             {
-                handlers = new List<Handler>();
+                handlers = new List<IHandler>();
             }
 
-            public void Add(Handler handler)
+            public void Add(IHandler handler)
             {
                 int index = handlers.BinarySearch(handler);
                 if (index >= 0)
                 {
-                    handlers[index].Combine(handler);
+                    //handlers[index].Combine(handler);
                 }
                 else
                 {
@@ -157,20 +157,20 @@ namespace x2
                 }
             }
 
-            public IEnumerable<Handler> GetEnumerable()
+            public IEnumerable<IHandler> GetEnumerable()
             {
                 return handlers;
             }
 
-            public bool Remove(Handler handler)
+            public bool Remove(IHandler handler)
             {
                 int index = handlers.BinarySearch(handler);
                 if (index >= 0)
                 {
-                    if (handlers[index].Remove(handler))
-                    {
+                    //if (handlers[index].Remove(handler))
+                    //{
                         handlers.RemoveAt(index);
-                    }
+                    //}
                 }
                 return (handlers.Count == 0);
             }
@@ -186,7 +186,7 @@ namespace x2
             rwlock = new ReaderWriterLock();
         }
 
-        public override void Bind(Event e, Handler handler)
+        public override void Bind(Event e, IHandler handler)
         {
             rwlock.AcquireWriterLock(Timeout.Infinite);
             try
@@ -199,7 +199,7 @@ namespace x2
             }
         }
 
-        public override int BuildHandlerChain(Event e, List<Handler> handlerChain)
+        public override int BuildHandlerChain(Event e, List<IHandler> handlerChain)
         {
             rwlock.AcquireReaderLock(Timeout.Infinite);
             try
@@ -212,7 +212,7 @@ namespace x2
             }
         }
 
-        public override void Unbind(Event e, Handler handler)
+        public override void Unbind(Event e, IHandler handler)
         {
             rwlock.AcquireWriterLock(Timeout.Infinite);
             try

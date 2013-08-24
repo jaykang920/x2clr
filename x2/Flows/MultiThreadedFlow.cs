@@ -83,7 +83,7 @@ namespace x2.Flows
         private void Run()
         {
             currentFlow = this;
-            handlerChain = new List<Handler>();
+            handlerChain = new List<IHandler>();
 
             while (true)
             {
