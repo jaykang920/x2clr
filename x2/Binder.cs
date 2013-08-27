@@ -50,7 +50,7 @@ namespace x2
             while (tag != null)
             {
                 int typeId = tag.TypeId;
-                IEnumerable<Slot> slots = filter.Get(typeId, fingerprint);
+                IEnumerable<Slot> slots = filter.Get(typeId);
                 if (slots != null)
                 {
                     foreach (Fingerprint slot in slots)
@@ -97,7 +97,7 @@ namespace x2
             internal void Add(int typeId, Fingerprint fingerprint)
             {
                 List<Slot> slots;
-                if (!map.TryGetValue(typeId, out slots))
+                if (map.TryGetValue(typeId, out slots) == false)
                 {
                     slots = new List<Slot>();
                     map.Add(typeId, slots);
@@ -115,7 +115,7 @@ namespace x2
                 }
             }
 
-            internal IEnumerable<Slot> Get(int typeId, Fingerprint fingerprint)
+            internal IEnumerable<Slot> Get(int typeId)
             {
                 List<Slot> slots;
                 map.TryGetValue(typeId, out slots);
@@ -124,6 +124,19 @@ namespace x2
 
             internal void Remove(int typeId, Fingerprint fingerprint)
             {
+                List<Slot> slots;
+                if (map.TryGetValue(typeId, out slots) == false)
+                {
+                    return;
+                }
+                int index = slots.BinarySearch(new Slot(fingerprint));
+                if (index >= 0)
+                {
+                    if (slots[index].DecrementRefCount() == 0)
+                    {
+                        slots.RemoveAt(index);
+                    }
+                }
             }
         }
 
