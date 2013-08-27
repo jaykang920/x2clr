@@ -9,7 +9,7 @@ namespace x2.Tests
     [TestFixture]
     public class HandlerTests
     {
-        struct IntBox
+        class IntBox
         {
             public static int StaticValue { get; set; }
             public int Value { get; set; }
@@ -35,8 +35,8 @@ namespace x2.Tests
             }
         }
 
-        private IntBox intBox1;
-        private IntBox intBox2;
+        private IntBox intBox1 = new IntBox();
+        private IntBox intBox2 = new IntBox();
 
         [TestFixtureSetUp]
         public void SetUp()
@@ -92,7 +92,7 @@ namespace x2.Tests
             var handler4 = new Handler<Event>(intBox2.Decrement);
 
             // Properties
-            //Assert.True(handler1.Action.Equals(handler2.Action));
+            Assert.True(handler1.Action.Equals(handler2.Action));
             Assert.False(handler2.Action.Equals(handler3.Action));
             Assert.False(handler3.Action.Equals(handler4.Action));
 
@@ -104,6 +104,7 @@ namespace x2.Tests
             Assert.AreEqual(2, intBox1.Value);
             handler3.Invoke(e);
             Assert.AreEqual(1, intBox1.Value);
+            Assert.AreEqual(0, intBox2.Value);
             handler4.Invoke(e);
             Assert.AreEqual(1, intBox1.Value);
             Assert.AreEqual(-1, intBox2.Value);
