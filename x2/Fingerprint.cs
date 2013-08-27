@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace x2
 {
@@ -336,7 +337,7 @@ namespace x2
     /// </summary>
     internal class Slot : Fingerprint, IComparable<Slot>
     {
-        private volatile int referenceCount;
+        private int refCount;
 
         /// <summary>
         /// Initializes a new instance of the Slot class that contains bit values
@@ -346,16 +347,16 @@ namespace x2
         public Slot(Fingerprint fingerprint)
             : base(fingerprint)
         {
-            referenceCount = 1;
+            refCount = 1;
         }
 
         /// <summary>
         /// Increases the reference count of this Slot.
         /// </summary>
         /// <returns>The resultant reference count.</returns>
-        public int AddReference()
+        public int IncrementRefCount()
         {
-            return ++referenceCount;
+            return Interlocked.Increment(ref refCount);
         }
 
         /// <summary>
@@ -380,9 +381,9 @@ namespace x2
         /// Decreases the reference count of this Slot.
         /// </summary>
         /// <returns>The resultant reference count.</returns>
-        public int RemoveReference()
+        public int DecrementRefCount()
         {
-            return --referenceCount;
+            return Interlocked.Decrement(ref refCount);
         }
     }
 }

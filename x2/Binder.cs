@@ -106,7 +106,7 @@ namespace x2
                 int index = slots.BinarySearch(slot);
                 if (index >= 0)
                 {
-                    slots[index].AddReference();
+                    slots[index].IncrementRefCount();
                 }
                 else
                 {
