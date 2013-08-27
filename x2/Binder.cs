@@ -21,21 +21,14 @@ namespace x2
         public void BindGeneric1<T>(T e, Action<T> handler)
             where T : Event
         {
-            Bind(e, new MethodHandler<T>(handler));
-        }
-
-        public void BindGeneric11<T, U>(T e, U target, Action<T> handler)
-            where T : Event
-            where U : class
-        {
-            Bind(e, new InstanceMethodHandler<T, U>(handler, target));
+            Bind(e, new Handler<T>(handler));
         }
 
         public void BindGeneric2<T, U>(T e, Action<U> handler)
             where T : Event
             where U : Event
         {
-            Bind(e, new MethodHandler<U>(handler));
+            Bind(e, new Handler<U>(handler));
         }
 
         public virtual void Bind(Event e, IHandler handler)

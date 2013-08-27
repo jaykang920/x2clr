@@ -35,24 +35,10 @@ namespace x2
             currentFlow.Subscribe(e, handler);
         }
 
-        public static void Bind<T, U>(T e, U target, Action<T> handler)
-            where T : Event
-            where U : class
-        {
-            currentFlow.Subscribe(e, target, handler);
-        }
-
         public static void Unbind<T, U>(T e, Action<T> handler)
             where T : Event
         {
             currentFlow.Unsubscribe(e, handler);
-        }
-
-        public static void Unbind<T, U>(T e, U target, Action<T> handler)
-            where T : Event
-            where U : class
-        {
-            currentFlow.Unsubscribe(e, target, handler);
         }
 
         protected Flow(Binder binder)
@@ -100,27 +86,13 @@ namespace x2
         public void Subscribe<T>(T e, Action<T> handler)
             where T : Event
         {
-            binder.Bind(e, new MethodHandler<T>(handler));
-        }
-
-        public void Subscribe<T, U>(T e, U target, Action<T> handler)
-            where T : Event
-            where U : class
-        {
-            binder.Bind(e, new InstanceMethodHandler<T, U>(handler, target));
+            binder.Bind(e, new Handler<T>(handler));
         }
 
         public void Unsubscribe<T>(T e, Action<T> handler)
             where T : Event
         {
-            binder.Unbind(e, new MethodHandler<T>(handler));
-        }
-
-        public void Unsubscribe<T, U>(T e, U target, Action<T> handler)
-            where T : Event
-            where U : class
-        {
-            binder.Unbind(e, new InstanceMethodHandler<T, U>(handler, target));
+            binder.Unbind(e, new Handler<T>(handler));
         }
 
         public abstract void StartUp();
@@ -176,14 +148,14 @@ namespace x2
 
         protected virtual void SetUp()
         {
-            Subscribe(new FlowStart(), this, OnFlowStart);
-            Subscribe(new FlowStop(), this, OnFlowStop);
+            Subscribe(new FlowStart(), OnFlowStart);
+            Subscribe(new FlowStop(), OnFlowStop);
         }
 
         protected virtual void TearDown()
         {
-            Unsubscribe(new FlowStop(), this, OnFlowStop);
-            Unsubscribe(new FlowStart(), this, OnFlowStart);
+            Unsubscribe(new FlowStop(), OnFlowStop);
+            Unsubscribe(new FlowStart(), OnFlowStart);
         }
 
         protected virtual void OnStart() {}

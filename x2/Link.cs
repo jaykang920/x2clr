@@ -25,14 +25,14 @@ namespace x2
         {
             base.SetUp();
 
-            Subscribe(new LinkSessionConnected(), this, OnLinkSessionConnected);
-            Subscribe(new LinkSessionDisconnected(), this, OnLinkSessionDisconnected);
+            Subscribe(new LinkSessionConnected(), OnLinkSessionConnected);
+            Subscribe(new LinkSessionDisconnected(), OnLinkSessionDisconnected);
         }
 
         protected override void TearDown()
         {
-            Unsubscribe(new LinkSessionDisconnected(), this, OnLinkSessionDisconnected);
-            Unsubscribe(new LinkSessionConnected(), this, OnLinkSessionConnected);
+            Unsubscribe(new LinkSessionDisconnected(), OnLinkSessionDisconnected);
+            Unsubscribe(new LinkSessionConnected(), OnLinkSessionConnected);
 
             base.TearDown();
         }
