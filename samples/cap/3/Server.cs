@@ -37,17 +37,17 @@ namespace x2.Samples.Capitalizer
             {
                 var e = CapitalizeResp.New();
                 e.SessionHandle = LinkSession.Handle.ToInt64();
-                Flow.Bind(e, OnCapitalizeResp);
+                Flow.Bind(e, Send);
             }
 
             public void OnDisconnect()
             {
                 var e = CapitalizeResp.New();
                 e.SessionHandle = LinkSession.Handle.ToInt64();
-                Flow.Unbind(e, OnCapitalizeResp);
+                Flow.Unbind(e, Send);
             }
 
-            void OnCapitalizeResp(CapitalizeResp e)
+            void Send(Event e)
             {
                 LinkSession.Send(Link, e);
             }

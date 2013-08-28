@@ -14,7 +14,7 @@ namespace x2.Samples.Capitalizer
     {
         TcpLink.Session session;
 
-        void OnCapitalizeReq(CapitalizeReq e)
+        void Send(Event e)
         {
             session.Send(this, e);
         }
@@ -27,7 +27,7 @@ namespace x2.Samples.Capitalizer
 
                 session = (TcpLink.Session)e.Context;
 
-                Flow.Bind(CapitalizeReq.New(), OnCapitalizeReq);
+                Flow.Bind(CapitalizeReq.New(), Send);
             }
             else
             {
@@ -41,7 +41,7 @@ namespace x2.Samples.Capitalizer
 
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
-            Flow.Unbind(CapitalizeReq.New(), OnCapitalizeReq);
+            Flow.Unbind(CapitalizeReq.New(), Send);
 
             Console.WriteLine("Disconnected");
 
