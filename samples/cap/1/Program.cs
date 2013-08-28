@@ -8,13 +8,13 @@ namespace x2.Samples.Capitalizer
         {
             while (true)
             {
-                string line = Console.ReadLine();
-                if (line == "exit" || line == "quit")
+                string message = Console.ReadLine();
+                if (message == "quit")
                 {
                     break;
                 }
 
-                Console.WriteLine(Capitalize(line));
+                Console.WriteLine(Capitalize(message));
             }
         }
 

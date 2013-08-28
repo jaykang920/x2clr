@@ -136,6 +136,10 @@ namespace x2
                     {
                         slots.RemoveAt(index);
                     }
+                    if (slots.Count == 0)
+                    {
+                        map.Remove(typeId);
+                    }
                 }
             }
         }

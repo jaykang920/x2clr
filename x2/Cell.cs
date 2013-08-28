@@ -112,7 +112,7 @@ namespace x2
 
         public virtual int GetHashCode(Fingerprint fingerprint)
         {
-            return Hash.Update(Hash.Seed, fingerprint.GetHashCode());
+            return Hash.Seed;
         }
 
         /// <summary>

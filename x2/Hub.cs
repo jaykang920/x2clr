@@ -74,7 +74,7 @@ namespace x2
         }
 
         /// <summary>
-        ///   Starts up all the flows attached to the hubs in the current process.
+        /// Starts all the flows attached to all the hubs in the current process.
         /// </summary>
         public static void StartAllFlows()
         {
@@ -82,7 +82,7 @@ namespace x2
         }
 
         /// <summary>
-        ///   Stops all the flows attached to the hubs in the current process.
+        /// Stops all the flows attached to all the hubs in the current process.
         /// </summary>
         public static void StopAllFlows()
         {
@@ -90,7 +90,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Attach the specified flow to this hub.
+        /// Attaches the specified flow to this hub.
         /// </summary>
         public Hub Attach(Flow flow)
         {
@@ -99,7 +99,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Detach the specified flow from this hub.
+        /// Detaches the specified flow from this hub.
         /// </summary>
         public Hub Detach(Flow flow)
         {
@@ -125,7 +125,7 @@ namespace x2
             return flowSet.Remove(flow);
         }
 
-        internal void Post(Event e)
+        public void Post(Event e)
         {
             if (e == null)
             {
@@ -134,7 +134,7 @@ namespace x2
             flowSet.Feed(e);
         }
 
-        internal void Post(Event e, Flow except)
+        public void Post(Event e, Flow except)
         {
             if (e == null)
             {

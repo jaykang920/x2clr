@@ -17,11 +17,6 @@ namespace x2.Events
 
         public FlowStop() : base(tag.NumProps) { }
 
-        public override int GetHashCode()
-        {
-            return Hash.Update(base.GetHashCode(), tag.TypeId);
-        }
-
         public override int GetHashCode(Fingerprint fingerprint)
         {
             return Hash.Update(base.GetHashCode(fingerprint), tag.TypeId);

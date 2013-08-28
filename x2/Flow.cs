@@ -35,7 +35,7 @@ namespace x2
             currentFlow.Subscribe(e, handler);
         }
 
-        public static void Unbind<T, U>(T e, Action<T> handler)
+        public static void Unbind<T>(T e, Action<T> handler)
             where T : Event
         {
             currentFlow.Unsubscribe(e, handler);
@@ -48,12 +48,6 @@ namespace x2
             hubSet = new HubSet();
         }
 
-        public static void Bind<T>(T e, Action<T> handler, int order)
-            where T : Event
-        {
-            //currentFlow.binder.BindGeneric11(e, EventHandler.C(handler));
-        }
-
         public static void Post(Event e)
         {
             currentFlow.hubSet.Post(e);
@@ -64,9 +58,20 @@ namespace x2
             currentFlow.hubSet.Post(e, currentFlow);
         }
 
-        public static void Unbind<T>(T t, Action<T> handler)
-            where T : Event
+        /// <summary>
+        /// Starts all the flows attached to all the hubs in the current process.
+        /// </summary>
+        public static void StartAll()
         {
+            Hub.StartAllFlows();
+        }
+
+        /// <summary>
+        /// Stops all the flows attached to all the hubs in the current process.
+        /// </summary>
+        public static void StopAll()
+        {
+            Hub.StopAllFlows();
         }
 
         public void Unbind(Event e, IHandler handler)

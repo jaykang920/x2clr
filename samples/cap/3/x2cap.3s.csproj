@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{446A45C1-F12A-4CCF-A065-76A9027104EE}</ProjectGuid>
+    <ProjectGuid>{446A45C1-F12A-4CCF-A065-76A9027104F0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>x2.Samples.Capitalizer</RootNamespace>
-    <AssemblyName>x2cap.2</AssemblyName>
+    <AssemblyName>x2cap.3s</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -35,7 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\x2\x2net.csproj">
