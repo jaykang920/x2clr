@@ -39,10 +39,6 @@ namespace xpiler
                     continue;
                 }
                 var elem = (XmlElement)node;
-                if (elem.IsEmpty)
-                {
-                    continue;
-                }
                 switch (elem.Name)
                 {
                     case "enum":
