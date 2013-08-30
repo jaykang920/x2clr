@@ -59,7 +59,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Starts all the flows attached to all the hubs in the current process.
+        /// Starts all the flows attached to the hubs in the current process.
         /// </summary>
         public static void StartAll()
         {
@@ -67,7 +67,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Stops all the flows attached to all the hubs in the current process.
+        /// Stops all the flows attached to the hubs in the current process.
         /// </summary>
         public static void StopAll()
         {
