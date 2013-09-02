@@ -124,14 +124,16 @@ namespace x2
             hubSet.Clear(this);
         }
 
-        public void Add(ICase c)
+        public Flow Add(ICase c)
         {
             caseStack.Add(c);
+            return this;
         }
 
-        public void Remove(ICase c)
+        public Flow Remove(ICase c)
         {
             caseStack.Remove(c);
+            return this;
         }
 
         protected internal abstract void Feed(Event e);
