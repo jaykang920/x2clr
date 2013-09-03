@@ -24,6 +24,26 @@ namespace x2
             return ((seed << 5) + seed) ^ (value ? 2 : 1);
         }
 
+        public static int Update(int seed, sbyte value)
+        {
+            return ((seed << 5) + seed) ^ (int)value;
+        }
+
+        public static int Update(int seed, byte value)
+        {
+            return ((seed << 5) + seed) ^ (int)value;
+        }
+
+        public static int Update(int seed, short value)
+        {
+            return ((seed << 5) + seed) ^ (int)value;
+        }
+
+        public static int Update(int seed, ushort value)
+        {
+            return ((seed << 5) + seed) ^ (int)value;
+        }
+
         public static int Update(int seed, int value)
         {
             return ((seed << 5) + seed) ^ value;
@@ -65,6 +85,26 @@ namespace x2
         }
 
         public void Update(bool value)
+        {
+            Code = Update(Code, value);
+        }
+
+        public void Update(sbyte value)
+        {
+            Code = Update(Code, value);
+        }
+
+        public void Update(byte value)
+        {
+            Code = Update(Code, value);
+        }
+
+        public void Update(short value)
+        {
+            Code = Update(Code, value);
+        }
+
+        public void Update(ushort value)
         {
             Code = Update(Code, value);
         }
