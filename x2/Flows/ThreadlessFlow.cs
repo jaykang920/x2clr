@@ -92,5 +92,10 @@ namespace x2.Flows
                 Dispatch(e);
             }
         }
+
+        public bool TryDequeue(out Event e)
+        {
+            return queue.TryDequeue(out e);
+        }
     }
 }
