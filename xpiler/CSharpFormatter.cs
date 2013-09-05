@@ -27,6 +27,7 @@ namespace xpiler
                     context.Out = writer;
                     FormatHead(context);
                     FormatBody(context);
+                    writer.Flush();
                 }
             }
             catch (Exception e)
