@@ -300,7 +300,14 @@ namespace xpiler
                 Indent(2); Out.WriteLine("{0} o = ({0})other;", def.Name);
                 foreach (var property in def.Properties)
                 {
-                    Indent(2); Out.WriteLine("if ({0} != o.{0})", property.NativeName);
+                    if (IsPrimitiveType(property.Type))
+                    {
+                        Indent(2); Out.WriteLine("if ({0} != o.{0})", property.NativeName);
+                    }
+                    else
+                    {
+                        Indent(2); Out.WriteLine("if (!{0}.Equals(o.{0}))", property.NativeName);
+                    }
                     Indent(2); Out.WriteLine("{");
                     Indent(3); Out.WriteLine("return false;");
                     Indent(2); Out.WriteLine("}");
@@ -364,7 +371,14 @@ namespace xpiler
                 {
                     Indent(2); Out.WriteLine("if (fingerprintView[{0}])", property.Index);
                     Indent(2); Out.WriteLine("{");
-                    Indent(3); Out.WriteLine("if ({0} != o.{0})", property.NativeName);
+                    if (IsPrimitiveType(property.Type))
+                    {
+                        Indent(3); Out.WriteLine("if ({0} != o.{0})", property.NativeName);
+                    }
+                    else
+                    {
+                        Indent(3); Out.WriteLine("if (!{0}.IsEquivalent(o.{0}))", property.NativeName);
+                    }
                     Indent(3); Out.WriteLine("{");
                     Indent(4); Out.WriteLine("return false;");
                     Indent(3); Out.WriteLine("}");
