@@ -408,6 +408,7 @@ namespace xpiler
                     }
                     else
                     {
+                        Indent(3); Out.WriteLine("if ({0} == null) {{ {0} = {1}.New(); }}", property.Name, property.Type);
                         Indent(3); Out.WriteLine("{0}.Load(buffer);", property.NativeName);
                     }
                     Indent(2); Out.WriteLine("}");
