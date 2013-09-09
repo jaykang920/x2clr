@@ -38,9 +38,9 @@
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\x2\x2net.csproj">
+    <ProjectReference Include="..\..\..\x2\x2clr.csproj">
       <Project>{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}</Project>
-      <Name>x2net</Name>
+      <Name>x2clr</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

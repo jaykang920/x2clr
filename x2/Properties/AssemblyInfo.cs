@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("x2net")]
+[assembly: AssemblyTitle("x2clr")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("x2net")]
+[assembly: AssemblyProduct("x2clr")]
 [assembly: AssemblyCopyright("Copyright © 2013 Jae-jun Kang")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

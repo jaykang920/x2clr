@@ -5,13 +5,15 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4F62C483-01DB-45B7-88A4-28D5B94A17E7}</ProjectGuid>
+    <ProjectGuid>{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>x2.Tests</RootNamespace>
-    <AssemblyName>x2test</AssemblyName>
+    <RootNamespace>x2</RootNamespace>
+    <AssemblyName>x2clr</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,30 +33,41 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HandlerTests.cs" />
-    <Compile Include="HashTests.cs" />
+    <Compile Include="Link.cs" />
+    <Compile Include="Pool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\x2\x2clr.csproj">
-      <Project>{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}</Project>
-      <Name>x2clr</Name>
-    </ProjectReference>
+    <Compile Include="Binder.cs" />
+    <Compile Include="Buffer.cs" />
+    <Compile Include="Case.cs" />
+    <Compile Include="Cell.cs" />
+    <Compile Include="Event.cs" />
+    <Compile Include="EventSink.cs" />
+    <Compile Include="Events\BuiltinType.cs" />
+    <Compile Include="Events\FlowStart.cs" />
+    <Compile Include="Events\FlowStop.cs" />
+    <Compile Include="Events\LinkSessionConnected.cs" />
+    <Compile Include="Events\LinkSessionDisconnected.cs" />
+    <Compile Include="Fingerprint.cs" />
+    <Compile Include="Flow.cs" />
+    <Compile Include="Flows\MultiThreadedFlow.cs" />
+    <Compile Include="Flows\SingleThreadedFlow.cs" />
+    <Compile Include="Flows\ThreadlessFlow.cs" />
+    <Compile Include="Getopt.cs" />
+    <Compile Include="Handler.cs" />
+    <Compile Include="Hash.cs" />
+    <Compile Include="Hub.cs" />
+    <Compile Include="Queue.cs" />
+    <Compile Include="Links\TcpClient.cs" />
+    <Compile Include="Links\TcpLink.cs" />
+    <Compile Include="Links\TcpServer.cs" />
+    <Compile Include="Queues\UnboundedQueue.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
