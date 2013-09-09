@@ -22,9 +22,9 @@ namespace x2
 
         public static int TypeId { get { return tag.TypeId; } }
 
-        private long sessionHandle;
+        private IntPtr sessionHandle;
 
-        public long SessionHandle
+        public IntPtr SessionHandle
         {
             get { return sessionHandle; }
             set
@@ -134,12 +134,33 @@ namespace x2
         /// </returns>
         public override bool EqualsTo(Cell other)
         {
-            return base.EqualsTo(other);
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            /*
+            Event o = (Event)other;
+            if (sessionHandle != o.sessionHandle)
+            {
+                return false;
+            }
+            */
+            return true;
         }
 
         public override int GetHashCode(Fingerprint fingerprint)
         {
-            return Hash.Update(base.GetHashCode(fingerprint), tag.TypeId);
+            Hash hash = new Hash(base.GetHashCode(fingerprint));
+            hash.Update(tag.TypeId);
+            /*
+            Fingerprint.View fingerprintView =
+                new Fingerprint.View(fingerprint, tag.Offset);
+            if (fingerprintView[0])
+            {
+                hash.Update(sessionHandle.ToInt64());
+            }
+            */
+            return hash.Code;
         }
 
         public virtual int GetTypeId()
@@ -154,7 +175,23 @@ namespace x2
 
         public override bool IsEquivalent(Cell other)
         {
-            return base.IsEquivalent(other);
+            if (!base.IsEquivalent(other))
+            {
+                return false;
+            }
+            /*
+            Event o = (Event)other;
+            Fingerprint.View fingerprintView =
+                new Fingerprint.View(fingerprint, tag.Offset);
+            if (fingerprintView[0])
+            {
+                if (sessionHandle != o.sessionHandle)
+                {
+                    return false;
+                }
+            }
+            */
+            return true;
         }
 
         /// <summary>

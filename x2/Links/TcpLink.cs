@@ -77,7 +77,7 @@ namespace x2.Links
                     else
                     {
                         e.Load(buffer);
-                        e.SessionHandle = session.Socket.Handle.ToInt64();
+                        e.SessionHandle = session.Socket.Handle;
 
                         // Post up the retrieved event to the hubs to which this
                         // link is attached.
