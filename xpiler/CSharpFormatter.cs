@@ -324,8 +324,8 @@ namespace xpiler
             Indent(2); Out.WriteLine("Hash hash = new Hash(base.GetHashCode(fingerprint));");
             if (def.HasProperties)
             {
-                Indent(2); Out.WriteLine("Fingerprint.View fingerprintView = ");
-                Indent(3); Out.WriteLine("new Fingerprint.View(fingerprint, tag.Offset);");
+                Indent(2); Out.WriteLine("FingerprintView fingerprintView = ");
+                Indent(3); Out.WriteLine("new FingerprintView(fingerprint, tag.Offset);");
                 foreach (var property in def.Properties)
                 {
                     Indent(2); Out.WriteLine("if (fingerprintView[{0}])", property.Index);
@@ -365,8 +365,8 @@ namespace xpiler
             if (def.HasProperties)
             {
                 Indent(2); Out.WriteLine("{0} o = ({0})other;", def.Name);
-                Indent(2); Out.WriteLine("Fingerprint.View fingerprintView = ");
-                Indent(3); Out.WriteLine("new Fingerprint.View(fingerprint, tag.Offset);");
+                Indent(2); Out.WriteLine("FingerprintView fingerprintView = ");
+                Indent(3); Out.WriteLine("new FingerprintView(fingerprint, tag.Offset);");
                 foreach (var property in def.Properties)
                 {
                     Indent(2); Out.WriteLine("if (fingerprintView[{0}])", property.Index);
@@ -396,8 +396,8 @@ namespace xpiler
             Indent(2); Out.WriteLine("base.Load(buffer);");
             if (def.HasProperties)
             {
-                Indent(2); Out.WriteLine("Fingerprint.View fingerprintView = ");
-                Indent(3); Out.WriteLine("new Fingerprint.View(fingerprint, tag.Offset);");
+                Indent(2); Out.WriteLine("FingerprintView fingerprintView = ");
+                Indent(3); Out.WriteLine("new FingerprintView(fingerprint, tag.Offset);");
                 foreach (var property in def.Properties)
                 {
                     Indent(2); Out.WriteLine("if (fingerprintView[{0}])", property.Index);
@@ -442,8 +442,8 @@ namespace xpiler
             Indent(2); Out.WriteLine("base.Dump(buffer);");
             if (def.HasProperties)
             {
-                Indent(2); Out.WriteLine("Fingerprint.View fingerprintView = ");
-                Indent(3); Out.WriteLine("new Fingerprint.View(fingerprint, tag.Offset);");
+                Indent(2); Out.WriteLine("FingerprintView fingerprintView = ");
+                Indent(3); Out.WriteLine("new FingerprintView(fingerprint, tag.Offset);");
                 foreach (var property in def.Properties)
                 {
                     Indent(2); Out.WriteLine("if (fingerprintView[{0}])", property.Index);

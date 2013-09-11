@@ -153,8 +153,8 @@ namespace x2
             Hash hash = new Hash(base.GetHashCode(fingerprint));
             hash.Update(tag.TypeId);
             /*
-            Fingerprint.View fingerprintView =
-                new Fingerprint.View(fingerprint, tag.Offset);
+            FingerprintView fingerprintView =
+                new FingerprintView(fingerprint, tag.Offset);
             if (fingerprintView[0])
             {
                 hash.Update(sessionHandle.ToInt64());
@@ -181,8 +181,8 @@ namespace x2
             }
             /*
             Event o = (Event)other;
-            Fingerprint.View fingerprintView =
-                new Fingerprint.View(fingerprint, tag.Offset);
+            FingerprintView fingerprintView =
+                new FingerprintView(fingerprint, tag.Offset);
             if (fingerprintView[0])
             {
                 if (sessionHandle != o.sessionHandle)

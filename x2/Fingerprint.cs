@@ -33,15 +33,9 @@ namespace x2
             get { return length; }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the Fingerprint class that contains bit
-        /// values copied from the specified Fingerprint.
-        /// </summary>
-        /// <param name="other">A Fingerprint object to copy from.</param>
-        public Fingerprint(Fingerprint other)
+        private int LengthInBytes
         {
-            blocks = (int[])other.blocks.Clone();
-            length = other.length;
+            get { return ((length - 1) >> 3) + 1; }
         }
 
         /// <summary>
@@ -62,6 +56,17 @@ namespace x2
             }
             blocks = new int[((length - 1) >> 5) + 1];
             this.length = length;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the Fingerprint class that contains bit
+        /// values copied from the specified Fingerprint.
+        /// </summary>
+        /// <param name="other">A Fingerprint object to copy from.</param>
+        public Fingerprint(Fingerprint other)
+        {
+            blocks = (int[])other.blocks.Clone();
+            length = other.length;
         }
 
         /// <summary>
@@ -90,6 +95,10 @@ namespace x2
         /// </returns>
         public int CompareTo(Fingerprint other)
         {
+            if (Object.ReferenceEquals(this, other))
+            {
+                return 0;
+            }
             if (length < other.length)
             {
                 return -1;
@@ -199,6 +208,10 @@ namespace x2
         /// </returns>
         public bool IsEquivalent(Fingerprint other)
         {
+            if (Object.ReferenceEquals(this, other))
+            {
+                return true;
+            }
             if (length > other.length)
             {
                 return false;
@@ -216,12 +229,10 @@ namespace x2
 
         public void Dump(Buffer buffer)
         {
-            //buffer.WriteUInt29(length);
-            int numBytes = ((length - 1) >> 3) + 1;
             int count = 0;
             foreach (int block in blocks)
             {
-                for (int j = 0; (j < 4) && (count < numBytes); ++j, ++count)
+                for (int j = 0; (j < 4) && (count < LengthInBytes); ++j, ++count)
                 {
                     buffer.Write((byte)(block >> (j << 3)));
                 }
@@ -230,19 +241,11 @@ namespace x2
 
         public void Load(Buffer buffer)
         {
-            /*
-            int length;
-            buffer.ReadUInt29(out length);
-            if (this.length != length) {
-              throw new System.IO.InvalidDataException();
-            }
-            */
-            int numBytes = ((length - 1) >> 3) + 1;
             int count = 0;
             for (int i = 0; i < blocks.Length; ++i)
             {
                 blocks[i] = 0;
-                for (int j = 0; (j < 4) && (count < numBytes); ++j, ++count)
+                for (int j = 0; (j < 4) && (count < LengthInBytes); ++j, ++count)
                 {
                     blocks[i] |= ((int)buffer.ReadByte() << (j << 3));
                 }
@@ -282,108 +285,53 @@ namespace x2
             }
             blocks[index >> 5] &= ~(1 << index);
         }
-
-        /// <summary>
-        /// Provides offset-based indexer for the underlying Fingerprint object.
-        /// </summary>
-        /// This trivial value type offers just a syntactic sugar to get Fingerprint
-        /// bits, applying predefined position offset.
-        public struct View
-        {
-            private readonly Fingerprint fingerprint;
-            private readonly int offset;
-
-            /// <summary>
-            /// Initializes a new instance of Fingerprint.View structure with the 
-            /// specified Fingerprint and offset.
-            /// </summary>
-            /// <param name="fingerprint">A Fingerprint object to access.</param>
-            /// <param name="offset">An integer offset to apply constantly.</param>
-            public View(Fingerprint fingerprint, int offset)
-            {
-                this.fingerprint = fingerprint;
-                this.offset = offset;
-            }
-
-            /// <summary>
-            /// Gets the bit value at the specified position in the underlying 
-            /// Fingerprint, applying the offset.
-            /// </summary>
-            /// This method does not throw on upper-bound overrun. If the calculated
-            /// position index (<c>offset</c> + <c>index</c>) is greater than or equal
-            /// to the length of the underlying Fingerprint, it simply returns 
-            /// <b>false</b>.
-            /// <param name="index">The zero-based index of the value to get.</param>
-            /// <returns>
-            /// The bit value at the position (<c>offset</c> + <c>index</c>).
-            /// </returns>
-            public bool this[int index]
-            {
-                get
-                {
-                    int actualIndex = offset + index;
-                    if (actualIndex >= fingerprint.Length)
-                    {
-                        return false;
-                    }
-                    return fingerprint.Get(actualIndex);
-                }
-            }
-        }
     }
 
     /// <summary>
-    /// Extends Fingerprint class to hold an additional reference count.
+    /// Provides offset-based indexer for the underlying Fingerprint object.
     /// </summary>
-    internal class Slot : Fingerprint, IComparable<Slot>
+    /// This trivial value type offers just a syntactic sugar to get Fingerprint
+    /// bits, applying preset position offset.
+    public struct FingerprintView
     {
-        private int refCount;
+        private readonly Fingerprint fingerprint;
+        private readonly int offset;
 
         /// <summary>
-        /// Initializes a new instance of the Slot class that contains bit values
-        /// copied from the specified Fingerprint.
+        /// Initializes a new instance of FingerprintView structure with the 
+        /// specified Fingerprint and offset.
         /// </summary>
-        /// <param name="fingerprint">A Fingerprint object to copy from.</param>
-        public Slot(Fingerprint fingerprint)
-            : base(fingerprint)
+        /// <param name="fingerprint">A Fingerprint object to access.</param>
+        /// <param name="offset">An integer offset to apply constantly.</param>
+        public FingerprintView(Fingerprint fingerprint, int offset)
         {
-            refCount = 1;
+            this.fingerprint = fingerprint;
+            this.offset = offset;
         }
 
         /// <summary>
-        /// Increases the reference count of this Slot.
+        /// Gets the bit value at the specified position in the underlying 
+        /// Fingerprint, applying the offset.
         /// </summary>
-        /// <returns>The resultant reference count.</returns>
-        public int IncrementRefCount()
-        {
-            return Interlocked.Increment(ref refCount);
-        }
-
-        /// <summary>
-        /// Compares this Slot with the specified Slot object.
-        /// </summary>
-        /// Implements IComparable(T).CompareTo interface.
-        /// <param name="other">
-        /// A Slot object to be compared with this.
-        /// </param>
+        /// This method does not throw on upper-bound overrun. If the calculated
+        /// position index (<c>offset</c> + <c>index</c>) is greater than or equal
+        /// to the length of the underlying Fingerprint, it simply returns 
+        /// <b>false</b>.
+        /// <param name="index">The zero-based index of the value to get.</param>
         /// <returns>
-        /// A value that indicates the relative order of the Slot objects being
-        /// compared. Zero return value means that this is equal to <c>other</c>,
-        /// while negative(positive) integer return value means that this is
-        /// less(greater) than <c>other</c>.
+        /// The bit value at the position (<c>offset</c> + <c>index</c>).
         /// </returns>
-        public int CompareTo(Slot other)
+        public bool this[int index]
         {
-            return base.CompareTo(other);
-        }
-
-        /// <summary>
-        /// Decreases the reference count of this Slot.
-        /// </summary>
-        /// <returns>The resultant reference count.</returns>
-        public int DecrementRefCount()
-        {
-            return Interlocked.Decrement(ref refCount);
+            get
+            {
+                int actualIndex = offset + index;
+                if (actualIndex >= fingerprint.Length)
+                {
+                    return false;
+                }
+                return fingerprint.Get(actualIndex);
+            }
         }
     }
 }

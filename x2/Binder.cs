@@ -235,4 +235,59 @@ namespace x2
             }
         }
     }
+
+    /// <summary>
+    /// Extends Fingerprint class to hold an additional reference count.
+    /// </summary>
+    internal class Slot : Fingerprint, IComparable<Slot>
+    {
+        private int refCount;
+
+        /// <summary>
+        /// Initializes a new instance of the Slot class that contains bit values
+        /// copied from the specified Fingerprint.
+        /// </summary>
+        /// <param name="fingerprint">A Fingerprint object to copy from.</param>
+        public Slot(Fingerprint fingerprint)
+            : base(fingerprint)
+        {
+            refCount = 1;
+        }
+
+        /// <summary>
+        /// Increases the reference count of this Slot.
+        /// </summary>
+        /// <returns>The resultant reference count.</returns>
+        public int IncrementRefCount()
+        {
+            return Interlocked.Increment(ref refCount);
+        }
+
+        /// <summary>
+        /// Compares this Slot with the specified Slot object.
+        /// </summary>
+        /// Implements IComparable(T).CompareTo interface.
+        /// <param name="other">
+        /// A Slot object to be compared with this.
+        /// </param>
+        /// <returns>
+        /// A value that indicates the relative order of the Slot objects being
+        /// compared. Zero return value means that this is equal to <c>other</c>,
+        /// while negative(positive) integer return value means that this is
+        /// less(greater) than <c>other</c>.
+        /// </returns>
+        public int CompareTo(Slot other)
+        {
+            return base.CompareTo(other);
+        }
+
+        /// <summary>
+        /// Decreases the reference count of this Slot.
+        /// </summary>
+        /// <returns>The resultant reference count.</returns>
+        public int DecrementRefCount()
+        {
+            return Interlocked.Decrement(ref refCount);
+        }
+    }
 }
