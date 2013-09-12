@@ -31,6 +31,12 @@ namespace x2.Tests
             Assert.True(fp.Get(31));
             fp.Wipe(31);
             Assert.False(fp.Get(31));
+
+            Assert.False(fp.Get(32));
+            fp.Touch(32);
+            Assert.True(fp.Get(32));
+            fp.Wipe(32);
+            Assert.False(fp.Get(32));
         }
 
         [Test]

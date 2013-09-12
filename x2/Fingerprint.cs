@@ -12,7 +12,8 @@ namespace x2
     /// </summary>
     public class Fingerprint : IComparable<Fingerprint>, IIndexable<bool>
     {
-        private readonly int[] blocks;
+        private int block;              // primary(default) bit block
+        private readonly int[] blocks;  // additional bit blocks
         private readonly int length;
 
         /// <summary>
@@ -42,8 +43,12 @@ namespace x2
             {
                 throw new ArgumentOutOfRangeException();
             }
-            blocks = new int[((length - 1) >> 5) + 1];
             this.length = length;
+            if (length > 32)
+            {
+                length -= 32;
+                blocks = new int[((length - 1) >> 5) + 1];
+            }
         }
 
         /// <summary>
@@ -52,7 +57,11 @@ namespace x2
         /// </summary>
         public Fingerprint(Fingerprint other)
         {
-            blocks = (int[])other.blocks.Clone();
+            block = other.block;
+            if (other.blocks != null)
+            {
+                blocks = (int[])other.blocks.Clone();
+            }
             length = other.length;
         }
 
@@ -61,6 +70,7 @@ namespace x2
         /// </summary>
         public void Clear()
         {
+            block = 0;
             for (int i = 0; i < blocks.Length; ++i)
             {
                 blocks[i] = 0;
@@ -87,16 +97,24 @@ namespace x2
             }
             for (int i = (blocks.Length - 1); i >= 0; --i)
             {
-                uint block = (uint)blocks[i];
+                uint myBlock = (uint)blocks[i];
                 uint otherBlock = (uint)other.blocks[i];
-                if (block < otherBlock)
+                if (myBlock < otherBlock)
                 {
                     return -1;
                 }
-                else if (block > otherBlock)
+                else if (myBlock > otherBlock)
                 {
                     return 1;
                 }
+            }
+            if ((uint)block < (uint)other.block)
+            {
+                return -1;
+            }
+            else if ((uint)block > (uint)other.block)
+            {
+                return 1;
             }
             return 0;
         }
@@ -112,6 +130,10 @@ namespace x2
             }
             var other = obj as Fingerprint;
             if (other == null || length != other.length)
+            {
+                return false;
+            }
+            if (block != other.block)
             {
                 return false;
             }
@@ -132,6 +154,7 @@ namespace x2
         {
             var hash = new Hash(Hash.Seed);
             hash.Update(length);
+            hash.Update(block);
             for (int i = 0; i < blocks.Length; ++i)
             {
                 hash.Update(blocks[i]);
@@ -170,10 +193,14 @@ namespace x2
             {
                 return false;
             }
+            if ((block & other.block) != block)
+            {
+                return false;
+            }
             for (int i = 0; i < blocks.Length; ++i)
             {
-                int block = blocks[i];
-                if ((block & other.blocks[i]) != block)
+                int myBlock = blocks[i];
+                if ((myBlock & other.blocks[i]) != myBlock)
                 {
                     return false;
                 }
@@ -184,11 +211,15 @@ namespace x2
         public void Dump(Buffer buffer)
         {
             int count = 0;
-            foreach (int block in blocks)
+            for (int j = 0; (j < 4) && (count < LengthInBytes); ++j, ++count)
+            {
+                buffer.Write((byte)(block >> (j << 3)));
+            }
+            foreach (var each in blocks)
             {
                 for (int j = 0; (j < 4) && (count < LengthInBytes); ++j, ++count)
                 {
-                    buffer.Write((byte)(block >> (j << 3)));
+                    buffer.Write((byte)(each >> (j << 3)));
                 }
             }
         }
@@ -196,6 +227,11 @@ namespace x2
         public void Load(Buffer buffer)
         {
             int count = 0;
+            block = 0;
+            for (int j = 0; (j < 4) && (count < LengthInBytes); ++j, ++count)
+            {
+                block |= ((int)buffer.ReadByte() << (j << 3));
+            }
             for (int i = 0; i < blocks.Length; ++i)
             {
                 blocks[i] = 0;
@@ -217,7 +253,12 @@ namespace x2
             {
                 throw new IndexOutOfRangeException();
             }
-            return ((blocks[index >> 5] & (1 << index)) != 0);
+            if ((index & (-1 << 5)) != 0)  // index >= 32
+            {
+                index -= 32;
+                return ((blocks[index >> 5] & (1 << index)) != 0);
+            }
+            return ((block & (1 << index)) != 0);
         }
 
         /// <summary>
@@ -229,7 +270,12 @@ namespace x2
             {
                 throw new IndexOutOfRangeException();
             }
-            blocks[index >> 5] |= (1 << index);
+            if ((index & (-1 << 5)) != 0)  // index >= 32
+            {
+                index -= 32;
+                blocks[index >> 5] |= (1 << index);
+            }
+            block |= (1 << index);
         }
 
         /// <summary>
@@ -241,7 +287,12 @@ namespace x2
             {
                 throw new IndexOutOfRangeException();
             }
-            blocks[index >> 5] &= ~(1 << index);
+            if ((index & (-1 << 5)) != 0)  // index >= 32
+            {
+                index -= 32;
+                blocks[index >> 5] &= ~(1 << index);
+            }
+            block &= ~(1 << index);
         }
 
         /// <summary>
