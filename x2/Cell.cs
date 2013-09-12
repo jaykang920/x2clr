@@ -235,63 +235,42 @@ namespace x2
         }
 
         /// <summary>
-        /// Supports light-weight custom type hierarchy for Cell and its
-        /// subclasses.
+        /// Supports light-weight custom type hierarchy for Cell and its subclasses.
         /// </summary>
         public class Tag
         {
-            private readonly Tag baseTag;
-            private readonly Type runtimeType;
-            private readonly int numProps;
-            private readonly int offset = 0;
+            /// <summary>
+            /// Gets the immediate base type tag.
+            /// </summary>
+            /// Returns null if this is a root tag.
+            public Tag Base { get; private set; }
 
             /// <summary>
-            /// Gets the base type tag. (Returns null if this is a root tag.)
+            /// Gets the correspondent runtime type.
             /// </summary>
-            public Tag Base
-            {
-                get { return baseTag; }
-            }
+            public Type RuntimeType { get; private set; }
 
             /// <summary>
-            /// Gets the associated runtime type.
+            /// Gets the number of immediate (directly defined) properties in this type.
             /// </summary>
-            public Type RuntimeType
-            {
-                get { return runtimeType; }
-            }
-
-            /// <summary>
-            /// Gets the number of immediate (directly-defined) properties in this
-            /// type.
-            /// </summary>
-            public int NumProps
-            {
-                get { return numProps; }
-            }
+            public int NumProps { get; private set; }
 
             /// <summary>
             /// Gets the fingerprint offset for immediate properties in this type.
             /// </summary>
-            public int Offset
-            {
-                get { return offset; }
-            }
+            public int Offset { get; private set; }
 
             /// <summary>
             /// Initializes a new instance of the Cell.Tag class.
             /// </summary>
-            /// <param name="baseTag">The base type tag.</param>
-            /// <param name="runtimeType">The associated runtime type.</param>
-            /// <param name="numProps">The number of immediate properties.</param>
             public Tag(Tag baseTag, Type runtimeType, int numProps)
             {
-                this.baseTag = baseTag;
-                this.runtimeType = runtimeType;
-                this.numProps = numProps;
+                Base = baseTag;
+                RuntimeType = runtimeType;
+                NumProps = numProps;
                 if (baseTag != null)
                 {
-                    offset = baseTag.Offset + baseTag.NumProps;
+                    Offset = baseTag.Offset + baseTag.NumProps;
                 }
             }
         }
