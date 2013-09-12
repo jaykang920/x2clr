@@ -247,21 +247,5 @@ namespace x2.Tests
 
             Assert.True(fp2.Equals(fp1));
         }
-
-        [Test]
-        public void TestView()
-        {
-            Fingerprint fp = new Fingerprint(8);
-            fp.Touch(2);
-            fp.Touch(4);
-            
-            FingerprintView fpv = new FingerprintView(fp, 3);
-            Assert.False(fpv[0]);
-            Assert.True(fpv[1]);
-            Assert.False(fpv[2]);
-
-            fp.Wipe(4);
-            Assert.False(fpv[1]);
-        }
     }
 }

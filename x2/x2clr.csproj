@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Capo.cs" />
     <Compile Include="Link.cs" />
     <Compile Include="Pool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

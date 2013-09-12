@@ -8,6 +8,7 @@ namespace x2
     /// <summary>
     /// Hash code generation unitily struct.
     /// </summary>
+    /// Be careful! This is a mutable struct.
     public struct Hash
     {
         public const int Seed = 17;

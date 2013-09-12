@@ -235,8 +235,8 @@ namespace x2
         }
 
         /// <summary>
-        /// Supports light-weight custom type hierarchy for Cell and its derived 
-        /// classes.
+        /// Supports light-weight custom type hierarchy for Cell and its
+        /// subclasses.
         /// </summary>
         public class Tag
         {
@@ -246,9 +246,8 @@ namespace x2
             private readonly int offset = 0;
 
             /// <summary>
-            /// Gets the base type tag. (Returns <c>null</c> if this is a root tag.)
+            /// Gets the base type tag. (Returns null if this is a root tag.)
             /// </summary>
-            /// 
             public Tag Base
             {
                 get { return baseTag; }

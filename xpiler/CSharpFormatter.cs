@@ -266,7 +266,14 @@ namespace xpiler
             Indent(1); Out.WriteLine("}");
 
             Out.WriteLine();
-            Indent(1); Out.WriteLine("new public static {0} New()", def.Name);
+            if (def.Base == "Cell" || def.Base == "x2.Cell")
+            {
+                Indent(1); Out.WriteLine("public static {0} New()", def.Name);
+            }
+            else
+            {
+                Indent(1); Out.WriteLine("new public static {0} New()", def.Name);
+            }
             Indent(1); Out.WriteLine("{");
             Indent(2); Out.WriteLine("return new {0}();", def.Name);
             Indent(1); Out.WriteLine("}");
@@ -321,14 +328,13 @@ namespace xpiler
         {
             Indent(1); Out.WriteLine("public override int GetHashCode(Fingerprint fingerprint)");
             Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("Hash hash = new Hash(base.GetHashCode(fingerprint));");
+            Indent(2); Out.WriteLine("var hash = new Hash(base.GetHashCode(fingerprint));");
             if (def.HasProperties)
             {
-                Indent(2); Out.WriteLine("FingerprintView fingerprintView = ");
-                Indent(3); Out.WriteLine("new FingerprintView(fingerprint, tag.Offset);");
+                Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
                 foreach (var property in def.Properties)
                 {
-                    Indent(2); Out.WriteLine("if (fingerprintView[{0}])", property.Index);
+                    Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
                     Indent(2); Out.WriteLine("{");
                     Indent(3); Out.WriteLine("hash.Update({0});", property.NativeName);
                     Indent(2); Out.WriteLine("}");
@@ -365,11 +371,10 @@ namespace xpiler
             if (def.HasProperties)
             {
                 Indent(2); Out.WriteLine("{0} o = ({0})other;", def.Name);
-                Indent(2); Out.WriteLine("FingerprintView fingerprintView = ");
-                Indent(3); Out.WriteLine("new FingerprintView(fingerprint, tag.Offset);");
+                Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
                 foreach (var property in def.Properties)
                 {
-                    Indent(2); Out.WriteLine("if (fingerprintView[{0}])", property.Index);
+                    Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
                     Indent(2); Out.WriteLine("{");
                     if (IsPrimitiveType(property.Type))
                     {
@@ -396,11 +401,10 @@ namespace xpiler
             Indent(2); Out.WriteLine("base.Load(buffer);");
             if (def.HasProperties)
             {
-                Indent(2); Out.WriteLine("FingerprintView fingerprintView = ");
-                Indent(3); Out.WriteLine("new FingerprintView(fingerprint, tag.Offset);");
+                Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
                 foreach (var property in def.Properties)
                 {
-                    Indent(2); Out.WriteLine("if (fingerprintView[{0}])", property.Index);
+                    Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
                     Indent(2); Out.WriteLine("{");
                     if (IsPrimitiveType(property.Type))
                     {
@@ -442,11 +446,10 @@ namespace xpiler
             Indent(2); Out.WriteLine("base.Dump(buffer);");
             if (def.HasProperties)
             {
-                Indent(2); Out.WriteLine("FingerprintView fingerprintView = ");
-                Indent(3); Out.WriteLine("new FingerprintView(fingerprint, tag.Offset);");
+                Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
                 foreach (var property in def.Properties)
                 {
-                    Indent(2); Out.WriteLine("if (fingerprintView[{0}])", property.Index);
+                    Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
                     Indent(2); Out.WriteLine("{");
                     if (IsPrimitiveType(property.Type))
                     {

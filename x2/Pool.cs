@@ -29,12 +29,12 @@ namespace x2
         }
 
         /// <summary>
-        /// Decreases the reference count to this object, and releases this
-        /// object if the reference count reached zero.
+        /// Decreases the reference count to this object, and releases this if
+        /// it reached zero.
         /// </summary>
         public void ReleaseReference()
         {
-            if (Interlocked.Decrement(ref refCount) <= 0)
+            if (Interlocked.Decrement(ref refCount) == 0)
             {
                 Release();
             }

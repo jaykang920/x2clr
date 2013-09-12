@@ -10,44 +10,32 @@ namespace x2
     /// <summary>
     /// Manages a fixed-length compact array of bit values.
     /// </summary>
-    /// <para>
-    /// A bit array manages an array of bit values which are represented as
-    /// Booleans, where <b>true</b> indicates that the bit is on (1) and
-    /// <b>false</b> indicates the bit is off (0).
-    /// </para>
-    /// <para>
-    /// Fingerprint is a special-purpose variant of an ordinary bit array,
-    /// dedicated to keep track of the property assignment of
-    /// <see cref="x2.Cell">Cell</see>-derived objects.
-    /// </para>
-    public class Fingerprint : IComparable<Fingerprint>
+    public class Fingerprint : IComparable<Fingerprint>, IIndexable<bool>
     {
         private readonly int[] blocks;
         private readonly int length;
 
         /// <summary>
-        /// Gets the number of bits contained in the Fingerprint.
+        /// Gets the number of bits contained in this Fingerprint.
         /// </summary>
         public int Length
         {
             get { return length; }
         }
 
+        /// <summary>
+        /// Gets the minimum number of bytes required to hold all the bits in
+        /// this Fingerprint.
+        /// </summary>
         private int LengthInBytes
         {
             get { return ((length - 1) >> 3) + 1; }
         }
 
         /// <summary>
-        /// Initializes a new instance of the Fingerprint class that can hold the
-        /// specified number of bit values, which are initially set to <b>false</b>.
+        /// Initializes a new Fingerprint object that can hold the specified
+        /// number of bit values, which are initially set to <b>false</b>.
         /// </summary>
-        /// <param name="length">
-        /// The number of bit values in the new Fingerprint.
-        /// </param>
-        /// <exception cref="System.ArgumentOutOfRangeException">
-        /// Thrown when <c>length</c> is less than 0.
-        /// </exception>
         public Fingerprint(int length)
         {
             if (length < 0)
@@ -59,10 +47,9 @@ namespace x2
         }
 
         /// <summary>
-        /// Initializes a new instance of the Fingerprint class that contains bit
-        /// values copied from the specified Fingerprint.
+        /// Initializes a new Fingerprint object that contains bit values
+        /// copied from the specified Fingerprint.
         /// </summary>
-        /// <param name="other">A Fingerprint object to copy from.</param>
         public Fingerprint(Fingerprint other)
         {
             blocks = (int[])other.blocks.Clone();
@@ -70,7 +57,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Clears all the bits in the Fingerprint, making them <b>false</b>.
+        /// Clears all the bits in the Fingerprint, setting them as <b>false</b>.
         /// </summary>
         public void Clear()
         {
@@ -84,15 +71,6 @@ namespace x2
         /// Compares this Fingerprint with the specified Fingerprint object.
         /// </summary>
         /// Implements IComparable(T).CompareTo interface.
-        /// <param name="other">
-        /// A Fingerprint object to be compared with this.
-        /// </param>
-        /// <returns>
-        /// A value that indicates the relative order of the Fingerprint objects
-        /// being compared. Zero return value means that this is equal to
-        /// <c>other</c>, while negative(positive) integer return value means that
-        /// this is less(greater) than <c>other</c>.
-        /// </returns>
         public int CompareTo(Fingerprint other)
         {
             if (Object.ReferenceEquals(this, other))
@@ -126,18 +104,13 @@ namespace x2
         /// <summary>
         /// Determines whether the specified object is equal to this Fingerprint.
         /// </summary>
-        /// <param name="obj">An object to compare with this Fingerprint.</param>
-        /// <returns>
-        /// <b>true</b> if <c>obj</c> is equal to this Fingerprint; otherwise,
-        /// <b>false</b>.
-        /// </returns>
         public override bool Equals(object obj)
         {
             if (Object.ReferenceEquals(this, obj))
             {
                 return true;
             }
-            Fingerprint other = obj as Fingerprint;
+            var other = obj as Fingerprint;
             if (other == null || length != other.length)
             {
                 return false;
@@ -153,30 +126,11 @@ namespace x2
         }
 
         /// <summary>
-        /// Gets the bit value at the specified position in the Fingerprint.
+        /// Returns the hash code for this instance.
         /// </summary>
-        /// <param name="index">The zero-based index of the value to get.</param>
-        /// <returns>The bit value at the position <c>index</c>.</returns>
-        /// <exception cref="System.IndexOutOfRangeException">
-        /// Thrown when <c>index</c> is less than 0, or when <c>index</c> is
-        /// greater than or equal to the length of the Fingerprint.
-        /// </exception>
-        public bool Get(int index)
-        {
-            if (index < 0 || index >= length)
-            {
-                throw new IndexOutOfRangeException();
-            }
-            return (blocks[index >> 5] & (1 << index)) != 0;
-        }
-
-        /// <summary>Returns the hash code for this instance.</summary>
-        /// <returns>
-        /// An integer that can serve as the hash code for this instance.
-        /// </returns>
         public override int GetHashCode()
         {
-            Hash hash = new Hash(Hash.Seed);
+            var hash = new Hash(Hash.Seed);
             hash.Update(length);
             for (int i = 0; i < blocks.Length; ++i)
             {
@@ -252,17 +206,26 @@ namespace x2
             }
         }
 
+        #region Accessors/indexer
+
         /// <summary>
-        /// Sets the bit at the specified position in the Fingerprint.
+        /// Gets the bit value at the specified index.
         /// </summary>
-        /// <param name="index">The zero-based index of the bit to set.</param>
-        /// <exception cref="System.IndexOutOfRangeException">
-        /// Thrown when <c>index</c> is less than 0, or when <c>index</c> is
-        /// greater than or equal to the length of the Fingerprint.
-        /// </exception>
+        public bool Get(int index)
+        {
+            if (index < 0 || length <= index)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            return ((blocks[index >> 5] & (1 << index)) != 0);
+        }
+
+        /// <summary>
+        /// Sets the bit at the specified index.
+        /// </summary>
         public void Touch(int index)
         {
-            if (index < 0 || index >= length)
+            if (index < 0 || length <= index)
             {
                 throw new IndexOutOfRangeException();
             }
@@ -270,68 +233,25 @@ namespace x2
         }
 
         /// <summary>
-        /// Clears the bit at the specified position in the Fingerprint.
+        /// Clears the bit at the specified index.
         /// </summary>
-        /// <param name="index">The zero-based index of the bit to clear.</param>
-        /// <exception cref="System.IndexOutOfRangeException">
-        /// Thrown when <c>index</c> is less than 0, or when <c>index</c> is
-        /// greater than or equal to the length of the Fingerprint.
-        /// </exception>
         public void Wipe(int index)
         {
-            if (index < 0 || index >= length)
+            if (index < 0 || length <= index)
             {
                 throw new IndexOutOfRangeException();
             }
             blocks[index >> 5] &= ~(1 << index);
         }
-    }
-
-    /// <summary>
-    /// Provides offset-based indexer for the underlying Fingerprint object.
-    /// </summary>
-    /// This trivial value type offers just a syntactic sugar to get Fingerprint
-    /// bits, applying preset position offset.
-    public struct FingerprintView
-    {
-        private readonly Fingerprint fingerprint;
-        private readonly int offset;
 
         /// <summary>
-        /// Initializes a new instance of FingerprintView structure with the 
-        /// specified Fingerprint and offset.
+        /// Gets the bit value at the specified index.
         /// </summary>
-        /// <param name="fingerprint">A Fingerprint object to access.</param>
-        /// <param name="offset">An integer offset to apply constantly.</param>
-        public FingerprintView(Fingerprint fingerprint, int offset)
-        {
-            this.fingerprint = fingerprint;
-            this.offset = offset;
-        }
-
-        /// <summary>
-        /// Gets the bit value at the specified position in the underlying 
-        /// Fingerprint, applying the offset.
-        /// </summary>
-        /// This method does not throw on upper-bound overrun. If the calculated
-        /// position index (<c>offset</c> + <c>index</c>) is greater than or equal
-        /// to the length of the underlying Fingerprint, it simply returns 
-        /// <b>false</b>.
-        /// <param name="index">The zero-based index of the value to get.</param>
-        /// <returns>
-        /// The bit value at the position (<c>offset</c> + <c>index</c>).
-        /// </returns>
         public bool this[int index]
         {
-            get
-            {
-                int actualIndex = offset + index;
-                if (actualIndex >= fingerprint.Length)
-                {
-                    return false;
-                }
-                return fingerprint.Get(actualIndex);
-            }
+            get { return Get(index); }
         }
+
+        #endregion
     }
 }
