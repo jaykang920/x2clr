@@ -51,12 +51,16 @@
     <Compile Include="HandlerTests.cs" />
     <Compile Include="HashTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sample.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\x2\x2clr.csproj">
       <Project>{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}</Project>
       <Name>x2clr</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Sample.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -66,4 +70,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PreBuildEvent>pushd $(ProjectDir)
+..\bin\$(ConfigurationName)\xpiler.exe .
+popd</PreBuildEvent>
+  </PropertyGroup>
 </Project>

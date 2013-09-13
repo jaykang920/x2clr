@@ -8,7 +8,7 @@
     <ProjectGuid>{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>xpiler</RootNamespace>
+    <RootNamespace>x2</RootNamespace>
     <AssemblyName>xpiler</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -38,14 +38,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CellDef.cs" />
     <Compile Include="CSharpFormatter.cs" />
     <Compile Include="Definition.cs" />
     <Compile Include="Document.cs" />
-    <Compile Include="EnumDef.cs" />
-    <Compile Include="EventDef.cs" />
-    <Compile Include="Formatter.cs" />
-    <Compile Include="Handler.cs" />
+    <Compile Include="OutputFormatter.cs" />
+    <Compile Include="InputHandler.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

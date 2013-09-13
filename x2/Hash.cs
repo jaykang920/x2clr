@@ -6,9 +6,9 @@ using System;
 namespace x2
 {
     /// <summary>
-    /// Hash code generation unitily struct.
+    /// Internal utility struct for Hash code generation.
     /// </summary>
-    /// Be careful! This is a mutable struct.
+    /// Note that this struct is mutable.
     public struct Hash
     {
         public const int Seed = 17;

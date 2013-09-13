@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 using x2;
 
-namespace xpiler
+namespace x2
 {
     class Options
     {

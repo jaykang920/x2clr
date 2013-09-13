@@ -4,9 +4,9 @@
 using System;
 using System.IO;
 
-namespace xpiler
+namespace x2
 {
-    abstract class Formatter
+    abstract class OutputFormatter
     {
         public abstract string Description { get; }
 
@@ -20,7 +20,7 @@ namespace xpiler
         public Document Doc { get; set; }
         public StreamWriter Out { get; set; }
 
-        public abstract void FormatEnum(EnumDef def);
+        public abstract void FormatConsts(ConstsDef def);
         public abstract void FormatCell(CellDef def);
     }
 }

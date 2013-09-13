@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace xpiler
+namespace x2
 {
-    class CSharpFormatter : Formatter
+    class CSharpFormatter : OutputFormatter
     {
         private const string Extension = ".cs";
         
@@ -28,6 +28,7 @@ namespace xpiler
                     FormatHead(context);
                     FormatBody(context);
                     writer.Flush();
+                    writer.Close();
                 }
             }
             catch (Exception e)
@@ -104,6 +105,8 @@ namespace xpiler
             nativeTypes.Add("int16", "short");
             nativeTypes.Add("int32", "int");
             nativeTypes.Add("int64", "long");
+            nativeTypes.Add("float32", "float");
+            nativeTypes.Add("float64", "double");
             nativeTypes.Add("string", "string");
 
             defaultValues = new Dictionary<string, string>();
@@ -112,26 +115,33 @@ namespace xpiler
             defaultValues.Add("int16", "0");
             defaultValues.Add("int32", "0");
             defaultValues.Add("int64", "0");
+            defaultValues.Add("float32", ".0f");
+            defaultValues.Add("float64", ".0f");
             defaultValues.Add("string", "");
         }
 
         public string Target { get; set; }
 
-        public override void FormatEnum(EnumDef def)
+        public override void FormatConsts(ConstsDef def)
         {
-            Indent(0); Out.WriteLine("public enum {0}", def.Name);
+            if (nativeTypes.ContainsKey(def.Type))
+            {
+                def.NativeType = nativeTypes[def.Type];
+            }
+            else
+            {
+                return;
+            }
+
+            Indent(0); Out.WriteLine("public static class {0}", def.Name);
             Indent(0); Out.WriteLine("{");
-            foreach (var element in def.Elements)
+            foreach (var constant in def.Constants)
             {
                 Indent(1);
-                Out.Write("{0}", element.Name);
-                if (!String.IsNullOrEmpty(element.Value))
+                Out.Write("public const {0} {1}", def.NativeType, constant.Name);
+                if (!String.IsNullOrEmpty(constant.Value))
                 {
-                    Out.Write(" = {0}", element.Value);
-                }
-                if (element != def.Elements[def.Elements.Count - 1])
-                {
-                    Out.Write(",");
+                    Out.Write(" = {0};", constant.Value);
                 }
                 Out.WriteLine();
             }
@@ -140,14 +150,14 @@ namespace xpiler
 
         public override void FormatCell(CellDef def)
         {
-            var super = def.Base;
-            if (String.IsNullOrEmpty(super))
+            def.BaseClass = def.Base;
+            if (String.IsNullOrEmpty(def.BaseClass))
             {
-                super = (def.IsEvent ? "Event" : "Cell");
+                def.BaseClass = (def.IsEvent ? "Event" : "Cell");
             }
             PreprocessProperties(def);
 
-            Indent(0); Out.WriteLine("public class {0} : {1}", def.Name, super);
+            Indent(0); Out.WriteLine("public class {0} : {1}", def.Name, def.BaseClass);
             Indent(0); Out.WriteLine("{");
             Indent(1); Out.WriteLine("new protected static readonly Tag tag;");
             Out.WriteLine();
@@ -266,7 +276,7 @@ namespace xpiler
             Indent(1); Out.WriteLine("}");
 
             Out.WriteLine();
-            if (def.Base == "Cell" || def.Base == "x2.Cell")
+            if (def.BaseClass == "Cell" || def.BaseClass == "x2.Cell")
             {
                 Indent(1); Out.WriteLine("public static {0} New()", def.Name);
             }

@@ -1,0 +1,18 @@
+<x2 namespace="x2.Tests">
+
+    <consts name="SampleConsts" type="int32">
+        <const name="Const1">1</const>
+        <const name="Const2">2</const>
+    </consts>
+
+    <cell name="SampleCell">
+        <property name="Foo" type="int32"/>
+        <property name="Bar" type="string"/>
+    </cell>
+
+    <event name="SampleEvent" id="1">
+        <property name="Foo" type="int32"/>
+        <property name="Bar" type="string"/>
+    </event>
+
+</x2>

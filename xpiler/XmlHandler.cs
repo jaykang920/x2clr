@@ -4,9 +4,9 @@
 using System;
 using System.Xml;
 
-namespace xpiler
+namespace x2
 {
-    class XmlHandler : Handler
+    class XmlHandler : InputHandler
     {
         public bool Handle(string path, out Document doc)
         {
@@ -41,8 +41,8 @@ namespace xpiler
                 var elem = (XmlElement)node;
                 switch (elem.Name)
                 {
-                    case "enum":
-                        if (ParseEnum(doc, elem) == false)
+                    case "consts":
+                        if (ParseConsts(doc, elem) == false)
                         {
                             return false;
                         }
@@ -61,15 +61,21 @@ namespace xpiler
             return true;
         }
 
-        private bool ParseEnum(Document doc, XmlElement elem)
+        private bool ParseConsts(Document doc, XmlElement elem)
         {
             var name = elem.GetAttribute("name");
+            var type = elem.GetAttribute("type");
             if (String.IsNullOrEmpty(name))
             {
                 return false;
             }
-            var def = new EnumDef();
+            if (String.IsNullOrEmpty(type))
+            {
+                type = "int32";  // default type
+            }
+            var def = new ConstsDef();
             def.Name = name;
+            def.Type = type;
 
             var node = elem.FirstChild;
             for ( ; node != null; node = node.NextSibling)
@@ -85,8 +91,8 @@ namespace xpiler
                 }
                 switch (child.Name)
                 {
-                    case "element":
-                        if (ParseEnumElement(def, child) == false)
+                    case "const":
+                        if (ParseConstant(def, child) == false)
                         {
                             return false;
                         }
@@ -99,17 +105,17 @@ namespace xpiler
             return true;
         }
 
-        private bool ParseEnumElement(EnumDef def, XmlElement elem)
+        private bool ParseConstant(ConstsDef def, XmlElement elem)
         {
             var name = elem.GetAttribute("name");
             if (String.IsNullOrEmpty(name))
             {
                 return false;
             }
-            var element = new EnumDef.Element();
+            var element = new ConstsDef.Constant();
             element.Name = name;
             element.Value = elem.InnerText.Trim();
-            def.Elements.Add(element);
+            def.Constants.Add(element);
             return true;
         }
 
