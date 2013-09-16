@@ -41,10 +41,7 @@ namespace x2
         /// </summary>
         public Capo(IIndexable<T> indexable, int offset)
         {
-            if (offset >= indexable.Length)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
+            // Never throws.
             this.indexable = indexable;
             this.offset = offset;
         }

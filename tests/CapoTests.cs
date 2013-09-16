@@ -20,9 +20,8 @@ namespace x2.Tests
             window = new Capo<bool>(fp, 3);
             Assert.AreEqual(4, window.Length);
 
-            // Invalid offset initialization attempt throws
-            Assert.Throws(typeof(ArgumentOutOfRangeException),
-                () => { window = new Capo<bool>(fp, 7); });
+            // Invalid offset initialization attempt never throws
+            Assert.DoesNotThrow(() => { window = new Capo<bool>(fp, 7); });
         }
 
         [Test]

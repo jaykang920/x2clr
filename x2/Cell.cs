@@ -45,7 +45,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Determines whether the specified object is equal to this Cell object. 
+        /// Determines whether the specified object is equal to this one.
         /// </summary>
         public override bool Equals(object obj)
         {
@@ -53,6 +53,8 @@ namespace x2
             {
                 return true;
             }
+            // Any comparison except the reference equality is delegated to the
+            // EqualsTo() method chain.
             Cell other = obj as Cell;
             if (other == null)
             {
@@ -62,13 +64,8 @@ namespace x2
         }
 
         /// <summary>
-        /// Determines whether this Cell object is equal to the specified Cell.
+        /// Determines whether this Cell object is equal to the specified one.
         /// </summary>
-        /// <param name="other">A Cell object to compare with this Cell.</param>
-        /// <returns>
-        /// <b>true</b> if this Cell is equal to <c>other</c>; otherwise,
-        /// <b>false</b>.
-        /// </returns>
         public virtual bool EqualsTo(Cell other)
         {
             if (GetType() != other.GetType())
@@ -82,18 +79,14 @@ namespace x2
             return true;
         }
 
-        /// <summary>
-        /// Gets the Fingerprint that reflects the property assignment of this
-        /// <see cref="x2.Cell">Cell</see>-derived object.
-        /// </summary>
-        /// <returns>
-        /// The fingerprint that reflects the property assignment.
-        /// </returns>
         public Fingerprint GetFingerprint()
         {
             return fingerprint;
         }
 
+        /// <summary>
+        /// Returns the hash code for the current object.
+        /// </summary>
         public override int GetHashCode()
         {
             return GetHashCode(fingerprint);
@@ -107,7 +100,6 @@ namespace x2
         /// <summary>
         /// Returns the custom type tag of this object.
         /// </summary>
-        /// <returns>The custom type tag of this object.</returns>
         public virtual Tag GetTypeTag()
         {
             return tag;
@@ -150,14 +142,9 @@ namespace x2
         }
 
         /// <summary>
-        /// Determines whether this Cell object is a kind of the specified Cell in
-        /// the custom type hierarchy.
+        /// Determines whether this Cell object is a kind of the specified Cell
+        /// in the custom type hierarchy.
         /// </summary>
-        /// <param name="other">A Cell object to check against.</param>
-        /// <returns>
-        /// <b>true</b> if this Cell is a kind of <c>other</c>; otherwise,
-        /// <b>false</b>.
-        /// </returns>
         public bool IsKindOf(Cell other)
         {
             Tag tag = GetTypeTag();
@@ -190,11 +177,10 @@ namespace x2
         /// <summary>
         /// Returns a string that describes the current object.
         /// </summary>
-        /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(GetTypeTag().RuntimeType.FullName);
+            stringBuilder.Append(GetTypeTag().RuntimeType.Name);
             Describe(stringBuilder);
             return stringBuilder.ToString();
         }
