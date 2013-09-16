@@ -148,6 +148,9 @@ namespace x2
             return true;
         }
 
+        /// <summary>
+        /// Returns the hash code for the current object.
+        /// </summary>
         public override int GetHashCode()
         {
             return GetHashCode(fingerprint, GetTypeId());
@@ -155,9 +158,8 @@ namespace x2
 
         public int GetHashCode(Fingerprint fingerprint, int typeId)
         {
-            Hash hash = new Hash(Hash.Seed);
+            Hash hash = new Hash(GetHashCode(fingerprint));
             hash.Update(typeId);
-            hash.Update(GetHashCode(fingerprint));
             return hash.Code;
         }
 

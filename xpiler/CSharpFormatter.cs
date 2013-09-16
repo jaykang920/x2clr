@@ -341,6 +341,11 @@ namespace x2
             Indent(2); Out.WriteLine("var hash = new Hash(base.GetHashCode(fingerprint));");
             if (def.HasProperties)
             {
+                Indent(2); Out.WriteLine("if (fingerprint.Length <= tag.Offset)");
+                Indent(2); Out.WriteLine("{");
+                Indent(3); Out.WriteLine("return hash.Code;");
+                Indent(2); Out.WriteLine("}");
+
                 Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
                 foreach (var property in def.Properties)
                 {
