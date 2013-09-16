@@ -71,9 +71,12 @@ namespace x2
         public void Clear()
         {
             block = 0;
-            for (int i = 0; i < blocks.Length; ++i)
+            if (blocks != null)
             {
-                blocks[i] = 0;
+                for (int i = 0; i < blocks.Length; ++i)
+                {
+                    blocks[i] = 0;
+                }
             }
         }
 
@@ -95,17 +98,20 @@ namespace x2
             {
                 return 1;
             }
-            for (int i = (blocks.Length - 1); i >= 0; --i)
+            if (blocks != null)
             {
-                uint myBlock = (uint)blocks[i];
-                uint otherBlock = (uint)other.blocks[i];
-                if (myBlock < otherBlock)
+                for (int i = (blocks.Length - 1); i >= 0; --i)
                 {
-                    return -1;
-                }
-                else if (myBlock > otherBlock)
-                {
-                    return 1;
+                    uint thisBlock = (uint)blocks[i];
+                    uint otherBlock = (uint)other.blocks[i];
+                    if (thisBlock < otherBlock)
+                    {
+                        return -1;
+                    }
+                    else if (thisBlock > otherBlock)
+                    {
+                        return 1;
+                    }
                 }
             }
             if ((uint)block < (uint)other.block)
@@ -137,11 +143,14 @@ namespace x2
             {
                 return false;
             }
-            for (int i = 0; i < blocks.Length; ++i)
+            if (blocks != null)
             {
-                if (blocks[i] != other.blocks[i])
+                for (int i = 0; i < blocks.Length; ++i)
                 {
-                    return false;
+                    if (blocks[i] != other.blocks[i])
+                    {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -155,9 +164,12 @@ namespace x2
             var hash = new Hash(Hash.Seed);
             hash.Update(length);
             hash.Update(block);
-            for (int i = 0; i < blocks.Length; ++i)
+            if (blocks != null)
             {
-                hash.Update(blocks[i]);
+                for (int i = 0; i < blocks.Length; ++i)
+                {
+                    hash.Update(blocks[i]);
+                }
             }
             return hash.Code;
         }
@@ -197,12 +209,15 @@ namespace x2
             {
                 return false;
             }
-            for (int i = 0; i < blocks.Length; ++i)
+            if (blocks != null)
             {
-                int myBlock = blocks[i];
-                if ((myBlock & other.blocks[i]) != myBlock)
+                for (int i = 0; i < blocks.Length; ++i)
                 {
-                    return false;
+                    int thisBlock = blocks[i];
+                    if ((thisBlock & other.blocks[i]) != thisBlock)
+                    {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -214,6 +229,10 @@ namespace x2
             for (int j = 0; (j < 4) && (count < LengthInBytes); ++j, ++count)
             {
                 buffer.Write((byte)(block >> (j << 3)));
+            }
+            if (blocks == null)
+            {
+                return;
             }
             foreach (var each in blocks)
             {
@@ -231,6 +250,10 @@ namespace x2
             for (int j = 0; (j < 4) && (count < LengthInBytes); ++j, ++count)
             {
                 block |= ((int)buffer.ReadByte() << (j << 3));
+            }
+            if (blocks == null)
+            {
+                return;
             }
             for (int i = 0; i < blocks.Length; ++i)
             {

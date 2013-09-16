@@ -19,7 +19,7 @@ namespace x2
         protected static readonly Tag tag;
 
         /// <summary>
-        /// Fingerprint to keep track of property assignment.
+        /// Fingerprint to keep track of property assignments.
         /// </summary>
         protected readonly Fingerprint fingerprint;
 
@@ -29,8 +29,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Initializes a new instance of the Cell class with the specified 
-        /// Fingerprint.
+        /// Initializes a new Cell instance with the specified Fingerprint.
         /// </summary>
         protected Cell(Fingerprint fingerprint)
         {
@@ -38,13 +37,8 @@ namespace x2
         }
 
         /// <summary>
-        /// Initializes a new instance of the Cell class with the specified 
-        /// fingerprint length.
+        /// Initializes a new Cell instance with the specified fingerprint length.
         /// </summary>
-        /// <param name="length">
-        /// The fingerprint length required to cover all the properties of this
-        /// <see cref="x2.Cell">Cell</see>-derived object.
-        /// </param>
         protected Cell(int length)
         {
             fingerprint = new Fingerprint(length);
@@ -53,11 +47,6 @@ namespace x2
         /// <summary>
         /// Determines whether the specified object is equal to this Cell object. 
         /// </summary>
-        /// <param name="obj">An object to compare with this Cell.</param>
-        /// <returns>
-        /// <b>true</b> if <c>obj</c> is equal to this Cell; otherwise, 
-        /// <b>false</b>.
-        /// </returns>
         public override bool Equals(object obj)
         {
             if (Object.ReferenceEquals(this, obj))

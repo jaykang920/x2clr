@@ -70,6 +70,7 @@ namespace x2.Tests
         [Test]
         public void TestClear()
         {
+            // Length > 32
             Fingerprint fp = new Fingerprint(65);
             for (int i = 0; i < 65; ++i)
             {
@@ -78,6 +79,19 @@ namespace x2.Tests
             }
             fp.Clear();
             for (int i = 0; i < 65; ++i)
+            {
+                Assert.False(fp.Get(i));
+            }
+
+            // Length <= 32
+            var fp2 = new Fingerprint(6);
+            for (int i = 0; i < 6; ++i)
+            {
+                fp2.Touch(i);
+                Assert.True(fp2.Get(i));
+            }
+            fp.Clear();
+            for (int i = 0; i < 6; ++i)
             {
                 Assert.False(fp.Get(i));
             }
@@ -167,6 +181,14 @@ namespace x2.Tests
             fp2.Touch(32);
             Assert.True(fp1.Equals(fp2));
             Assert.True(fp2.Equals(fp1));
+
+            // Length <= 32
+            var fp5 = new Fingerprint(7);
+            var fp6 = new Fingerprint(7);
+            fp5.Touch(0);
+            Assert.False(fp5.Equals(fp6));
+            fp6.Touch(0);
+            Assert.True(fp5.Equals(fp6));
         }
 
         [Test]

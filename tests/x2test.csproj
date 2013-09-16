@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CapoTests.cs" />
+    <Compile Include="CellTests.cs" />
     <Compile Include="FingerprintTests.cs" />
     <Compile Include="HandlerTests.cs" />
     <Compile Include="HashTests.cs" />

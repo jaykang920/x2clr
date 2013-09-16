@@ -5,9 +5,21 @@
         <const name="Const2">2</const>
     </consts>
 
-    <cell name="SampleCell">
+    <cell name="SampleCell1">
         <property name="Foo" type="int32"/>
         <property name="Bar" type="string"/>
+    </cell>
+
+    <cell name="SampleCell2" extends="SampleCell1">
+        <property name="Baz" type="bool"/>
+    </cell>
+
+    <cell name="SampleCell3" extends="SampleCell1">
+        <property name="Qux" type="bool"/>
+    </cell>
+
+    <cell name="SampleCell4" extends="SampleCell2">
+        <property name="Quux" type="bool"/>
     </cell>
 
     <event name="SampleEvent" id="1">
