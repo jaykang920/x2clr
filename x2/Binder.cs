@@ -16,19 +16,7 @@ namespace x2
         {
             handlerMap = new Dictionary<Event, HandlerSet>();
             filter = new Filter();
-        }
-
-        public void BindGeneric1<T>(T e, Action<T> handler)
-            where T : Event
-        {
-            Bind(e, new Handler<T>(handler));
-        }
-
-        public void BindGeneric2<T, U>(T e, Action<U> handler)
-            where T : Event
-            where U : Event
-        {
-            Bind(e, new Handler<U>(handler));
+            Diag = new Diagnostics(this);
         }
 
         public virtual void Bind(Event e, IHandler handler)
@@ -57,7 +45,7 @@ namespace x2
                     {
                         if (slot.IsEquivalent(fingerprint))
                         {
-                            EventEquivalent equivalent = new EventEquivalent(e, slot);
+                            EventEquivalent equivalent = new EventEquivalent(e, slot, typeId);
                             HandlerSet handlers;
                             if (handlerMap.TryGetValue(equivalent, out handlers))
                             {
@@ -185,6 +173,28 @@ namespace x2
                 return (handlers.Count == 0);
             }
         }
+
+        #region Diagnostics
+
+        /// <summary>
+        /// Gets the diagnostics object.
+        /// </summary>
+        public Diagnostics Diag { get; private set; }
+
+        /// <summary>
+        /// Internal diagnostics helper class.
+        /// </summary>
+        public class Diagnostics
+        {
+            private readonly Binder owner;
+
+            internal Diagnostics(Binder owner)
+            {
+                this.owner = owner;
+            }
+        }
+
+        #endregion
     }
 
     public class SynchronizedBinding : Binder

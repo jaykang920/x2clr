@@ -22,9 +22,21 @@
         <property name="Quux" type="bool"/>
     </cell>
 
-    <event name="SampleEvent" id="1">
+    <event name="SampleEvent1" id="1">
         <property name="Foo" type="int32"/>
         <property name="Bar" type="string"/>
+    </event>
+
+    <event name="SampleEvent2" id="2" extends="SampleEvent1">
+        <property name="Baz" type="bool"/>
+    </event>
+
+    <event name="SampleEvent3" id="3" extends="SampleEvent1">
+        <property name="Qux" type="bool"/>
+    </event>
+
+    <event name="SampleEvent4" id="4" extends="SampleEvent2">
+        <property name="Quux" type="bool"/>
     </event>
 
 </x2>

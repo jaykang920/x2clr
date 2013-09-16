@@ -84,12 +84,12 @@ namespace x2
         #region Diagnostics
 
         /// <summary>
-        /// Gets the diagnostics object for this Pool.
+        /// Gets the diagnostics object.
         /// </summary>
         public Diagnostics Diag { get; private set; }
 
         /// <summary>
-        /// Internal diagnostics helper class for Pool.
+        /// Internal diagnostics helper class.
         /// </summary>
         public class Diagnostics
         {

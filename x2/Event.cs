@@ -148,10 +148,22 @@ namespace x2
             return true;
         }
 
+        public override int GetHashCode()
+        {
+            return GetHashCode(fingerprint, GetTypeId());
+        }
+
+        public int GetHashCode(Fingerprint fingerprint, int typeId)
+        {
+            Hash hash = new Hash(Hash.Seed);
+            hash.Update(typeId);
+            hash.Update(GetHashCode(fingerprint));
+            return hash.Code;
+        }
+
         public override int GetHashCode(Fingerprint fingerprint)
         {
             Hash hash = new Hash(base.GetHashCode(fingerprint));
-            hash.Update(tag.TypeId);
             /*
             FingerprintView fingerprintView =
                 new FingerprintView(fingerprint, tag.Offset);
@@ -278,11 +290,13 @@ namespace x2
     public class EventEquivalent : Event
     {
         private readonly Event e;
+        private readonly int typeId;
 
-        public EventEquivalent(Event e, Fingerprint fingerprint)
+        public EventEquivalent(Event e, Fingerprint fingerprint, int typeId)
             : base(fingerprint)
         {
             this.e = e;
+            this.typeId = typeId;
         }
 
         public override bool EqualsTo(Cell other)
@@ -292,7 +306,7 @@ namespace x2
 
         public override int GetHashCode()
         {
-            return e.GetHashCode(fingerprint);
+            return e.GetHashCode(fingerprint, typeId);
         }
     }
 }
