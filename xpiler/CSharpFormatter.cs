@@ -488,8 +488,16 @@ namespace x2
             foreach (var property in def.Properties)
             {
                 Indent(2);
-                Out.WriteLine("stringBuilder.AppendFormat(\" {0} = {{0}}\", {1});",
-                    property.Name, property.NativeName);
+                if (property.NativeType == "string")
+                {
+                    Out.WriteLine("stringBuilder.AppendFormat(\" {0}=\\\"{{0}}\\\"\", {1}.Replace(\"\\\"\", \"\\\\\\\"\"));",
+                        property.Name, property.NativeName);
+                }
+                else
+                {
+                    Out.WriteLine("stringBuilder.AppendFormat(\" {0}={{0}}\", {1});",
+                        property.Name, property.NativeName);
+                }
             }
             Indent(1); Out.WriteLine("}");
         }

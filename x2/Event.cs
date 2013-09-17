@@ -121,7 +121,7 @@ namespace x2
         /// </returns>
         protected override void Describe(StringBuilder stringBuilder)
         {
-            return;
+            stringBuilder.AppendFormat(" {0}", GetTypeId());
         }
 
         /// <summary>
