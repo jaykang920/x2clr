@@ -97,5 +97,33 @@ namespace x2.Flows
         {
             return queue.TryDequeue(out e);
         }
+
+        /// <summary>
+        /// Wait for a single event of type (T).
+        /// </summary>
+        public bool Wait<T>(T expected, out T actual, TimeSpan timeout)
+            where T : Event
+        {
+            var stopWatch = new System.Diagnostics.Stopwatch();
+            stopWatch.Start();
+            while (stopWatch.Elapsed < timeout)
+            {
+                Event dequeued;
+                if (queue.TryDequeue(out dequeued))
+                {
+                    if (expected.IsEquivalent(dequeued))
+                    {
+                        actual = (T)dequeued;
+                        return true;
+                    }
+
+                    Dispatch(dequeued);
+                }
+
+                Thread.Sleep(1);
+            }
+            actual = null;
+            return false;
+        }
     }
 }
