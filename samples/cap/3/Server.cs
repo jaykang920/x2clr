@@ -36,14 +36,14 @@ namespace x2.Samples.Capitalizer
             public void OnConnect()
             {
                 var e = CapitalizeResp.New();
-                e.SessionHandle = LinkSession.Handle.ToInt64();
+                e.SessionHandle = LinkSession.Handle;
                 Flow.Bind(e, Send);
             }
 
             public void OnDisconnect()
             {
                 var e = CapitalizeResp.New();
-                e.SessionHandle = LinkSession.Handle.ToInt64();
+                e.SessionHandle = LinkSession.Handle;
                 Flow.Unbind(e, Send);
             }
 
