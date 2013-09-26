@@ -251,7 +251,7 @@ namespace x2
         }
     }
 
-    public class ListCell<T> : Cell, IEnumerable<T>
+    public class ListCell<T> : Cell, IEnumerable<T> where T : Cell, new()
     {
         private readonly List<T> list;
 
@@ -275,6 +275,31 @@ namespace x2
         IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public override void Load(Buffer buffer)
+        {
+            int numItems;
+            buffer.Read(out numItems);
+
+            for (int i = 0; i < numItems; ++i)
+            {
+                T item = new T();
+                ((Cell)item).Load(buffer);
+                list.Add(item);
+            }
+        }
+
+        protected override void Dump(Buffer buffer)
+        {
+            base.Dump(buffer);
+            int numItems = (int)list.Count;
+            buffer.Write(numItems);
+
+            foreach (T item in list)
+            {
+                ((Cell)item).Serialize(buffer);
+            }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
