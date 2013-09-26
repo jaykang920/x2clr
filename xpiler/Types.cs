@@ -129,7 +129,7 @@ namespace x2
             string type = null;
             IList<TypeSpec> details = null;
 
-            var backMargin = 1;
+            var backMargin = 0;
             var start = index;
             for (; index < s.Length; ++index)
             {
@@ -139,16 +139,17 @@ namespace x2
                     type = s.Substring(start, index - start).Trim();
                     ++index;
                     details = ParseDetails(s, ref index);
+                    backMargin = 1;
                     break;
                 }
                 else if (c == ',')
                 {
                     ++index;
+                    backMargin = 1;
                     break;
                 }
                 else if (c == ')')
                 {
-                    backMargin = 0;
                     break;
                 }
             }

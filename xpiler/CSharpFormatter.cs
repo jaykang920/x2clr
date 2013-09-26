@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace x2
 {
@@ -108,6 +109,8 @@ namespace x2
             nativeTypes.Add("float32", "float");
             nativeTypes.Add("float64", "double");
             nativeTypes.Add("string", "string");
+            nativeTypes.Add("list", "ListCell");
+            //nativeTypes.Add("map", "MapCell");
 
             defaultValues = new Dictionary<string, string>();
             defaultValues.Add("bool", "false");
@@ -317,7 +320,7 @@ namespace x2
                 Indent(2); Out.WriteLine("{0} o = ({0})other;", def.Name);
                 foreach (var property in def.Properties)
                 {
-                    if (IsPrimitiveType(property.Type))
+                    if (Types.IsPrimitive(property.TypeSpec.Type))
                     {
                         Indent(2); Out.WriteLine("if ({0} != o.{0})", property.NativeName);
                     }
@@ -391,7 +394,7 @@ namespace x2
                 {
                     Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
                     Indent(2); Out.WriteLine("{");
-                    if (IsPrimitiveType(property.Type))
+                    if (Types.IsPrimitive(property.TypeSpec.Type))
                     {
                         Indent(3); Out.WriteLine("if ({0} != o.{0})", property.NativeName);
                     }
@@ -421,13 +424,13 @@ namespace x2
                 {
                     Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
                     Indent(2); Out.WriteLine("{");
-                    if (IsPrimitiveType(property.Type))
+                    if (Types.IsPrimitive(property.TypeSpec.Type))
                     {
                         Indent(3); Out.WriteLine("buffer.Read(out {0});", property.NativeName);
                     }
                     else
                     {
-                        Indent(3); Out.WriteLine("if ({0} == null) {{ {0} = {1}.New(); }}", property.Name, property.Type);
+                        Indent(3); Out.WriteLine("if ({0} == null) {{ {0} = new {1}(); }}", property.Name, property.NativeType);
                         Indent(3); Out.WriteLine("{0}.Load(buffer);", property.NativeName);
                     }
                     Indent(2); Out.WriteLine("}");
@@ -466,7 +469,7 @@ namespace x2
                 {
                     Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
                     Indent(2); Out.WriteLine("{");
-                    if (IsPrimitiveType(property.Type))
+                    if (Types.IsPrimitive(property.TypeSpec.Type))
                     {
                         Indent(3); Out.WriteLine("buffer.Write({0});", property.NativeName);
                     }
@@ -524,13 +527,13 @@ namespace x2
                 property.NativeName = FirstToLower(property.Name);
                 property.Name = FirstToUpper(property.Name);
 
-                if (defaultValues.ContainsKey(property.Type))
+                if (Types.IsPrimitive(property.TypeSpec.Type))
                 {
                     if (String.IsNullOrEmpty(property.DefaultValue))
                     {
-                        property.DefaultValue = defaultValues[property.Type];
+                        property.DefaultValue = defaultValues[property.TypeSpec.Type];
                     }
-                    if (property.Type == "string")
+                    if (property.TypeSpec.Type == "string")
                     {
                         property.DefaultValue = "\"" + property.DefaultValue + "\"";
                     }
@@ -540,27 +543,47 @@ namespace x2
                     property.DefaultValue = "null";
                 }
 
-                if (nativeTypes.ContainsKey(property.Type))
+                string type = property.TypeSpec.Type;
+                if (Types.IsBuiltin(type))
                 {
-                    property.NativeType = nativeTypes[property.Type];
+                    if (Types.IsPrimitive(type))
+                    {
+                        property.NativeType = nativeTypes[type];
+                    }
+                    else  // collection type
+                    {
+                        property.NativeType = FormatCollectionType(property.TypeSpec);
+                    }
                 }
-                else
+                else  // custom type
                 {
-                    if (property.Type.ToLower() == "list")
-                    {
-                        property.NativeType = String.Format("ListCell<{0}>", property.Subtype);
-                    }
-                    else
-                    {
-                        property.NativeType = property.Type;
-                    }
+                    property.NativeType = type;
                 }
             }
         }
 
-        private static bool IsPrimitiveType(string type)
+        private static string FormatCollectionType(TypeSpec typeSpec)
         {
-            return nativeTypes.ContainsKey(type);
+            var sb = new StringBuilder(nativeTypes[typeSpec.Type]);
+            if (!Object.ReferenceEquals(typeSpec.Details, null))
+            {
+                sb.Append('<');
+                var leading = true;
+                foreach (var detail in typeSpec.Details)
+                {
+                    if (leading)
+                    {
+                        leading = false;
+                    }
+                    else
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(detail.ToString());
+                }
+                sb.Append('>');
+            }
+            return sb.ToString();
         }
 
         #region Indentation

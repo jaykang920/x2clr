@@ -178,8 +178,6 @@ namespace x2
             }
             var property = new CellDef.Property();
             property.Name = name;
-            property.Type = type;
-            property.Subtype = elem.GetAttribute("subtype");
             property.DefaultValue = elem.InnerText.Trim();
             def.Properties.Add(property);
 

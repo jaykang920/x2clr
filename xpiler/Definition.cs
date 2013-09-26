@@ -39,13 +39,10 @@ namespace x2
         {
             public int Index { get; set; }
             public string Name { get; set; }
-            public string Type { get; set; }
-            public string Subtype { get; set; }
+            public TypeSpec TypeSpec { get; set; }
             public string DefaultValue { get; set; }
             public string NativeName { get; set; }
             public string NativeType { get; set; }
-
-            public TypeSpec TypeSpec { get; set; }
         }
 
         public string Base { get; set; }
