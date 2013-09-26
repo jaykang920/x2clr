@@ -182,6 +182,13 @@ namespace x2
             property.Subtype = elem.GetAttribute("subtype");
             property.DefaultValue = elem.InnerText.Trim();
             def.Properties.Add(property);
+
+            property.TypeSpec = Types.Parse(type);
+            if (property.TypeSpec == null)
+            {
+                return false;
+            }
+
             return true;
         }
     }

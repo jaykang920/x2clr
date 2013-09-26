@@ -11,8 +11,8 @@ namespace x2
         public string BaseName { get; set; }
         public string Namespace { get; set; }
 
-        public List<Definition> Definitions { get { return definitions; } }
+        public IList<Definition> Definitions { get { return definitions; } }
 
-        private readonly List<Definition> definitions = new List<Definition>();
+        private readonly IList<Definition> definitions = new List<Definition>();
     }
 }

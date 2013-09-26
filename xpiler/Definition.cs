@@ -44,6 +44,8 @@ namespace x2
             public string DefaultValue { get; set; }
             public string NativeName { get; set; }
             public string NativeType { get; set; }
+
+            public TypeSpec TypeSpec { get; set; }
         }
 
         public string Base { get; set; }

@@ -54,13 +54,13 @@ namespace x2
         private void FormatBody(CSharpFormatterContext context)
         {
             var @out = context.Out;
-            var leading = true;
             if (!String.IsNullOrEmpty(context.Doc.Namespace))
             {
                 @out.WriteLine("namespace {0}", context.Doc.Namespace.Replace('/', '.'));
                 @out.WriteLine("{");
                 context.Indent();
             }
+            var leading = true;
             foreach (var def in context.Doc.Definitions)
             {
                 if (leading)
