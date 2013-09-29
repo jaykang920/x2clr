@@ -543,23 +543,19 @@ namespace x2
                     property.DefaultValue = "null";
                 }
 
-                string type = property.TypeSpec.Type;
-                if (Types.IsBuiltin(type))
-                {
-                    if (Types.IsPrimitive(type))
-                    {
-                        property.NativeType = nativeTypes[type];
-                    }
-                    else  // collection type
-                    {
-                        property.NativeType = FormatCollectionType(property.TypeSpec);
-                    }
-                }
-                else  // custom type
-                {
-                    property.NativeType = type;
-                }
+                property.NativeType = FormatTypeSpec(property.TypeSpec);
             }
+        }
+
+        private static string FormatTypeSpec(TypeSpec typeSpec)
+        {
+            string type = typeSpec.Type;
+            if (!Types.IsBuiltin(type))
+            {
+                return type;  // custom type
+            }
+            return Types.IsPrimitive(type) ? nativeTypes[type]
+                                           : FormatCollectionType(typeSpec);
         }
 
         private static string FormatCollectionType(TypeSpec typeSpec)
@@ -579,7 +575,7 @@ namespace x2
                     {
                         sb.Append(", ");
                     }
-                    sb.Append(detail.ToString());
+                    sb.Append(FormatTypeSpec(detail));
                 }
                 sb.Append('>');
             }
