@@ -165,24 +165,24 @@ namespace x2
 
         protected void Dispatch(Event e)
         {
-            try
+            int chainLength = binder.BuildHandlerChain(e, handlerChain);
+            if (chainLength == 0)
             {
-                int chainLength = binder.BuildHandlerChain(e, handlerChain);
-                if (chainLength == 0)
-                {
-                    // unhandled event
-                    return;
-                }
-                foreach (var handler in handlerChain)
+                // unhandled event
+                return;
+            }
+            foreach (var handler in handlerChain)
+            {
+                try
                 {
                     handler.Invoke(e);
                 }
-                handlerChain.Clear();
+                catch (Exception ex)
+                {
+                    ExceptionHandler(ex);
+                }
             }
-            catch (Exception ex)
-            {
-                ExceptionHandler(ex);
-            }
+            handlerChain.Clear();
         }
 
         protected virtual void SetUp()
