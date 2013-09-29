@@ -29,6 +29,21 @@ namespace x2
             set { currentFlow = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the default exception handler for all flows.
+        /// </summary>
+        public static Action<Exception> DefaultExceptionHandler { get; set; }
+
+        /// <summary>
+        /// Gets or sets the exception handler for this flow.
+        /// </summary>
+        public Action<Exception> ExceptionHandler { get; set; }
+
+        static Flow()
+        {
+            DefaultExceptionHandler = OnException;
+        }
+
         public static void Bind<T>(T e, Action<T> handler)
             where T : Event
         {
@@ -46,6 +61,8 @@ namespace x2
             this.binder = binder;
             caseStack = new CaseStack();
             hubSet = new HubSet();
+
+            ExceptionHandler = DefaultExceptionHandler;
         }
 
         public static void Post(Event e)
@@ -72,6 +89,14 @@ namespace x2
         public static void StopAll()
         {
             Hub.StopAllFlows();
+        }
+
+        /// <summary>
+        /// Default exception handler.
+        /// </summary>
+        private static void OnException(Exception e)
+        {
+            throw new Exception("", e);
         }
 
         public void Unbind(Event e, IHandler handler)
@@ -140,17 +165,24 @@ namespace x2
 
         protected void Dispatch(Event e)
         {
-            int chainLength = binder.BuildHandlerChain(e, handlerChain);
-            if (chainLength == 0)
+            try
             {
-                // unhandled event
-                return;
+                int chainLength = binder.BuildHandlerChain(e, handlerChain);
+                if (chainLength == 0)
+                {
+                    // unhandled event
+                    return;
+                }
+                foreach (var handler in handlerChain)
+                {
+                    handler.Invoke(e);
+                }
+                handlerChain.Clear();
             }
-            foreach (var handler in handlerChain)
+            catch (Exception ex)
             {
-                handler.Invoke(e);
+                ExceptionHandler(ex);
             }
-            handlerChain.Clear();
         }
 
         protected virtual void SetUp()
