@@ -111,13 +111,14 @@ namespace x2.Flows
                 Event dequeued;
                 if (queue.TryDequeue(out dequeued))
                 {
+                    Dispatch(dequeued);
+
                     if (expected.IsEquivalent(dequeued))
                     {
                         actual = (T)dequeued;
                         return true;
                     }
 
-                    Dispatch(dequeued);
                 }
 
                 Thread.Sleep(1);
