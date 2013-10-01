@@ -233,6 +233,20 @@ namespace x2
             base.Dump(buffer);
         }
 
+        #region Convenience methods
+
+        public void Post()
+        {
+            Flow.Post(this);
+        }
+
+        public void PostAway()
+        {
+            Flow.PostAway(this);
+        }
+
+        #endregion
+
         /// <summary>
         /// Supports light-weight custom type hierarchy for Event and its derived 
         /// classes.
