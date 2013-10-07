@@ -255,6 +255,8 @@ namespace x2
     {
         private readonly List<T> list;
 
+        public int Count { get { return list.Count; } }
+
         public ListCell()
             : base(0)
         {
