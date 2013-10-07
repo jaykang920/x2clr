@@ -50,6 +50,11 @@ namespace x2
             @out.WriteLine();
             @out.WriteLine("using x2;");
             @out.WriteLine();
+
+            foreach (var reference in context.Doc.References)
+            {
+                reference.Format(context);
+            }
         }
 
         private void FormatBody(CSharpFormatterContext context)
@@ -124,6 +129,12 @@ namespace x2
         }
 
         public string Target { get; set; }
+
+        public override void FormatReference(Reference reference)
+        {
+            Indent(0); Out.WriteLine("using {0};", reference.Target);
+            Out.WriteLine();
+        }
 
         public override void FormatConsts(ConstsDef def)
         {

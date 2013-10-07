@@ -41,6 +41,12 @@ namespace x2
                 var elem = (XmlElement)node;
                 switch (elem.Name)
                 {
+                    case "ref":
+                        if (ParseReference(doc, elem) == false)
+                        {
+                            return false;
+                        }
+                        break;
                     case "consts":
                         if (ParseConsts(doc, elem) == false)
                         {
@@ -58,6 +64,19 @@ namespace x2
                         break;
                 }
             }
+            return true;
+        }
+
+        private bool ParseReference(Document doc, XmlElement elem)
+        {
+            var target = elem.GetAttribute("target");
+            if (String.IsNullOrEmpty(target))
+            {
+                return false;
+            }
+            Reference reference = new Reference();
+            reference.Target = target;
+            doc.References.Add(reference);
             return true;
         }
 

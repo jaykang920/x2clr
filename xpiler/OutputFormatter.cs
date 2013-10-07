@@ -20,6 +20,7 @@ namespace x2
         public Document Doc { get; set; }
         public StreamWriter Out { get; set; }
 
+        public abstract void FormatReference(Reference reference);
         public abstract void FormatConsts(ConstsDef def);
         public abstract void FormatCell(CellDef def);
     }

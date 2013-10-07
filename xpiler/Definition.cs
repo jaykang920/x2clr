@@ -6,6 +6,16 @@ using System.Collections.Generic;
 
 namespace x2
 {
+    class Reference
+    {
+        public string Target { get; set; }
+
+        public void Format(FormatterContext context)
+        {
+            context.FormatReference(this);
+        }
+    }
+
     abstract class Definition
     {
         public string Name { get; set; }
