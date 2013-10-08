@@ -15,7 +15,7 @@ namespace x2
         public override string ToString()
         {
             var sb = new StringBuilder(Type);
-            if (!Object.ReferenceEquals(Details, null))
+            if ((object)Details != null)
             {
                 sb.Append('(');
                 var leading = true;
@@ -153,7 +153,7 @@ namespace x2
                     break;
                 }
             }
-            if (Object.ReferenceEquals(type, null))
+            if ((object)type == null)
             {
                 type = s.Substring(start, index - start - backMargin).Trim();
             }
@@ -181,7 +181,7 @@ namespace x2
                 else
                 {
                     var detail = ParseTypeSpec(s, ref index);
-                    if (!Object.ReferenceEquals(detail, null))
+                    if ((object)detail != null)
                     {
                         details.Add(detail);
                         --index;

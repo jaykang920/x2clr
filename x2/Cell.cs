@@ -209,6 +209,28 @@ namespace x2
             fingerprint.Dump(buffer);
         }
 
+        #region Operators
+
+        public static bool operator ==(Cell x, Cell y)
+        {
+            if (Object.ReferenceEquals(x, y))
+            {
+                return true;
+            }
+            if (((object)x == null) || ((object)y == null))
+            {
+                return false;
+            }
+            return x.Equals(y);
+        }
+
+        public static bool operator !=(Cell x, Cell y)
+        {
+            return !(x == y);
+        }
+
+        #endregion
+
         /// <summary>
         /// Supports light-weight custom type hierarchy for Cell and its subclasses.
         /// </summary>

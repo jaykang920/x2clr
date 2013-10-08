@@ -331,14 +331,14 @@ namespace x2
                 Indent(2); Out.WriteLine("{0} o = ({0})other;", def.Name);
                 foreach (var property in def.Properties)
                 {
-                    if (Types.IsPrimitive(property.TypeSpec.Type))
-                    {
+                    //if (Types.IsPrimitive(property.TypeSpec.Type))
+                    //{
                         Indent(2); Out.WriteLine("if ({0} != o.{0})", property.NativeName);
-                    }
-                    else
-                    {
-                        Indent(2); Out.WriteLine("if (!{0}.Equals(o.{0}))", property.NativeName);
-                    }
+                    //}
+                    //else
+                    //{
+                    //    Indent(2); Out.WriteLine("if (!{0}.Equals(o.{0}))", property.NativeName);
+                    //}
                     Indent(2); Out.WriteLine("{");
                     Indent(3); Out.WriteLine("return false;");
                     Indent(2); Out.WriteLine("}");
@@ -411,7 +411,7 @@ namespace x2
                     }
                     else
                     {
-                        Indent(3); Out.WriteLine("if (!{0}.IsEquivalent(o.{0}))", property.NativeName);
+                        Indent(3); Out.WriteLine("if ((object){0} == null || !{0}.IsEquivalent(o.{0}))", property.NativeName);
                     }
                     Indent(3); Out.WriteLine("{");
                     Indent(4); Out.WriteLine("return false;");
@@ -572,7 +572,7 @@ namespace x2
         private static string FormatCollectionType(TypeSpec typeSpec)
         {
             var sb = new StringBuilder(nativeTypes[typeSpec.Type]);
-            if (!Object.ReferenceEquals(typeSpec.Details, null))
+            if ((object)typeSpec.Details != null)
             {
                 sb.Append('<');
                 var leading = true;
