@@ -21,7 +21,7 @@ namespace x2
 
         protected readonly CaseStack caseStack;
 
-        private readonly HubSet hubSet;
+        private Hub hub;  // the hub to which this flow is attached
 
         public/*internal*/ static Flow CurrentFlow
         {
@@ -60,19 +60,18 @@ namespace x2
         {
             this.binder = binder;
             caseStack = new CaseStack();
-            hubSet = new HubSet();
 
             ExceptionHandler = DefaultExceptionHandler;
         }
 
         public static void Post(Event e)
         {
-            currentFlow.hubSet.Post(e);
+            currentFlow.hub.Post(e);
         }
 
         public static void PostAway(Event e)
         {
-            currentFlow.hubSet.Post(e, currentFlow);
+            currentFlow.hub.Post(e, currentFlow);
         }
 
         /// <summary>
@@ -105,12 +104,12 @@ namespace x2
 
         protected void Publish(Event e)
         {
-            hubSet.Post(e);
+            hub.Post(e);
         }
 
         protected void PublishAway(Event e)
         {
-            hubSet.Post(e, currentFlow);
+            hub.Post(e, currentFlow);
         }
 
         public void Subscribe<T>(T e, Action<T> handler)
@@ -132,7 +131,7 @@ namespace x2
         {
             if (hub.AttachInternal(this))
             {
-                hubSet.Add(hub);
+                this.hub = hub;
             }
         }
 
@@ -140,13 +139,8 @@ namespace x2
         {
             if (hub.DetachInternal(this))
             {
-                hubSet.Remove(hub);
+                this.hub = null;
             }
-        }
-
-        public void DetachFromAll()
-        {
-            hubSet.Clear(this);
         }
 
         public Flow Add(ICase c)
@@ -209,90 +203,6 @@ namespace x2
         private void OnFlowStop(FlowStop e)
         {
             OnStop();
-        }
-
-        private class HubSet
-        {
-            private List<Hub> hubs = new List<Hub>();
-            private ReaderWriterLock rwlock = new ReaderWriterLock();
-
-            internal void Add(Hub hub)
-            {
-                rwlock.AcquireWriterLock(Timeout.Infinite);
-                try
-                {
-                    if (!hubs.Contains(hub))
-                    {
-                        hubs.Add(hub);
-                    }
-                }
-                finally
-                {
-                    rwlock.ReleaseWriterLock();
-                }
-            }
-
-            internal void Remove(Hub hub)
-            {
-                rwlock.AcquireWriterLock(Timeout.Infinite);
-                try
-                {
-                    hubs.Remove(hub);
-                }
-                finally
-                {
-                    rwlock.ReleaseWriterLock();
-                }
-            }
-
-            internal void Clear(Flow flow)
-            {
-                rwlock.AcquireWriterLock(Timeout.Infinite);
-                try
-                {
-                    foreach (Hub hub in hubs)
-                    {
-                        hub.Detach(flow);
-                    }
-                    hubs.Clear();
-                }
-                finally
-                {
-                    rwlock.ReleaseWriterLock();
-                }
-            }
-
-            internal void Post(Event e)
-            {
-                rwlock.AcquireReaderLock(Timeout.Infinite);
-                try
-                {
-                    foreach (Hub hub in hubs)
-                    {
-                        hub.Post(e);
-                    }
-                }
-                finally
-                {
-                    rwlock.ReleaseReaderLock();
-                }
-            }
-
-            internal void Post(Event e, Flow except)
-            {
-                rwlock.AcquireReaderLock(Timeout.Infinite);
-                try
-                {
-                    foreach (Hub hub in hubs)
-                    {
-                        hub.Post(e, except);
-                    }
-                }
-                finally
-                {
-                    rwlock.ReleaseReaderLock();
-                }
-            }
         }
     }
 }
