@@ -2,6 +2,7 @@
 // See the file COPYING for license details.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -118,10 +119,22 @@ namespace x2
             binder.Bind(e, new Handler<T>(handler));
         }
 
+        public void SubscribeCoroutine<T>(T e, Func<T, IEnumerator> handler)
+            where T : Event
+        {
+            binder.Bind(e, new CoroutineHandler<T>(handler));
+        }
+
         public void Unsubscribe<T>(T e, Action<T> handler)
             where T : Event
         {
             binder.Unbind(e, new Handler<T>(handler));
+        }
+
+        public void UnsubscribeCoroutine<T>(T e, Func<T, IEnumerator> handler)
+            where T : Event
+        {
+            binder.Unbind(e, new CoroutineHandler<T>(handler));
         }
 
         public abstract void StartUp();
