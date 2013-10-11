@@ -9,13 +9,14 @@ namespace x2
 {
     public sealed class Hub
     {
-        private const string defaultName = "anonymous";
-        private static readonly HubMap hubMap = new HubMap();
-        private readonly FlowSet flowSet = new FlowSet();
+        private const string defaultName = "default";
+
+        private static readonly HubMap hubMap;
+        private readonly FlowSet flowSet;
         private readonly string name;
 
         /// <summary>
-        ///   Gets the name of the hub.
+        /// Gets the name of this hub.
         /// </summary>
         public string Name
         {
@@ -24,17 +25,19 @@ namespace x2
 
         static Hub()
         {
+            hubMap = new HubMap();
             // Create the default(anonymous) hub.
             Create();
         }
 
         private Hub(string name)
         {
+            flowSet = new FlowSet();
             this.name = name;
         }
 
         /// <summary>
-        ///   Creates a default(anonymous) hub.
+        /// Creates a default(anonymous) hub.
         /// </summary>
         public static Hub Create()
         {
@@ -42,7 +45,7 @@ namespace x2
         }
 
         /// <summary>
-        ///   Creates a named hub.
+        /// Creates a named hub.
         /// </summary>
         public static Hub Create(string name)
         {
@@ -54,7 +57,7 @@ namespace x2
         }
 
         /// <summary>
-        ///   Gets the default(anonymous) hub.
+        /// Gets the default(anonymous) hub.
         /// </summary>
         public static Hub Get()
         {
@@ -62,7 +65,7 @@ namespace x2
         }
 
         /// <summary>
-        ///   Gets the named hub.
+        /// Gets the named hub.
         /// </summary>
         public static Hub Get(string name)
         {

@@ -88,33 +88,83 @@ namespace x2.Flows
         }
     }
 
+    // TODO: Repeated occurrence, scheduling, canceling, time-scale factor
     public sealed class TimeFlow : Flow
     {
-        public struct Token
-        {
-            public DateTime key;
-            public Event value;
+        private const string defaultName = "default";
 
-            public Token(DateTime key, Event value)
-            {
-                this.key = key;
-                this.value = value;
-            }
-        }
+        private static readonly Map map = new Map();
+
+        private readonly string name;
 
         private readonly IQueue<Event> incomming;
         private readonly PriorityQueue<DateTime, Event> outgoing;
         private readonly object syncRoot;
         private Thread thread;
 
-        public TimeFlow()
+        /// <summary>
+        /// Gets the default(anonymous) TimeFlow.
+        /// </summary>
+        public static TimeFlow Default { get { return Get(); } }
+
+        /// <summary>
+        /// Gets the name of this TimeFlow.
+        /// </summary>
+        public string Name
+        {
+            get { return name; }
+        }
+
+
+        private TimeFlow(string name)
             : base(new Binder())
         {
+            this.name = name;
+
             incomming = new UnboundedQueue<Event>();
+            outgoing = new PriorityQueue<DateTime, Event>();
             syncRoot = new Object();
             thread = null;
+        }
 
-            outgoing = new PriorityQueue<DateTime, Event>();
+        /// <summary>
+        /// Creates a default(anonymous) TimeFlow.
+        /// </summary>
+        public static TimeFlow Create()
+        {
+            return Create(defaultName);
+        }
+
+        /// <summary>
+        /// Creates a named TimeFlow.
+        /// </summary>
+        public static TimeFlow Create(string name)
+        {
+            if (name == null)
+            {
+                throw new NullReferenceException();
+            }
+            return map.Create(name);
+        }
+
+        /// <summary>
+        /// Gets the default(anonymous) TimeFlow.
+        /// </summary>
+        public static TimeFlow Get()
+        {
+            return Get(defaultName);
+        }
+
+        /// <summary>
+        /// Gets the named TimeFlow.
+        /// </summary>
+        public static TimeFlow Get(string name)
+        {
+            if (name == null)
+            {
+                throw new NullReferenceException();
+            }
+            return map.Get(name);
         }
         
         protected internal override void Feed(Event e)
@@ -221,6 +271,63 @@ namespace x2.Flows
 
             handlerChain = null;
             currentFlow = null;
+        }
+
+        private class Map
+        {
+            private readonly IDictionary<string, TimeFlow> timeFlows;
+            private readonly ReaderWriterLock rwlock;
+
+            internal Map()
+            {
+                timeFlows = new Dictionary<string, TimeFlow>();
+                rwlock = new ReaderWriterLock();
+            }
+
+            internal TimeFlow Get(string name)
+            {
+                rwlock.AcquireReaderLock(Timeout.Infinite);
+                try
+                {
+                    TimeFlow timeFlow;
+                    return timeFlows.TryGetValue(name, out timeFlow) ? timeFlow : null;
+                }
+                finally
+                {
+                    rwlock.ReleaseReaderLock();
+                }
+            }
+
+            internal TimeFlow Create(string name)
+            {
+                rwlock.AcquireWriterLock(Timeout.Infinite);
+                try
+                {
+                    TimeFlow timeFlow;
+                    if (!timeFlows.TryGetValue(name, out timeFlow))
+                    {
+                        timeFlow = new TimeFlow(name);
+                        timeFlows.Add(name, timeFlow);
+                    }
+                    return timeFlow;
+                }
+                finally
+                {
+                    rwlock.ReleaseWriterLock();
+                }
+            }
+        }
+
+        public struct Token
+        {
+            public DateTime key;
+            public Event value;
+
+            public Token(DateTime key, Event value)
+            {
+                this.key = key;
+                this.value = value;
+            }
         }
     }
 }
