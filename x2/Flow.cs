@@ -129,6 +129,10 @@ namespace x2
 
         public void AttachTo(Hub hub)
         {
+            if ((object)this.hub != null && !Object.ReferenceEquals(this.hub, hub))
+            {
+                throw new InvalidOperationException();
+            }
             if (hub.AttachInternal(this))
             {
                 this.hub = hub;
@@ -137,6 +141,10 @@ namespace x2
 
         public void DetachFrom(Hub hub)
         {
+            if ((object)this.hub == null || !Object.ReferenceEquals(this.hub, hub))
+            {
+                throw new InvalidOperationException();
+            }
             if (hub.DetachInternal(this))
             {
                 this.hub = null;
