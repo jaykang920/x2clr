@@ -26,22 +26,23 @@ namespace x2
         private bool running;
         private bool started;
 
-        private Coroutine(IEnumerator routine)
-        {
-            this.routine = routine;
-            running = (routine != null);
-        }
+        public object Context { get; set; }
 
         public override object Current
         {
             get { return (running ? routine.Current : null); }
         }
 
-        public static Coroutine Start(IEnumerator routine)
+        public Coroutine()
         {
-            Coroutine coroutine = new Coroutine(routine);
-            coroutine.Continue();
-            return coroutine;
+
+        }
+
+        public void Start(IEnumerator routine)
+        {
+            this.routine = routine;
+            running = (routine != null);
+            MoveNext();
         }
 
         public override bool MoveNext()
@@ -71,12 +72,9 @@ namespace x2
                         return true;
                     }
                 }
-                else
+                if (routine.MoveNext())
                 {
-                    if (routine.MoveNext())
-                    {
-                        return true;
-                    }
+                    return true;
                 }
                 running = false;
             }

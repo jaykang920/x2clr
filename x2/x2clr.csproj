@@ -42,7 +42,8 @@
   <ItemGroup>
     <Compile Include="Capo.cs" />
     <Compile Include="Coroutine.cs" />
-    <Compile Include="YieldInstructions\WaitForSeconds.cs" />
+    <Compile Include="Events\TimeFlowEvents.cs" />
+    <Compile Include="Yields\WaitForSeconds.cs" />
     <Compile Include="Flows\TimeFlow.cs" />
     <Compile Include="Link.cs" />
     <Compile Include="Pool.cs" />

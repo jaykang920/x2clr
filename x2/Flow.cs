@@ -51,7 +51,19 @@ namespace x2
             currentFlow.Subscribe(e, handler);
         }
 
+        public static void Bind<T>(T e, Func<T, Coroutine, IEnumerator> handler)
+            where T : Event
+        {
+            currentFlow.Subscribe(e, handler);
+        }
+
         public static void Unbind<T>(T e, Action<T> handler)
+            where T : Event
+        {
+            currentFlow.Unsubscribe(e, handler);
+        }
+
+        public static void Unbind<T>(T e, Func<T, Coroutine, IEnumerator> handler)
             where T : Event
         {
             currentFlow.Unsubscribe(e, handler);
@@ -119,7 +131,7 @@ namespace x2
             binder.Bind(e, new Handler<T>(handler));
         }
 
-        public void SubscribeCoroutine<T>(T e, Func<T, IEnumerator> handler)
+        public void Subscribe<T>(T e, Func<T, Coroutine, IEnumerator> handler)
             where T : Event
         {
             binder.Bind(e, new CoroutineHandler<T>(handler));
@@ -131,7 +143,7 @@ namespace x2
             binder.Unbind(e, new Handler<T>(handler));
         }
 
-        public void UnsubscribeCoroutine<T>(T e, Func<T, IEnumerator> handler)
+        public void Unsubscribe<T>(T e, Func<T, Coroutine, IEnumerator> handler)
             where T : Event
         {
             binder.Unbind(e, new CoroutineHandler<T>(handler));

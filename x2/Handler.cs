@@ -71,11 +71,11 @@ namespace x2
     public struct CoroutineHandler<T> : IHandler
         where T : Event
     {
-        private readonly Func<T, IEnumerator> action;
+        private readonly Func<T, Coroutine, IEnumerator> action;
 
         public Delegate Action { get { return action; } }
 
-        public CoroutineHandler(Func<T, IEnumerator> action)
+        public CoroutineHandler(Func<T, Coroutine, IEnumerator> action)
         {
             this.action = action;
         }
@@ -117,7 +117,8 @@ namespace x2
 
         public void Invoke(Event e)
         {
-            Coroutine.Start(action((T)e));
+            Coroutine coroutine = new Coroutine();
+            coroutine.Start(action((T)e, coroutine));
         }
     }
 }

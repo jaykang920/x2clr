@@ -12,5 +12,8 @@ namespace x2.Events
         FlowStop = -2,
         LinkSessionConnected = -3,
         LinkSessionDisconnected = -4,
+        // TimeFlow
+        TimeoutEvent = -5,
+        PeriodicEvent = -6,
     }
 }
