@@ -10,10 +10,8 @@ using x2.Queues;
 
 namespace x2.Flows
 {
-    public class MultiThreadedFlow : Flow
+    public class MultiThreadedFlow : EventBasedFlow
     {
-        protected readonly IQueue<Event> queue;
-        protected readonly object syncRoot;
         protected readonly List<Thread> threads;
         protected int numThreads;
 
@@ -23,17 +21,10 @@ namespace x2.Flows
         }
         
         public MultiThreadedFlow(IQueue<Event> queue, int numThreads)
-            : base(new SynchronizedBinding())
+            : base(queue, new SynchronizedBinding())
         {
-            this.queue = queue;
-            syncRoot = new Object();
             threads = new List<Thread>();
             this.numThreads = numThreads;
-        }
-
-        protected internal override void Feed(Event e)
-        {
-            queue.Enqueue(e);
         }
 
         public override void StartUp()
@@ -78,26 +69,6 @@ namespace x2.Flows
                 caseStack.TearDown(this);
                 TearDown();
             }
-        }
-
-        private void Run()
-        {
-            currentFlow = this;
-            handlerChain = new List<IHandler>();
-
-            while (true)
-            {
-                Event e = queue.Dequeue();
-                if (e == null)
-                {
-                    break;
-                }
-                Dispatch(e);
-                Thread.Sleep(1);
-            }
-
-            handlerChain = null;
-            currentFlow = null;
         }
     }
 }

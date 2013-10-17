@@ -29,7 +29,7 @@ namespace x2.Flows
             running = false;
         }
 
-        protected internal override void Feed(Event e)
+        public override void Feed(Event e)
         {
             queue.Enqueue(e);
         }

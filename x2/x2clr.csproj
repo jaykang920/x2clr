@@ -43,6 +43,8 @@
     <Compile Include="Capo.cs" />
     <Compile Include="Coroutine.cs" />
     <Compile Include="Events\TimeFlowEvents.cs" />
+    <Compile Include="Flows\EventBasedFlow.cs" />
+    <Compile Include="Flows\FrameBasedFlow.cs" />
     <Compile Include="Yields\WaitForSeconds.cs" />
     <Compile Include="Flows\TimeFlow.cs" />
     <Compile Include="Link.cs" />

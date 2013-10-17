@@ -10,10 +10,8 @@ using x2.Queues;
 
 namespace x2.Flows
 {
-    public class SingleThreadedFlow : Flow
+    public class SingleThreadedFlow : EventBasedFlow
     {
-        protected readonly IQueue<Event> queue;
-        protected readonly object syncRoot;
         protected Thread thread;
 
         public SingleThreadedFlow()
@@ -22,16 +20,9 @@ namespace x2.Flows
         }
         
         public SingleThreadedFlow(IQueue<Event> queue)
-            : base(new Binder())
+            : base(queue, new Binder())
         {
-            this.queue = queue;
-            syncRoot = new Object();
             thread = null;
-        }
-
-        protected internal override void Feed(Event e)
-        {
-            queue.Enqueue(e);
         }
 
         public override void StartUp()
@@ -66,26 +57,6 @@ namespace x2.Flows
                 caseStack.TearDown(this);
                 TearDown();
             }
-        }
-
-        private void Run()
-        {
-            currentFlow = this;
-            handlerChain = new List<IHandler>();
-
-            while (true)
-            {
-                Event e = queue.Dequeue();
-                if (e == null)
-                {
-                    break;
-                }
-                Dispatch(e);
-                Thread.Sleep(1);
-            }
-
-            handlerChain = null;
-            currentFlow = null;
         }
     }
 }

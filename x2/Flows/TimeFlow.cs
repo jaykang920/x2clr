@@ -89,18 +89,14 @@ namespace x2.Flows
     }
 
     // TODO: Repeated occurrence, scheduling, canceling, time-scale factor
-    public sealed class TimeFlow : Flow
+    public sealed class TimeFlow : FrameBasedFlow
     {
         private const string defaultName = "default";
 
         private static readonly Map map = new Map();
 
         private readonly string name;
-
-        private readonly IQueue<Event> incomming;
-        private readonly PriorityQueue<DateTime, Event> outgoing;
-        private readonly object syncRoot;
-        private Thread thread;
+        private readonly PriorityQueue<DateTime, Event> reserved;
 
         /// <summary>
         /// Gets the default(anonymous) TimeFlow.
@@ -115,16 +111,10 @@ namespace x2.Flows
             get { return name; }
         }
 
-
         private TimeFlow(string name)
-            : base(new Binder())
         {
             this.name = name;
-
-            incomming = new UnboundedQueue<Event>();
-            outgoing = new PriorityQueue<DateTime, Event>();
-            syncRoot = new Object();
-            thread = null;
+            reserved = new PriorityQueue<DateTime, Event>();
         }
 
         /// <summary>
@@ -167,45 +157,6 @@ namespace x2.Flows
             return map.Get(name);
         }
         
-        protected internal override void Feed(Event e)
-        {
-            incomming.Enqueue(e);
-        }
-
-        public override void StartUp()
-        {
-            lock (syncRoot)
-            {
-                if (thread != null)
-                {
-                    return;
-                }
-
-                SetUp();
-                caseStack.SetUp(this);
-                thread = new Thread(this.Run);
-                thread.Start();
-                incomming.Enqueue(new FlowStart());
-            }
-        }
-
-        public override void ShutDown()
-        {
-            lock (syncRoot)
-            {
-                if (thread == null)
-                {
-                    return;
-                }
-                incomming.Close(new FlowStop());
-                thread.Join();
-                thread = null;
-
-                caseStack.TearDown(this);
-                TearDown();
-            }
-        }
-
         public Token Reserve(TimeSpan delay, Event e)
         {
             return Reserve(DateTime.Now + delay, e);
@@ -213,64 +164,45 @@ namespace x2.Flows
 
         public Token Reserve(DateTime when, Event e)
         {
-            lock (outgoing)
+            lock (reserved)
             {
-                outgoing.Enqueue(when, e);
+                reserved.Enqueue(when, e);
             }
             return new Token(when, e);
         }
 
         public void Cancel(Token token)
         {
-            lock (outgoing)
+            lock (reserved)
             {
-                outgoing.Remove(token.key, token.value);
+                reserved.Remove(token.key, token.value);
             }
         }
 
-        private void Run()
+        protected override void Start() { }
+        protected override void Stop() { }
+
+        protected override void Update()
         {
-            currentFlow = this;
-            handlerChain = new List<IHandler>();
-
-            while (true)
+            List<Event> events = null;
+            lock (reserved)
             {
-                Event e;
-                if (incomming.TryDequeue(out e))
+                if (reserved.Count != 0)
                 {
-                    Dispatch(e);
-
-                    if (e.GetTypeId() == (int)BuiltinType.FlowStop)
+                    DateTime next = reserved.Peek();
+                    if (DateTime.Now > next)
                     {
-                        break;
+                        events = reserved.DequeueBundle();
                     }
                 }
-
-                List<Event> events = null;
-                lock (outgoing)
-                {
-                    if (outgoing.Count != 0)
-                    {
-                        DateTime next = outgoing.Peek();
-                        if (DateTime.Now > next)
-                        {
-                            events = outgoing.DequeueBundle();
-                        }
-                    }
-                }
-                if ((object)events != null)
-                {
-                    foreach (var deferred in events)
-                    {
-                        PublishAway(deferred);
-                    }
-                }
-
-                Thread.Sleep(1);
             }
-
-            handlerChain = null;
-            currentFlow = null;
+            if ((object)events != null)
+            {
+                foreach (var deferred in events)
+                {
+                    PublishAway(deferred);
+                }
+            }
         }
 
         private class Map

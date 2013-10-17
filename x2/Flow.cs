@@ -188,7 +188,7 @@ namespace x2
             return this;
         }
 
-        protected internal abstract void Feed(Event e);
+        public abstract void Feed(Event e);
 
         protected void Dispatch(Event e)
         {
