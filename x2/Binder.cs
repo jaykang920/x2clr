@@ -19,7 +19,7 @@ namespace x2
             Diag = new Diagnostics(this);
         }
 
-        public virtual void Bind(Event e, IHandler handler)
+        public virtual Token Bind(Event e, IHandler handler)
         {
             filter.Add(e.GetTypeId(), e.GetFingerprint());
             HandlerSet handlers;
@@ -29,6 +29,7 @@ namespace x2
                 handlerMap.Add(e, handlers);
             }
             handlers.Add(handler);
+            return new Token(e, handler);
         }
 
         public virtual int BuildHandlerChain(Event e, List<IHandler> handlerChain)
@@ -60,6 +61,11 @@ namespace x2
             return handlerChain.Count;
         }
 
+        public void Unbind(Token token)
+        {
+            Unbind(token.key, token.value);
+        }
+
         public virtual void Unbind(Event e, IHandler handler)
         {
             HandlerSet handlers;
@@ -71,6 +77,18 @@ namespace x2
                 }
             }
             filter.Remove(e.GetTypeId(), e.GetFingerprint());
+        }
+
+        public struct Token
+        {
+            public Event key;
+            public IHandler value;
+
+            public Token(Event key, IHandler value)
+            {
+                this.key = key;
+                this.value = value;
+            }
         }
 
         private class Filter
@@ -206,12 +224,12 @@ namespace x2
             rwlock = new ReaderWriterLock();
         }
 
-        public override void Bind(Event e, IHandler handler)
+        public override Token Bind(Event e, IHandler handler)
         {
             rwlock.AcquireWriterLock(Timeout.Infinite);
             try
             {
-                base.Bind(e, handler);
+                return base.Bind(e, handler);
             }
             finally
             {

@@ -6,9 +6,10 @@ using System.Collections.Generic;
 
 namespace x2
 {
-    public class EventSink : IDisposable
+    public class EventSink
     {
-        private readonly List<KeyValuePair<Event, IHandler>> bindings;
+        private readonly IList<Binder.Token> bindings;
+
         /// An EventSink-derived class should be instantiated in a thread of a single
         /// specific Flow. And an object instance of any EventSink-derived class 
         /// should not be shared by two or more different flows. These are 
@@ -17,26 +18,29 @@ namespace x2
 
         public EventSink()
         {
-            bindings = new List<KeyValuePair<Event, IHandler>>();
+            bindings = new List<Binder.Token>();
             flow = new WeakReference(Flow.CurrentFlow);
         }
 
         ~EventSink()
         {
-            UnbindAll();
+            if (bindings.Count > 0)
+            {
+                CleanUp();
+            }
         }
 
-        internal void AddBinding(Event e, IHandler handler)
+        internal void AddBinding(Binder.Token binderToken)
         {
-            bindings.Add(new KeyValuePair<Event, IHandler>(e, handler));
+            bindings.Add(binderToken);
         }
 
-        internal void RemoveBinding(Event e, IHandler handler)
+        internal void RemoveBinding(Binder.Token binderToken)
         {
-            bindings.Remove(new KeyValuePair<Event, IHandler>(e, handler));
+            bindings.Remove(binderToken);
         }
 
-        protected void UnbindAll()
+        protected void CleanUp()
         {
             Flow owner = flow.Target as Flow;
             if (owner == null)
@@ -45,16 +49,9 @@ namespace x2
             }
             foreach (var binding in bindings)
             {
-                owner.Unbind(binding.Key, binding.Value);
+                owner.Unbind(binding);
             }
             bindings.Clear();
-        }
-
-        public void Dispose()
-        {
-            UnbindAll();
-
-            GC.SuppressFinalize(this);
         }
     }
 }

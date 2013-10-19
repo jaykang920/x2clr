@@ -111,8 +111,9 @@ namespace x2
             throw new Exception("", e);
         }
 
-        public void Unbind(Event e, IHandler handler)
+        public void Unbind(Binder.Token binderToken)
         {
+            binder.Unbind(binderToken);
         }
 
         protected void Publish(Event e)
