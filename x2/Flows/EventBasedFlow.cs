@@ -43,7 +43,8 @@ namespace x2.Flows
                     break;
                 }
                 Dispatch(e);
-                Thread.Sleep(1);
+
+                Thread.Sleep(0);
             }
 
             handlerChain = null;

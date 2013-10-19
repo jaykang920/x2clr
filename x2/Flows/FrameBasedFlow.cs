@@ -157,13 +157,16 @@ namespace x2.Flows
         private void StartInternal()
         {
             Time.Initialize();
+
             Start();
         }
 
         private void UpdateInternal()
         {
             Time.BeforeUpdate();
+
             Update();
+
             Time.AfterUpdate();
         }
 
