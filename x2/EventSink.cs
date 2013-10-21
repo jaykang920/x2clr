@@ -2,24 +2,25 @@
 // See the file COPYING for license details.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace x2
 {
     public class EventSink
     {
+        private readonly WeakReference flow;
         private readonly IList<Binder.Token> bindings;
 
         /// An EventSink-derived class should be instantiated in a thread of a single
         /// specific Flow. And an object instance of any EventSink-derived class 
         /// should not be shared by two or more different flows. These are 
         /// constraints by design.
-        private WeakReference flow;
 
-        public EventSink()
+        public EventSink(Flow flow)
         {
             bindings = new List<Binder.Token>();
-            flow = new WeakReference(Flow.CurrentFlow);
+            this.flow = new WeakReference(flow);
         }
 
         ~EventSink()
@@ -27,6 +28,46 @@ namespace x2
             if (bindings.Count > 0)
             {
                 CleanUp();
+            }
+        }
+
+        public  void Bind<T>(T e, Action<T> handler)
+            where T : Event
+        {
+            Flow target = flow.Target as Flow;
+            if (target != null)
+            {
+                target.Subscribe(e, handler);
+            }
+        }
+
+        public void Bind<T>(T e, Func<T, Coroutine, IEnumerator> handler)
+            where T : Event
+        {
+            Flow target = flow.Target as Flow;
+            if (target != null)
+            {
+                target.Subscribe(e, handler);
+            }
+        }
+
+        public void Unbind<T>(T e, Action<T> handler)
+            where T : Event
+        {
+            Flow target = flow.Target as Flow;
+            if (target != null)
+            {
+                target.Unsubscribe(e, handler);
+            }
+        }
+
+        public void Unbind<T>(T e, Func<T, Coroutine, IEnumerator> handler)
+            where T : Event
+        {
+            Flow target = flow.Target as Flow;
+            if (target != null)
+            {
+                target.Unsubscribe(e, handler);
             }
         }
 
@@ -40,16 +81,16 @@ namespace x2
             bindings.Remove(binderToken);
         }
 
-        protected void CleanUp()
+        public void CleanUp()
         {
-            Flow owner = flow.Target as Flow;
-            if (owner == null)
+            Flow target = flow.Target as Flow;
+            if (target == null)
             {
                 return;
             }
             foreach (var binding in bindings)
             {
-                owner.Unbind(binding);
+                target.Unbind(binding);
             }
             bindings.Clear();
         }
