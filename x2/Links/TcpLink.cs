@@ -100,7 +100,7 @@ namespace x2.Links
                     LinkSessionDisconnected e = new LinkSessionDisconnected();
                     e.LinkName = Name;
                     e.Context = session;
-                    Feed(e);
+                    Publish(e);
                 }
             }
             catch (SocketException)
@@ -108,14 +108,14 @@ namespace x2.Links
                 LinkSessionDisconnected e = new LinkSessionDisconnected();
                 e.LinkName = Name;
                 e.Context = session;
-                Feed(e);
+                Publish(e);
             }
             catch (ObjectDisposedException)
             { // socket closed
                 LinkSessionDisconnected e = new LinkSessionDisconnected();
                 e.LinkName = Name;
                 e.Context = session;
-                Feed(e);
+                Publish(e);
             }
         }
 
@@ -131,14 +131,14 @@ namespace x2.Links
                 LinkSessionDisconnected e = new LinkSessionDisconnected();
                 e.LinkName = Name;
                 e.Context = asyncState.Session;
-                Feed(e);
+                Publish(e);
             }
             catch (ObjectDisposedException)
             { // socket closed
                 LinkSessionDisconnected e = new LinkSessionDisconnected();
                 e.LinkName = Name;
                 e.Context = asyncState.Session;
-                Feed(e);
+                Publish(e);
             }
         }
 
@@ -192,14 +192,14 @@ namespace x2.Links
                     LinkSessionDisconnected e = new LinkSessionDisconnected();
                     e.LinkName = link.Name;
                     e.Context = receiveState.Session;
-                    link.Feed(e);
+                    link.Publish(e);
                 }
                 catch (ObjectDisposedException)
                 { // socket closed
                     LinkSessionDisconnected e = new LinkSessionDisconnected();
                     e.LinkName = link.Name;
                     e.Context = receiveState.Session;
-                    link.Feed(e);
+                    link.Publish(e);
                 }
             }
 
@@ -225,14 +225,14 @@ namespace x2.Links
                     LinkSessionDisconnected e = new LinkSessionDisconnected();
                     e.LinkName = link.Name;
                     e.Context = asyncState.Session;
-                    link.Feed(e);
+                    link.Publish(e);
                 }
                 catch (ObjectDisposedException)
                 { // socket closed
                     LinkSessionDisconnected e = new LinkSessionDisconnected();
                     e.LinkName = link.Name;
                     e.Context = asyncState.Session;
-                    link.Feed(e);
+                    link.Publish(e);
                 }
             }
 

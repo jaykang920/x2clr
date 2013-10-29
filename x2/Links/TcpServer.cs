@@ -46,7 +46,7 @@ namespace x2.Links
                 e.LinkName = Name;
                 e.Result = true;
                 e.Context = session;
-                Feed(e);
+                Publish(e);
 
                 session.BeginReceive(this, true);
 

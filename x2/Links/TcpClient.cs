@@ -69,7 +69,7 @@ namespace x2.Links
             {
                 e.Context = asyncResult.AsyncState;  // remote endpoint
             }
-            Feed(e);
+            Publish(e);
         }
     }
 }
