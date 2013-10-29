@@ -13,12 +13,13 @@ namespace x2.Events
 
         // Link events
         LinkOpen = -3,
-        LinkClose = -4,
-        LinkSessionConnected = -5,
-        LinkSessionDisconnected = -6,
+        LinkRetry = -4,
+        LinkClose = -5,
+        LinkSessionConnected = -6,
+        LinkSessionDisconnected = -7,
         
         // TimeFlow events
-        TimeoutEvent = -7,
-        PeriodicEvent = -8,
+        TimeoutEvent = -8,
+        PeriodicEvent = -9,
     }
 }

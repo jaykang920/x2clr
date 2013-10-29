@@ -98,6 +98,7 @@ namespace x2.Links
                 {
                     // connection reset by peer
                     LinkSessionDisconnected e = new LinkSessionDisconnected();
+                    e.LinkName = Name;
                     e.Context = session;
                     Feed(e);
                 }
@@ -105,12 +106,14 @@ namespace x2.Links
             catch (SocketException)
             { // socket error
                 LinkSessionDisconnected e = new LinkSessionDisconnected();
+                e.LinkName = Name;
                 e.Context = session;
                 Feed(e);
             }
             catch (ObjectDisposedException)
             { // socket closed
                 LinkSessionDisconnected e = new LinkSessionDisconnected();
+                e.LinkName = Name;
                 e.Context = session;
                 Feed(e);
             }
@@ -126,12 +129,14 @@ namespace x2.Links
             catch (SocketException)
             { // socket error
                 LinkSessionDisconnected e = new LinkSessionDisconnected();
+                e.LinkName = Name;
                 e.Context = asyncState.Session;
                 Feed(e);
             }
             catch (ObjectDisposedException)
             { // socket closed
                 LinkSessionDisconnected e = new LinkSessionDisconnected();
+                e.LinkName = Name;
                 e.Context = asyncState.Session;
                 Feed(e);
             }
@@ -185,12 +190,14 @@ namespace x2.Links
                 catch (SocketException)
                 { // socket error
                     LinkSessionDisconnected e = new LinkSessionDisconnected();
+                    e.LinkName = link.Name;
                     e.Context = receiveState.Session;
                     link.Feed(e);
                 }
                 catch (ObjectDisposedException)
                 { // socket closed
                     LinkSessionDisconnected e = new LinkSessionDisconnected();
+                    e.LinkName = link.Name;
                     e.Context = receiveState.Session;
                     link.Feed(e);
                 }
@@ -216,12 +223,14 @@ namespace x2.Links
                 catch (SocketException)
                 { // socket error
                     LinkSessionDisconnected e = new LinkSessionDisconnected();
+                    e.LinkName = link.Name;
                     e.Context = asyncState.Session;
                     link.Feed(e);
                 }
                 catch (ObjectDisposedException)
                 { // socket closed
                     LinkSessionDisconnected e = new LinkSessionDisconnected();
+                    e.LinkName = link.Name;
                     e.Context = asyncState.Session;
                     link.Feed(e);
                 }

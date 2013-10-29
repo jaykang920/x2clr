@@ -43,6 +43,7 @@ namespace x2.Links
 
                 Session session = new Session(clientSocket);
                 LinkSessionConnected e = new LinkSessionConnected();
+                e.LinkName = Name;
                 e.Result = true;
                 e.Context = session;
                 Feed(e);

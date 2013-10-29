@@ -9,6 +9,7 @@ namespace x2.Events
     {
         new private static readonly Tag tag;
 
+        public string LinkName { get; set; }
         public bool Result { get; set; }
         public object Context { get; set; }
 

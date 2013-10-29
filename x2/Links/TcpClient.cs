@@ -29,6 +29,11 @@ namespace x2.Links
             socket.BeginConnect(endpoint, this.OnConnect, endpoint);
         }
 
+        protected void Reconnect(string ip, int port)
+        {
+            Reconnect(new IPEndPoint(IPAddress.Parse(ip), port));
+        }
+
         protected void Reconnect(EndPoint endpoint)
         {
             if (socket == null)
@@ -41,6 +46,7 @@ namespace x2.Links
         private void OnConnect(IAsyncResult asyncResult)
         {
             LinkSessionConnected e = new LinkSessionConnected();
+            e.LinkName = Name;
             try
             {
                 socket.EndConnect(asyncResult);
