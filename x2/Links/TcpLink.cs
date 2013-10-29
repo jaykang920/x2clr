@@ -16,7 +16,7 @@ namespace x2.Links
     {
         protected Socket socket;
 
-        protected TcpLink() { }
+        protected TcpLink(string name) : base(name) { }
 
         public override void Close()
         {
@@ -256,6 +256,12 @@ namespace x2.Links
         protected class AsyncTxState : AsyncState
         {
             public byte[] lengthBytes = new byte[4];
+        }
+
+        public class ConnectionTag
+        {
+            public string Tag { get; set; }
+            public EndPoint EndPoint { get; set; }
         }
     }
 }

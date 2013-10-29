@@ -30,7 +30,7 @@ namespace x2.Links
             }
         }
 
-        public TcpServer()
+        public TcpServer(string name) : base(name)
         {
             backlog = (int)SocketOptionName.MaxConnections;
         }

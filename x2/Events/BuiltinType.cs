@@ -5,15 +5,20 @@ using System;
 
 namespace x2.Events
 {
+    // Internal event types
     public enum BuiltinType
     {
-        // Internal event types
         FlowStart = -1,
         FlowStop = -2,
-        LinkSessionConnected = -3,
-        LinkSessionDisconnected = -4,
-        // TimeFlow
-        TimeoutEvent = -5,
-        PeriodicEvent = -6,
+
+        // Link events
+        LinkOpen = -3,
+        LinkClose = -4,
+        LinkSessionConnected = -5,
+        LinkSessionDisconnected = -6,
+        
+        // TimeFlow events
+        TimeoutEvent = -7,
+        PeriodicEvent = -8,
     }
 }

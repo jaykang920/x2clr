@@ -11,6 +11,8 @@ namespace x2.Links
 {
     public class TcpClient : TcpLink
     {
+        public TcpClient(string name) : base(name) { }
+
         protected void Connect(string ip, int port)
         {
             Connect(IPAddress.Parse(ip), port);

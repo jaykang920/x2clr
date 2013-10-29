@@ -13,11 +13,19 @@ namespace x2
     {
         protected const byte sentinel = 0x55;
 
+        public string Name { get; private set; }
+
         /// <summary>
         /// Gets or sets whether this link itself is included as a target when
         /// publishing remote events. Default value is false.
+        /// XXX: to be deprecated
         /// </summary>
         public bool IsSelfPublishingEnabled { get; set; }
+
+        public Link(string name)
+        {
+            Name = name;
+        }
 
         public abstract void Close();
 
