@@ -84,13 +84,15 @@ namespace x2.Flows
             }
         }
 
-        public void TryDispatch()
+        public Event TryDispatch()
         {
             Event e;
             if (queue.TryDequeue(out e))
             {
                 Dispatch(e);
+                return e;
             }
+            return null;
         }
 
         public bool TryDequeue(out Event e)
