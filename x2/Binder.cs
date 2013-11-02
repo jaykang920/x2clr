@@ -84,6 +84,29 @@ namespace x2
             public Event key;
             public IHandler value;
 
+            public override bool Equals(object obj)
+            {
+                if (!(obj is Token))
+                {
+                    return false;
+                }
+
+                Token other = (Token)obj;
+                if (!key.Equals(other.key) || !value.Equals(other.value))
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            public override int GetHashCode()
+            {
+                Hash hash = new Hash(Hash.Seed);
+                hash.Update(key.GetHashCode());
+                hash.Update(value.GetHashCode());
+                return hash.Code;
+            }
+
             public Token(Event key, IHandler value)
             {
                 this.key = key;

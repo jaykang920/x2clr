@@ -97,7 +97,7 @@ namespace x2.Flows
 
         private readonly string name;
         private readonly PriorityQueue<DateTime, Event> reserved;
-        private readonly Repeater repeater;
+        private readonly Generator generator;
 
         /// <summary>
         /// Gets the default(anonymous) TimeFlow.
@@ -116,7 +116,7 @@ namespace x2.Flows
         {
             this.name = name;
             reserved = new PriorityQueue<DateTime, Event>();
-            repeater = new Repeater(this);
+            generator = new Generator(this);
         }
 
         /// <summary>
@@ -183,17 +183,17 @@ namespace x2.Flows
 
         public void ReserveRepetition(Event e, TimeSpan interval)
         {
-            repeater.Add(e, new TimeTag(interval));
+            generator.Add(e, new TimeTag(interval));
         }
 
         public void ReserveRepetition(Event e, DateTime nextTime, TimeSpan interval)
         {
-            repeater.Add(e, new TimeTag(nextTime, interval));
+            generator.Add(e, new TimeTag(nextTime, interval));
         }
 
         public void CancelRepetition(Event e)
         {
-            repeater.Remove(e);
+            generator.Remove(e);
         }
 
         protected override void Start() { }
@@ -222,7 +222,7 @@ namespace x2.Flows
                 }
             }
 
-            repeater.Tick(now);
+            generator.Tick(now);
         }
 
         private class Map
@@ -282,7 +282,7 @@ namespace x2.Flows
             }
         }
 
-        public class TimeTag
+        private class TimeTag
         {
             public DateTime NextTime { get; set; }
             public TimeSpan Interval { get; private set; }
@@ -299,13 +299,13 @@ namespace x2.Flows
             }
         }
 
-        private class Repeater
+        private class Generator
         {
             private readonly ReaderWriterLock rwlock;
             private readonly IDictionary<Event, TimeTag> map;
             private readonly TimeFlow owner;
 
-            public Repeater(TimeFlow owner)
+            public Generator(TimeFlow owner)
             {
                 rwlock = new ReaderWriterLock();
                 map = new Dictionary<Event, TimeTag>();
