@@ -80,6 +80,11 @@ namespace x2
             return ((seed << 5) + seed) ^ (value != null ? value.GetHashCode() : 0);
         }
 
+        public static int Update(int seed, DateTime value)
+        {
+            return Update(seed, value.Ticks);
+        }
+
         public static int Update<T>(int seed, T value) where T : class
         {
             return ((seed << 5) + seed) ^ (value != null ? value.GetHashCode() : 0);
@@ -141,6 +146,11 @@ namespace x2
         }
 
         public void Update(string value)
+        {
+            Code = Update(Code, value);
+        }
+
+        public void Update(DateTime value)
         {
             Code = Update(Code, value);
         }

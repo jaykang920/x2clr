@@ -92,6 +92,11 @@ namespace x2
                 IsPrimitive = true,
                 DetailRequired = false
             });
+            types.Add("datetime", new TypeProperty
+            {
+                IsPrimitive = true,
+                DetailRequired = false
+            });
 
             // Collection types
             types.Add("list", new TypeProperty

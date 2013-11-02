@@ -331,6 +331,13 @@ namespace x2
             value = stringBuilder.ToString();
         }
 
+        public void Read(out DateTime value)
+        {
+            long ticks;
+            Read(out ticks);
+            value = new DateTime(ticks);
+        }
+
         public byte ReadByte()
         {
             CheckLengthToRead(1);
@@ -573,6 +580,11 @@ namespace x2
                     PutByte((byte)(0x80 | ((c >> 0) & 0x3F)));
                 }
             }
+        }
+
+        public void Write(DateTime value)
+        {
+            Write(value.Ticks);
         }
 
         public void WriteUInt29(int value)

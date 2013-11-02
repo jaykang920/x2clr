@@ -114,6 +114,7 @@ namespace x2
             nativeTypes.Add("float32", "float");
             nativeTypes.Add("float64", "double");
             nativeTypes.Add("string", "string");
+            nativeTypes.Add("datetime", "DateTime");
             nativeTypes.Add("list", "ListCell");
             //nativeTypes.Add("map", "MapCell");
 
@@ -125,6 +126,7 @@ namespace x2
             defaultValues.Add("int64", "0");
             defaultValues.Add("float32", ".0f");
             defaultValues.Add("float64", ".0f");
+            defaultValues.Add("datetime", "new DateTime(0)");
             defaultValues.Add("string", "");
         }
 
