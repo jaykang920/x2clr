@@ -183,7 +183,12 @@ namespace x2.Flows
 
         public void ReserveRepetition(Event e, TimeSpan interval)
         {
-            repeater.Add(e, interval);
+            repeater.Add(e, new TimeTag(interval));
+        }
+
+        public void ReserveRepetition(Event e, DateTime nextTime, TimeSpan interval)
+        {
+            repeater.Add(e, new TimeTag(nextTime, interval));
         }
 
         public void CancelRepetition(Event e)
@@ -283,9 +288,14 @@ namespace x2.Flows
             public TimeSpan Interval { get; private set; }
 
             public TimeTag(TimeSpan interval)
+                : this(DateTime.Now + interval, interval)
             {
+            }
+
+            public TimeTag(DateTime nextTime, TimeSpan interval)
+            {
+                NextTime = nextTime;
                 Interval = interval;
-                NextTime = DateTime.Now + interval;
             }
         }
 
@@ -302,12 +312,12 @@ namespace x2.Flows
                 this.owner = owner;
             }
 
-            public void Add(Event e, TimeSpan interval)
+            public void Add(Event e, TimeTag timeTag)
             {
                 rwlock.AcquireWriterLock(Timeout.Infinite);
                 try
                 {
-                    map[e] = new TimeTag(interval);
+                    map[e] = timeTag;
                 }
                 finally
                 {
