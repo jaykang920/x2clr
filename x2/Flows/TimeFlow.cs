@@ -97,6 +97,7 @@ namespace x2.Flows
 
         private readonly string name;
         private readonly PriorityQueue<DateTime, Event> reserved;
+        private readonly Repeater repeater;
 
         /// <summary>
         /// Gets the default(anonymous) TimeFlow.
@@ -115,6 +116,7 @@ namespace x2.Flows
         {
             this.name = name;
             reserved = new PriorityQueue<DateTime, Event>();
+            repeater = new Repeater(this);
         }
 
         /// <summary>
@@ -179,18 +181,29 @@ namespace x2.Flows
             }
         }
 
+        public void ReserveRepetition(Event e, TimeSpan interval)
+        {
+            repeater.Add(e, interval);
+        }
+
+        public void CancelRepetition(Event e)
+        {
+            repeater.Remove(e);
+        }
+
         protected override void Start() { }
         protected override void Stop() { }
 
         protected override void Update()
         {
+            DateTime now = DateTime.Now;
             List<Event> events = null;
             lock (reserved)
             {
                 if (reserved.Count != 0)
                 {
                     DateTime next = reserved.Peek();
-                    if (DateTime.Now > next)
+                    if (now >= next)
                     {
                         events = reserved.DequeueBundle();
                     }
@@ -198,11 +211,13 @@ namespace x2.Flows
             }
             if ((object)events != null)
             {
-                foreach (var deferred in events)
+                for (int i = 0; i < events.Count; ++i)
                 {
-                    PublishAway(deferred);
+                    PublishAway(events[i]);
                 }
             }
+
+            repeater.Tick(now);
         }
 
         private class Map
@@ -259,6 +274,79 @@ namespace x2.Flows
             {
                 this.key = key;
                 this.value = value;
+            }
+        }
+
+        public class TimeTag
+        {
+            public DateTime NextTime { get; set; }
+            public TimeSpan Interval { get; private set; }
+
+            public TimeTag(TimeSpan interval)
+            {
+                Interval = interval;
+                NextTime = DateTime.Now + interval;
+            }
+        }
+
+        private class Repeater
+        {
+            private readonly ReaderWriterLock rwlock;
+            private readonly IDictionary<Event, TimeTag> map;
+            private readonly TimeFlow owner;
+
+            public Repeater(TimeFlow owner)
+            {
+                rwlock = new ReaderWriterLock();
+                map = new Dictionary<Event, TimeTag>();
+                this.owner = owner;
+            }
+
+            public void Add(Event e, TimeSpan interval)
+            {
+                rwlock.AcquireWriterLock(Timeout.Infinite);
+                try
+                {
+                    map[e] = new TimeTag(interval);
+                }
+                finally
+                {
+                    rwlock.ReleaseWriterLock();
+                }
+            }
+
+            public void Remove(Event e)
+            {
+                rwlock.AcquireWriterLock(Timeout.Infinite);
+                try
+                {
+                    map.Remove(e);
+                }
+                finally
+                {
+                    rwlock.ReleaseWriterLock();
+                }
+            }
+
+            public void Tick(DateTime now)
+            {
+                rwlock.AcquireReaderLock(Timeout.Infinite);
+                try
+                {
+                    foreach (var pair in map)
+                    {
+                        TimeTag timeTag = pair.Value;
+                        if (now >= timeTag.NextTime)
+                        {
+                            owner.PublishAway(pair.Key);
+                            timeTag.NextTime = now + timeTag.Interval;
+                        }
+                    }
+                }
+                finally
+                {
+                    rwlock.ReleaseReaderLock();
+                }
             }
         }
     }
