@@ -29,7 +29,14 @@ namespace x2
                 handlerMap.Add(e, handlers);
             }
             handlers.Add(handler);
-            return new Token(e, handler);
+
+            var token = new Token(e, handler);
+            if (handler.Action.Target is EventSink)
+            {
+                var eventSink = (EventSink)handler.Action.Target;
+                eventSink.AddBinding(token);
+            }
+            return token;
         }
 
         public virtual int BuildHandlerChain(Event e, List<IHandler> handlerChain)
@@ -77,6 +84,13 @@ namespace x2
                 }
             }
             filter.Remove(e.GetTypeId(), e.GetFingerprint());
+
+            var token = new Token(e, handler);
+            if (handler.Action.Target is EventSink)
+            {
+                var eventSink = (EventSink)handler.Action.Target;
+                eventSink.RemoveBinding(token);
+            }
         }
 
         public struct Token

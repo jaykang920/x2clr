@@ -7,28 +7,29 @@ using System.Collections.Generic;
 
 namespace x2
 {
+    /// x2 event handlers are built on C# delegates. In case of an instance
+    /// method delegate, it keeps a strong reference to the method target object.
+    /// This means that when you bind an event with an instance method, the
+    /// target object will never be garbage-collected since the handler delegate
+    /// keeps the strong reference, resulting in undesirable memory leak.
+    ///
+    /// EventSink is here to help. Let your event-consuming class be derived
+    /// from EventSink class. When the object is no longer needed, call its
+    /// CleanUp() method to ensure that all the event bindings to the object are
+    /// removed so that the object is properly garbage-collected.
+    ///
+    /// An EventSink object should be initialized with a single specific flow.
+    /// And an object instance of any EventSink-derived class should never be
+    /// shared by two or more different flows. These are constraints by design.
     public class EventSink
     {
         private readonly WeakReference flow;
         private readonly IList<Binder.Token> bindings;
 
-        /// An EventSink-derived class should be instantiated in a thread of a single
-        /// specific Flow. And an object instance of any EventSink-derived class 
-        /// should not be shared by two or more different flows. These are 
-        /// constraints by design.
-
         public EventSink(Flow flow)
         {
             bindings = new List<Binder.Token>();
             this.flow = new WeakReference(flow);
-        }
-
-        ~EventSink()
-        {
-            if (bindings.Count > 0)
-            {
-                CleanUp();
-            }
         }
 
         public  void Bind<T>(T e, Action<T> handler)
