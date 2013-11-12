@@ -29,7 +29,6 @@ namespace x2
                     FormatHead(context);
                     FormatBody(context);
                     writer.Flush();
-                    writer.Close();
                 }
             }
             catch (Exception e)
@@ -245,8 +244,6 @@ namespace x2
             FormatIsEquivalent(def);
             Out.WriteLine();
             FormatLoad(def);
-            Out.WriteLine();
-            FormatActionRunner(def);
             if (def.IsEvent)
             {
                 Out.WriteLine();
@@ -449,15 +446,6 @@ namespace x2
                     Indent(2); Out.WriteLine("}");
                 }
             }
-            Indent(1); Out.WriteLine("}");
-        }
-
-        private void FormatActionRunner(CellDef def)
-        {
-            Indent(1); Out.WriteLine("public {0} Run(Action<{0}> action)", def.Name);
-            Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("action(this);");
-            Indent(2); Out.WriteLine("return this;");
             Indent(1); Out.WriteLine("}");
         }
 

@@ -80,7 +80,7 @@ namespace x2.Links
             catch (Exception e)
             {
                 socket = null;
-                throw e;
+                throw;
             }
         }
 
