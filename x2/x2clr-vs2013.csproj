@@ -93,6 +93,7 @@
     <Compile Include="Links\TcpLink.cs" />
     <Compile Include="Links\TcpServer.cs" />
     <Compile Include="Queues\UnboundedQueue.cs" />
+    <Compile Include="Yields\WaitForSingleEvent.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

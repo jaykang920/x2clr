@@ -9,18 +9,16 @@ using x2.Flows;
 
 namespace x2.Yields
 {
-    // YieldInstruction that waits for the specified time in seconds.
-    public class WaitForSeconds : YieldInstruction
+    // YieldInstruction that waits for a single event infinitely.
+    public class WaitForSingleEvent : YieldInstruction
     {
         private readonly Coroutine coroutine;
-        private readonly Binder.Token binderToken;
+        private readonly Binder.Token token;
 
-        public WaitForSeconds(Coroutine coroutine, int seconds)
+        public WaitForSingleEvent(Coroutine coroutine, Event e)
         {
             this.coroutine = coroutine;
-            TimeoutEvent e = new TimeoutEvent { Key = this };
-            binderToken = Flow.Bind(e, OnTimeoutEvent);
-            TimeFlow.Token token = TimeFlow.Default.Reserve(new TimeSpan(0, 0, seconds), e);
+            token = Flow.Bind(e, OnEvent);
         }
 
         public override object Current { get { return null; } }
@@ -30,9 +28,9 @@ namespace x2.Yields
             return false;
         }
 
-        void OnTimeoutEvent(TimeoutEvent e)
+        void OnEvent(Event e)
         {
-            Flow.Unbind(binderToken);
+            Flow.Unbind(token);
 
             coroutine.Context = e;
             coroutine.Continue();

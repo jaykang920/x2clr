@@ -91,7 +91,7 @@ namespace x2
             }
             foreach (var binding in bindings)
             {
-                target.Unbind(binding);
+                target.Unsubscribe(binding);
             }
             bindings.Clear();
         }

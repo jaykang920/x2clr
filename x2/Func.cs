@@ -5,7 +5,7 @@ using System;
 
 namespace x2
 {
-    // Func<> delegates for .NET 2.0
+    // Work-around for .NET 2.0 missing Func<> delegates.
     public delegate TResult Func<TResult>();
     public delegate TResult Func<T, TResult>(T arg);
     public delegate TResult Func<T1, T2, TResult>(T1 arg1, T2 arg2);

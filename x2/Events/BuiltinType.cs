@@ -20,6 +20,5 @@ namespace x2.Events
         
         // TimeFlow events
         TimeoutEvent = -8,
-        PeriodicEvent = -9,
     }
 }

@@ -45,16 +45,16 @@ namespace x2
             DefaultExceptionHandler = OnException;
         }
 
-        public static void Bind<T>(T e, Action<T> handler)
+        public static Binder.Token Bind<T>(T e, Action<T> handler)
             where T : Event
         {
-            currentFlow.Subscribe(e, handler);
+            return currentFlow.Subscribe(e, handler);
         }
 
-        public static void Bind<T>(T e, Func<T, Coroutine, IEnumerator> handler)
+        public static Binder.Token Bind<T>(T e, Func<T, Coroutine, IEnumerator> handler)
             where T : Event
         {
-            currentFlow.Subscribe(e, handler);
+            return currentFlow.Subscribe(e, handler);
         }
 
         public static void Unbind<T>(T e, Action<T> handler)
@@ -67,6 +67,11 @@ namespace x2
             where T : Event
         {
             currentFlow.Unsubscribe(e, handler);
+        }
+
+        public static void Unbind(Binder.Token binderToken)
+        {
+            currentFlow.Unsubscribe(binderToken);
         }
 
         protected Flow(Binder binder)
@@ -111,11 +116,6 @@ namespace x2
             throw new Exception("", e);
         }
 
-        public void Unbind(Binder.Token binderToken)
-        {
-            binder.Unbind(binderToken);
-        }
-
         protected void Publish(Event e)
         {
             hub.Post(e);
@@ -126,16 +126,16 @@ namespace x2
             hub.Post(e, currentFlow);
         }
 
-        public void Subscribe<T>(T e, Action<T> handler)
+        public Binder.Token Subscribe<T>(T e, Action<T> handler)
             where T : Event
         {
-            binder.Bind(e, new Handler<T>(handler));
+            return binder.Bind(e, new Handler<T>(handler));
         }
 
-        public void Subscribe<T>(T e, Func<T, Coroutine, IEnumerator> handler)
+        public Binder.Token Subscribe<T>(T e, Func<T, Coroutine, IEnumerator> handler)
             where T : Event
         {
-            binder.Bind(e, new CoroutineHandler<T>(handler));
+            return binder.Bind(e, new CoroutineHandler<T>(handler));
         }
 
         public void Unsubscribe<T>(T e, Action<T> handler)
@@ -148,6 +148,11 @@ namespace x2
             where T : Event
         {
             binder.Unbind(e, new CoroutineHandler<T>(handler));
+        }
+
+        public void Unsubscribe(Binder.Token token)
+        {
+            binder.Unbind(token);
         }
 
         public abstract void StartUp();
