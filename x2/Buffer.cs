@@ -408,19 +408,11 @@ namespace x2
             get
             {
                 index += front;
-                if (index < 0 || back <= index)
-                {
-                    throw new IndexOutOfRangeException();
-                }
                 return blocks[index >> blockSizeExponent][index & remainderMask];
             }
             set
             {
                 index += front;
-                if (index < 0 || back <= index)
-                {
-                    throw new IndexOutOfRangeException();
-                }
                 blocks[index >> blockSizeExponent][index & remainderMask] = value;
             }
         }

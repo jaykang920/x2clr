@@ -126,6 +126,16 @@ namespace x2
                 this.key = key;
                 this.value = value;
             }
+
+            public static bool operator ==(Token x, Token y)
+            {
+                return x.Equals(y);
+            }
+
+            public static bool operator !=(Token x, Token y)
+            {
+                return !x.Equals(y);
+            }
         }
 
         private class Filter

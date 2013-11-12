@@ -66,6 +66,16 @@ namespace x2
         {
             action((T)e);
         }
+
+        public static bool operator ==(Handler<T> x, IHandler y)
+        {
+            return x.Equals(y);
+        }
+
+        public static bool operator !=(Handler<T> x, IHandler y)
+        {
+            return !x.Equals(y);
+        }
     }
 
     public struct CoroutineHandler<T> : IHandler
@@ -101,8 +111,7 @@ namespace x2
             {
                 return true;
             }
-            if (obj == null ||
-                typeof(IHandler).IsAssignableFrom(obj.GetType()) == false)
+            if (obj == null || !(obj is IHandler))
             {
                 return false;
             }
@@ -119,6 +128,16 @@ namespace x2
         {
             Coroutine coroutine = new Coroutine();
             coroutine.Start(action((T)e, coroutine));
+        }
+
+        public static bool operator ==(CoroutineHandler<T> x, IHandler y)
+        {
+            return x.Equals(y);
+        }
+
+        public static bool operator !=(CoroutineHandler<T> x, IHandler y)
+        {
+            return !x.Equals(y);
         }
     }
 }
