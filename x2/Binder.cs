@@ -68,12 +68,24 @@ namespace x2
             return handlerChain.Count;
         }
 
-        public void Unbind(Token token)
+        public virtual void Unbind(Event e, IHandler handler)
         {
-            Unbind(token.key, token.value);
+            UnbindInternal(e, handler);
+
+            var token = new Token(e, handler);
+            if (handler.Action.Target is EventSink)
+            {
+                var eventSink = (EventSink)handler.Action.Target;
+                eventSink.RemoveBinding(token);
+            }
         }
 
-        public virtual void Unbind(Event e, IHandler handler)
+        public void Unbind(Token token)
+        {
+            UnbindInternal(token.key, token.value);
+        }
+
+        private void UnbindInternal(Event e, IHandler handler)
         {
             HandlerSet handlers;
             if (handlerMap.TryGetValue(e, out handlers))
@@ -84,13 +96,6 @@ namespace x2
                 }
             }
             filter.Remove(e.GetTypeId(), e.GetFingerprint());
-
-            var token = new Token(e, handler);
-            if (handler.Action.Target is EventSink)
-            {
-                var eventSink = (EventSink)handler.Action.Target;
-                eventSink.RemoveBinding(token);
-            }
         }
 
         public struct Token
