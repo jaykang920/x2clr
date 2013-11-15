@@ -15,12 +15,12 @@ namespace x2.Yields
         private readonly Coroutine coroutine;
         private readonly Binder.Token binderToken;
 
-        public WaitForSeconds(Coroutine coroutine, int seconds)
+        public WaitForSeconds(Coroutine coroutine, float seconds)
         {
             this.coroutine = coroutine;
             TimeoutEvent e = new TimeoutEvent { Key = this };
             binderToken = Flow.Bind(e, OnTimeoutEvent);
-            TimeFlow.Token token = TimeFlow.Default.Reserve(new TimeSpan(0, 0, seconds), e);
+            TimeFlow.Token token = TimeFlow.Default.Reserve(e, seconds);
         }
 
         public override object Current { get { return null; } }

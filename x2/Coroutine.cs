@@ -17,7 +17,7 @@ namespace x2
         // IEnumerator interface implementation
         public abstract object Current { get; }
         public abstract bool MoveNext();
-        public void Reset() { }  // not supported in iterator block
+        public void Reset() { }  // not supported
     }
 
     public class Coroutine : YieldInstruction

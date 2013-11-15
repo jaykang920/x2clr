@@ -158,13 +158,18 @@ namespace x2.Flows
             }
             return map.Get(name);
         }
-        
-        public Token Reserve(TimeSpan delay, Event e)
+
+        public Token Reserve(Event e, float seconds)
         {
-            return Reserve(DateTime.Now + delay, e);
+            return Reserve(e, DateTime.Now.AddSeconds(seconds));
+        }
+        
+        public Token Reserve(Event e, TimeSpan delay)
+        {
+            return Reserve(e, DateTime.Now.Add(delay));
         }
 
-        public Token Reserve(DateTime when, Event e)
+        public Token Reserve(Event e, DateTime when)
         {
             lock (reserved)
             {
