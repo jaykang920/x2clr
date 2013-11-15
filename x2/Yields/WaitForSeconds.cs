@@ -13,14 +13,14 @@ namespace x2.Yields
     public class WaitForSeconds : YieldInstruction
     {
         private readonly Coroutine coroutine;
-        private readonly Binder.Token binderToken;
+        private readonly Binder.Token token;
 
         public WaitForSeconds(Coroutine coroutine, float seconds)
         {
             this.coroutine = coroutine;
             TimeoutEvent e = new TimeoutEvent { Key = this };
-            binderToken = Flow.Bind(e, OnTimeoutEvent);
-            TimeFlow.Token token = TimeFlow.Default.Reserve(e, seconds);
+            token = Flow.Bind(e, OnTimeout);
+            TimeFlow.Default.Reserve(e, seconds);
         }
 
         public override object Current { get { return null; } }
@@ -30,9 +30,9 @@ namespace x2.Yields
             return false;
         }
 
-        void OnTimeoutEvent(TimeoutEvent e)
+        void OnTimeout(TimeoutEvent e)
         {
-            Flow.Unbind(binderToken);
+            Flow.Unbind(token);
 
             coroutine.Context = e;
             coroutine.Continue();

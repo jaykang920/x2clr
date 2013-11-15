@@ -77,7 +77,7 @@ namespace x2.Links
                 socket.Listen(backlog);
                 socket.BeginAccept(this.OnAccept, null);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 socket = null;
                 throw;

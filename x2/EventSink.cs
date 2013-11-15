@@ -42,7 +42,7 @@ namespace x2
             }
         }
 
-        public void Bind<T>(T e, Func<T, Coroutine, IEnumerator> handler)
+        public void Bind<T>(T e, Func<Coroutine, T, IEnumerator> handler)
             where T : Event
         {
             Flow target = flow.Target as Flow;
@@ -62,7 +62,7 @@ namespace x2
             }
         }
 
-        public void Unbind<T>(T e, Func<T, Coroutine, IEnumerator> handler)
+        public void Unbind<T>(T e, Func<Coroutine, T, IEnumerator> handler)
             where T : Event
         {
             Flow target = flow.Target as Flow;

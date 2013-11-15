@@ -51,7 +51,7 @@ namespace x2
             return currentFlow.Subscribe(e, handler);
         }
 
-        public static Binder.Token Bind<T>(T e, Func<T, Coroutine, IEnumerator> handler)
+        public static Binder.Token Bind<T>(T e, Func<Coroutine, T, IEnumerator> handler)
             where T : Event
         {
             return currentFlow.Subscribe(e, handler);
@@ -63,7 +63,7 @@ namespace x2
             currentFlow.Unsubscribe(e, handler);
         }
 
-        public static void Unbind<T>(T e, Func<T, Coroutine, IEnumerator> handler)
+        public static void Unbind<T>(T e, Func<Coroutine, T, IEnumerator> handler)
             where T : Event
         {
             currentFlow.Unsubscribe(e, handler);
@@ -132,7 +132,7 @@ namespace x2
             return binder.Bind(e, new Handler<T>(handler));
         }
 
-        public Binder.Token Subscribe<T>(T e, Func<T, Coroutine, IEnumerator> handler)
+        public Binder.Token Subscribe<T>(T e, Func<Coroutine, T, IEnumerator> handler)
             where T : Event
         {
             return binder.Bind(e, new CoroutineHandler<T>(handler));
@@ -144,7 +144,7 @@ namespace x2
             binder.Unbind(e, new Handler<T>(handler));
         }
 
-        public void Unsubscribe<T>(T e, Func<T, Coroutine, IEnumerator> handler)
+        public void Unsubscribe<T>(T e, Func<Coroutine, T, IEnumerator> handler)
             where T : Event
         {
             binder.Unbind(e, new CoroutineHandler<T>(handler));

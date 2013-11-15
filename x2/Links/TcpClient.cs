@@ -52,7 +52,7 @@ namespace x2.Links
                 socket.EndConnect(asyncResult);
                 e.Result = true;
             }
-            catch (SocketException se)
+            catch (SocketException)
             {
                 // socket error
             }
