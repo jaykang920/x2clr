@@ -100,6 +100,12 @@ namespace x2.Flows
             return queue.TryDequeue(out e);
         }
 
+        public bool Wait<T>(T expected, out T actual, double seconds)
+            where T : Event
+        {
+            return Wait(expected, out actual, TimeSpan.FromSeconds(seconds));
+        }
+
         /// <summary>
         /// Wait for a single event of type (T).
         /// </summary>

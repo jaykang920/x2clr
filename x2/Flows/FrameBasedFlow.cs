@@ -28,9 +28,9 @@ namespace x2.Flows
         /// <summary>
         /// Gets the time in seconds it took to complete the last frame.
         /// </summary>
-        public float DeltaTime
+        public double DeltaTime
         {
-            get { return (float)(new TimeSpan(deltaTicks).TotalSeconds); }
+            get { return new TimeSpan(deltaTicks).TotalSeconds; }
         }
 
         /// <summary>

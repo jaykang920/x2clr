@@ -159,7 +159,7 @@ namespace x2.Flows
             return map.Get(name);
         }
 
-        public Token Reserve(Event e, float seconds)
+        public Token Reserve(Event e, double seconds)
         {
             return Reserve(e, DateTime.Now.AddSeconds(seconds));
         }

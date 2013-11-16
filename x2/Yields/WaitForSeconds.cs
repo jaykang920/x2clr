@@ -15,7 +15,7 @@ namespace x2.Yields
         private readonly Coroutine coroutine;
         private readonly Binder.Token token;
 
-        public WaitForSeconds(Coroutine coroutine, float seconds)
+        public WaitForSeconds(Coroutine coroutine, double seconds)
         {
             this.coroutine = coroutine;
             TimeoutEvent e = new TimeoutEvent { Key = this };
