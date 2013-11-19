@@ -80,6 +80,8 @@ namespace x2.Links
                         e.Load(buffer);
                         e.SessionHandle = session.Socket.Handle;
 
+                        Console.WriteLine("Received ({0}): {1}", e.SessionHandle, e);
+
                         // Post up the retrieved event to the hubs to which this
                         // link is attached.
                         if (IsSelfPublishingEnabled)

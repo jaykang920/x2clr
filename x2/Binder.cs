@@ -213,6 +213,10 @@ namespace x2
 
             public void Add(IHandler handler)
             {
+                if (handlers.Contains(handler))
+                {
+                    return;
+                }
                 handlers.Add(handler);
             }
 
