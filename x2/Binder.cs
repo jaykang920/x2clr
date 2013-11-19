@@ -213,17 +213,7 @@ namespace x2
 
             public void Add(IHandler handler)
             {
-                int index = handlers.BinarySearch(handler);
-                if (index >= 0)
-                {
-                    // Replace it.
-                    handlers[index] = handler;
-                }
-                else
-                {
-                    index = ~index;
-                    handlers.Insert(index, handler);
-                }
+                handlers.Add(handler);
             }
 
             public IEnumerable<IHandler> GetEnumerable()
@@ -233,11 +223,7 @@ namespace x2
 
             public bool Remove(IHandler handler)
             {
-                int index = handlers.BinarySearch(handler);
-                if (index >= 0)
-                {
-                    handlers.RemoveAt(index);
-                }
+                handlers.Remove(handler);
                 return (handlers.Count == 0);
             }
         }

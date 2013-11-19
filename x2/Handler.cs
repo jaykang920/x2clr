@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace x2
 {
-    public interface IHandler : IComparable<IHandler>
+    public interface IHandler
     {
         Delegate Action { get; }
 
@@ -25,21 +25,6 @@ namespace x2
         public Handler(Action<T> action)
         {
             this.action = action;
-        }
-
-        public int CompareTo(IHandler other)
-        {
-            int token = action.Method.MetadataToken;
-            int otherToken = other.Action.Method.MetadataToken;
-            if (token == otherToken)
-            {
-                return 0;
-            }
-            else if (token < otherToken)
-            {
-                return -1;
-            }
-            return 1;
         }
 
         public override bool Equals(object obj)
@@ -88,21 +73,6 @@ namespace x2
         public CoroutineHandler(Func<Coroutine, T, IEnumerator> action)
         {
             this.action = action;
-        }
-
-        public int CompareTo(IHandler other)
-        {
-            int token = action.Method.MetadataToken;
-            int otherToken = other.Action.Method.MetadataToken;
-            if (token == otherToken)
-            {
-                return 0;
-            }
-            else if (token < otherToken)
-            {
-                return -1;
-            }
-            return 1;
         }
 
         public override bool Equals(object obj)
