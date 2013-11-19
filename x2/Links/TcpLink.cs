@@ -80,7 +80,7 @@ namespace x2.Links
                         e.Load(buffer);
                         e.SessionHandle = session.Socket.Handle;
 
-                        Console.WriteLine("Received ({0}): {1}", e.SessionHandle, e);
+                        //Console.WriteLine("Received ({0}): {1}", e.SessionHandle, e);
 
                         // Post up the retrieved event to the hubs to which this
                         // link is attached.
@@ -237,6 +237,12 @@ namespace x2.Links
                     e.Context = asyncState.Session;
                     link.Publish(e);
                 }
+            }
+
+            public override void Close()
+            {
+                socket.Shutdown(SocketShutdown.Both);
+                socket.Close();
             }
 
             public override void Send(Link link, Event e)

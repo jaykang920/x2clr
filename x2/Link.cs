@@ -69,6 +69,8 @@ namespace x2
                 Handle = handle;
             }
 
+            public abstract void Close();
+
             public abstract void Send(Link link, x2.Event e);
         }
     }
