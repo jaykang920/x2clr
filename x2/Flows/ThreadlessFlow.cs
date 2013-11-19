@@ -119,10 +119,13 @@ namespace x2.Flows
                 Event dequeued;
                 if (queue.TryDequeue(out dequeued))
                 {
+                    Console.WriteLine("Dequeued: {0}", dequeued);
+
                     Dispatch(dequeued);
 
                     if (expected.IsEquivalent(dequeued))
                     {
+                        stopWatch.Stop();
                         actual = (T)dequeued;
                         return true;
                     }
@@ -131,6 +134,7 @@ namespace x2.Flows
 
                 Thread.Sleep(1);
             }
+            stopWatch.Stop();
             actual = null;
             return false;
         }

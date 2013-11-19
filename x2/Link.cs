@@ -33,14 +33,14 @@ namespace x2
         {
             base.SetUp();
 
-            Subscribe(new LinkSessionConnected(), OnLinkSessionConnected);
-            Subscribe(new LinkSessionDisconnected(), OnLinkSessionDisconnected);
+            Subscribe(new LinkSessionConnected { LinkName = Name }, OnLinkSessionConnected);
+            Subscribe(new LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
         }
 
         protected override void TearDown()
         {
-            Unsubscribe(new LinkSessionDisconnected(), OnLinkSessionDisconnected);
-            Unsubscribe(new LinkSessionConnected(), OnLinkSessionConnected);
+            Unsubscribe(new LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
+            Unsubscribe(new LinkSessionConnected() { LinkName = Name }, OnLinkSessionConnected);
 
             base.TearDown();
         }

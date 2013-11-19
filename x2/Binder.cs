@@ -216,7 +216,8 @@ namespace x2
                 int index = handlers.BinarySearch(handler);
                 if (index >= 0)
                 {
-                    //handlers[index].Combine(handler);
+                    // Replace it.
+                    handlers[index] = handler;
                 }
                 else
                 {
@@ -235,10 +236,7 @@ namespace x2
                 int index = handlers.BinarySearch(handler);
                 if (index >= 0)
                 {
-                    //if (handlers[index].Remove(handler))
-                    //{
-                        handlers.RemoveAt(index);
-                    //}
+                    handlers.RemoveAt(index);
                 }
                 return (handlers.Count == 0);
             }
