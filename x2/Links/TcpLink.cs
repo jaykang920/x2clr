@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 
 using x2.Events;
 using x2.Flows;
@@ -241,6 +242,20 @@ namespace x2.Links
                 var buffer = new Buffer(12);
                 e.Serialize(buffer);
                 BeginSend((TcpLink)link, buffer);
+            }
+
+            public override string ToString()
+            {
+                var stringBuilder = new StringBuilder();
+                stringBuilder
+                    .Append("TcpLink.Session { Handle=")
+                    .Append(socket.Handle)
+                    .Append(" Local=")
+                    .Append(socket.LocalEndPoint)
+                    .Append(" Remote=")
+                    .Append(socket.RemoteEndPoint)
+                    .Append(" }");
+                return stringBuilder.ToString();
             }
         }
 

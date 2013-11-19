@@ -66,18 +66,6 @@ namespace x2.Tests
             handler3.Invoke(e);
             Assert.AreEqual(1, IntBox.StaticValue);
 
-            // IComparable
-            Assert.AreEqual(0, handler1.CompareTo(handler2));
-            Assert.AreNotEqual(0, handler2.CompareTo(handler3));
-            if (handler2.CompareTo(handler3) > 0)
-            {
-                Assert.Less(handler3.CompareTo(handler2), 0);
-            }
-            else
-            {
-                Assert.Greater(handler3.CompareTo(handler2), 0);
-            }
-
             // Equality
             Assert.True(handler1.Equals(handler2));
             Assert.False(handler2.Equals(handler3));
@@ -108,18 +96,6 @@ namespace x2.Tests
             handler4.Invoke(e);
             Assert.AreEqual(1, intBox1.Value);
             Assert.AreEqual(-1, intBox2.Value);
-
-            // IComparable
-            Assert.AreEqual(0, handler1.CompareTo(handler2));
-            Assert.AreNotEqual(0, handler2.CompareTo(handler3));
-            if (handler2.CompareTo(handler3) > 0)
-            {
-                Assert.Less(handler3.CompareTo(handler2), 0);
-            }
-            else
-            {
-                Assert.Greater(handler3.CompareTo(handler2), 0);
-            }
 
             // Equality
             Assert.True(handler1.Equals(handler2));
