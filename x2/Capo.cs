@@ -54,8 +54,8 @@ namespace x2
             get
             {
                 int actualIndex = offset + index;
-                // Instead of throwing an exception, just return a default value
-                // on out-of-range condition.
+                // Just return a default value on out-of-range condition,
+                // instead of throwing an exception.
                 if (actualIndex < 0 || indexable.Length <= actualIndex)
                 {
                     return default(T);
