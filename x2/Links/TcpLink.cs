@@ -274,16 +274,23 @@ namespace x2.Links
 
             public override string ToString()
             {
-                var stringBuilder = new StringBuilder();
-                stringBuilder
-                    .Append("TcpLink.Session { Handle=")
-                    .Append(socket.Handle)
-                    .Append(" Local=")
-                    .Append(socket.LocalEndPoint)
-                    .Append(" Remote=")
-                    .Append(socket.RemoteEndPoint)
-                    .Append(" }");
-                return stringBuilder.ToString();
+                try
+                {
+                    var stringBuilder = new StringBuilder();
+                    stringBuilder
+                        .Append("TcpLink.Session { Handle=")
+                        .Append(socket.Handle)
+                        .Append(" Local=")
+                        .Append(socket.LocalEndPoint)
+                        .Append(" Remote=")
+                        .Append(socket.RemoteEndPoint)
+                        .Append(" }");
+                    return stringBuilder.ToString();
+                }
+                catch (Exception)
+                {
+                    return "TcpLink.Session (Closed)";
+                }
             }
         }
 
