@@ -38,6 +38,11 @@ namespace x2
             get { return (BlockSize * blocks.Count); }
         }
 
+        public bool IsEmpty
+        {
+            get { return (front == back); }
+        }
+
         public int Length
         {
             get { return (back - front); }

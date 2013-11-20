@@ -53,48 +53,68 @@ namespace x2.Links
                         asyncState.length = payloadLength;
                     }
 
+                    // Handle split packets.
                     if (buffer.Length < asyncState.length)
                     {
                         session.BeginReceive(this, false);
                         return;
                     }
 
-                    // end sentinel check
-                    if (buffer[asyncState.length - 1] != sentinel)
+                    while (true)
                     {
-                        // protocol format error
-                    }
-
-                    // pre-process
-                    buffer.MarkToRead(asyncState.length);
-
-                    int typeId;
-                    buffer.ReadUInt29(out typeId);
-                    Event e = Event.Create(typeId);
-                    if (e == null)
-                    {
-                        // error
-                    }
-                    else
-                    {
-                        e.Load(buffer);
-                        e.SessionHandle = session.Socket.Handle;
-
-                        //Console.WriteLine("Received ({0}): {1}", e.SessionHandle, e);
-
-                        // Post up the retrieved event to the hubs to which this
-                        // link is attached.
-                        if (IsSelfPublishingEnabled)
+                        // end sentinel check
+                        if (buffer[asyncState.length - 1] != sentinel)
                         {
-                            Publish(e);
+                            // packet framing error
+                        }
+
+                        // pre-process
+                        buffer.MarkToRead(asyncState.length);
+
+                        int typeId;
+                        buffer.ReadUInt29(out typeId);
+
+                        Event e = Event.Create(typeId);
+                        if (e == null)
+                        {
+                            // error
                         }
                         else
                         {
-                            PublishAway(e);
+                            e.Load(buffer);
+                            e.SessionHandle = session.Socket.Handle;
+
+                            // Post up the retrieved event to the hubs to which this
+                            // link is attached.
+                            if (IsSelfPublishingEnabled)
+                            {
+                                Publish(e);
+                            }
+                            else
+                            {
+                                PublishAway(e);
+                            }
+                        }
+
+                        buffer.Trim();
+
+                        if (buffer.IsEmpty)
+                        {
+                            break;
+                        }
+
+                        int payloadLength;
+                        int numLengthBytes = buffer.ReadUInt29(out payloadLength);
+                        buffer.Shrink(numLengthBytes);
+                        asyncState.length = payloadLength;
+
+                        if (buffer.Length < asyncState.length)
+                        {
+                            session.BeginReceive(this, false);
+                            return;
                         }
                     }
 
-                    buffer.Trim();
                     session.BeginReceive(this, true);
                 }
                 else
