@@ -26,10 +26,12 @@ namespace x2
         private readonly WeakReference flow;  // do we really need weak reference here?
         private readonly IList<Binder.Token> bindings;
 
+        public EventSink() : this(Flow.CurrentFlow) { }
+
         public EventSink(Flow flow)
         {
-            bindings = new List<Binder.Token>();
             this.flow = new WeakReference(flow);
+            bindings = new List<Binder.Token>();
         }
 
         public void Bind<T>(T e, Action<T> handler)

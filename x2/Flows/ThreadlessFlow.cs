@@ -100,6 +100,9 @@ namespace x2.Flows
             return queue.TryDequeue(out e);
         }
 
+        /// <summary>
+        /// Wait for a single event of type (T) with timeout in seconds.
+        /// </summary>
         public bool Wait<T>(T expected, out T actual, double seconds)
             where T : Event
         {
@@ -107,11 +110,12 @@ namespace x2.Flows
         }
 
         /// <summary>
-        /// Wait for a single event of type (T).
+        /// Wait for a single event of type (T) with timeout.
         /// </summary>
         public bool Wait<T>(T expected, out T actual, TimeSpan timeout)
             where T : Event
         {
+            actual = null;
             var stopWatch = new System.Diagnostics.Stopwatch();
             stopWatch.Start();
             while (stopWatch.Elapsed < timeout)
@@ -125,17 +129,58 @@ namespace x2.Flows
 
                     if (expected.IsEquivalent(dequeued))
                     {
-                        stopWatch.Stop();
                         actual = (T)dequeued;
                         return true;
                     }
-
                 }
 
                 Thread.Sleep(1);
             }
-            stopWatch.Stop();
-            actual = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Wait for multiple events with timeout in seconds.
+        /// </summary>
+        public bool Wait(double seconds, out Event[] actual, params Event[] expected)
+        {
+            return Wait(TimeSpan.FromSeconds(seconds), out actual, expected);
+        }
+
+        /// <summary>
+        /// Wait for multiple events with timeout.
+        /// </summary>
+        public bool Wait(TimeSpan timeout, out Event[] actual, params Event[] expected)
+        {
+            int count = 0;
+            actual = new Event[expected.Length];
+            var stopWatch = new System.Diagnostics.Stopwatch();
+            stopWatch.Start();
+            while (stopWatch.Elapsed < timeout)
+            {
+                Event dequeued;
+                if (queue.TryDequeue(out dequeued))
+                {
+                    Console.WriteLine("Dequeued: {0}", dequeued);
+
+                    Dispatch(dequeued);
+
+                    for (int i = 0; i < expected.Length; ++i)
+                    {
+                        if (actual[i] == null && expected[i].IsEquivalent(dequeued))
+                        {
+                            actual[i] = dequeued;
+                            if (++count >= expected.Length)
+                            {
+                                return true;
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                Thread.Sleep(1);
+            }
             return false;
         }
     }

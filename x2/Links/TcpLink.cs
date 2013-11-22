@@ -287,7 +287,7 @@ namespace x2.Links
                         .Append(" }");
                     return stringBuilder.ToString();
                 }
-                catch (Exception)
+                catch (ObjectDisposedException)
                 {
                     return "TcpLink.Session (Closed)";
                 }
