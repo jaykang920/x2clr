@@ -63,6 +63,7 @@
     <Compile Include="Flows\EventBasedFlow.cs" />
     <Compile Include="Flows\FrameBasedFlow.cs" />
     <Compile Include="Func.cs" />
+    <Compile Include="Yields\WaitForMultipleEvents.cs" />
     <Compile Include="Yields\WaitForSeconds.cs" />
     <Compile Include="Flows\TimeFlow.cs" />
     <Compile Include="Link.cs" />
