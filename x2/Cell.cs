@@ -285,9 +285,16 @@ namespace x2
             list = new System.Collections.Generic.List<T>();
         }
 
-        public void Add(T item)
+        public ListCell<T> Add(T item)
         {
             list.Add(item);
+            return this;
+        }
+
+        public ListCell<T> AddRange(IEnumerable<T> collection)
+        {
+            list.AddRange(collection);
+            return this;
         }
 
         public IEnumerator<T> GetEnumerator()
