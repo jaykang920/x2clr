@@ -14,14 +14,14 @@ namespace x2.Yields
     public class WaitForMultipleEvents : YieldInstruction
     {
         private readonly Coroutine coroutine;
-        private readonly Event[] expected;
-        private readonly IList<Event> actual;
+        private readonly Event[] expected, actual;
+        private int count;
 
         public WaitForMultipleEvents(Coroutine coroutine, params Event[] e)
         {
             this.coroutine = coroutine;
             expected = e;
-            actual = new List<Event>();
+            actual = new Event[expected.Length];
 
             for (int i = 0; i < expected.Length; ++i)
             {
@@ -40,15 +40,16 @@ namespace x2.Yields
         {
             for (int i = 0; i < expected.Length; ++i)
             {
-                if (expected[i].IsEquivalent(e))
+                if (actual[i] == null && expected[i].IsEquivalent(e))
                 {
                     Flow.Unbind(expected[i], OnEvent);
-                    actual.Add(e);
+                    actual[i] = e;
+                    ++count;
                     break;
                 }
             }
 
-            if (actual.Count >= expected.Length)
+            if (count >= expected.Length)
             {
                 coroutine.Context = actual;
                 coroutine.Continue();

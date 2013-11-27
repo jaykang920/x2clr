@@ -267,6 +267,20 @@ namespace x2
             value = (value << 8) | GetByte();
         }
 
+        public void Read(out float value)
+        {
+            int i;
+            Read(out i);
+            value = System.BitConverter.ToSingle(System.BitConverter.GetBytes(i), 0);
+        }
+
+        public void Read(out double value)
+        {
+            long l;
+            Read(out l);
+            value = System.BitConverter.Int64BitsToDouble(l);
+        }
+
         public void Read(out string value)
         {
             int length;
@@ -537,6 +551,16 @@ namespace x2
             PutByte((byte)(value >> 16));
             PutByte((byte)(value >> 8));
             PutByte((byte)value);
+        }
+
+        public void Write(float value)
+        {
+            Write(System.BitConverter.ToInt32(System.BitConverter.GetBytes(value), 0));
+        }
+
+        public void Write(double value)
+        {
+            Write(System.BitConverter.DoubleToInt64Bits(value));
         }
 
         public void Write(string value)

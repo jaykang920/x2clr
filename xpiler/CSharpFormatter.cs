@@ -525,7 +525,7 @@ namespace x2
             {
                 property.Index = index++;
 
-                property.NativeName = FirstToLower(property.Name);
+                property.NativeName = FirstToLower(property.Name) + "_";
                 property.Name = FirstToUpper(property.Name);
 
                 if (Types.IsPrimitive(property.TypeSpec.Type))
