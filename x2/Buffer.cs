@@ -278,7 +278,7 @@ namespace x2
         {
             long l;
             Read(out l);
-            value = System.BitConverter.Int64BitsToDouble(l);
+            value = System.BitConverter.ToDouble(System.BitConverter.GetBytes(l), 0);
         }
 
         public void Read(out string value)
@@ -560,7 +560,7 @@ namespace x2
 
         public void Write(double value)
         {
-            Write(System.BitConverter.DoubleToInt64Bits(value));
+            Write(System.BitConverter.ToInt64(System.BitConverter.GetBytes(value), 0));
         }
 
         public void Write(string value)
