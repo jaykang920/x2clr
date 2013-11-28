@@ -45,7 +45,7 @@ namespace x2.Flows
 
                 SetUp();
                 caseStack.SetUp(this);
-                handlerChain = new List<IHandler>();
+                handlerChain = new List<Handler>();
 
                 currentFlow = this;
 

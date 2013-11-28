@@ -16,7 +16,7 @@ namespace x2
         protected static Flow currentFlow;
 
         [ThreadStatic]
-        protected static List<IHandler> handlerChain;
+        protected static List<Handler> handlerChain;
 
         protected readonly Binder binder;
 
@@ -45,28 +45,56 @@ namespace x2
             DefaultExceptionHandler = OnException;
         }
 
-        public static Binder.Token Bind<T>(T e, Action<T> handler)
+        public static Binder.Token Bind<T>(T e, Action<T> action)
             where T : Event
         {
-            return currentFlow.Subscribe(e, handler);
+            return currentFlow.Subscribe(e, action);
         }
 
-        public static Binder.Token Bind<T>(T e, Func<Coroutine, T, IEnumerator> handler)
+        public static Binder.Token Bind<T>(
+            T e, Action<T> action, Predicate<T> predicate)
             where T : Event
         {
-            return currentFlow.Subscribe(e, handler);
+            return currentFlow.Subscribe(e, action, predicate);
         }
 
-        public static void Unbind<T>(T e, Action<T> handler)
+        public static Binder.Token Bind<T>(T e, Func<Coroutine, T, IEnumerator> routine)
             where T : Event
         {
-            currentFlow.Unsubscribe(e, handler);
+            return currentFlow.Subscribe(e, routine);
         }
 
-        public static void Unbind<T>(T e, Func<Coroutine, T, IEnumerator> handler)
+        public static Binder.Token Bind<T>(
+            T e, Func<Coroutine, T, IEnumerator> routine, Predicate<T> predicate)
             where T : Event
         {
-            currentFlow.Unsubscribe(e, handler);
+            return currentFlow.Subscribe(e, routine, predicate);
+        }
+
+        public static void Unbind<T>(T e, Action<T> action)
+            where T : Event
+        {
+            currentFlow.Unsubscribe(e, action);
+        }
+
+        public static void Unbind<T>(
+            T e, Action<T> action, Predicate<T> predicate)
+            where T : Event
+        {
+            currentFlow.Unsubscribe(e, action, predicate);
+        }
+
+        public static void Unbind<T>(T e, Func<Coroutine, T, IEnumerator> routine)
+            where T : Event
+        {
+            currentFlow.Unsubscribe(e, routine);
+        }
+
+        public static void Unbind<T>(
+            T e, Func<Coroutine, T, IEnumerator> routine, Predicate<T> predicate)
+            where T : Event
+        {
+            currentFlow.Unsubscribe(e, routine, predicate);
         }
 
         public static void Unbind(Binder.Token binderToken)
@@ -126,28 +154,59 @@ namespace x2
             hub.Post(e, currentFlow);
         }
 
-        public Binder.Token Subscribe<T>(T e, Action<T> handler)
+        public Binder.Token Subscribe<T>(T e, Action<T> action)
             where T : Event
         {
-            return binder.Bind(e, new Handler<T>(handler));
+            return binder.Bind(e, new MethodHandler<T>(action));
         }
 
-        public Binder.Token Subscribe<T>(T e, Func<Coroutine, T, IEnumerator> handler)
+        public Binder.Token Subscribe<T>(
+            T e, Action<T> action, Predicate<T> predicate)
             where T : Event
         {
-            return binder.Bind(e, new CoroutineHandler<T>(handler));
+            return binder.Bind(e,
+                new ConditionalMethodHandler<T>(action, predicate));
+        }
+
+        public Binder.Token Subscribe<T>(T e, Func<Coroutine, T, IEnumerator> routine)
+            where T : Event
+        {
+            return binder.Bind(e, new CoroutineHandler<T>(routine));
+        }
+
+        public Binder.Token Subscribe<T>(
+            T e, Func<Coroutine, T, IEnumerator> routine, Predicate<T> predicate)
+            where T : Event
+        {
+            return binder.Bind(e,
+                new ConditionalCoroutineHandler<T>(routine, predicate));
         }
 
         public void Unsubscribe<T>(T e, Action<T> handler)
             where T : Event
         {
-            binder.Unbind(e, new Handler<T>(handler));
+            binder.Unbind(e, new MethodHandler<T>(handler));
+        }
+
+        public void Unsubscribe<T>(T e, Action<T> handler, Predicate<T> predicate)
+            where T : Event
+        {
+            binder.Unbind(e,
+                new ConditionalMethodHandler<T>(handler, predicate));
         }
 
         public void Unsubscribe<T>(T e, Func<Coroutine, T, IEnumerator> handler)
             where T : Event
         {
             binder.Unbind(e, new CoroutineHandler<T>(handler));
+        }
+
+        public void Unsubscribe<T>(
+            T e, Func<Coroutine, T, IEnumerator> handler, Predicate<T> predicate)
+            where T : Event
+        {
+            binder.Unbind(e,
+                new ConditionalCoroutineHandler<T>(handler, predicate));
         }
 
         public void Unsubscribe(Binder.Token token)

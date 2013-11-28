@@ -49,9 +49,9 @@ namespace x2.Tests
         [Test]
         public void TestStaticMethods()
         {
-            var handler1 = new Handler<Event>(IntBox.StaticIncrement);
-            var handler2 = new Handler<Event>(IntBox.StaticIncrement);
-            var handler3 = new Handler<Event>(IntBox.StaticDecrement);
+            var handler1 = new MethodHandler<Event>(IntBox.StaticIncrement);
+            var handler2 = new MethodHandler<Event>(IntBox.StaticIncrement);
+            var handler3 = new MethodHandler<Event>(IntBox.StaticDecrement);
 
             // Properties
             Assert.True(handler1.Action.Equals(handler2.Action));
@@ -74,10 +74,10 @@ namespace x2.Tests
         [Test]
         public void TestInstanceMethods()
         {
-            var handler1 = new Handler<Event>(intBox1.Increment);
-            var handler2 = new Handler<Event>(intBox1.Increment);
-            var handler3 = new Handler<Event>(intBox1.Decrement);
-            var handler4 = new Handler<Event>(intBox2.Decrement);
+            var handler1 = new MethodHandler<Event>(intBox1.Increment);
+            var handler2 = new MethodHandler<Event>(intBox1.Increment);
+            var handler3 = new MethodHandler<Event>(intBox1.Decrement);
+            var handler4 = new MethodHandler<Event>(intBox2.Decrement);
 
             // Properties
             Assert.True(handler1.Action.Equals(handler2.Action));

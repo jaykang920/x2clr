@@ -33,7 +33,7 @@ namespace x2.Flows
         protected void Run()
         {
             currentFlow = this;
-            handlerChain = new List<IHandler>();
+            handlerChain = new List<Handler>();
 
             while (true)
             {

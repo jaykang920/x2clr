@@ -19,7 +19,7 @@ namespace x2
             Diag = new Diagnostics(this);
         }
 
-        public virtual Token Bind(Event e, IHandler handler)
+        public virtual Token Bind(Event e, Handler handler)
         {
             filter.Add(e.GetTypeId(), e.GetFingerprint());
             HandlerSet handlers;
@@ -39,7 +39,7 @@ namespace x2
             return token;
         }
 
-        public virtual int BuildHandlerChain(Event e, List<IHandler> handlerChain)
+        public virtual int BuildHandlerChain(Event e, List<Handler> handlerChain)
         {
             Event.Tag tag = (Event.Tag)e.GetTypeTag();
             Fingerprint fingerprint = e.GetFingerprint();
@@ -68,7 +68,7 @@ namespace x2
             return handlerChain.Count;
         }
 
-        public virtual void Unbind(Event e, IHandler handler)
+        public virtual void Unbind(Event e, Handler handler)
         {
             UnbindInternal(e, handler);
 
@@ -85,7 +85,7 @@ namespace x2
             UnbindInternal(token.key, token.value);
         }
 
-        private void UnbindInternal(Event e, IHandler handler)
+        private void UnbindInternal(Event e, Handler handler)
         {
             HandlerSet handlers;
             if (handlerMap.TryGetValue(e, out handlers))
@@ -101,7 +101,7 @@ namespace x2
         public struct Token
         {
             public Event key;
-            public IHandler value;
+            public Handler value;
 
             public override bool Equals(object obj)
             {
@@ -126,7 +126,7 @@ namespace x2
                 return hash.Code;
             }
 
-            public Token(Event key, IHandler value)
+            public Token(Event key, Handler value)
             {
                 this.key = key;
                 this.value = value;
@@ -204,14 +204,14 @@ namespace x2
 
         private class HandlerSet
         {
-            private readonly List<IHandler> handlers;
+            private readonly List<Handler> handlers;
 
             public HandlerSet()
             {
-                handlers = new List<IHandler>();
+                handlers = new List<Handler>();
             }
 
-            public void Add(IHandler handler)
+            public void Add(Handler handler)
             {
                 if (handlers.Contains(handler))
                 {
@@ -220,12 +220,12 @@ namespace x2
                 handlers.Add(handler);
             }
 
-            public IEnumerable<IHandler> GetEnumerable()
+            public IEnumerable<Handler> GetEnumerable()
             {
                 return handlers;
             }
 
-            public bool Remove(IHandler handler)
+            public bool Remove(Handler handler)
             {
                 handlers.Remove(handler);
                 return (handlers.Count == 0);
@@ -264,7 +264,7 @@ namespace x2
             rwlock = new ReaderWriterLock();
         }
 
-        public override Token Bind(Event e, IHandler handler)
+        public override Token Bind(Event e, Handler handler)
         {
             rwlock.AcquireWriterLock(Timeout.Infinite);
             try
@@ -277,7 +277,7 @@ namespace x2
             }
         }
 
-        public override int BuildHandlerChain(Event e, List<IHandler> handlerChain)
+        public override int BuildHandlerChain(Event e, List<Handler> handlerChain)
         {
             rwlock.AcquireReaderLock(Timeout.Infinite);
             try
@@ -290,7 +290,7 @@ namespace x2
             }
         }
 
-        public override void Unbind(Event e, IHandler handler)
+        public override void Unbind(Event e, Handler handler)
         {
             rwlock.AcquireWriterLock(Timeout.Infinite);
             try

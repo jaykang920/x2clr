@@ -8,24 +8,12 @@ using System.Reflection;
 
 namespace x2
 {
-    public interface IHandler
+    /// <summary>
+    /// Abstract base class for concrete event handlers.
+    /// </summary>
+    public abstract class Handler
     {
-        Delegate Action { get; }
-
-        void Invoke(Event e);
-    }
-
-    public struct Handler<T> : IHandler
-        where T : Event
-    {
-        private readonly Action<T> action;
-
-        public Delegate Action { get { return action; } }
-
-        public Handler(Action<T> action)
-        {
-            this.action = action;
-        }
+        public abstract Delegate Action { get; }
 
         public override bool Equals(object obj)
         {
@@ -33,81 +21,139 @@ namespace x2
             {
                 return true;
             }
-            if (obj == null ||
-                typeof(IHandler).IsAssignableFrom(obj.GetType()) == false)
+            if (obj == null || GetType() != obj.GetType())
             {
                 return false;
             }
-            IHandler other = (IHandler)obj;
-            return action.Equals(other.Action);
+
+            Handler other = (Handler)obj;
+            return Action.Equals(other.Action);
         }
 
         public override int GetHashCode()
         {
-            return action.GetHashCode();
+            return Action.GetHashCode();
         }
 
-        public void Invoke(Event e)
+        public abstract void Invoke(Event e);
+    }
+
+    public class MethodHandler<T> : Handler
+        where T : Event
+    {
+        protected readonly Action<T> action;
+
+        public override Delegate Action { get { return action; } }
+
+        public MethodHandler(Action<T> action)
+        {
+            this.action = action;
+        }
+
+        public override void Invoke(Event e)
         {
             action((T)e);
         }
-
-        public static bool operator ==(Handler<T> x, IHandler y)
-        {
-            return x.Equals(y);
-        }
-
-        public static bool operator !=(Handler<T> x, IHandler y)
-        {
-            return !x.Equals(y);
-        }
     }
 
-    public struct CoroutineHandler<T> : IHandler
+    public class CoroutineHandler<T> : Handler
         where T : Event
     {
-        private readonly Func<Coroutine, T, IEnumerator> action;
+        protected readonly Func<Coroutine, T, IEnumerator> action;
 
-        public Delegate Action { get { return action; } }
+        public override Delegate Action { get { return action; } }
 
         public CoroutineHandler(Func<Coroutine, T, IEnumerator> action)
         {
             this.action = action;
         }
 
-        public override bool Equals(object obj)
-        {
-            if (Object.ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            if (obj == null || !(obj is IHandler))
-            {
-                return false;
-            }
-            IHandler other = (IHandler)obj;
-            return action.Equals(other.Action);
-        }
-
-        public override int GetHashCode()
-        {
-            return action.GetHashCode();
-        }
-
-        public void Invoke(Event e)
+        public override void Invoke(Event e)
         {
             Coroutine coroutine = new Coroutine();
             coroutine.Start(action(coroutine, (T)e));
         }
+    }
 
-        public static bool operator ==(CoroutineHandler<T> x, IHandler y)
+    public class ConditionalMethodHandler<T> : MethodHandler<T>
+        where T : Event
+    {
+        private readonly Predicate<T> predicate;
+
+        public ConditionalMethodHandler(Action<T> action, Predicate<T> predicate)
+            : base(action)
         {
-            return x.Equals(y);
+            this.predicate = predicate;
         }
 
-        public static bool operator !=(CoroutineHandler<T> x, IHandler y)
+        /*
+        public override bool Equals(object obj)
         {
-            return !x.Equals(y);
+            if (!base.Equals(obj))
+            {
+                return false;
+            }
+
+            var other = (ConditionalMethodHandler<T>)obj;
+            return predicate.Equals(other.predicate);
+        }
+
+        public override int GetHashCode()
+        {
+            Hash hash = new Hash(Hash.Seed);
+            hash.Update(base.GetHashCode());
+            hash.Update(predicate.GetHashCode());
+            return hash.Code;
+        }
+        */
+
+        public override void Invoke(Event e)
+        {
+            if (predicate((T)e))
+            {
+                base.Invoke((T)e);
+            }
+        }
+    }
+
+    public class ConditionalCoroutineHandler<T> : CoroutineHandler<T>
+        where T : Event
+    {
+        private readonly Predicate<T> predicate;
+
+        public ConditionalCoroutineHandler(Func<Coroutine, T, IEnumerator> action,
+            Predicate<T> predicate) : base(action)
+        {
+            this.predicate = predicate;
+        }
+
+        /*
+        public override bool Equals(object obj)
+        {
+            if (!base.Equals(obj))
+            {
+                return false;
+            }
+
+            var other = (ConditionalCoroutineHandler<T>)obj;
+            return predicate.Equals(other.predicate);
+        }
+
+        public override int GetHashCode()
+        {
+            Hash hash = new Hash(Hash.Seed);
+            hash.Update(base.GetHashCode());
+            hash.Update(predicate.GetHashCode());
+            return hash.Code;
+        }
+        */
+
+        public override void Invoke(Event e)
+        {
+            if (predicate((T)e))
+            {
+                base.Invoke((T)e);
+            }
         }
     }
 }
