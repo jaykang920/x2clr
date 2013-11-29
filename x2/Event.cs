@@ -9,7 +9,7 @@ using System.Text;
 namespace x2
 {
     /// <summary>
-    /// Common base class for all event classes.
+    /// Common base class for all events.
     /// </summary>
     public class Event : Cell
     {

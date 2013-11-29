@@ -9,7 +9,7 @@ using System.Text;
 namespace x2
 {
     /// <summary>
-    /// Common base class for all custom type classes.
+    /// Common base class for all custom types.
     /// </summary>
     public abstract class Cell
     {

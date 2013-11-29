@@ -13,6 +13,19 @@ namespace x2
         void TearDown(Flow holder);
     }
 
+    public abstract class Case : EventSink, ICase
+    {
+        public virtual void SetUp(Flow holder)
+        {
+            Flow = holder;
+        }
+
+        public virtual void TearDown(Flow holder)
+        {
+            base.CleanUp();
+        }
+    }
+
     public class CaseStack : ICase
     {
         private readonly IList<ICase> cases;
@@ -21,7 +34,6 @@ namespace x2
         public CaseStack()
         {
             cases = new List<ICase>();
-            activated = false;
         }
 
         public void Add(ICase c)
