@@ -266,25 +266,25 @@ namespace x2
         }
     }
 
-    public class ListCell<T> : Cell, IEnumerable<T> where T : Cell, new()
+    public class Sequence<T> : Cell, IEnumerable<T> where T : Cell, new()
     {
         private readonly List<T> list;
 
         public int Count { get { return list.Count; } }
 
-        public ListCell()
+        public Sequence()
             : base(0)
         {
             list = new System.Collections.Generic.List<T>();
         }
 
-        public ListCell<T> Add(T item)
+        public Sequence<T> Add(T item)
         {
             list.Add(item);
             return this;
         }
 
-        public ListCell<T> AddRange(IEnumerable<T> collection)
+        public Sequence<T> AddRange(IEnumerable<T> collection)
         {
             list.AddRange(collection);
             return this;

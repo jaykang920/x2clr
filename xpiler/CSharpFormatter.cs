@@ -114,7 +114,7 @@ namespace x2
             nativeTypes.Add("float64", "double");
             nativeTypes.Add("string", "string");
             nativeTypes.Add("datetime", "DateTime");
-            nativeTypes.Add("list", "ListCell");
+            nativeTypes.Add("list", "Sequence");
             //nativeTypes.Add("map", "MapCell");
 
             defaultValues = new Dictionary<string, string>();

@@ -108,7 +108,7 @@ namespace x2
         public void CleanUp()
         {
             var flow = Flow;
-            if (flow != null)
+            if (flow == null)
             {
                 return;
             }
