@@ -15,15 +15,22 @@ namespace x2
 
     public abstract class Case : EventSink, ICase
     {
-        public virtual void SetUp(Flow holder)
+        public void SetUp(Flow holder)
         {
             Flow = holder;
+
+            SetUp();
         }
 
-        public virtual void TearDown(Flow holder)
+        public void TearDown(Flow holder)
         {
-            base.CleanUp();
+            TearDown();
+
+            CleanUp();
         }
+
+        public virtual void SetUp() { }
+        public virtual void TearDown() { }
     }
 
     public class CaseStack : ICase

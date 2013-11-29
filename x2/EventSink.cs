@@ -43,7 +43,7 @@ namespace x2
                 {
                     throw new InvalidOperationException();
                 }
-                this.flow = new WeakReference(flow);
+                this.flow = new WeakReference(value);
             }
         }
 
