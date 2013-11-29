@@ -106,28 +106,21 @@ namespace x2
         }
 
         /// <summary>
-        /// Determines whether the specified Cell object is equivalent to this Cell.
+        /// Determines whether the specified Cell object is equivalent to this
+        /// one.
         /// </summary>
-        /// A Cell is said to be <i>equivalent</i> to the other when its fingerprint
-        /// is equivalent to the other's, and all the fingerprinted properties of
+        /// A Cell is said to be equivalent to the other if its fingerprint is
+        /// equivalent to the other's, and all the fingerprinted properties of
         /// the other exactly matches with their counterparts.
         /// <remarks>
-        /// Given two Cell objects x and y, x.IsEquivalent(y) returns
-        /// <b>true</b> if:
+        /// Given two Cell objects x and y, x.IsEquivalent(y) returns true if:
         ///   <list type="bullet">
-        ///     <item>x.fingerprint.IsEquivalent(y.fingerprint) returns <b>true</b>.
+        ///     <item>x.fingerprint.IsEquivalent(y.fingerprint) returns true.
         ///     </item>
-        ///     <item>All the fingerprinted properties in x are equal to those in y.
-        ///     </item>
+        ///     <item>All the fingerprinted properties in x are equal to those
+        ///     in y.</item>
         ///   </list>
         /// </remarks>
-        /// <param name="other">
-        /// A Cell object to compare with this Cell.
-        /// </param>
-        /// <returns>
-        /// <b>true</b> if <c>other</c> is equivalent to this Cell; otherwise,
-        /// <b>false</b>.
-        /// </returns>
         public virtual bool IsEquivalent(Cell other)
         {
             if (!other.IsKindOf(this))

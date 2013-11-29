@@ -176,25 +176,18 @@ namespace x2
 
         /// <summary>
         /// Determines whether the specified Fingerprint object is equivalent to 
-        /// this Fingerprint.
+        /// this one.
         /// </summary>
-        /// A Fingerprint is said to be <i>equivalent</i> to the other when it 
-        /// covers all the bits set in the other.
+        /// A Fingerprint is said to be equivalent to the other if it covers all
+        /// the bits set in the other.
         /// <remarks>
         /// Given two Fingerprint objects x and y, x.IsEquivalent(y) returns
-        /// <b>true</b> if:
+        /// true if:
         ///   <list type="bullet">
-        ///     <item>x.Length is less than or equal to y.Length</item>
+        ///     <item>y.Length is greater than or equal to x.Length</item>
         ///     <item>All the bits set in x are also set in y</item>
         ///   </list>
         /// </remarks>
-        /// <param name="other">
-        /// A Fingerprint object to compare with this Fingerprint.
-        /// </param>
-        /// <returns>
-        /// <b>true</b> if <c>other</c> is equivalent to this Fingerprint;
-        /// otherwise, <b>false</b>.
-        /// </returns>
         public bool IsEquivalent(Fingerprint other)
         {
             if (Object.ReferenceEquals(this, other))
