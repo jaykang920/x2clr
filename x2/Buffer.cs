@@ -245,6 +245,36 @@ namespace x2
             value = (short)((value << 8) | GetByte());
         }
 
+        /// <summary>
+        /// Decode variable-length 32-bit signed integer from this buffer.
+        /// </summary>
+        public void ReadVariable(out int value)
+        {
+            // Zigzag decoding
+            uint u;
+            ReadVariable(out u);
+            value = (int)(u >> 1);
+            if ((u & 1) != 0)
+            {
+                value = ~value;
+            }
+        }
+
+        /// <summary>
+        /// Decode variable-length 64-bit signed integer from this buffer.
+        /// </summary>
+        public void ReadVariable(out long value)
+        {
+            // Zigzag decoding
+            ulong u;
+            ReadVariable(out u);
+            value = (long)(u >> 1);
+            if ((u & 1) != 0)
+            {
+                value = ~value;
+            }
+        }
+
         public void Read(out int value)
         {
             CheckLengthToRead(4);
@@ -395,6 +425,50 @@ namespace x2
             return 4;
         }
 
+        /// <summary>
+        /// Decode variable-length 32-bit unsigned integer from this buffer.
+        /// </summary>
+        public int ReadVariable(out uint value)
+        {
+            value = 0U;
+            for (int i = 1; i < 5; ++i)
+            {
+                CheckLengthToRead(1);
+                byte b = GetByte();
+                if ((b & 0x80) == 0)
+                {
+                    value |= b;
+                    return i;
+                }
+                value = (value | (b & 0x7fU)) << 7;
+            }
+            CheckLengthToRead(1);
+            value |= GetByte();
+            return 5;
+        }
+
+        /// <summary>
+        /// Decode variable-length 64-bit unsigned integer from this buffer.
+        /// </summary>
+        public int ReadVariable(out ulong value)
+        {
+            value = 0UL;
+            for (int i = 1; i < 10; ++i)
+            {
+                CheckLengthToRead(1);
+                byte b = GetByte();
+                if ((b & 0x80) == 0)
+                {
+                    value |= b;
+                    return i;
+                }
+                value = (value | (b & 0x7fUL)) << 7;
+            }
+            CheckLengthToRead(1);
+            value |= GetByte();
+            return 10;
+        }
+
         public void Rewind()
         {
             Position = front;
@@ -531,6 +605,24 @@ namespace x2
             PutByte((byte)value);
         }
 
+        /// <summary>
+        /// Encode variable-length 32-bit signed integer into this buffer.
+        /// </summary>
+        public void WriteVariable(int value)
+        {
+            // Zigzag encoding
+            WriteVariable((uint)((value << 1) ^ (value >> 31)));
+        }
+
+        /// <summary>
+        /// Encode variable-length 64-bit signed integer into this buffer.
+        /// </summary>
+        public void WriteVariable(long value)
+        {
+            // Zigzag encoding
+            WriteVariable((ulong)((value << 1) ^ (value >> 63)));
+        }
+
         public void Write(int value)
         {
             EnsureCapacityToWrite(4);
@@ -552,7 +644,7 @@ namespace x2
             PutByte((byte)(value >> 8));
             PutByte((byte)value);
         }
-
+        
         public void Write(float value)
         {
             Write(System.BitConverter.ToInt32(System.BitConverter.GetBytes(value), 0));
@@ -646,6 +738,176 @@ namespace x2
             {
                 throw new ArgumentOutOfRangeException();
             }
+        }
+
+        /// <summary>
+        /// Encode variable-length 32-bit unsigned integer into this buffer.
+        /// </summary>
+        public void WriteVariable(uint value)
+        {
+            // 0x00000000 - 0x0000007f : 0xxxxxxx
+            // 0x00000080 - 0x00003fff : 1xxxxxxx 0xxxxxxx
+            // 0x00004000 - 0x001fffff : 1xxxxxxx 1xxxxxxx 0xxxxxxx
+            // 0x00200000 - 0x0fffffff : 1xxxxxxx 1xxxxxxx 1xxxxxxx 0xxxxxxx
+            // 0x10000000 - 0xffffffff : 1xxxxxxx 1xxxxxxx 1xxxxxxx 1xxxxxxx 0000xxxx
+
+            if ((value & 0xffffff80) == 0)
+            {
+                EnsureCapacityToWrite(1);
+                PutByte((byte)value);
+                return;
+            }
+            
+            if ((value & 0xffffc000) == 0)
+            {
+                EnsureCapacityToWrite(2);
+                PutByte((byte)((value >> 7) | 0x80));
+                PutByte((byte)(value & 0x7f));
+                return;
+            }
+            
+            if ((value & 0xffe00000) == 0)
+            {
+                EnsureCapacityToWrite(3);
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 7) | 0x80));
+                PutByte((byte)(value & 0x7f));
+                return;
+            }
+            
+            if ((value & 0xf0000000) == 0)
+            {
+                EnsureCapacityToWrite(4);
+                PutByte((byte)((value >> 21) | 0x80));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 7) | 0x80));
+                PutByte((byte)(value & 0x7f));
+                return;
+            }
+            
+            EnsureCapacityToWrite(5);
+            PutByte((byte)((value >> 25) | 0x80));
+            PutByte((byte)((value >> 18) | 0x80));
+            PutByte((byte)((value >> 11) | 0x80));
+            PutByte((byte)((value >> 4) | 0x80));
+            PutByte((byte)(value & 0x0f));
+        }
+
+        /// <summary>
+        /// Encode variable-length 64-bit unsigned integer into this buffer.
+        /// </summary>
+        public void WriteVariable(ulong value)
+        {
+            if ((value & 0xffffffffffffff80L) == 0)
+            {
+                EnsureCapacityToWrite(1);
+                PutByte((byte)value);
+                return;
+            }
+
+            if ((value & 0xffffffffffffc000L) == 0)
+            {
+                EnsureCapacityToWrite(2);
+                PutByte((byte)((value >> 7) | 0x80));
+                PutByte((byte)(value & 0x7f));
+                return;
+            }
+
+            if ((value & 0xffffffffffe00000L) == 0)
+            {
+                EnsureCapacityToWrite(3);
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 7) | 0x80));
+                PutByte((byte)(value & 0x7f));
+                return;
+            }
+
+            if ((value & 0xfffffffff0000000L) == 0)
+            {
+                EnsureCapacityToWrite(4);
+                PutByte((byte)((value >> 21) | 0x80));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 7) | 0x80));
+                PutByte((byte)(value & 0x7f));
+                return;
+            }
+
+            if ((value & 0xfffffff800000000L) == 0)
+            {
+                EnsureCapacityToWrite(5);
+                PutByte((byte)((value >> 28) | 0x80));
+                PutByte((byte)((value >> 21) | 0x80));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 7) | 0x80));
+                PutByte((byte)(value & 0x7f));
+                return;
+            }
+
+            if ((value & 0xfffffc0000000000L) == 0)
+            {
+                EnsureCapacityToWrite(6);
+                PutByte((byte)((value >> 35) | 0x80));
+                PutByte((byte)((value >> 28) | 0x80));
+                PutByte((byte)((value >> 21) | 0x80));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 7) | 0x80));
+                PutByte((byte)(value & 0x7f));
+                return;
+            }
+
+            if ((value & 0xfffe000000000000L) == 0)
+            {
+                EnsureCapacityToWrite(7);
+                PutByte((byte)((value >> 42) | 0x80));
+                PutByte((byte)((value >> 35) | 0x80));
+                PutByte((byte)((value >> 28) | 0x80));
+                PutByte((byte)((value >> 21) | 0x80));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 7) | 0x80));
+                PutByte((byte)(value & 0x7f));
+                return;
+            }
+
+            if ((value & 0xff00000000000000L) == 0)
+            {
+                EnsureCapacityToWrite(8);
+                PutByte((byte)((value >> 49) | 0x80));
+                PutByte((byte)((value >> 42) | 0x80));
+                PutByte((byte)((value >> 35) | 0x80));
+                PutByte((byte)((value >> 28) | 0x80));
+                PutByte((byte)((value >> 21) | 0x80));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 7) | 0x80));
+                PutByte((byte)(value & 0x7f));
+                return;
+            }
+
+            if ((value & 0x8000000000000000L) == 0)
+            {
+                EnsureCapacityToWrite(9);
+                PutByte((byte)((value >> 56) | 0x80));
+                PutByte((byte)((value >> 49) | 0x80));
+                PutByte((byte)((value >> 42) | 0x80));
+                PutByte((byte)((value >> 35) | 0x80));
+                PutByte((byte)((value >> 28) | 0x80));
+                PutByte((byte)((value >> 21) | 0x80));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 7) | 0x80));
+                PutByte((byte)(value & 0x7f));
+                return;
+            }
+
+            EnsureCapacityToWrite(10);
+            PutByte((byte)((value >> 57) | 0x80));
+            PutByte((byte)((value >> 50) | 0x80));
+            PutByte((byte)((value >> 43) | 0x80));
+            PutByte((byte)((value >> 36) | 0x80));
+            PutByte((byte)((value >> 29) | 0x80));
+            PutByte((byte)((value >> 22) | 0x80));
+            PutByte((byte)((value >> 15) | 0x80));
+            PutByte((byte)((value >> 8) | 0x80));
+            PutByte((byte)((value >> 1) | 0x80));
+            PutByte((byte)(value & 0x01));
         }
 
         private void CheckLengthToRead(int numBytes)
