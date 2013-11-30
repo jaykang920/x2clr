@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinderTests.cs" />
+    <Compile Include="BufferTests.cs" />
     <Compile Include="CapoTests.cs" />
     <Compile Include="CellTests.cs" />
     <Compile Include="FingerprintTests.cs" />

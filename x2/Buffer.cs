@@ -248,31 +248,33 @@ namespace x2
         /// <summary>
         /// Decode variable-length 32-bit signed integer from this buffer.
         /// </summary>
-        public void ReadVariable(out int value)
+        public int ReadVariable(out int value)
         {
             // Zigzag decoding
             uint u;
-            ReadVariable(out u);
+            int bytes = ReadVariable(out u);
             value = (int)(u >> 1);
             if ((u & 1) != 0)
             {
                 value = ~value;
             }
+            return bytes;
         }
 
         /// <summary>
         /// Decode variable-length 64-bit signed integer from this buffer.
         /// </summary>
-        public void ReadVariable(out long value)
+        public int ReadVariable(out long value)
         {
             // Zigzag decoding
             ulong u;
-            ReadVariable(out u);
+            int bytes = ReadVariable(out u);
             value = (long)(u >> 1);
             if ((u & 1) != 0)
             {
                 value = ~value;
             }
+            return bytes;
         }
 
         public void Read(out int value)
@@ -440,7 +442,7 @@ namespace x2
                     value |= b;
                     return i;
                 }
-                value = (value | (b & 0x7fU)) << 7;
+                value = (value | (b & 0x7fU)) << (i == 4 ? 4 : 7);
             }
             CheckLengthToRead(1);
             value |= GetByte();
@@ -462,7 +464,7 @@ namespace x2
                     value |= b;
                     return i;
                 }
-                value = (value | (b & 0x7fUL)) << 7;
+                value = (value | (b & 0x7fUL)) << (i == 9 ? 1 : 7);
             }
             CheckLengthToRead(1);
             value |= GetByte();
