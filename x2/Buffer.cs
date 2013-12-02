@@ -203,21 +203,33 @@ namespace x2
             }
         }
 
+        /// <summary>
+        /// Reads a boolean value from this buffer.
+        /// </summary>
         public void Read(out bool value)
         {
             value = (ReadByte() != 0);
         }
 
+        /// <summary>
+        /// Reads a signed 8-bit integer from this buffer.
+        /// </summary>
         public void Read(out sbyte value)
         {
             value = (sbyte)ReadByte();
         }
 
+        /// <summary>
+        /// Reads a single byte (unsigned 8-bit integer) from this buffer.
+        /// </summary>
         public void Read(out byte value)
         {
             value = ReadByte();
         }
 
+        /// <summary>
+        /// Reads an array of bytes from this buffer.
+        /// </summary>
         public void Read(out byte[] value)
         {
             int length;
@@ -238,6 +250,9 @@ namespace x2
             Position = position + length;
         }
 
+        /// <summary>
+        /// Reads a signed 16-bit integer from this buffer.
+        /// </summary>
         public void Read(out short value)
         {
             CheckLengthToRead(2);
@@ -246,9 +261,9 @@ namespace x2
         }
 
         /// <summary>
-        /// Decode variable-length 32-bit signed integer from this buffer.
+        /// Decodes a variable-length 32-bit signed integer from this buffer.
         /// </summary>
-        public int ReadVariable(out int value)
+        public int Read(out int value)
         {
             // Zigzag decoding
             uint u;
@@ -262,9 +277,9 @@ namespace x2
         }
 
         /// <summary>
-        /// Decode variable-length 64-bit signed integer from this buffer.
+        /// Decodes a variable-length 64-bit signed integer from this buffer.
         /// </summary>
-        public int ReadVariable(out long value)
+        public int Read(out long value)
         {
             // Zigzag decoding
             ulong u;
@@ -277,28 +292,9 @@ namespace x2
             return bytes;
         }
 
-        public void Read(out int value)
-        {
-            CheckLengthToRead(4);
-            value = GetByte();
-            value = (value << 8) | GetByte();
-            value = (value << 8) | GetByte();
-            value = (value << 8) | GetByte();
-        }
-
-        public void Read(out long value)
-        {
-            CheckLengthToRead(8);
-            value = GetByte();
-            value = (value << 8) | GetByte();
-            value = (value << 8) | GetByte();
-            value = (value << 8) | GetByte();
-            value = (value << 8) | GetByte();
-            value = (value << 8) | GetByte();
-            value = (value << 8) | GetByte();
-            value = (value << 8) | GetByte();
-        }
-
+        /// <summary>
+        /// Reads a single-precision (32-bit) float from this buffer.
+        /// </summary>
         public void Read(out float value)
         {
             int i;
@@ -306,6 +302,9 @@ namespace x2
             value = System.BitConverter.ToSingle(System.BitConverter.GetBytes(i), 0);
         }
 
+        /// <summary>
+        /// Reads a double-precision (64-bit) float from this buffer.
+        /// </summary>
         public void Read(out double value)
         {
             long l;
@@ -313,6 +312,9 @@ namespace x2
             value = System.BitConverter.ToDouble(System.BitConverter.GetBytes(l), 0);
         }
 
+        /// <summary>
+        /// Decodes a UTF-8 string from this buffer.
+        /// </summary>
         public void Read(out string value)
         {
             int length;
@@ -382,6 +384,9 @@ namespace x2
             value = stringBuilder.ToString();
         }
 
+        /// <summary>
+        /// Reads a date time value from this buffer.
+        /// </summary>
         public void Read(out DateTime value)
         {
             long ticks;
@@ -393,6 +398,34 @@ namespace x2
         {
             CheckLengthToRead(1);
             return GetByte();
+        }
+
+        /// <summary>
+        /// Reads a fixed-length 32-bit signed integer from this buffer.
+        /// </summary>
+        public void ReadFixed(out int value)
+        {
+            CheckLengthToRead(4);
+            value = GetByte();
+            value = (value << 8) | GetByte();
+            value = (value << 8) | GetByte();
+            value = (value << 8) | GetByte();
+        }
+
+        /// <summary>
+        /// Reads a fixed-length 64-bit signed integer from this buffer.
+        /// </summary>
+        public void ReadFixed(out long value)
+        {
+            CheckLengthToRead(8);
+            value = GetByte();
+            value = (value << 8) | GetByte();
+            value = (value << 8) | GetByte();
+            value = (value << 8) | GetByte();
+            value = (value << 8) | GetByte();
+            value = (value << 8) | GetByte();
+            value = (value << 8) | GetByte();
+            value = (value << 8) | GetByte();
         }
 
         public int ReadUInt29(out int value)
@@ -428,7 +461,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Decode variable-length 32-bit unsigned integer from this buffer.
+        /// Decodes a variable-length 32-bit unsigned integer from this buffer.
         /// </summary>
         public int ReadVariable(out uint value)
         {
@@ -450,7 +483,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Decode variable-length 64-bit unsigned integer from this buffer.
+        /// Decodes a variable-length 64-bit unsigned integer from this buffer.
         /// </summary>
         public int ReadVariable(out ulong value)
         {
@@ -558,6 +591,9 @@ namespace x2
             marker = front + lengthToRead;
         }
 
+        /// <summary>
+        /// Writes a boolean value to this buffer.
+        /// </summary>
         public void Write(bool value)
         {
             EnsureCapacityToWrite(1);
@@ -565,23 +601,35 @@ namespace x2
             PutByte(b);
         }
 
+        /// <summary>
+        /// Writes a signed 8-bit integer to this buffer.
+        /// </summary>
         public void Write(sbyte value)
         {
             EnsureCapacityToWrite(1);
             PutByte((byte)value);
         }
 
+        /// <summary>
+        /// Writes a single byte (unsigned 8-bit integer) to this buffer.
+        /// </summary>
         public void Write(byte value)
         {
             EnsureCapacityToWrite(1);
             PutByte(value);
         }
 
+        /// <summary>
+        /// Writes an array of bytes to this buffer.
+        /// </summary>
         public void Write(byte[] value)
         {
             Write(value, value.GetLowerBound(0), value.Length);
         }
 
+        /// <summary>
+        /// Writes the specified segment of byte array to this buffer.
+        /// </summary>
         public void Write(byte[] value, int offset, int count)
         {
             WriteUInt29(count);
@@ -600,6 +648,9 @@ namespace x2
             Position = position + count;
         }
 
+        /// <summary>
+        /// Writes a signed 16-bit integer to this buffer.
+        /// </summary>
         public void Write(short value)
         {
             EnsureCapacityToWrite(2);
@@ -608,55 +659,42 @@ namespace x2
         }
 
         /// <summary>
-        /// Encode variable-length 32-bit signed integer into this buffer.
+        /// Encodes a variable-length 32-bit signed integer into this buffer.
         /// </summary>
-        public void WriteVariable(int value)
+        public void Write(int value)
         {
             // Zigzag encoding
             WriteVariable((uint)((value << 1) ^ (value >> 31)));
         }
 
         /// <summary>
-        /// Encode variable-length 64-bit signed integer into this buffer.
+        /// Encodes a variable-length 64-bit signed integer into this buffer.
         /// </summary>
-        public void WriteVariable(long value)
+        public void Write(long value)
         {
             // Zigzag encoding
             WriteVariable((ulong)((value << 1) ^ (value >> 63)));
         }
 
-        public void Write(int value)
-        {
-            EnsureCapacityToWrite(4);
-            PutByte((byte)(value >> 24));
-            PutByte((byte)(value >> 16));
-            PutByte((byte)(value >> 8));
-            PutByte((byte)value);
-        }
-
-        public void Write(long value)
-        {
-            EnsureCapacityToWrite(8);
-            PutByte((byte)(value >> 56));
-            PutByte((byte)(value >> 48));
-            PutByte((byte)(value >> 40));
-            PutByte((byte)(value >> 32));
-            PutByte((byte)(value >> 24));
-            PutByte((byte)(value >> 16));
-            PutByte((byte)(value >> 8));
-            PutByte((byte)value);
-        }
-        
+        /// <summary>
+        /// Writes a single-precision (32-bit) float to this buffer.
+        /// </summary>
         public void Write(float value)
         {
             Write(System.BitConverter.ToInt32(System.BitConverter.GetBytes(value), 0));
         }
 
+        /// <summary>
+        /// Writes a double-precision (64-bit) float from this buffer.
+        /// </summary>
         public void Write(double value)
         {
             Write(System.BitConverter.ToInt64(System.BitConverter.GetBytes(value), 0));
         }
 
+        /// <summary>
+        /// Encodes a UTF-8 string into this buffer.
+        /// </summary>
         public void Write(string value)
         {
             int length = 0;
@@ -697,9 +735,40 @@ namespace x2
             }
         }
 
+        /// <summary>
+        /// Writes a date time value to this buffer.
+        /// </summary>
         public void Write(DateTime value)
         {
             Write(value.Ticks);
+        }
+
+        /// <summary>
+        /// Writes a fixed-length 32-bit signed integer to this buffer.
+        /// </summary>
+        public void WriteFixed(int value)
+        {
+            EnsureCapacityToWrite(4);
+            PutByte((byte)(value >> 24));
+            PutByte((byte)(value >> 16));
+            PutByte((byte)(value >> 8));
+            PutByte((byte)value);
+        }
+
+        /// <summary>
+        /// Writes a fixed-length 64-bit signed integer to this buffer.
+        /// </summary>
+        public void WriteFixed(long value)
+        {
+            EnsureCapacityToWrite(8);
+            PutByte((byte)(value >> 56));
+            PutByte((byte)(value >> 48));
+            PutByte((byte)(value >> 40));
+            PutByte((byte)(value >> 32));
+            PutByte((byte)(value >> 24));
+            PutByte((byte)(value >> 16));
+            PutByte((byte)(value >> 8));
+            PutByte((byte)value);
         }
 
         public void WriteUInt29(int value)
@@ -743,7 +812,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encode variable-length 32-bit unsigned integer into this buffer.
+        /// Encodes a variable-length 32-bit unsigned integer into this buffer.
         /// </summary>
         public void WriteVariable(uint value)
         {
@@ -796,7 +865,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encode variable-length 64-bit unsigned integer into this buffer.
+        /// Encodes a variable-length 64-bit unsigned integer into this buffer.
         /// </summary>
         public void WriteVariable(ulong value)
         {
