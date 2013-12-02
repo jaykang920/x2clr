@@ -12,7 +12,99 @@ namespace x2.Tests
         [Test]
         public void TestFloat32()
         {
+            var buffer = new Buffer(1);
 
+            // Boundary value tests
+
+            buffer.Write(0.0F);
+            buffer.Write(Single.Epsilon);
+            buffer.Write(Single.MinValue);
+            buffer.Write(Single.MaxValue);
+            buffer.Write(Single.NegativeInfinity);
+            buffer.Write(Single.PositiveInfinity);
+            buffer.Write(Single.NaN);
+
+            buffer.Rewind();
+
+            float f;
+
+            buffer.Read(out f);
+            Assert.AreEqual(0.0F, f);
+            buffer.Read(out f);
+            Assert.AreEqual(Single.Epsilon, f);
+            buffer.Read(out f);
+            Assert.AreEqual(Single.MinValue, f);
+            buffer.Read(out f);
+            Assert.AreEqual(Single.MaxValue, f);
+            buffer.Read(out f);
+            Assert.AreEqual(Single.NegativeInfinity, f);
+            buffer.Read(out f);
+            Assert.AreEqual(Single.PositiveInfinity, f);
+            buffer.Read(out f);
+            Assert.AreEqual(Single.NaN, f);
+
+            buffer.Trim();
+
+            // Intermediate value tests
+
+            buffer.Write(0.001234F);
+            buffer.Write(8765.4321F);
+
+            buffer.Rewind();
+
+            buffer.Read(out f);
+            Assert.AreEqual(0.001234F, f);
+            buffer.Read(out f);
+            Assert.AreEqual(8765.4321F, f);
+        }
+
+        [Test]
+        public void TestFloat64()
+        {
+            var buffer = new Buffer(2);
+
+            // Boundary value tests
+
+            buffer.Write(0.0D);
+            buffer.Write(Double.Epsilon);
+            buffer.Write(Double.MinValue);
+            buffer.Write(Double.MaxValue);
+            buffer.Write(Double.NegativeInfinity);
+            buffer.Write(Double.PositiveInfinity);
+            buffer.Write(Double.NaN);
+
+            buffer.Rewind();
+
+            double d;
+
+            buffer.Read(out d);
+            Assert.AreEqual(0.0D, d);
+            buffer.Read(out d);
+            Assert.AreEqual(Double.Epsilon, d);
+            buffer.Read(out d);
+            Assert.AreEqual(Double.MinValue, d);
+            buffer.Read(out d);
+            Assert.AreEqual(Double.MaxValue, d);
+            buffer.Read(out d);
+            Assert.AreEqual(Double.NegativeInfinity, d);
+            buffer.Read(out d);
+            Assert.AreEqual(Double.PositiveInfinity, d);
+            buffer.Read(out d);
+            Assert.AreEqual(Double.NaN, d);
+
+            buffer.Trim();
+
+            // Intermediate value tests
+
+            buffer.Write(0.00123456789D);
+            buffer.Write(98765.0004321D);
+
+            buffer.Rewind();
+
+            buffer.Read(out d);
+            Assert.AreEqual(0.00123456789D, d);
+            buffer.Read(out d);
+            Assert.AreEqual(98765.0004321D, d);
         }
 
         [Test]
