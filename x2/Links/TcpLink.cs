@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 using x2.Events;
 using x2.Flows;
@@ -39,6 +40,8 @@ namespace x2.Links
             try
             {
                 int numBytes = session.Socket.EndReceive(asyncResult);
+
+                Log.Debug("{0} TcpLink.OnReceive Socket.EndReceive {1} byte(s)", session.Handle, numBytes);
 
                 if (numBytes > 0)
                 {
@@ -77,7 +80,7 @@ namespace x2.Links
                         Event e = Event.Create(typeId);
                         if (e == null)
                         {
-                            // error
+                            Log.Error("{0} Unknown event type id {1}", session.Handle, typeId);
                         }
                         else
                         {
@@ -134,11 +137,8 @@ namespace x2.Links
                 Publish(e);
             }
             catch (ObjectDisposedException)
-            { // socket closed
-                LinkSessionDisconnected e = new LinkSessionDisconnected();
-                e.LinkName = Name;
-                e.Context = session;
-                Publish(e);
+            {
+                Log.Warn("{0} Socket already closed", session.Handle);
             }
         }
 
@@ -148,6 +148,20 @@ namespace x2.Links
             try
             {
                 int numBytes = asyncState.Session.Socket.EndSend(asyncResult);
+
+                Log.Debug("{0} TcpLink.OnSend Socket.EndSend {1} of {2} byte(s) completed", asyncState.Session.Handle, numBytes, asyncState.length);
+
+                if (numBytes < asyncState.length)
+                {
+                    // Try to send the rest
+                    asyncState.Buffer.Shrink(numBytes);
+                    asyncState.length = asyncState.Buffer.Length;
+                    asyncState.Buffer.ListOccupiedSegments(asyncState.ArraySegments);
+                    socket.BeginSend(asyncState.ArraySegments, SocketFlags.None, OnSend, asyncState);
+                    return;
+                }
+
+                asyncState.Session.ReadyToSend.Set();
             }
             catch (SocketException)
             { // socket error
@@ -157,11 +171,8 @@ namespace x2.Links
                 Publish(e);
             }
             catch (ObjectDisposedException)
-            { // socket closed
-                LinkSessionDisconnected e = new LinkSessionDisconnected();
-                e.LinkName = Name;
-                e.Context = asyncState.Session;
-                Publish(e);
+            {
+                Log.Warn("{0} Socket already closed", asyncState.Session.Handle);
             }
         }
 
@@ -188,7 +199,10 @@ namespace x2.Links
             public static AsyncCallback sendCallback;
 
             private readonly Socket socket;
-            AsyncRxState receiveState;
+            private AsyncRxState receiveState;
+            private volatile bool closing;
+
+            public AutoResetEvent ReadyToSend { get; private set; }
 
             public Socket Socket { get { return socket; } }
 
@@ -196,9 +210,12 @@ namespace x2.Links
                 : base(socket.Handle)
             {
                 this.socket = socket;
+                
                 receiveState = new AsyncRxState();
                 receiveState.Session = this;
                 receiveState.Buffer = new Buffer(12);
+
+                ReadyToSend = new AutoResetEvent(true);
             }
 
             public void BeginReceive(TcpLink link, bool beginning)
@@ -208,6 +225,13 @@ namespace x2.Links
                 receiveState.Buffer.ListAvailableSegments(receiveState.ArraySegments);
                 try
                 {
+                    int bufferLength = 0;
+                    for (int i = 0; i < receiveState.ArraySegments.Count; ++i)
+                    {
+                        bufferLength += receiveState.ArraySegments[i].Count;
+                    }
+                    Log.Debug("{0} TcpLink.Session.BeginReceive {1} byte(s) in {2} block(s) beginning={3}", Handle, bufferLength, receiveState.ArraySegments.Count, beginning);
+
                     socket.BeginReceive(receiveState.ArraySegments, SocketFlags.None, link.OnReceive, receiveState);
                 }
                 catch (SocketException)
@@ -218,11 +242,8 @@ namespace x2.Links
                     link.Publish(e);
                 }
                 catch (ObjectDisposedException)
-                { // socket closed
-                    LinkSessionDisconnected e = new LinkSessionDisconnected();
-                    e.LinkName = link.Name;
-                    e.Context = receiveState.Session;
-                    link.Publish(e);
+                {
+                    Log.Warn("{0} Socket already closed", Handle);
                 }
             }
 
@@ -241,6 +262,8 @@ namespace x2.Links
                 buffer.ListOccupiedSegments(asyncState.ArraySegments);
                 try
                 {
+                    Log.Debug("{0} TcpLink.Session.BeginSend {1} ({2} including length) byte(s)", Handle, buffer.Length, asyncState.length);
+
                     socket.BeginSend(asyncState.ArraySegments, SocketFlags.None, link.OnSend, asyncState);
                 }
                 catch (SocketException)
@@ -251,22 +274,29 @@ namespace x2.Links
                     link.Publish(e);
                 }
                 catch (ObjectDisposedException)
-                { // socket closed
-                    LinkSessionDisconnected e = new LinkSessionDisconnected();
-                    e.LinkName = link.Name;
-                    e.Context = asyncState.Session;
-                    link.Publish(e);
+                {
+                    Log.Warn("{0} Socket already closed", Handle);
                 }
             }
 
             public override void Close()
             {
+                closing = true;
+                ReadyToSend.Set();  // let any pending writer thread continue
+                ReadyToSend.Close();
+
                 socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
             }
 
             public override void Send(Link link, Event e)
             {
+                ReadyToSend.WaitOne();
+                if (closing)
+                {
+                    return;
+                }
+
                 var buffer = new Buffer(12);
                 e.Serialize(buffer);
                 BeginSend((TcpLink)link, buffer);
