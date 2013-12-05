@@ -11,8 +11,6 @@ namespace x2
 {
     public abstract class Link : SingleThreadedFlow
     {
-        protected const byte sentinel = 0x55;
-
         public string Name { get; private set; }
 
         /// <summary>

@@ -47,6 +47,8 @@ namespace x2.Links
                 {
                     buffer.Stretch(numBytes);
 
+                    Log.Trace("{0} TcpLink.OnReceive buffer length {1} after stretching", session.Handle, buffer.Length);
+
                     if (asyncState.beginning)
                     {
                         buffer.Rewind();
@@ -54,23 +56,20 @@ namespace x2.Links
                         int numLengthBytes = buffer.ReadUInt29(out payloadLength);
                         buffer.Shrink(numLengthBytes);
                         asyncState.length = payloadLength;
+
+                        Log.Trace("{0} TcpLink.OnReceive beginning length {1} payload length {2} after stretching", session.Handle, buffer.Length, payloadLength);
                     }
 
                     // Handle split packets.
                     if (buffer.Length < asyncState.length)
                     {
+                        Log.Debug("{0} TcpLink.OnReceive split packet #1 {1} of {2} byte(s)", session.Handle, buffer.Length, asyncState.length);
                         session.BeginReceive(this, false);
                         return;
                     }
 
                     while (true)
                     {
-                        // end sentinel check
-                        if (buffer[asyncState.length - 1] != sentinel)
-                        {
-                            // packet framing error
-                        }
-
                         // pre-process
                         buffer.MarkToRead(asyncState.length);
 
@@ -103,16 +102,25 @@ namespace x2.Links
 
                         if (buffer.IsEmpty)
                         {
+                            Log.Trace("{0} TcpLink.OnReceive completed exactly", session.Handle);
                             break;
                         }
 
+                        Log.Trace("{0} TcpLink.OnReceive continuing to next event with buffer length {1}", session.Handle, buffer.Length);
+
                         int payloadLength;
                         int numLengthBytes = buffer.ReadUInt29(out payloadLength);
+
+                        Log.Trace("{0} TcpLink.OnReceive next payload length {1} numLengthByte {2}", session.Handle, payloadLength, numLengthBytes);
+
                         buffer.Shrink(numLengthBytes);
                         asyncState.length = payloadLength;
 
+                        Log.Trace("{0} TcpLink.OnReceive re-beginning length {1} payload length {2} after stretching", session.Handle, buffer.Length, payloadLength);
+
                         if (buffer.Length < asyncState.length)
                         {
+                            Log.Debug("{0} TcpLink.OnReceive split packet #2 {1} of {2} byte(s)", session.Handle, buffer.Length, asyncState.length);
                             session.BeginReceive(this, false);
                             return;
                         }
@@ -138,7 +146,10 @@ namespace x2.Links
             }
             catch (ObjectDisposedException)
             {
-                Log.Warn("{0} Socket already closed", session.Handle);
+                LinkSessionDisconnected e = new LinkSessionDisconnected();
+                e.LinkName = Name;
+                e.Context = session;
+                Publish(e);
             }
         }
 
@@ -153,6 +164,8 @@ namespace x2.Links
 
                 if (numBytes < asyncState.length)
                 {
+                    Log.Warn("{0} TcpLink.OnSend trying to send {2} more byte(s)", asyncState.Session.Handle, asyncState.length - numBytes);
+
                     // Try to send the rest
                     asyncState.Buffer.Shrink(numBytes);
                     asyncState.length = asyncState.Buffer.Length;
@@ -172,7 +185,10 @@ namespace x2.Links
             }
             catch (ObjectDisposedException)
             {
-                Log.Warn("{0} Socket already closed", asyncState.Session.Handle);
+                LinkSessionDisconnected e = new LinkSessionDisconnected();
+                e.LinkName = Name;
+                e.Context = asyncState.Session;
+                Publish(e);
             }
         }
 
@@ -243,14 +259,16 @@ namespace x2.Links
                 }
                 catch (ObjectDisposedException)
                 {
-                    Log.Warn("{0} Socket already closed", Handle);
+                    LinkSessionDisconnected e = new LinkSessionDisconnected();
+                    e.LinkName = link.Name;
+                    e.Context = receiveState.Session;
+                    link.Publish(e);
                 }
             }
 
             public void BeginSend(TcpLink link, Buffer buffer)
             {
-                // pre-process
-                buffer.Write(sentinel);
+                //buffer.Write((byte)0x66);
                 AsyncTxState asyncState = new AsyncTxState();
                 asyncState.Session = this;
                 asyncState.Buffer = buffer;
@@ -275,15 +293,22 @@ namespace x2.Links
                 }
                 catch (ObjectDisposedException)
                 {
-                    Log.Warn("{0} Socket already closed", Handle);
+                    LinkSessionDisconnected e = new LinkSessionDisconnected();
+                    e.LinkName = link.Name;
+                    e.Context = asyncState.Session;
+                    link.Publish(e);
                 }
             }
 
             public override void Close()
             {
+                if (closing)
+                {
+                    return;
+                }
+
                 closing = true;
                 ReadyToSend.Set();  // let any pending writer thread continue
-                ReadyToSend.Close();
 
                 socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
@@ -294,6 +319,7 @@ namespace x2.Links
                 ReadyToSend.WaitOne();
                 if (closing)
                 {
+                    //ReadyToSend.Close();
                     return;
                 }
 

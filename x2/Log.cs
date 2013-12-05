@@ -9,10 +9,13 @@ namespace x2
 {
     public enum LogLevel
     {
+        All,
+        Trace,
         Debug,
         Info,
         Warning,
-        Error
+        Error,
+        None,
     }
 
     public delegate void LogHandler(LogLevel level, object message);
@@ -21,6 +24,28 @@ namespace x2
     {
         public static LogLevel Level { get; set; }
         public static LogHandler Handler { get; set; }
+
+        #region Trace
+
+        public static void Trace(object message)
+        {
+            if ((Handler == null) || Level > LogLevel.Trace)
+            {
+                return;
+            }
+            Handler(LogLevel.Trace, message);
+        }
+
+        public static void Trace(string format, params object[] args)
+        {
+            if ((Handler == null) || Level > LogLevel.Trace)
+            {
+                return;
+            }
+            Handler(LogLevel.Trace, String.Format(format, args));
+        }
+
+        #endregion
 
         #region Debug
 

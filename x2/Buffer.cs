@@ -248,7 +248,7 @@ namespace x2
         /// <summary>
         /// Decode variable-length 32-bit signed integer from this buffer.
         /// </summary>
-        public int ReadVariable(out int value)
+        public int Read(out int value)
         {
             // Zigzag decoding
             uint u;
@@ -264,7 +264,7 @@ namespace x2
         /// <summary>
         /// Decode variable-length 64-bit signed integer from this buffer.
         /// </summary>
-        public int ReadVariable(out long value)
+        public int Read(out long value)
         {
             // Zigzag decoding
             ulong u;
@@ -277,7 +277,7 @@ namespace x2
             return bytes;
         }
 
-        public void Read(out int value)
+        public void ReadFixed(out int value)
         {
             CheckLengthToRead(4);
             value = GetByte();
@@ -286,7 +286,7 @@ namespace x2
             value = (value << 8) | GetByte();
         }
 
-        public void Read(out long value)
+        public void ReadFixed(out long value)
         {
             CheckLengthToRead(8);
             value = GetByte();
@@ -515,9 +515,12 @@ namespace x2
         public void Trim()
         {
             int index, count;
-            if (marker >= 0 && position < marker)
+            if (marker >= 0)
             {
-                Position = marker;
+                if (position < marker)
+                {
+                    Position = marker;
+                }
                 marker = -1;
             }
             if (position == back)
@@ -610,7 +613,7 @@ namespace x2
         /// <summary>
         /// Encode variable-length 32-bit signed integer into this buffer.
         /// </summary>
-        public void WriteVariable(int value)
+        public void Write(int value)
         {
             // Zigzag encoding
             WriteVariable((uint)((value << 1) ^ (value >> 31)));
@@ -619,13 +622,13 @@ namespace x2
         /// <summary>
         /// Encode variable-length 64-bit signed integer into this buffer.
         /// </summary>
-        public void WriteVariable(long value)
+        public void Write(long value)
         {
             // Zigzag encoding
             WriteVariable((ulong)((value << 1) ^ (value >> 63)));
         }
 
-        public void Write(int value)
+        public void WriteFixed(int value)
         {
             EnsureCapacityToWrite(4);
             PutByte((byte)(value >> 24));
@@ -634,7 +637,7 @@ namespace x2
             PutByte((byte)value);
         }
 
-        public void Write(long value)
+        public void WriteFixed(long value)
         {
             EnsureCapacityToWrite(8);
             PutByte((byte)(value >> 56));
@@ -917,6 +920,8 @@ namespace x2
             int limit = (marker >= 0 ? marker : back);
             if ((position + numBytes) > limit)
             {
+                Log.Error("front={0} pos={1} back={2} marker={3} numBytes={4}", front, position, back, marker, numBytes);
+
                 throw new IndexOutOfRangeException();
             }
         }
