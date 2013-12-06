@@ -86,6 +86,8 @@ namespace x2.Links
                             e.Load(buffer);
                             e.SessionHandle = session.Socket.Handle;
 
+                            Log.Info("{0} Received {1}", session.Handle, e.ToString());
+
                             // Post up the retrieved event to the hubs to which this
                             // link is attached.
                             if (IsSelfPublishingEnabled)
@@ -326,6 +328,8 @@ namespace x2.Links
                 var buffer = new Buffer(12);
                 e.Serialize(buffer);
                 BeginSend((TcpLink)link, buffer);
+
+                Log.Info("{0} Sent {1}", Handle, e.ToString());
             }
 
             public override string ToString()
