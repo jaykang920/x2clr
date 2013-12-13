@@ -123,8 +123,6 @@ namespace x2.Flows
                 Event dequeued;
                 if (queue.TryDequeue(out dequeued))
                 {
-                    Console.WriteLine("Dequeued: {0}", dequeued);
-
                     Dispatch(dequeued);
 
                     if (expected.IsEquivalent(dequeued))
@@ -161,8 +159,6 @@ namespace x2.Flows
                 Event dequeued;
                 if (queue.TryDequeue(out dequeued))
                 {
-                    Console.WriteLine("MultiEventWait-Dequeued: {0}", dequeued);
-
                     Dispatch(dequeued);
 
                     for (int i = 0; i < expected.Length; ++i)
