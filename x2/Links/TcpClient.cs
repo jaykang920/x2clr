@@ -13,9 +13,16 @@ namespace x2.Links
     {
         public TcpClient(string name) : base(name) { }
 
-        protected void Connect(string ip, int port)
+        protected void Connect(string host, int port)
         {
-            Connect(IPAddress.Parse(ip), port);
+            try
+            {
+                Connect(Dns.GetHostAddresses(host)[0], port);
+            }
+            catch (Exception e)
+            {
+                Log.Error("TcpClient.Connect: error resolving target host - {0}", e.Message);
+            }
         }
 
         protected void Connect(IPAddress ip, int port)
@@ -24,6 +31,9 @@ namespace x2.Links
             {
                 throw new InvalidOperationException();
             }
+
+            Log.Info("Connecting to {0}:{1}", ip, port);
+
             socket = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             var endpoint = new IPEndPoint(ip, port);
             socket.BeginConnect(endpoint, this.OnConnect, endpoint);
