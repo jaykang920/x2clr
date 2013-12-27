@@ -15,13 +15,20 @@ namespace x2.Links
 
         protected void Connect(string host, int port)
         {
+            IPAddress ip = null;
+
             try
             {
-                Connect(Dns.GetHostAddresses(host)[0], port);
+                ip = Dns.GetHostAddresses(host)[0];
             }
             catch (Exception e)
             {
-                Log.Error("TcpClient.Connect: error resolving target host - {0}", e.Message);
+                Log.Error("TcpClient.Connect: aborted by an error resolving target host - {0}", e.Message);
+            }
+
+            if (ip != null)
+            {
+                Connect(ip, port);
             }
         }
 

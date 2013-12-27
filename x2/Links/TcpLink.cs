@@ -22,13 +22,17 @@ namespace x2.Links
 
         public override void Close()
         {
-            if (socket != null && socket.Connected)
+            if (socket != null)
             {
-                socket.Shutdown(SocketShutdown.Both);
-                socket.Close();
+                if (socket.Connected)
+                {
+                    socket.Shutdown(SocketShutdown.Both);
+                    socket.Close();
+                }
 
                 // Setting socket as null here causes NullReferenceException
                 // later trying to complete asynchronous jobs.
+                socket = null;
             }
         }
 
@@ -132,7 +136,7 @@ namespace x2.Links
                 }
                 else
                 {
-                    // connection reset by peer
+                    // Connection reset by peer.
                     LinkSessionDisconnected e = new LinkSessionDisconnected();
                     e.LinkName = Name;
                     e.Context = session;
