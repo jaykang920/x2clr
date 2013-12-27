@@ -29,8 +29,8 @@ namespace x2
             CleanUp();
         }
 
-        public virtual void SetUp() { }
-        public virtual void TearDown() { }
+        protected virtual void SetUp() { }
+        protected virtual void TearDown() { }
     }
 
     public class CaseStack : ICase
