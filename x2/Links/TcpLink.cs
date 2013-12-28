@@ -16,6 +16,8 @@ namespace x2.Links
 {
     public abstract class TcpLink : Link
     {
+        //protected Binder prePostBinder;
+
         protected Socket socket;
 
         protected TcpLink(string name) : base(name) { }
@@ -88,12 +90,27 @@ namespace x2.Links
                         else
                         {
                             e.Load(buffer);
+
+                            /*
+                            if (prePostBinder != null)
+                            {
+                                var handlerChain = new List<Handler>();
+                                if (prePostBinder.BuildHandlerChain(e, handlerChain) > 0)
+                                {
+                                    for (int i = 0; i < handlerChain.Count; ++i)
+                                    {
+                                        handlerChain[i].Invoke(e);
+                                    }
+                                }
+                            }
+                            */
+
                             e.SessionHandle = session.Socket.Handle;
 
                             Log.Info("{0} Received {1}", session.Handle, e.ToString());
 
-                            // Post up the retrieved event to the hubs to which this
-                            // link is attached.
+                            // Post up the retrieved event to the hub which this
+                            // link is attached to.
                             if (IsSelfPublishingEnabled)
                             {
                                 Publish(e);
