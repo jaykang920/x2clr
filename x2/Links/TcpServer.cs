@@ -41,6 +41,9 @@ namespace x2.Links
             {
                 Socket clientSocket = socket.EndAccept(asyncResult);
 
+                Log.Info("{0} Accepted connection from {1}",
+                    clientSocket.Handle, clientSocket.RemoteEndPoint);
+
                 Session session = new Session(clientSocket);
                 LinkSessionConnected e = new LinkSessionConnected();
                 e.LinkName = Name;
@@ -73,9 +76,12 @@ namespace x2.Links
             {
                 socket = new Socket(ip.AddressFamily,
                   SocketType.Stream, ProtocolType.Tcp);
-                socket.Bind(new IPEndPoint(ip, port));
+                EndPoint endpoint = new IPEndPoint(ip, port);
+                socket.Bind(endpoint);
                 socket.Listen(backlog);
                 socket.BeginAccept(this.OnAccept, null);
+
+                Log.Info("Listening on {0}", endpoint);
             }
             catch (Exception)
             {

@@ -68,6 +68,8 @@ namespace x2.Links
             {
                 socket.EndConnect(asyncResult);
                 e.Result = true;
+
+                Log.Info("{0} Connected to {1}", socket.Handle, socket.RemoteEndPoint);
             }
             catch (SocketException)
             {
