@@ -92,9 +92,9 @@ namespace x2.Links
                             // TODO: to be moved into pre-post handler chain
                             e.SessionHandle = session.Socket.Handle;
 
-                            if (PrePostHandler != null)
+                            if (Preprocessor != null)
                             {
-                                PrePostHandler(e, session);
+                                Preprocessor(e, session);
                             }
 
                             Log.Info("{0} Received {1}", session.Handle, e.ToString());

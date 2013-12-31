@@ -13,8 +13,7 @@ namespace x2
     {
         public string Name { get; private set; }
 
-        public delegate void PrePostDelegate(Event e, Session session);
-        public PrePostDelegate PrePostHandler { get; set; }
+        public Action<Event, Session> Preprocessor { get; set; }
 
         /// <summary>
         /// Gets or sets whether this link itself is included as a target when

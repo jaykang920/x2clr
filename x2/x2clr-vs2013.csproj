@@ -55,6 +55,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Action.cs" />
     <Compile Include="Capo.cs" />
     <Compile Include="Coroutine.cs" />
     <Compile Include="Events\LinkClose.cs" />
