@@ -16,8 +16,6 @@ namespace x2.Links
 {
     public abstract class TcpLink : Link
     {
-        //protected Binder prePostBinder;
-
         protected Socket socket;
 
         protected TcpLink(string name) : base(name) { }
@@ -91,21 +89,13 @@ namespace x2.Links
                         {
                             e.Load(buffer);
 
-                            /*
-                            if (prePostBinder != null)
-                            {
-                                var handlerChain = new List<Handler>();
-                                if (prePostBinder.BuildHandlerChain(e, handlerChain) > 0)
-                                {
-                                    for (int i = 0; i < handlerChain.Count; ++i)
-                                    {
-                                        handlerChain[i].Invoke(e);
-                                    }
-                                }
-                            }
-                            */
-
+                            // TODO: to be moved into pre-post handler chain
                             e.SessionHandle = session.Socket.Handle;
+
+                            if (PrePostHandler != null)
+                            {
+                                PrePostHandler(e, session);
+                            }
 
                             Log.Info("{0} Received {1}", session.Handle, e.ToString());
 
@@ -244,6 +234,19 @@ namespace x2.Links
             public AutoResetEvent ReadyToSend { get; private set; }
 
             public Socket Socket { get { return socket; } }
+
+            public string RemoteAddress
+            {
+                get
+                {
+                    if (!socket.Connected)
+                    {
+                        return null;
+                    }
+                    var endpoint = socket.RemoteEndPoint as IPEndPoint;
+                    return endpoint.Address.ToString();
+                }
+            }
 
             public Session(Socket socket)
                 : base(socket.Handle)

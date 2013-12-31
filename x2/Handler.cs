@@ -9,9 +9,17 @@ using System.Reflection;
 namespace x2
 {
     /// <summary>
+    /// Defines a method to handle events.
+    /// </summary>
+    public interface IHandler
+    {
+        void Invoke(Event e);
+    }
+
+    /// <summary>
     /// Abstract base class for concrete event handlers.
     /// </summary>
-    public abstract class Handler
+    public abstract class Handler : IHandler
     {
         public abstract Delegate Action { get; }
 
