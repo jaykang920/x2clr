@@ -61,12 +61,12 @@ namespace x2.Links
             }
         }
 
-        protected void Listen(int port)
+        public void Listen(int port)
         {
             Listen(IPAddress.Any, port);
         }
 
-        protected void Listen(IPAddress ip, int port)
+        public void Listen(IPAddress ip, int port)
         {
             if (socket != null)
             {
@@ -90,7 +90,7 @@ namespace x2.Links
             }
         }
 
-        protected void Listen(string ip, int port)
+        public void Listen(string ip, int port)
         {
             Listen(IPAddress.Parse(ip), port);
         }

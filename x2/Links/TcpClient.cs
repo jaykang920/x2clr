@@ -13,7 +13,7 @@ namespace x2.Links
     {
         public TcpClient(string name) : base(name) { }
 
-        protected void Connect(string host, int port)
+        public void Connect(string host, int port)
         {
             IPAddress ip = null;
 
@@ -32,7 +32,7 @@ namespace x2.Links
             }
         }
 
-        protected void Connect(IPAddress ip, int port)
+        public void Connect(IPAddress ip, int port)
         {
             if (socket != null)
             {
