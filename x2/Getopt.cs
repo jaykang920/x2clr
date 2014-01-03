@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace x2
 {
@@ -162,7 +163,7 @@ namespace x2
             longOnly = false;
 
             posixlyCorrect =
-                (System.Environment.GetEnvironmentVariable("POSIXLY_CORRECT") != null);
+                (Environment.GetEnvironmentVariable("POSIXLY_CORRECT") != null);
 
             Reset(args, optstring, longopts);
         }
@@ -367,9 +368,9 @@ namespace x2
                     {
                         if (opterr)
                         {
-                            System.Console.Error.WriteLine(
+                            Console.Error.WriteLine(
                                 "{0}: option '{1}' doesn't allow an argument",
-                                Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location),
+                                Path.GetFileName(Assembly.GetEntryAssembly().Location),
                                 args[optind - 1]
                                 );
                         }
@@ -388,9 +389,9 @@ namespace x2
                     {
                         if (opterr)
                         {
-                            System.Console.Error.WriteLine(
+                            Console.Error.WriteLine(
                                 "{0}: option '{1}' requires an argument",
-                                Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location),
+                                Path.GetFileName(Assembly.GetEntryAssembly().Location),
                                 args[optind - 1]
                                 );
                         }
@@ -407,9 +408,9 @@ namespace x2
             {  // ambiguous
                 if (opterr)
                 {
-                    System.Console.Error.WriteLine(
+                    Console.Error.WriteLine(
                         "{0}: option '{1}' is ambiguous",
-                        Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location),
+                        Path.GetFileName(Assembly.GetEntryAssembly().Location),
                         args[optind]
                         );
                 }
@@ -425,9 +426,9 @@ namespace x2
             {
                 if (opterr)
                 {
-                    System.Console.Error.WriteLine(
+                    Console.Error.WriteLine(
                         "{0}: unrecognized option '{1}'",
-                        Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location),
+                        Path.GetFileName(Assembly.GetEntryAssembly().Location),
                         args[optind]
                         );
                 }
@@ -466,9 +467,9 @@ namespace x2
             {
                 if (opterr)
                 {
-                    System.Console.Error.WriteLine(
+                    Console.Error.WriteLine(
                         "{0}: {1} option -- {2}",
-                        Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location),
+                        Path.GetFileName(Assembly.GetEntryAssembly().Location),
                         (posixlyCorrect ? "illegal" : "invalid"),
                         c
                         );
@@ -499,9 +500,9 @@ namespace x2
                     {
                         if (opterr)
                         {
-                            System.Console.Error.WriteLine(
+                            Console.Error.WriteLine(
                                 "{0}: option requires an argument -- {1}",
-                                Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location),
+                                Path.GetFileName(Assembly.GetEntryAssembly().Location),
                                 c);
                         }
                         optopt = c;
