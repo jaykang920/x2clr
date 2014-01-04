@@ -241,7 +241,7 @@ namespace x2.Links
                 {
                     if (!socket.Connected)
                     {
-                        return null;
+                        return "(Closed)";
                     }
                     var endpoint = socket.RemoteEndPoint as IPEndPoint;
                     return endpoint.Address.ToString();
