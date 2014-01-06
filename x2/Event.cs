@@ -138,13 +138,13 @@ namespace x2
             {
                 return false;
             }
-            ///*
+
             Event o = (Event)other;
             if (sessionHandle != o.sessionHandle)
             {
                 return false;
             }
-            //*/
+
             return true;
         }
 
@@ -166,13 +166,12 @@ namespace x2
         public override int GetHashCode(Fingerprint fingerprint)
         {
             Hash hash = new Hash(base.GetHashCode(fingerprint));
-            ///*
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
+
+            if (fingerprint[0])
             {
                 hash.Update(sessionHandle.ToInt64());
             }
-            //*/
+
             return hash.Code;
         }
 
@@ -192,17 +191,16 @@ namespace x2
             {
                 return false;
             }
-            ///*
+
             Event o = (Event)other;
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
+            if (fingerprint[0])
             {
                 if (sessionHandle != o.sessionHandle)
                 {
                     return false;
                 }
             }
-            //*/
+
             return true;
         }
 
