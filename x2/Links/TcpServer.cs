@@ -30,6 +30,11 @@ namespace x2.Links
             }
         }
 
+        public bool Listening
+        {
+            get { return (socket != null && socket.IsBound); }
+        }
+
         public TcpServer(string name) : base(name)
         {
             backlog = (int)SocketOptionName.MaxConnections;
