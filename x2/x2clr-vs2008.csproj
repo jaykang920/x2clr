@@ -36,6 +36,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Action.cs" />
     <Compile Include="Capo.cs" />
     <Compile Include="Coroutine.cs" />
     <Compile Include="Events\LinkClose.cs" />
@@ -44,6 +45,7 @@
     <Compile Include="Flows\EventBasedFlow.cs" />
     <Compile Include="Flows\FrameBasedFlow.cs" />
     <Compile Include="Func.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="Yields\WaitForSeconds.cs" />
     <Compile Include="Flows\TimeFlow.cs" />
     <Compile Include="Link.cs" />
@@ -74,9 +76,6 @@
     <Compile Include="Links\TcpLink.cs" />
     <Compile Include="Links\TcpServer.cs" />
     <Compile Include="Queues\UnboundedQueue.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
