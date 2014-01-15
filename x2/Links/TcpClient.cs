@@ -62,6 +62,12 @@ namespace x2.Links
 
         private void OnConnect(IAsyncResult asyncResult)
         {
+            if (socket == null)
+            {
+                // Closed already
+                return;
+            }
+
             LinkSessionConnected e = new LinkSessionConnected();
             e.LinkName = Name;
             try

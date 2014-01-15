@@ -41,6 +41,13 @@ namespace x2.Links
             AsyncRxState asyncState = (AsyncRxState)asyncResult.AsyncState;
             Buffer buffer = asyncState.Buffer;
             Session session = asyncState.Session;
+
+            if (session == null || session.Socket == null)
+            {
+                // Closed already
+                return;
+            }
+
             try
             {
                 int numBytes = session.Socket.EndReceive(asyncResult);
@@ -169,15 +176,23 @@ namespace x2.Links
         public void OnSend(IAsyncResult asyncResult)
         {
             AsyncState asyncState = (AsyncState)asyncResult.AsyncState;
+            var session = asyncState.Session;
+
+            if (session == null || session.Socket == null)
+            {
+                // Closed already
+                return;
+            }
+
             try
             {
-                int numBytes = asyncState.Session.Socket.EndSend(asyncResult);
+                int numBytes = session.Socket.EndSend(asyncResult);
 
-                Log.Debug("{0} TcpLink.OnSend Socket.EndSend {1} of {2} byte(s) completed", asyncState.Session.Handle, numBytes, asyncState.length);
+                Log.Debug("{0} TcpLink.OnSend Socket.EndSend {1} of {2} byte(s) completed", session.Handle, numBytes, asyncState.length);
 
                 if (numBytes < asyncState.length)
                 {
-                    Log.Warn("{0} TcpLink.OnSend trying to send {2} more byte(s)", asyncState.Session.Handle, asyncState.length - numBytes);
+                    Log.Warn("{0} TcpLink.OnSend trying to send {2} more byte(s)", session.Handle, asyncState.length - numBytes);
 
                     // Try to send the rest
                     asyncState.Buffer.Shrink(numBytes);
@@ -187,20 +202,20 @@ namespace x2.Links
                     return;
                 }
 
-                asyncState.Session.ReadyToSend.Set();
+                session.ReadyToSend.Set();
             }
             catch (SocketException)
             { // socket error
                 LinkSessionDisconnected e = new LinkSessionDisconnected();
                 e.LinkName = Name;
-                e.Context = asyncState.Session;
+                e.Context = session;
                 Publish(e);
             }
             catch (ObjectDisposedException)
             {
                 LinkSessionDisconnected e = new LinkSessionDisconnected();
                 e.LinkName = Name;
-                e.Context = asyncState.Session;
+                e.Context = session;
                 Publish(e);
             }
         }

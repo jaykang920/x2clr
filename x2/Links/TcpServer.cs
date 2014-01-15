@@ -42,6 +42,12 @@ namespace x2.Links
 
         public void OnAccept(IAsyncResult asyncResult)
         {
+            if (socket == null)
+            {
+                // Closed already
+                return;
+            }
+
             try
             {
                 Socket clientSocket = socket.EndAccept(asyncResult);

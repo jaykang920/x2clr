@@ -22,7 +22,7 @@ namespace x2
 
         protected readonly CaseStack caseStack;
 
-        private Hub hub;  // the hub to which this flow is attached
+        private Hub hub;
 
         public/*internal*/ static Flow CurrentFlow
         {
@@ -39,6 +39,11 @@ namespace x2
         /// Gets or sets the exception handler for this flow.
         /// </summary>
         public Action<Exception> ExceptionHandler { get; set; }
+
+        /// <summary>
+        /// Gets the hub to which this flow is attached.
+        /// </summary>
+        public Hub Hub { get { return hub; } }
 
         static Flow()
         {
