@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>x2</RootNamespace>
     <AssemblyName>x2clr</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -55,7 +55,6 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Action.cs" />
     <Compile Include="Capo.cs" />
     <Compile Include="Coroutine.cs" />
     <Compile Include="Events\LinkClose.cs" />
@@ -63,7 +62,6 @@
     <Compile Include="Events\TimeFlowEvents.cs" />
     <Compile Include="Flows\EventBasedFlow.cs" />
     <Compile Include="Flows\FrameBasedFlow.cs" />
-    <Compile Include="Func.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Mapping.cs" />
     <Compile Include="Sequence.cs" />

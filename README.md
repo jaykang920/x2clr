@@ -9,4 +9,4 @@ Requirements
 ------------
 
 * Visual Studio 2008 (9.0) or newer equivalent to compile C# 3.0.
-* .NET framework 2.0 or newer equivalent to run.
+* .NET framework 3.5 or newer equivalent to run.
