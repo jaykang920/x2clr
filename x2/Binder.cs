@@ -257,49 +257,49 @@ namespace x2
 
     public class SynchronizedBinding : Binder
     {
-        private readonly ReaderWriterLock rwlock;
+        private readonly ReaderWriterLockSlim rwlock;
 
         public SynchronizedBinding()
         {
-            rwlock = new ReaderWriterLock();
+            rwlock = new ReaderWriterLockSlim();
         }
 
         public override Token Bind(Event e, Handler handler)
         {
-            rwlock.AcquireWriterLock(Timeout.Infinite);
+            rwlock.EnterWriteLock();
             try
             {
                 return base.Bind(e, handler);
             }
             finally
             {
-                rwlock.ReleaseWriterLock();
+                rwlock.ExitWriteLock();
             }
         }
 
         public override int BuildHandlerChain(Event e, List<Handler> handlerChain)
         {
-            rwlock.AcquireReaderLock(Timeout.Infinite);
+            rwlock.EnterReadLock();
             try
             {
                 return base.BuildHandlerChain(e, handlerChain);
             }
             finally
             {
-                rwlock.ReleaseReaderLock();
+                rwlock.ExitReadLock();
             }
         }
 
         public override void Unbind(Event e, Handler handler)
         {
-            rwlock.AcquireWriterLock(Timeout.Infinite);
+            rwlock.EnterWriteLock();
             try
             {
                 base.Unbind(e, handler);
             }
             finally
             {
-                rwlock.ReleaseWriterLock();
+                rwlock.ExitWriteLock();
             }
         }
     }

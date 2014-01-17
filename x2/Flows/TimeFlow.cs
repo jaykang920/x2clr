@@ -233,17 +233,17 @@ namespace x2.Flows
         private class Map
         {
             private readonly IDictionary<string, TimeFlow> timeFlows;
-            private readonly ReaderWriterLock rwlock;
+            private readonly ReaderWriterLockSlim rwlock;
 
             internal Map()
             {
                 timeFlows = new Dictionary<string, TimeFlow>();
-                rwlock = new ReaderWriterLock();
+                rwlock = new ReaderWriterLockSlim();
             }
 
             internal TimeFlow Get(string name)
             {
-                rwlock.AcquireReaderLock(Timeout.Infinite);
+                rwlock.EnterReadLock();
                 try
                 {
                     TimeFlow timeFlow;
@@ -251,13 +251,13 @@ namespace x2.Flows
                 }
                 finally
                 {
-                    rwlock.ReleaseReaderLock();
+                    rwlock.ExitReadLock();
                 }
             }
 
             internal TimeFlow Create(string name)
             {
-                rwlock.AcquireWriterLock(Timeout.Infinite);
+                rwlock.EnterWriteLock();
                 try
                 {
                     TimeFlow timeFlow;
@@ -270,7 +270,7 @@ namespace x2.Flows
                 }
                 finally
                 {
-                    rwlock.ReleaseWriterLock();
+                    rwlock.ExitWriteLock();
                 }
             }
         }
@@ -306,46 +306,46 @@ namespace x2.Flows
 
         private class Generator
         {
-            private readonly ReaderWriterLock rwlock;
+            private readonly ReaderWriterLockSlim rwlock;
             private readonly IDictionary<Event, TimeTag> map;
             private readonly TimeFlow owner;
 
             public Generator(TimeFlow owner)
             {
-                rwlock = new ReaderWriterLock();
+                rwlock = new ReaderWriterLockSlim();
                 map = new Dictionary<Event, TimeTag>();
                 this.owner = owner;
             }
 
             public void Add(Event e, TimeTag timeTag)
             {
-                rwlock.AcquireWriterLock(Timeout.Infinite);
+                rwlock.EnterWriteLock();
                 try
                 {
                     map[e] = timeTag;
                 }
                 finally
                 {
-                    rwlock.ReleaseWriterLock();
+                    rwlock.ExitWriteLock();
                 }
             }
 
             public void Remove(Event e)
             {
-                rwlock.AcquireWriterLock(Timeout.Infinite);
+                rwlock.EnterWriteLock();
                 try
                 {
                     map.Remove(e);
                 }
                 finally
                 {
-                    rwlock.ReleaseWriterLock();
+                    rwlock.ExitWriteLock();
                 }
             }
 
             public void Tick(DateTime now)
             {
-                rwlock.AcquireReaderLock(Timeout.Infinite);
+                rwlock.EnterReadLock();
                 try
                 {
                     foreach (var pair in map)
@@ -360,7 +360,7 @@ namespace x2.Flows
                 }
                 finally
                 {
-                    rwlock.ReleaseReaderLock();
+                    rwlock.ExitReadLock();
                 }
             }
         }
