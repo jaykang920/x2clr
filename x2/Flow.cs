@@ -149,7 +149,7 @@ namespace x2
             throw new Exception("", e);
         }
 
-        protected void Publish(Event e)
+        public void Publish(Event e)
         {
             hub.Post(e);
         }

@@ -3,12 +3,61 @@
 
 using System;
 
+using x2;
 using x2.Events;
 using x2.Flows;
 using x2.Queues;
 
 namespace x2
 {
+    public abstract class LinkCase : Case
+    {
+        public string Name { get; private set; }
+
+        public Action<Event, LinkSession> Preprocessor { get; set; }
+
+        public LinkCase(string name)
+        {
+            Name = name;
+        }
+
+        public abstract void Close();
+
+        protected override void SetUp()
+        {
+            Bind(new LinkSessionConnected { LinkName = Name }, OnLinkSessionConnected);
+            Bind(new LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
+        }
+
+        protected virtual void OnSessionConnected(LinkSessionConnected e) { }
+
+        protected virtual void OnSessionDisconnected(LinkSessionDisconnected e) { }
+
+        private void OnLinkSessionConnected(LinkSessionConnected e)
+        {
+            OnSessionConnected(e);
+        }
+
+        private void OnLinkSessionDisconnected(LinkSessionDisconnected e)
+        {
+            OnSessionDisconnected(e);
+        }
+    }
+
+    public abstract class LinkSession
+    {
+        public IntPtr Handle { get; private set; }
+
+        public LinkSession(IntPtr handle)
+        {
+            Handle = handle;
+        }
+
+        public abstract void Close();
+
+        public abstract void Send(Event e);
+    }
+
     public abstract class Link : SingleThreadedFlow
     {
         public string Name { get; private set; }
@@ -71,7 +120,7 @@ namespace x2
 
             public abstract void Close();
 
-            public abstract void Send(Link link, x2.Event e);
+            public abstract void Send(Link link, Event e);
         }
     }
 }
