@@ -8,59 +8,32 @@ using System.Threading;
 namespace x2
 {
     /// <summary>
-    /// Common base class for any pooled object with custom lifecycle based on
-    /// reference counting.
-    /// </summary>
-    public abstract class PooledObject
-    {
-        private int refCount;
-
-        /// <summary>
-        /// Releases this object and returns it to the pool.
-        /// </summary>
-        public abstract void Release();
-
-        /// <summary>
-        /// Increases the reference count to this object.
-        /// </summary>
-        public void AcquireReference()
-        {
-            Interlocked.Increment(ref refCount);
-        }
-
-        /// <summary>
-        /// Decreases the reference count to this object, and releases this if
-        /// it reached zero.
-        /// </summary>
-        public void ReleaseReference()
-        {
-            if (Interlocked.Decrement(ref refCount) == 0)
-            {
-                Release();
-            }
-        }
-    }
-
-    /// <summary>
     /// Minimal generic object pool.
     /// </summary>
     /// <typeparam name="T">
-    /// Specifies the type of objects in the pool.
+    /// The type of objects in the pool.
     /// </typeparam>
     public class Pool<T> where T : class
     {
         private readonly Stack<T> store;
+        private readonly int capacity;
+
+        public int Capacity { get { return capacity; } }
+        public int Count { get { return store.Count; } }
 
         public Pool()
         {
             store = new Stack<T>();
-            Diag = new Diagnostics(this);
         }
 
-        public T Acquire()
+        public Pool(int capacity)
         {
-            Diag.IncrementAcquireCount();
+            store = new Stack<T>(capacity);
+            this.capacity = capacity;
+        }
 
+        public T Pop()
+        {
             lock (store)
             {
                 if (store.Count != 0)
@@ -71,62 +44,15 @@ namespace x2
             return null;
         }
 
-        public void Release(T item)
+        public void Push(T item)
         {
-            Diag.IncrementReleaseCount();
-
             lock (store)
             {
-                store.Push(item);
-            }
-        }
-
-        #region Diagnostics
-
-        /// <summary>
-        /// Gets the diagnostics object.
-        /// </summary>
-        public Diagnostics Diag { get; private set; }
-
-        /// <summary>
-        /// Internal diagnostics helper class.
-        /// </summary>
-        public class Diagnostics
-        {
-            private readonly Pool<T> owner;
-
-            private int acquireCount;
-            private int releaseCount;
-
-            public int AcquireCount { get { return acquireCount; } }
-            public int ReleaseCount { get { return releaseCount; } }
-
-            public int StoreSize {
-                get
+                if (capacity == 0 || store.Count < capacity)
                 {
-                    lock (owner.store)
-                    {
-                        return owner.store.Count;
-                    }
+                    store.Push(item);
                 }
             }
-
-            internal Diagnostics(Pool<T> owner)
-            {
-                this.owner = owner;
-            }
-
-            public void IncrementAcquireCount()
-            {
-                Interlocked.Increment(ref acquireCount);
-            }
-
-            public void IncrementReleaseCount()
-            {
-                Interlocked.Increment(ref releaseCount);
-            }
         }
-
-        #endregion
     }
 }

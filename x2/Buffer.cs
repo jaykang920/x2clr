@@ -988,7 +988,7 @@ namespace x2
 
             public byte[] Acquire(int blockSizeExponent)
             {
-                byte[] block = pools[blockSizeExponent].Acquire();
+                byte[] block = pools[blockSizeExponent].Pop();
                 if (block == null)
                 {
                     block = new byte[1 << blockSizeExponent];
@@ -998,7 +998,7 @@ namespace x2
 
             public void Release(int blockSizeExponent, byte[] block)
             {
-                pools[blockSizeExponent].Release(block);
+                pools[blockSizeExponent].Push(block);
             }
         }
     }
