@@ -6,7 +6,7 @@ using System.Threading;
 using x2;
 using x2.Events;
 using x2.Flows;
-using x2.Links;
+using x2.Links.AsyncTcpLink;
 
 namespace x2.Samples.Capitalizer
 {
@@ -26,12 +26,11 @@ namespace x2.Samples.Capitalizer
         }
     }
 
-    class CapitalizerServer : TcpServer
+    class CapitalizerServer : AsyncTcpServer
     {
         new class Session
         {
-            public Link Link { get; set; }
-            public Link.Session LinkSession { get; set; }
+            public LinkSession LinkSession { get; set; }
 
             public void OnConnect()
             {
@@ -49,13 +48,14 @@ namespace x2.Samples.Capitalizer
 
             void Send(Event e)
             {
-                LinkSession.Send(Link, e);
+                LinkSession.Send(e);
             }
         }
 
         private readonly IDictionary<IntPtr, Session> sessions;
 
         public CapitalizerServer()
+            : base("CapitalizerServer")
         {
             sessions = new Dictionary<IntPtr, Session>();
         }
@@ -67,8 +67,8 @@ namespace x2.Samples.Capitalizer
                 return;
             }
 
-            var linkSession = (Link.Session)e.Context;
-            var session = new Session { Link = this, LinkSession = linkSession };
+            var linkSession = (LinkSession)e.Context;
+            var session = new Session { LinkSession = linkSession };
             sessions.Add(linkSession.Handle, session);
             session.OnConnect();
 
@@ -79,7 +79,7 @@ namespace x2.Samples.Capitalizer
         {
             Console.WriteLine("Disconnected");
 
-            Link.Session linkSession = (Link.Session)e.Context;
+            LinkSession linkSession = (LinkSession)e.Context;
             Session session;
             if (sessions.TryGetValue(linkSession.Handle, out session) == false)
             {
@@ -108,6 +108,11 @@ namespace x2.Samples.Capitalizer
     {
         static void Main(string[] args)
         {
+            x2.Log.Handler = (level, message) => {
+                Console.WriteLine("[x2] {0}", message);
+            };
+            x2.Log.Level = x2.LogLevel.All;
+
             Hub.Get()
                 .Attach(new CapitalizerFlow())
                 .Attach(new CapitalizerServer());

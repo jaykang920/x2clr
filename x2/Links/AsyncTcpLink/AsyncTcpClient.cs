@@ -2,8 +2,10 @@
 // See the file COPYING for license details.
 
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 using x2.Events;
 using x2.Flows;
@@ -13,6 +15,16 @@ namespace x2.Links.AsyncTcpLink
     public class AsyncTcpClientCase : AsyncTcpLinkCase
     {
         protected AsyncTcpLinkSession session;
+
+        private Stopwatch stopwatch = new Stopwatch();
+        private int retryCount;
+
+        public bool AutoReconnect { get; set; }
+        public int MaxRetryCount { get; set; }  // 0 for unlimited
+        public long RetryInterval { get; set; }  // in millisec
+
+        public string RemoteHost { get; set; }
+        public int RemotePort { get; set; }
 
         public AsyncTcpClientCase(string name)
             : base(name)
@@ -34,6 +46,9 @@ namespace x2.Links.AsyncTcpLink
 
         public void Connect(string host, int port)
         {
+            RemoteHost = host;
+            RemotePort = port;
+
             IPAddress ip = null;
             try
             {
@@ -65,28 +80,30 @@ namespace x2.Links.AsyncTcpLink
             e.Completed += OnConnectCompleted;
             e.RemoteEndPoint = new IPEndPoint(ip, port);
 
+            ConnectAsync(e);
+        }
+
+        protected override void OnSessionDisconnected(LinkSessionDisconnected e)
+        {
+            Close();
+
+            if (AutoReconnect)
+            {
+                Connect(RemoteHost, RemotePort);
+            }
+        }
+
+        private void ConnectAsync(SocketAsyncEventArgs e)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+
             bool pending = socket.ConnectAsync(e);
             if (!pending)
             {
                 OnConnect(e);
             }
         }
-
-        /*
-        protected void Reconnect(string ip, int port)
-        {
-            Reconnect(new IPEndPoint(IPAddress.Parse(ip), port));
-        }
-
-        protected void Reconnect(EndPoint endpoint)
-        {
-            if (socket == null)
-            {
-                throw new InvalidOperationException();
-            }
-            socket.BeginConnect(endpoint, this.OnConnect, endpoint);
-        }
-        */
 
         private void OnConnectCompleted(object sender, SocketAsyncEventArgs e)
         {
@@ -102,11 +119,30 @@ namespace x2.Links.AsyncTcpLink
                 notification.Result = true;
                 
                 ///...
+                ///
+
+                // Reset the retry counter
+                retryCount = 0;
             }
             else
             {
-                Log.Warn("AsyncTcpClientCase: ConnectAsync failed with SocketError {1}",
+                Log.Warn("AsyncTcpClientCase: connect failed with SocketError {0}",
                     e.SocketError);
+
+                // Connection retry
+                if (MaxRetryCount <= 0 ||
+                    (MaxRetryCount > 0 && retryCount < MaxRetryCount))
+                {
+                    ++retryCount;
+
+                    stopwatch.Stop();
+                    if (stopwatch.ElapsedMilliseconds < RetryInterval)
+                    {
+                        Thread.Sleep((int)(RetryInterval - stopwatch.ElapsedMilliseconds));
+                    }
+                    
+                    ConnectAsync(e);
+                }
             }
 
             if (notification.Result)
@@ -131,6 +167,22 @@ namespace x2.Links.AsyncTcpLink
 
         public string Name { get; private set; }
 
+        public bool AutoReconnect
+        {
+            get { return linkCase.AutoReconnect; }
+            set { linkCase.AutoReconnect = value; }
+        }
+        public int MaxRetryCount  // 0 for unlimited
+        {
+            get { return linkCase.MaxRetryCount; }
+            set { linkCase.MaxRetryCount = value; }
+        }
+        public long RetryInterval  // in millisec
+        {
+            get { return linkCase.RetryInterval; }
+            set { linkCase.RetryInterval = value; }
+        }
+
         public Action<Event, LinkSession> Preprocessor { get; set; }
 
         public AsyncTcpClient(string name)
@@ -144,6 +196,11 @@ namespace x2.Links.AsyncTcpLink
         public void Close()
         {
             linkCase.Close();
+        }
+
+        public void Connect(string host, int port)
+        {
+            linkCase.Connect(host, port);
         }
 
         protected override void SetUp()

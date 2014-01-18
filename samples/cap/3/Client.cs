@@ -6,17 +6,26 @@ using System.Threading;
 using x2;
 using x2.Events;
 using x2.Flows;
-using x2.Links;
+using x2.Links.AsyncTcpLink;
 
 namespace x2.Samples.Capitalizer
 {
-    class CapitalizerClient : TcpClient
+    class CapitalizerClient : AsyncTcpClient
     {
-        TcpLink.Session session;
+        AsyncTcpLinkSession session;
+
+        public CapitalizerClient()
+            : base("CapitalizerClient")
+        {
+            AutoReconnect = true;
+            RetryInterval = 1000;
+        }
 
         void Send(Event e)
         {
-            session.Send(this, e);
+            Console.WriteLine("Sending: {0}", e);
+
+            session.Send(e);
         }
 
         protected override void OnSessionConnected(LinkSessionConnected e)
@@ -25,29 +34,21 @@ namespace x2.Samples.Capitalizer
             {
                 Console.WriteLine("Connected");
 
-                session = (TcpLink.Session)e.Context;
+                session = (AsyncTcpLinkSession)e.Context;
 
-                Flow.Bind(CapitalizeReq.New(), Send);
+                Flow.Bind(new CapitalizeReq(), Send);
             }
             else
             {
                 Console.WriteLine("Connection Failed");
-
-                System.Threading.Thread.Sleep(1000);
-
-                Reconnect((EndPoint)e.Context);
             }
         }
 
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
-            Flow.Unbind(CapitalizeReq.New(), Send);
+            Flow.Unbind(new CapitalizeReq(), Send);
 
             Console.WriteLine("Disconnected");
-
-            Close();
-            socket = null;
-            Connect("127.0.0.1", 5678);
         }
 
         protected override void OnStart()
@@ -74,7 +75,7 @@ namespace x2.Samples.Capitalizer
 
         protected override void SetUp()
         {
-            Subscribe(CapitalizeResp.New(), OnCapitalizeResp);
+            Subscribe(new CapitalizeResp(), OnCapitalizeResp);
         }
     }
 
@@ -82,6 +83,11 @@ namespace x2.Samples.Capitalizer
     {
         static void Main(string[] args)
         {
+            x2.Log.Handler = (level, message) => {
+                Console.WriteLine("[x2] {0}", message);
+            };
+            x2.Log.Level = x2.LogLevel.All;
+
             Hub.Get()
                 .Attach(new CapitalizerClient())
                 .Attach(new OutputFlow());
@@ -96,8 +102,9 @@ namespace x2.Samples.Capitalizer
                     break;
                 }
 
-                var e = CapitalizeReq.New();
-                e.Message = message;
+                var e = new CapitalizeReq {
+                    Message = message
+                };
                 Hub.Get().Post(e);
             }
 

@@ -133,15 +133,29 @@ namespace x2.Links.AsyncTcpLink
 
                     session.Beginning = true;
                     session.ReceiveAsync();
+
+                    return;
                 }
-                else
-                {
-                    // reset by peer
-                }
+
+                // (e.BytesTransferred == 0) means a graceful close
             }
-            else
+
+            Flow.Publish(new LinkSessionDisconnected {
+                LinkName = Name,
+                Context = session
+            });
+
+            switch (e.SocketError)
             {
-                // discon
+                case SocketError.Success:
+                    break;
+                case SocketError.ConnectionReset:
+                case SocketError.Disconnecting:
+                    break;
+                default:
+                    Console.WriteLine(e);
+
+                    throw new SocketException((int)e.SocketError);
             }
         }
 
@@ -159,23 +173,30 @@ namespace x2.Links.AsyncTcpLink
                     // Try to send the rest.
                     session.SendBuffer.Shrink(bytesTransferred);
                     session.Length = session.SendBuffer.Length;
-                    e.BufferList.Clear();
-                    session.SendBuffer.ListOccupiedSegments(e.BufferList);
 
-                    bool pending = socket.SendAsync(e);
-                    if (!pending)
-                    {
-                        OnSend(e);
-                    }
+                    session.SendRemaining();
 
                     return;
                 }
+
+                session.SendBuffer.Trim();
 
                 session.TrySendNext();
             }
             else
             {
-                // discon
+                Flow.Publish(new LinkSessionDisconnected {
+                    LinkName = Name,
+                    Context = session
+                });
+
+                switch (e.SocketError)
+                {
+                    case SocketError.ConnectionReset:
+                        break;
+                    default:
+                        throw new SocketException((int)e.SocketError);
+                }
             }
         }
 
@@ -196,6 +217,9 @@ namespace x2.Links.AsyncTcpLink
 
         private SocketAsyncEventArgs receiveEventArgs;
         private SocketAsyncEventArgs sendEventArgs;
+
+        private IList<ArraySegment<byte>> receiveBufferList;
+        private IList<ArraySegment<byte>> sendBufferList;
 
         private Buffer receiveBuffer;
         private Buffer sendBuffer;
@@ -225,8 +249,8 @@ namespace x2.Links.AsyncTcpLink
             receiveEventArgs.Completed += link.OnCompleted;
             sendEventArgs.Completed += link.OnCompleted;
 
-            receiveEventArgs.BufferList = new List<ArraySegment<byte>>();
-            sendEventArgs.BufferList = new List<ArraySegment<byte>>();
+            receiveBufferList = new List<ArraySegment<byte>>();
+            sendBufferList = new List<ArraySegment<byte>>();
 
             receiveEventArgs.UserToken = this;
             sendEventArgs.UserToken = this;
@@ -265,8 +289,9 @@ namespace x2.Links.AsyncTcpLink
         /// </summary>
         public void ReceiveAsync()
         {
-            receiveEventArgs.BufferList.Clear();
-            receiveBuffer.ListAvailableSegments(receiveEventArgs.BufferList);
+            receiveBufferList.Clear();
+            receiveBuffer.ListAvailableSegments(receiveBufferList);
+            receiveEventArgs.BufferList = receiveBufferList;
 
             bool pending = socket.ReceiveAsync(receiveEventArgs);
 
@@ -281,8 +306,6 @@ namespace x2.Links.AsyncTcpLink
         /// </summary>
         public void SendAsync()
         {
-            sendEventArgs.BufferList.Clear();
-
             bool pending = socket.SendAsync(sendEventArgs);
 
             if (!pending)
@@ -296,19 +319,26 @@ namespace x2.Links.AsyncTcpLink
             e.Serialize(sendBuffer);
             int numLengthBytes = Buffer.WriteUInt29(lengthBytes, sendBuffer.Length);
             Length = sendBuffer.Length + numLengthBytes;
-            sendEventArgs.BufferList.Clear();
-            sendEventArgs.BufferList.Add(new ArraySegment<byte>(lengthBytes, 0, numLengthBytes));
+            sendBufferList.Clear();
+            sendBufferList.Add(new ArraySegment<byte>(lengthBytes, 0, numLengthBytes));
 
-            sendBuffer.ListOccupiedSegments(sendEventArgs.BufferList);
+            sendBuffer.ListOccupiedSegments(sendBufferList);
+
+            sendEventArgs.BufferList = sendBufferList;
 
             sending = true;
 
-            bool pending = socket.SendAsync(sendEventArgs);
+            SendAsync();
+        }
 
-            if (!pending)
-            {
-                link.OnSend(sendEventArgs);
-            }
+        public void SendRemaining()
+        {
+            sendBufferList.Clear();
+            sendBuffer.ListOccupiedSegments(sendBufferList);
+            
+            sendEventArgs.BufferList = sendBufferList;
+
+            SendAsync();
         }
 
         public void TrySendNext()
@@ -318,6 +348,7 @@ namespace x2.Links.AsyncTcpLink
             {
                 if (sendQueue.Count == 0)
                 {
+                    sending = false;
                     return;
                 }
 

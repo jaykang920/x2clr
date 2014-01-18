@@ -83,7 +83,7 @@ namespace x2.Links.AsyncTcpLink
 
                 Log.Info("AsyncTcpServerCase: listening on {0}", endpoint);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 socket = null;
                 throw;
@@ -164,6 +164,11 @@ namespace x2.Links.AsyncTcpLink
         public void Close()
         {
             linkCase.Close();
+        }
+
+        public void Listen(int port)
+        {
+            linkCase.Listen(port);
         }
 
         protected override void SetUp()
