@@ -46,6 +46,11 @@ namespace x2
 
         public void Push(T item)
         {
+            if (item == null)
+            {
+                throw new ArgumentNullException();
+            }
+
             lock (store)
             {
                 if (capacity == 0 || store.Count < capacity)
