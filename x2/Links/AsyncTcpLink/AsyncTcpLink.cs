@@ -151,53 +151,7 @@ namespace x2.Links.AsyncTcpLink
                 }
             }
 
-            internal void SendRemaining()
-            {
-            }
-
-            internal void TrySendNext()
-            {
-                Event e;
-                lock (sendQueue)
-                {
-                    if (sendQueue.Count == 0)
-                    {
-                        sending = false;
-                        return;
-                    }
-
-                    e = sendQueue.Dequeue();
-                }
-
-                SendAsync(e);
-            }
-
-            private void SendAsync(Event e)
-            {
-                e.Serialize(sendBuffer);
-                int numLengthBytes = Buffer.WriteUInt29(lengthBytes, sendBuffer.Length);
-                length = sendBuffer.Length + numLengthBytes;
-
-                sendBufferList.Clear();
-                sendBufferList.Add(new ArraySegment<byte>(lengthBytes, 0, numLengthBytes));
-                sendBuffer.ListOccupiedSegments(sendBufferList);
-
-                sendEventArgs.BufferList = sendBufferList;
-
-                SendAsync();
-            }
-
-            private void SendAsync()
-            {
-                bool pending = socket.SendAsync(sendEventArgs);
-
-                if (!pending)
-                {
-                    OnSend(sendEventArgs);
-                }
-            }
-
-            // Completion callback for ReceiveAsync.
+            // Completion callback for ReceiveAsync
             internal void OnReceive(SocketAsyncEventArgs e)
             {
                 if (e.SocketError == SocketError.Success)
@@ -349,6 +303,48 @@ namespace x2.Links.AsyncTcpLink
                         default:
                             throw new SocketException((int)e.SocketError);
                     }
+                }
+            }
+
+            private void TrySendNext()
+            {
+                Event e;
+                lock (sendQueue)
+                {
+                    if (sendQueue.Count == 0)
+                    {
+                        sending = false;
+                        return;
+                    }
+
+                    e = sendQueue.Dequeue();
+                }
+
+                SendAsync(e);
+            }
+
+            private void SendAsync(Event e)
+            {
+                e.Serialize(sendBuffer);
+                int numLengthBytes = Buffer.WriteUInt29(lengthBytes, sendBuffer.Length);
+                length = sendBuffer.Length + numLengthBytes;
+
+                sendBufferList.Clear();
+                sendBufferList.Add(new ArraySegment<byte>(lengthBytes, 0, numLengthBytes));
+                sendBuffer.ListOccupiedSegments(sendBufferList);
+
+                sendEventArgs.BufferList = sendBufferList;
+
+                SendAsync();
+            }
+
+            private void SendAsync()
+            {
+                bool pending = socket.SendAsync(sendEventArgs);
+
+                if (!pending)
+                {
+                    OnSend(sendEventArgs);
                 }
             }
         }
