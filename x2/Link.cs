@@ -58,7 +58,7 @@ namespace x2
         public abstract void Send(Event e);
     }
 
-    public abstract class Link : SingleThreadedFlow
+    public abstract class LinkFlow : SingleThreadedFlow
     {
         public string Name { get; private set; }
 
@@ -71,7 +71,7 @@ namespace x2
         /// </summary>
         public bool IsSelfPublishingEnabled { get; set; }
 
-        public Link(string name)
+        public LinkFlow(string name)
         {
             Name = name;
         }
@@ -120,7 +120,7 @@ namespace x2
 
             public abstract void Close();
 
-            public abstract void Send(Link link, Event e);
+            public abstract void Send(LinkFlow link, Event e);
         }
     }
 }

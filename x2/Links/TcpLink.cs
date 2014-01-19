@@ -14,7 +14,7 @@ using x2.Queues;
 
 namespace x2.Links
 {
-    public abstract class TcpLink : Link
+    public abstract class TcpLink : LinkFlow
     {
         protected Socket socket;
 
@@ -237,7 +237,7 @@ namespace x2.Links
             base.TearDown();
         }
 
-        public new class Session : Link.Session
+        public new class Session : LinkFlow.Session
         {
             public static AsyncCallback receiveCallback;
             public static AsyncCallback sendCallback;
@@ -355,7 +355,7 @@ namespace x2.Links
                 socket.Close();
             }
 
-            public override void Send(Link link, Event e)
+            public override void Send(LinkFlow link, Event e)
             {
                 ReadyToSend.WaitOne();
                 if (closing)
