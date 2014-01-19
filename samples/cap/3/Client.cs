@@ -10,9 +10,9 @@ using x2.Links.AsyncTcpLink;
 
 namespace x2.Samples.Capitalizer
 {
-    class CapitalizerClient : AsyncTcpClient
+    class CapitalizerClient : AsyncTcpClientFlow
     {
-        AsyncTcpLinkSession session;
+        AsyncTcpLink.Session session;
 
         public CapitalizerClient()
             : base("CapitalizerClient")
@@ -34,7 +34,7 @@ namespace x2.Samples.Capitalizer
             {
                 Console.WriteLine("Connected");
 
-                session = (AsyncTcpLinkSession)e.Context;
+                session = (AsyncTcpLink.Session)e.Context;
 
                 Flow.Bind(new CapitalizeReq(), Send);
             }

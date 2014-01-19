@@ -12,9 +12,12 @@ using x2.Flows;
 
 namespace x2.Links.AsyncTcpLink
 {
-    public class AsyncTcpClientCase : AsyncTcpLinkCase
+    /// <summary>
+    /// TCP/IP client link based on the enhanced SocketAsyncEventArgs pattern.
+    /// </summary>
+    public class AsyncTcpClient : AsyncTcpLink
     {
-        protected AsyncTcpLinkSession session;
+        protected AsyncTcpLink.Session session;
 
         private Stopwatch stopwatch = new Stopwatch();
         private int retryCount;
@@ -26,7 +29,7 @@ namespace x2.Links.AsyncTcpLink
         public string RemoteHost { get; set; }
         public int RemotePort { get; set; }
 
-        public AsyncTcpClientCase(string name)
+        public AsyncTcpClient(string name)
             : base(name)
         {
         }
@@ -37,7 +40,7 @@ namespace x2.Links.AsyncTcpLink
 
             if (socket.Connected)
             {
-                socket.Shutdown(SocketShutdown.Send);
+                socket.Shutdown(SocketShutdown.Both);
             }
             socket.Close();
 
@@ -56,7 +59,7 @@ namespace x2.Links.AsyncTcpLink
             }
             catch (Exception e)
             {
-                Log.Error("AsyncTcpClientCase.Connect: error resolving target host {0} - {1}", host, e.Message);
+                Log.Error("AsyncTcpClient.Connect: error resolving target host {0} - {1}", host, e.Message);
             }
 
             if (ip != null)
@@ -72,7 +75,7 @@ namespace x2.Links.AsyncTcpLink
                 throw new InvalidOperationException();
             }
 
-            Log.Info("AsyncTcpClientCase: connecting to {0}:{1}", ip, port);
+            Log.Info("AsyncTcpClient: connecting to {0}:{1}", ip, port);
 
             socket = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
@@ -126,7 +129,7 @@ namespace x2.Links.AsyncTcpLink
             }
             else
             {
-                Log.Warn("AsyncTcpClientCase: connect failed with SocketError {0}",
+                Log.Warn("AsyncTcpClient: connect failed with SocketError {0}",
                     e.SocketError);
 
                 // Connection retry
@@ -147,10 +150,10 @@ namespace x2.Links.AsyncTcpLink
 
             if (notification.Result)
             {
-                AsyncTcpLinkSession session = new AsyncTcpLinkSession(this, socket);
+                var session = new AsyncTcpLink.Session(this, socket);
                 notification.Context = session;
 
-                session.Receive();
+                session.ReceiveAsync(true);
             }
             else
             {
@@ -161,9 +164,9 @@ namespace x2.Links.AsyncTcpLink
         }
     }
 
-    public class AsyncTcpClient : SingleThreadedFlow
+    public class AsyncTcpClientFlow : SingleThreadedFlow
     {
-        private AsyncTcpClientCase linkCase;
+        private AsyncTcpClient linkCase;
 
         public string Name { get; private set; }
 
@@ -185,9 +188,9 @@ namespace x2.Links.AsyncTcpLink
 
         public Action<Event, LinkSession> Preprocessor { get; set; }
 
-        public AsyncTcpClient(string name)
+        public AsyncTcpClientFlow(string name)
         {
-            linkCase = new AsyncTcpClientCase(name);
+            linkCase = new AsyncTcpClient(name);
             Add(linkCase);
 
             Name = name;

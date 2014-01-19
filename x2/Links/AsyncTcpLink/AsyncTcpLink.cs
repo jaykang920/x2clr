@@ -14,348 +14,346 @@ using x2.Queues;
 
 namespace x2.Links.AsyncTcpLink
 {
-    public abstract class AsyncTcpLinkCase : LinkCase
+    /// <summary>
+    /// Common abstract base class for the TCP/IP link pair (client and server)
+    /// based on the enhanced SocketAsyncEventArgs pattern.
+    /// </summary>
+    public abstract class AsyncTcpLink : Link
     {
-        protected Socket socket;
+        protected Socket socket;  // underlying socket
 
-        protected AsyncTcpLinkCase(string name) : base(name) { }
-
-        public void OnCompleted(object sender, SocketAsyncEventArgs e)
+        protected AsyncTcpLink(string name)
+            : base(name)
         {
-            switch (e.LastOperation)
-            {
-                case SocketAsyncOperation.Receive:
-                    OnReceive(e);
-                    break;
-                case SocketAsyncOperation.Send:
-                    OnSend(e);
-                    break;
-                default:
-                    throw new Exception("Invalid async operation completed");
-            }
-        }
-
-        public void OnReceive(SocketAsyncEventArgs e)
-        {
-            var session = e.UserToken as AsyncTcpLinkSession;
-            Buffer buffer = session.ReceiveBuffer;
-
-            if (e.SocketError == SocketError.Success)
-            {
-                int bytesTransferred = e.BytesTransferred;
-
-                if (bytesTransferred > 0)
-                {
-                    buffer.Stretch(bytesTransferred);
-
-                    Log.Trace("{0} AsyncTcpLink.OnReceive buffer length {1} after stretching", session.Handle, buffer.Length);
-
-                    if (session.Beginning)
-                    {
-                        buffer.Rewind();
-                        int payloadLength;
-                        int numLengthBytes = buffer.ReadUInt29(out payloadLength);
-                        buffer.Shrink(numLengthBytes);
-                        session.Length = payloadLength;
-
-                        Log.Trace("{0} TcpLink.OnReceive beginning length {1} payload length {2} after stretching", session.Handle, buffer.Length, payloadLength);
-                    }
-
-                    // Handle split packets.
-                    if (buffer.Length < session.Length)
-                    {
-                        Log.Debug("{0} TcpLink.OnReceive split packet #1 {1} of {2} byte(s)", session.Handle, buffer.Length, session.Length);
-                        session.Beginning = false;
-                        session.ReceiveAsync();
-                        return;
-                    }
-
-                    while (true)
-                    {
-                        // pre-process
-                        buffer.MarkToRead(session.Length);
-
-                        int typeId;
-                        buffer.ReadUInt29(out typeId);
-
-                        Event retrieved = Event.Create(typeId);
-                        if (retrieved == null)
-                        {
-                            Log.Error("{0} Unknown event type id {1}", session.Handle, typeId);
-                        }
-                        else
-                        {
-                            retrieved.Load(buffer);
-
-                            // TODO: to be moved into pre-post handler chain
-                            retrieved.SessionHandle = session.Socket.Handle;
-
-                            if (Preprocessor != null)
-                            {
-                                Preprocessor(retrieved, session);
-                            }
-
-                            Log.Info("{0} Received {1}", session.Handle, retrieved.ToString());
-
-                            // Post up the retrieved event to the hub which this
-                            // link is attached to.
-                            Flow.Publish(retrieved);
-                        }
-
-                        buffer.Trim();
-
-                        if (buffer.IsEmpty)
-                        {
-                            Log.Trace("{0} TcpLink.OnReceive completed exactly", session.Handle);
-                            break;
-                        }
-
-                        Log.Trace("{0} TcpLink.OnReceive continuing to next event with buffer length {1}", session.Handle, buffer.Length);
-
-                        int payloadLength;
-                        int numLengthBytes = buffer.ReadUInt29(out payloadLength);
-
-                        Log.Trace("{0} TcpLink.OnReceive next payload length {1} numLengthByte {2}", session.Handle, payloadLength, numLengthBytes);
-
-                        buffer.Shrink(numLengthBytes);
-                        session.Length = payloadLength;
-
-                        Log.Trace("{0} TcpLink.OnReceive re-beginning length {1} payload length {2} after stretching", session.Handle, buffer.Length, payloadLength);
-
-                        if (buffer.Length < session.Length)
-                        {
-                            Log.Debug("{0} TcpLink.OnReceive split packet #2 {1} of {2} byte(s)", session.Handle, buffer.Length, session.Length);
-                            session.Beginning = false;
-                            session.ReceiveAsync();
-                            return;
-                        }
-                    }
-
-                    session.Beginning = true;
-                    session.ReceiveAsync();
-
-                    return;
-                }
-
-                // (e.BytesTransferred == 0) means a graceful close
-            }
-
-            Flow.Publish(new LinkSessionDisconnected {
-                LinkName = Name,
-                Context = session
-            });
-
-            switch (e.SocketError)
-            {
-                case SocketError.Success:
-                    break;
-                case SocketError.ConnectionReset:
-                case SocketError.Disconnecting:
-                    break;
-                default:
-                    Console.WriteLine(e);
-
-                    throw new SocketException((int)e.SocketError);
-            }
-        }
-
-        public void OnSend(SocketAsyncEventArgs e)
-        {
-            var session = e.UserToken as AsyncTcpLinkSession;
-            Buffer buffer = session.ReceiveBuffer;
-
-            if (e.SocketError == SocketError.Success)
-            {
-                int bytesTransferred = e.BytesTransferred;
-
-                if (bytesTransferred < session.Length)
-                {
-                    // Try to send the rest.
-                    session.SendBuffer.Shrink(bytesTransferred);
-                    session.Length = session.SendBuffer.Length;
-
-                    session.SendRemaining();
-
-                    return;
-                }
-
-                session.SendBuffer.Trim();
-
-                session.TrySendNext();
-            }
-            else
-            {
-                Flow.Publish(new LinkSessionDisconnected {
-                    LinkName = Name,
-                    Context = session
-                });
-
-                switch (e.SocketError)
-                {
-                    case SocketError.ConnectionReset:
-                        break;
-                    default:
-                        throw new SocketException((int)e.SocketError);
-                }
-            }
         }
 
         protected override void TearDown()
         {
             Close();
-
-            base.TearDown();
-        }
-    }
-
-    public class AsyncTcpLinkSession : LinkSession
-    {
-        private AsyncTcpLinkCase link;  // associated LinkCase
-        private Socket socket;          // underlying socket
-
-        private Queue<Event> sendQueue;
-
-        private SocketAsyncEventArgs receiveEventArgs;
-        private SocketAsyncEventArgs sendEventArgs;
-
-        private IList<ArraySegment<byte>> receiveBufferList;
-        private IList<ArraySegment<byte>> sendBufferList;
-
-        private Buffer receiveBuffer;
-        private Buffer sendBuffer;
-
-        // Operation context details
-        public int Length { get; set; }      // common
-        public bool Beginning { get; set; }  // rx
-        private volatile bool sending;       // tx
-        private byte[] lengthBytes = new byte[4];  // tx
-
-        public Socket Socket { get { return socket; } }
-
-        public Buffer ReceiveBuffer { get { return receiveBuffer; } }
-        public Buffer SendBuffer { get { return sendBuffer; } }
-
-        public AsyncTcpLinkSession(AsyncTcpLinkCase link, Socket socket)
-            : base(socket.Handle)
-        {
-            this.link = link;
-            this.socket = socket;
-
-            sendQueue = new Queue<Event>();
-
-            receiveEventArgs = new SocketAsyncEventArgs();
-            sendEventArgs = new SocketAsyncEventArgs();
-
-            receiveEventArgs.Completed += link.OnCompleted;
-            sendEventArgs.Completed += link.OnCompleted;
-
-            receiveBufferList = new List<ArraySegment<byte>>();
-            sendBufferList = new List<ArraySegment<byte>>();
-
-            receiveEventArgs.UserToken = this;
-            sendEventArgs.UserToken = this;
-
-            receiveBuffer = new Buffer(12);
-            sendBuffer = new Buffer(12);
         }
 
-        public override void Close()
+        // Completed event handler for ReceiveAsync
+        static void OnReceiveCompleted(object sender, SocketAsyncEventArgs e)
         {
+            var session = e.UserToken as Session;
+
+            session.OnReceive(e);
         }
 
-        public void Receive()
+        // Completed event handler for SendAsync
+        static void OnSendCompleted(object sender, SocketAsyncEventArgs e)
         {
-            Beginning = true;
-            ReceiveAsync();
+            var session = e.UserToken as Session;
+
+            session.OnSend(e);
         }
 
-        public override void Send(Event e)
+        /// <summary>
+        /// Represents an AsyncTcpLink communication session.
+        /// </summary>
+        public class Session : LinkSession
         {
-            if (sending)
+            private AsyncTcpLink link;  // associated Link
+            private Socket socket;      // underlying socket
+
+            private Queue<Event> sendQueue;
+
+            private Buffer recvBuffer;
+            private Buffer sendBuffer;
+
+            private SocketAsyncEventArgs recvEventArgs;
+            private SocketAsyncEventArgs sendEventArgs;
+
+            private IList<ArraySegment<byte>> recvBufferList;
+            private IList<ArraySegment<byte>> sendBufferList;
+
+            // Operation context details
+            private int length;     // common
+            private bool beginning;  // rx
+            private volatile bool sending;  // tx
+            private byte[] lengthBytes = new byte[4];  // tx
+
+            public Socket Socket { get { return socket; } }
+
+            public Session(AsyncTcpLink link, Socket socket)
+                : base(socket.Handle)
+            {
+                this.link = link;
+                this.socket = socket;
+
+                sendQueue = new Queue<Event>();
+
+                recvBuffer = new Buffer(12);
+                sendBuffer = new Buffer(12);
+
+                recvEventArgs = new SocketAsyncEventArgs();
+                sendEventArgs = new SocketAsyncEventArgs();
+
+                recvEventArgs.Completed += AsyncTcpLink.OnReceiveCompleted;
+                sendEventArgs.Completed += AsyncTcpLink.OnSendCompleted;
+
+                recvBufferList = new List<ArraySegment<byte>>();
+                sendBufferList = new List<ArraySegment<byte>>();
+
+                recvEventArgs.UserToken = this;
+                sendEventArgs.UserToken = this;
+            }
+
+            /// <summary>
+            /// Closes the session.
+            /// </summary>
+            public override void Close()
+            {
+                if (socket == null) { return; }
+
+                if (socket.Connected)
+                {
+                    socket.Shutdown(SocketShutdown.Both);
+                }
+                socket.Close();
+
+                //socket = null;
+            }
+
+            /// <summary>
+            /// Tries to send the specified event through this session.
+            /// </summary>
+            public override void Send(Event e)
             {
                 lock (sendQueue)
                 {
-                    sendQueue.Enqueue(e);
+                    if (sending)
+                    {
+                        sendQueue.Enqueue(e);
+                        return;
+                    }
+
+                    sending = true;
                 }
-            }
-            else
-            {
+
                 SendAsync(e);
             }
-        }
 
-        /// <summary>
-        /// Initiates a new asynchronous receive operation on this session.
-        /// </summary>
-        public void ReceiveAsync()
-        {
-            receiveBufferList.Clear();
-            receiveBuffer.ListAvailableSegments(receiveBufferList);
-            receiveEventArgs.BufferList = receiveBufferList;
-
-            bool pending = socket.ReceiveAsync(receiveEventArgs);
-
-            if (!pending)
+            internal void ReceiveAsync(bool beginning)
             {
-                link.OnReceive(receiveEventArgs);
-            }
-        }
+                this.beginning = beginning;
 
-        /// <summary>
-        /// Initiates a new asynchronous send operation on this session.
-        /// </summary>
-        public void SendAsync()
-        {
-            bool pending = socket.SendAsync(sendEventArgs);
+                recvBufferList.Clear();
+                recvBuffer.ListAvailableSegments(recvBufferList);
 
-            if (!pending)
-            {
-                link.OnSend(sendEventArgs);
-            }
-        }
+                recvEventArgs.BufferList = recvBufferList;
 
-        public void SendAsync(Event e)
-        {
-            e.Serialize(sendBuffer);
-            int numLengthBytes = Buffer.WriteUInt29(lengthBytes, sendBuffer.Length);
-            Length = sendBuffer.Length + numLengthBytes;
-            sendBufferList.Clear();
-            sendBufferList.Add(new ArraySegment<byte>(lengthBytes, 0, numLengthBytes));
+                bool pending = socket.ReceiveAsync(recvEventArgs);
 
-            sendBuffer.ListOccupiedSegments(sendBufferList);
-
-            sendEventArgs.BufferList = sendBufferList;
-
-            sending = true;
-
-            SendAsync();
-        }
-
-        public void SendRemaining()
-        {
-            sendBufferList.Clear();
-            sendBuffer.ListOccupiedSegments(sendBufferList);
-            
-            sendEventArgs.BufferList = sendBufferList;
-
-            SendAsync();
-        }
-
-        public void TrySendNext()
-        {
-            Event e;
-            lock (sendQueue)
-            {
-                if (sendQueue.Count == 0)
+                if (!pending)
                 {
-                    sending = false;
-                    return;
+                    OnReceive(recvEventArgs);
+                }
+            }
+
+            internal void SendRemaining()
+            {
+                length = sendBuffer.Length;
+
+                sendBufferList.Clear();
+                sendBuffer.ListOccupiedSegments(sendBufferList);
+
+                sendEventArgs.BufferList = sendBufferList;
+
+                SendAsync();
+            }
+
+            internal void TrySendNext()
+            {
+                Event e;
+                lock (sendQueue)
+                {
+                    if (sendQueue.Count == 0)
+                    {
+                        sending = false;
+                        return;
+                    }
+
+                    e = sendQueue.Dequeue();
                 }
 
-                e = sendQueue.Dequeue();
+                SendAsync(e);
             }
-            
-            SendAsync(e);
+
+            private void SendAsync(Event e)
+            {
+                e.Serialize(sendBuffer);
+                int numLengthBytes = Buffer.WriteUInt29(lengthBytes, sendBuffer.Length);
+                length = sendBuffer.Length + numLengthBytes;
+
+                sendBufferList.Clear();
+                sendBufferList.Add(new ArraySegment<byte>(lengthBytes, 0, numLengthBytes));
+                sendBuffer.ListOccupiedSegments(sendBufferList);
+
+                sendEventArgs.BufferList = sendBufferList;
+
+                SendAsync();
+            }
+
+            private void SendAsync()
+            {
+                bool pending = socket.SendAsync(sendEventArgs);
+
+                if (!pending)
+                {
+                    OnSend(sendEventArgs);
+                }
+            }
+
+            // Completion callback for ReceiveAsync.
+            internal void OnReceive(SocketAsyncEventArgs e)
+            {
+                if (e.SocketError == SocketError.Success)
+                {
+                    if (e.BytesTransferred > 0)
+                    {
+                        recvBuffer.Stretch(e.BytesTransferred);
+
+                        Log.Trace("{0} AsyncTcpLink.OnReceive buffer length {1} after stretching", Handle, recvBuffer.Length);
+
+                        if (beginning)
+                        {
+                            recvBuffer.Rewind();
+                            int payloadLength;
+                            int numLengthBytes = recvBuffer.ReadUInt29(out payloadLength);
+                            recvBuffer.Shrink(numLengthBytes);
+                            length = payloadLength;
+
+                            Log.Trace("{0} TcpLink.OnReceive beginning length {1} payload length {2} after stretching", Handle, recvBuffer.Length, payloadLength);
+                        }
+
+                        // Handle split packets.
+                        if (recvBuffer.Length < length)
+                        {
+                            Log.Debug("{0} TcpLink.OnReceive split packet #1 {1} of {2} byte(s)", Handle, recvBuffer.Length, length);
+                            ReceiveAsync(false);
+                            return;
+                        }
+
+                        while (true)
+                        {
+                            // pre-process
+                            recvBuffer.MarkToRead(length);
+
+                            int typeId;
+                            recvBuffer.ReadUInt29(out typeId);
+
+                            Event retrieved = Event.Create(typeId);
+                            if (retrieved == null)
+                            {
+                                Log.Error("{0} Unknown event type id {1}", Handle, typeId);
+                            }
+                            else
+                            {
+                                retrieved.Load(recvBuffer);
+
+                                // TODO: to be moved into pre-post handler chain
+                                retrieved.SessionHandle = Handle;
+
+                                if (link.Preprocessor != null)
+                                {
+                                    link.Preprocessor(retrieved, this);
+                                }
+
+                                Log.Info("{0} Received {1}", Handle, retrieved.ToString());
+
+                                // Post up the retrieved event to the hub which this
+                                // link is attached to.
+                                link.Flow.Publish(retrieved);
+                            }
+
+                            recvBuffer.Trim();
+
+                            if (recvBuffer.IsEmpty)
+                            {
+                                Log.Trace("{0} TcpLink.OnReceive completed exactly", Handle);
+                                break;
+                            }
+
+                            Log.Trace("{0} TcpLink.OnReceive continuing to next event with buffer length {1}", Handle, recvBuffer.Length);
+
+                            int payloadLength;
+                            int numLengthBytes = recvBuffer.ReadUInt29(out payloadLength);
+
+                            Log.Trace("{0} TcpLink.OnReceive next payload length {1} numLengthByte {2}", Handle, payloadLength, numLengthBytes);
+
+                            recvBuffer.Shrink(numLengthBytes);
+                            length = payloadLength;
+
+                            Log.Trace("{0} TcpLink.OnReceive re-beginning length {1} payload length {2} after stretching", Handle, recvBuffer.Length, payloadLength);
+
+                            if (recvBuffer.Length < length)
+                            {
+                                Log.Debug("{0} TcpLink.OnReceive split packet #2 {1} of {2} byte(s)", Handle, recvBuffer.Length, length);
+                                ReceiveAsync(false);
+                                return;
+                            }
+                        }
+
+                        ReceiveAsync(true);
+                        return;
+                    }
+
+                    // (e.BytesTransferred == 0) implies a graceful shutdown
+                }
+
+                link.Flow.Publish(new LinkSessionDisconnected {
+                    LinkName = link.Name,
+                    Context = this
+                });
+
+                switch (e.SocketError)
+                {
+                    case SocketError.Success:
+                        break;
+                    case SocketError.ConnectionReset:
+                    case SocketError.Disconnecting:
+                        break;
+                    default:
+                        throw new SocketException((int)e.SocketError);
+                }
+            }
+
+            // Completion callback for SendAsync
+            internal void OnSend(SocketAsyncEventArgs e)
+            {
+                if (e.SocketError == SocketError.Success)
+                {
+                    if (e.BytesTransferred < length)
+                    {
+                        // Try to send the rest.
+                        sendBuffer.Shrink(e.BytesTransferred);
+
+                        SendRemaining();
+
+                        return;
+                    }
+
+                    sendBuffer.Trim();
+
+                    TrySendNext();
+                }
+                else
+                {
+                    link.Flow.Publish(new LinkSessionDisconnected {
+                        LinkName = link.Name,
+                        Context = this
+                    });
+
+                    switch (e.SocketError)
+                    {
+                        case SocketError.ConnectionReset:
+                            break;
+                        default:
+                            throw new SocketException((int)e.SocketError);
+                    }
+                }
+            }
         }
     }
 }

@@ -10,13 +10,16 @@ using x2.Queues;
 
 namespace x2
 {
-    public abstract class LinkCase : Case
+    /// <summary>
+    /// Abstract base class for concrete link cases.
+    /// </summary>
+    public abstract class Link : Case
     {
         public string Name { get; private set; }
 
         public Action<Event, LinkSession> Preprocessor { get; set; }
 
-        public LinkCase(string name)
+        public Link(string name)
         {
             Name = name;
         }
@@ -44,6 +47,9 @@ namespace x2
         }
     }
 
+    /// <summary>
+    /// Abstract base class for concrete link sessions.
+    /// </summary>
     public abstract class LinkSession
     {
         public IntPtr Handle { get; private set; }
@@ -58,6 +64,8 @@ namespace x2
         public abstract void Send(Event e);
     }
 
+
+    // <to be deprecated>
     public abstract class LinkFlow : SingleThreadedFlow
     {
         public string Name { get; private set; }

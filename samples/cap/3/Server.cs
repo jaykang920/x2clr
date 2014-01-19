@@ -26,7 +26,7 @@ namespace x2.Samples.Capitalizer
         }
     }
 
-    class CapitalizerServer : AsyncTcpServer
+    class CapitalizerServer : AsyncTcpServerFlow
     {
         new class Session
         {

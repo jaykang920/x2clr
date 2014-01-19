@@ -14,7 +14,10 @@ using x2.Queues;
 
 namespace x2.Links.AsyncTcpLink
 {
-    public class AsyncTcpServerCase : AsyncTcpLinkCase
+    /// <summary>
+    /// TCP/IP server link based on the enhanced SocketAsyncEventArgs pattern.
+    /// </summary>
+    public class AsyncTcpServer : AsyncTcpLink
     {
         private int backlog;
 
@@ -42,7 +45,7 @@ namespace x2.Links.AsyncTcpLink
             get { return (socket != null && socket.IsBound ); }
         }
 
-        public AsyncTcpServerCase(string name) : base(name)
+        public AsyncTcpServer(string name) : base(name)
         {
             backlog = Int32.MaxValue;
         }
@@ -81,7 +84,7 @@ namespace x2.Links.AsyncTcpLink
 
                 Accept(null);
 
-                Log.Info("AsyncTcpServerCase: listening on {0}", endpoint);
+                Log.Info("AsyncTcpServer: listening on {0}", endpoint);
             }
             catch (Exception)
             {
@@ -125,7 +128,7 @@ namespace x2.Links.AsyncTcpLink
             }
             else
             {
-                Log.Warn("AsyncTcpClientCase: ConnectAsync failed with SocketError {1}",
+                Log.Warn("AsyncTcpClient: ConnectAsync failed with SocketError {1}",
                     e.SocketError);
             }
 
@@ -133,10 +136,10 @@ namespace x2.Links.AsyncTcpLink
             {
                 Socket clientSocket = e.AcceptSocket;
 
-                AsyncTcpLinkSession session = new AsyncTcpLinkSession(this, clientSocket);
+                var session = new AsyncTcpLink.Session(this, clientSocket);
                 notification.Context = session;
 
-                session.Receive();
+                session.ReceiveAsync(true);
 
                 Accept(e);
             }
@@ -145,17 +148,17 @@ namespace x2.Links.AsyncTcpLink
         }
     }
 
-    public class AsyncTcpServer : SingleThreadedFlow
+    public class AsyncTcpServerFlow : SingleThreadedFlow
     {
-        private AsyncTcpServerCase linkCase;
+        private AsyncTcpServer linkCase;
 
         public string Name { get; private set; }
 
         public Action<Event, LinkSession> Preprocessor { get; set; }
 
-        public AsyncTcpServer(string name)
+        public AsyncTcpServerFlow(string name)
         {
-            linkCase = new AsyncTcpServerCase(name);
+            linkCase = new AsyncTcpServer(name);
             Add(linkCase);
 
             Name = name;
