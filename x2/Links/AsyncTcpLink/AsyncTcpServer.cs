@@ -150,7 +150,7 @@ namespace x2.Links.AsyncTcpLink
 
     public class AsyncTcpServerFlow : SingleThreadedFlow
     {
-        private AsyncTcpServer linkCase;
+        private AsyncTcpServer link;
 
         public string Name { get; private set; }
 
@@ -158,20 +158,20 @@ namespace x2.Links.AsyncTcpLink
 
         public AsyncTcpServerFlow(string name)
         {
-            linkCase = new AsyncTcpServer(name);
-            Add(linkCase);
+            link = new AsyncTcpServer(name);
+            Add(link);
 
             Name = name;
         }
 
         public void Close()
         {
-            linkCase.Close();
+            link.Close();
         }
 
         public void Listen(int port)
         {
-            linkCase.Listen(port);
+            link.Listen(port);
         }
 
         protected override void SetUp()

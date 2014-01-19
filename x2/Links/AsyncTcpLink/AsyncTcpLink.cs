@@ -153,14 +153,6 @@ namespace x2.Links.AsyncTcpLink
 
             internal void SendRemaining()
             {
-                length = sendBuffer.Length;
-
-                sendBufferList.Clear();
-                sendBuffer.ListOccupiedSegments(sendBufferList);
-
-                sendEventArgs.BufferList = sendBufferList;
-
-                SendAsync();
             }
 
             internal void TrySendNext()
@@ -328,9 +320,14 @@ namespace x2.Links.AsyncTcpLink
                     {
                         // Try to send the rest.
                         sendBuffer.Shrink(e.BytesTransferred);
+                        length = sendBuffer.Length;
 
-                        SendRemaining();
+                        sendBufferList.Clear();
+                        sendBuffer.ListOccupiedSegments(sendBufferList);
 
+                        sendEventArgs.BufferList = sendBufferList;
+
+                        SendAsync();
                         return;
                     }
 

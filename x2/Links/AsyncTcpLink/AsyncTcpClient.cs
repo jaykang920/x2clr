@@ -166,44 +166,44 @@ namespace x2.Links.AsyncTcpLink
 
     public class AsyncTcpClientFlow : SingleThreadedFlow
     {
-        private AsyncTcpClient linkCase;
+        private AsyncTcpClient link;
 
         public string Name { get; private set; }
 
         public bool AutoReconnect
         {
-            get { return linkCase.AutoReconnect; }
-            set { linkCase.AutoReconnect = value; }
+            get { return link.AutoReconnect; }
+            set { link.AutoReconnect = value; }
         }
         public int MaxRetryCount  // 0 for unlimited
         {
-            get { return linkCase.MaxRetryCount; }
-            set { linkCase.MaxRetryCount = value; }
+            get { return link.MaxRetryCount; }
+            set { link.MaxRetryCount = value; }
         }
         public long RetryInterval  // in millisec
         {
-            get { return linkCase.RetryInterval; }
-            set { linkCase.RetryInterval = value; }
+            get { return link.RetryInterval; }
+            set { link.RetryInterval = value; }
         }
 
         public Action<Event, LinkSession> Preprocessor { get; set; }
 
         public AsyncTcpClientFlow(string name)
         {
-            linkCase = new AsyncTcpClient(name);
-            Add(linkCase);
+            link = new AsyncTcpClient(name);
+            Add(link);
 
             Name = name;
         }
 
         public void Close()
         {
-            linkCase.Close();
+            link.Close();
         }
 
         public void Connect(string host, int port)
         {
-            linkCase.Connect(host, port);
+            link.Connect(host, port);
         }
 
         protected override void SetUp()
