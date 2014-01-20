@@ -10,6 +10,9 @@ using x2.Links.AsyncTcpLink;
 
 namespace x2.Samples.Capitalizer
 {
+    using ServerCase = x2.Links.TcpLink2.TcpServer;
+    using ServerFlow = x2.Links.TcpLink2.TcpServerFlow;
+
     class CapitalizerFlow : SingleThreadedFlow
     {
         static void OnCapitalizeReq(CapitalizeReq req)
@@ -26,9 +29,9 @@ namespace x2.Samples.Capitalizer
         }
     }
 
-    class CapitalizerServer : AsyncTcpServerFlow
+    class CapitalizerServer : ServerFlow
     {
-        new class Session
+        class Session
         {
             public LinkSession LinkSession { get; set; }
 

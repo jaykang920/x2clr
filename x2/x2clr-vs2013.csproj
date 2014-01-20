@@ -71,6 +71,11 @@
     <Compile Include="Links\AsyncTcpLink\AsyncTcpServer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Links\TcpLink\TcpClient.cs" />
+    <Compile Include="Links\TcpLink\TcpLink.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Links\TcpLink\TcpServer.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Mapping.cs" />
     <Compile Include="Sequence.cs" />
@@ -119,6 +124,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
