@@ -12,87 +12,24 @@ using x2.Events;
 using x2.Flows;
 using x2.Queues;
 
-namespace x2.Links.TcpLink2
+namespace x2.Links.SocketLink
 {
     /// <summary>
     /// TCP/IP server link based on the Begin/End pattern.
     /// </summary>
-    public class TcpServer : TcpLink2
+    public class TcpServer : TcpServerBase
     {
-        private int backlog;
-
-        /// <summary>
-        /// Gets or sets the maximum length of the pending connections queue.
-        /// </summary>
-        public int Backlog
+        public TcpServer(string name)
+            : base(name)
         {
-            get { return backlog; }
-            set
-            {
-                if (socket != null)
-                {
-                    throw new InvalidOperationException();
-                }
-                backlog = value;
-            }
         }
 
-        /// <summary>
-        /// Gets a value that indicates whether the server socket is ready.
-        /// </summary>
-        public bool Listening
+        protected override void AcceptImpl()
         {
-            get { return (socket != null && socket.IsBound ); }
+            socket.BeginAccept(OnAccept, null);
         }
 
-        public TcpServer(string name) : base(name)
-        {
-            backlog = Int32.MaxValue;
-        }
-
-        public override void Close()
-        {
-            if (socket == null) { return; }
-            socket.Close();
-            socket = null;
-        }
-
-        public void Listen(int port)
-        {
-            Listen(IPAddress.Any, port);
-        }
-
-        public void Listen(string ip, int port)
-        {
-            Listen(IPAddress.Parse(ip), port);
-        }
-
-        public void Listen(IPAddress ip, int port)
-        {
-            if (socket != null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            try
-            {
-                socket = new Socket(ip.AddressFamily,
-                    SocketType.Stream, ProtocolType.Tcp);
-                EndPoint endpoint = new IPEndPoint(ip, port);
-                socket.Bind(endpoint);
-                socket.Listen(backlog);
-
-                socket.BeginAccept(OnAccept, null);
-
-                Log.Info("TcpServer: listening on {0}", endpoint);
-            }
-            catch (Exception)
-            {
-                socket = null;
-                throw;
-            }
-        }
-
+        // Asynchronous callback for BeginAccept
         private void OnAccept(IAsyncResult asyncResult)
         {
             var notification = new LinkSessionConnected { LinkName = Name };
@@ -103,12 +40,12 @@ namespace x2.Links.TcpLink2
 
                 notification.Result = true;
 
-                var session = new TcpLink2.Session(this, clientSocket);
+                var session = new TcpLinkSession(this, clientSocket);
                 notification.Context = session;
 
                 session.BeginReceive(true);
 
-                socket.BeginAccept(OnAccept, null);
+                AcceptImpl();
             }
             catch (Exception)
             {
@@ -125,8 +62,6 @@ namespace x2.Links.TcpLink2
         private TcpServer link;
 
         public string Name { get; private set; }
-
-        public Action<Event, LinkSession> Preprocessor { get; set; }
 
         public TcpServerFlow(string name)
         {

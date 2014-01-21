@@ -52,7 +52,7 @@ namespace x2.Links
             {
                 int numBytes = session.Socket.EndReceive(asyncResult);
 
-                Log.Debug("{0} TcpLink.OnReceive Socket.EndReceive {1} byte(s)", session.Handle, numBytes);
+                Log.Debug("{0} TcpLink.OnReceive Socket.ReceiveInternal {1} byte(s)", session.Handle, numBytes);
 
                 if (numBytes > 0)
                 {
@@ -188,7 +188,7 @@ namespace x2.Links
             {
                 int numBytes = session.Socket.EndSend(asyncResult);
 
-                Log.Debug("{0} TcpLink.OnSend Socket.EndSend {1} of {2} byte(s) completed", session.Handle, numBytes, asyncState.length);
+                Log.Debug("{0} TcpLink.OnSend Socket.SendInternal {1} of {2} byte(s) completed", session.Handle, numBytes, asyncState.length);
 
                 if (numBytes < asyncState.length)
                 {
@@ -287,7 +287,7 @@ namespace x2.Links
                     {
                         bufferLength += receiveState.ArraySegments[i].Count;
                     }
-                    Log.Debug("{0} TcpLink.Session.BeginReceive {1} byte(s) in {2} block(s) beginning={3}", Handle, bufferLength, receiveState.ArraySegments.Count, beginning);
+                    Log.Debug("{0} TcpLink.Session.ReceiveImpl {1} byte(s) in {2} block(s) beginning={3}", Handle, bufferLength, receiveState.ArraySegments.Count, beginning);
 
                     socket.BeginReceive(receiveState.ArraySegments, SocketFlags.None, link.OnReceive, receiveState);
                 }
@@ -321,7 +321,7 @@ namespace x2.Links
                 buffer.ListOccupiedSegments(asyncState.ArraySegments);
                 try
                 {
-                    Log.Debug("{0} TcpLink.Session.BeginSend {1} ({2} including length) byte(s)", Handle, buffer.Length, asyncState.length);
+                    Log.Debug("{0} TcpLink.Session.SendImpl {1} ({2} including length) byte(s)", Handle, buffer.Length, asyncState.length);
 
                     socket.BeginSend(asyncState.ArraySegments, SocketFlags.None, link.OnSend, asyncState);
                 }

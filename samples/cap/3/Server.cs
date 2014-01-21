@@ -6,12 +6,12 @@ using System.Threading;
 using x2;
 using x2.Events;
 using x2.Flows;
-using x2.Links.AsyncTcpLink;
+using x2.Links.SocketLink;
 
 namespace x2.Samples.Capitalizer
 {
-    using ServerCase = x2.Links.TcpLink2.TcpServer;
-    using ServerFlow = x2.Links.TcpLink2.TcpServerFlow;
+    using ServerCase = x2.Links.SocketLink.AsyncTcpServer;
+    using ServerFlow = x2.Links.SocketLink.AsyncTcpServerFlow;
 
     class CapitalizerFlow : SingleThreadedFlow
     {

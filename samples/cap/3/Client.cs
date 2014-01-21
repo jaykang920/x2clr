@@ -6,16 +6,16 @@ using System.Threading;
 using x2;
 using x2.Events;
 using x2.Flows;
-using x2.Links.TcpLink2;
+using x2.Links.SocketLink;
 
 namespace x2.Samples.Capitalizer
 {
-    using ClientCase = x2.Links.TcpLink2.TcpClient;
-    using ClientFlow = x2.Links.TcpLink2.TcpClientFlow;
+    using ClientCase = x2.Links.SocketLink.AsyncTcpClient;
+    using ClientFlow = x2.Links.SocketLink.AsyncTcpClientFlow;
 
     class CapitalizerClient : ClientFlow
     {
-        ClientCase.Session session;
+        LinkSession session;
 
         public CapitalizerClient()
             : base("CapitalizerClient")
@@ -37,7 +37,7 @@ namespace x2.Samples.Capitalizer
             {
                 Console.WriteLine("Connected");
 
-                session = (ClientCase.Session)e.Context;
+                session = (LinkSession)e.Context;
 
                 Flow.Bind(new CapitalizeReq(), Send);
             }

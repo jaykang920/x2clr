@@ -32,6 +32,11 @@ namespace x2
             Bind(new LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
         }
 
+        protected override void TearDown()
+        {
+            Close();
+        }
+
         protected virtual void OnSessionConnected(LinkSessionConnected e) { }
 
         protected virtual void OnSessionDisconnected(LinkSessionDisconnected e) { }
