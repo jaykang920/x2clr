@@ -43,6 +43,8 @@ namespace x2.Links.SocketLink
                 }
 
                 // (bytesTransferred == 0) implies a graceful shutdown
+                Log.Info("{0} {1} disconnected", link.Name, Handle);
+
                 link.Flow.Publish(new LinkSessionDisconnected {
                     LinkName = link.Name,
                     Context = this

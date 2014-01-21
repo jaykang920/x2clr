@@ -80,6 +80,7 @@ namespace x2.Links.SocketLink
                 }
 
                 // (e.BytesTransferred == 0) implies a graceful shutdown
+                Log.Info("{0} {1} disconnected", link.Name, Handle);
             }
             else
             {

@@ -54,6 +54,9 @@ namespace x2.Links.SocketLink
         {
             if (e.SocketError == SocketError.Success)
             {
+                Log.Info("{0} {1} accepted from {2}",
+                    Name, e.AcceptSocket.Handle, e.AcceptSocket.RemoteEndPoint);
+
                 var session = new AsyncTcpLinkSession(this, e.AcceptSocket);
 
                 Flow.Publish(new LinkSessionConnected {

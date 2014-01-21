@@ -36,6 +36,9 @@ namespace x2.Links.SocketLink
             {
                 var clientSocket = socket.EndAccept(asyncResult);
 
+                Log.Info("{0} {1} accepted from {2}",
+                    Name, clientSocket.Handle, clientSocket.RemoteEndPoint);
+
                 var session = new TcpLinkSession(this, clientSocket);
 
                 Flow.Publish(new LinkSessionConnected {

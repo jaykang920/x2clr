@@ -35,7 +35,9 @@ namespace x2.Links.SocketLink
             try
             {
                 socket.EndConnect(asyncResult);
-                
+
+                Log.Info("{0} {1} connected to {2}", Name, socket.Handle, socket.RemoteEndPoint);
+
                 noti.Result = true;
 
                 ConnectInternal();
