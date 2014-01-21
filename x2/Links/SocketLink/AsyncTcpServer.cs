@@ -43,6 +43,7 @@ namespace x2.Links.SocketLink
             }
         }
 
+        // Completed event handler for AcceptAsync
         private void OnAcceptCompleted(object sender, SocketAsyncEventArgs e)
         {
             OnAccept(e);

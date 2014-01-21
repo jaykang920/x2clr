@@ -36,9 +36,12 @@ namespace x2.Links.SocketLink
         protected volatile bool sending;              // tx
         protected byte[] lengthBytes = new byte[4];   // tx
 
+        /// <summary>
+        /// Gets the underlying socket object.
+        /// </summary>
         public Socket Socket { get { return socket; } }
 
-        public SocketLinkSession(SocketLink link, Socket socket)
+        protected SocketLinkSession(SocketLink link, Socket socket)
             : base(socket.Handle)
         {
             this.link = link;

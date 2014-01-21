@@ -40,6 +40,7 @@ namespace x2.Links.SocketLink
             }
         }
 
+        // Completed event handler for ConnectAsync
         private void OnConnectCompleted(object sender, SocketAsyncEventArgs e)
         {
             OnConnect(e);
