@@ -32,28 +32,26 @@ namespace x2.Links.SocketLink
         // Asynchronous callback for BeginAccept
         private void OnAccept(IAsyncResult asyncResult)
         {
-            var notification = new LinkSessionConnected { LinkName = Name };
-
             try
             {
                 var clientSocket = socket.EndAccept(asyncResult);
 
-                notification.Result = true;
-
                 var session = new TcpLinkSession(this, clientSocket);
-                notification.Context = session;
+
+                Flow.Publish(new LinkSessionConnected {
+                    LinkName = Name,
+                    Result = true,
+                    Context = session
+                });
 
                 session.BeginReceive(true);
 
                 AcceptImpl();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Log.Warn("TcpServer: Accept failed with SocketError");
-                throw;
+                Log.Warn("{0} accept error: {1}", Name, e.Message);
             }
-
-            Flow.Publish(notification);
         }
     }
 

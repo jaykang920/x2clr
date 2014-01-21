@@ -9,7 +9,7 @@ using x2;
 namespace x2.Links.SocketLink
 {
     /// <summary>
-    /// Common abstract base class for any socket link pair (client and server).
+    /// Common abstract base class for socket-based links.
     /// </summary>
     public abstract class SocketLink : Link
     {

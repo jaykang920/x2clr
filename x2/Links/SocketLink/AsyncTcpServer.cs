@@ -54,14 +54,13 @@ namespace x2.Links.SocketLink
         {
             if (e.SocketError == SocketError.Success)
             {
-                var noti = new LinkSessionConnected { LinkName = Name };
-
-                noti.Result = true;
-
                 var session = new AsyncTcpLinkSession(this, e.AcceptSocket);
 
-                noti.Context = session;
-                Flow.Publish(noti);
+                Flow.Publish(new LinkSessionConnected {
+                    LinkName = Name,
+                    Result = true,
+                    Context = session
+                });
 
                 session.BeginReceive(true);
 
@@ -69,7 +68,7 @@ namespace x2.Links.SocketLink
             }
             else
             {
-                // log the error
+                Log.Warn("{0} accept error {1}", Name, e.SocketError);
             }
         }
     }

@@ -47,9 +47,9 @@ namespace x2.Links.SocketLink
 
                 session.BeginReceive(true);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // log the error
+                Log.Warn("{0} connect error: {1}", Name, e.Message);
 
                 var endpoint = (EndPoint)asyncResult.AsyncState;
                 

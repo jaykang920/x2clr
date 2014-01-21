@@ -48,22 +48,14 @@ namespace x2.Links.SocketLink
                     Context = this
                 });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                Log.Warn("{0} {1} recv error: {2}", link.Name, Handle, ex.Message);
+
                 link.Flow.Publish(new LinkSessionDisconnected {
                     LinkName = link.Name,
                     Context = this
                 });
-
-                if (e is SocketException)
-                {
-                    var se = (SocketException)e;
-                    Log.Info("TcpLink.OnReceive SocketException {0} {1}", se.ErrorCode, e.Message);
-                }
-                else
-                {
-                    Log.Info("TcpLink.OnReceive Exception {0}", e.Message);
-                }
             }
         }
 
@@ -76,22 +68,14 @@ namespace x2.Links.SocketLink
 
                 SendInternal(bytesTransferred);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                Log.Warn("{0} {1} send error: {2}", link.Name, Handle, ex.Message);
+
                 link.Flow.Publish(new LinkSessionDisconnected {
                     LinkName = link.Name,
                     Context = this
                 });
-
-                if (e is SocketException)
-                {
-                    var se = (SocketException)e;
-                    Log.Info("TcpLink.OnSend SocketException {0} {1}", se.ErrorCode, e.Message);
-                }
-                else
-                {
-                    Log.Info("TcpLink.OnSend Exception {0}", e.Message);
-                }
             }
         }
     }

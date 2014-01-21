@@ -68,7 +68,7 @@ namespace x2.Links.SocketLink
             }
             else
             {
-                // log the error
+                Log.Warn("{0} connect error {1}", Name, e.SocketError);
 
                 noti.Context = e.RemoteEndPoint;
                 Flow.Publish(noti);

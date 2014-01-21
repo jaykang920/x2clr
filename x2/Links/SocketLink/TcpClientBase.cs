@@ -57,8 +57,8 @@ namespace x2.Links.SocketLink
             }
             catch (Exception e)
             {
-                Log.Error("TcpClient: error resolving target host {0} - {1}",
-                    host, e.Message);
+                Log.Error("{0} error resolving target host {1} - {2}",
+                    Name, host, e.Message);
                 throw;
             }
 
@@ -82,11 +82,19 @@ namespace x2.Links.SocketLink
                 throw new InvalidOperationException();
             }
 
-            Log.Info("TcpClient: connecting to {0}:{1}", ip, port);
+            try
+            {
+                socket = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-            socket = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                BeginConnect(new IPEndPoint(ip, port));
 
-            BeginConnect(new IPEndPoint(ip, port));
+                Log.Info("{0} connecting to {1}:{2}", Name, ip, port);
+            }
+            catch (Exception)
+            {
+                socket = null;
+                throw;
+            }
         }
 
         private void BeginConnect(EndPoint endpoint)

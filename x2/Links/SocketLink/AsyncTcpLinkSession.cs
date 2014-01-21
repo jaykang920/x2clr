@@ -83,7 +83,7 @@ namespace x2.Links.SocketLink
             }
             else
             {
-                // log error
+                Log.Warn("{0} {1} recv error {2}", link.Name, Handle, e.SocketError);
             }
 
             link.Flow.Publish(new LinkSessionDisconnected {
@@ -101,6 +101,8 @@ namespace x2.Links.SocketLink
             }
             else
             {
+                Log.Warn("{0} {1} send error {2}", link.Name, Handle, e.SocketError);
+
                 link.Flow.Publish(new LinkSessionDisconnected {
                     LinkName = link.Name,
                     Context = this

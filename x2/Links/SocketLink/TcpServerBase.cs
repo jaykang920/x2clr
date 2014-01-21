@@ -86,7 +86,7 @@ namespace x2.Links.SocketLink
 
                 AcceptImpl();
 
-                Log.Info("TcpServer: listening on {0}", endpoint);
+                Log.Info("{0} listening on {1}", Name, endpoint);
             }
             catch (Exception)
             {

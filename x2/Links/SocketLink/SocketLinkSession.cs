@@ -15,7 +15,7 @@ using x2.Queues;
 namespace x2.Links.SocketLink
 {
     /// <summary>
-    /// Common abstract base class for socket link communication sessions.
+    /// Common abstract base class for SocketLink sessions.
     /// </summary>
     public abstract class SocketLinkSession : LinkSession
     {
@@ -134,28 +134,23 @@ namespace x2.Links.SocketLink
                 Event retrieved = Event.Create(typeId);
                 if (retrieved == null)
                 {
-                    Log.Error("{0} Unknown event type id {1}", Handle, typeId);
+                    Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
                 }
                 else
                 {
                     retrieved.Load(recvBuffer);
-
                     retrieved.SessionHandle = Handle;
-
                     if (link.Preprocessor != null)
                     {
                         link.Preprocessor(retrieved, this);
                     }
 
-                    Log.Info("{0} Received {1}", Handle, retrieved.ToString());
+                    Log.Info("{0} {1} received event {2}", link.Name, Handle, retrieved);
 
-                    // Post up the retrieved event to the hub which this
-                    // link is attached to.
                     link.Flow.Publish(retrieved);
                 }
 
                 recvBuffer.Trim();
-
                 if (recvBuffer.IsEmpty)
                 {
                     break;
@@ -207,6 +202,8 @@ namespace x2.Links.SocketLink
             sendBuffer.ListOccupiedSegments(sendBufferList);
 
             SendImpl();
+
+            Log.Info("{0} {1} sent event {2}", link.Name, Handle, e);
         }
 
         private void TrySendNext()
