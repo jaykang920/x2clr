@@ -110,9 +110,6 @@
     <Compile Include="Hash.cs" />
     <Compile Include="Hub.cs" />
     <Compile Include="Queue.cs" />
-    <Compile Include="Links\TcpClient.cs" />
-    <Compile Include="Links\TcpLink.cs" />
-    <Compile Include="Links\TcpServer.cs" />
     <Compile Include="Queues\UnboundedQueue.cs" />
     <Compile Include="Yields\WaitForSingleEvent.cs" />
   </ItemGroup>

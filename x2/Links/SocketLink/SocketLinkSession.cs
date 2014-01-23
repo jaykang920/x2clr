@@ -31,7 +31,8 @@ namespace x2.Links.SocketLink
         protected IList<ArraySegment<byte>> sendBufferList;
 
         // Operation context details
-        protected int length;                         // common
+        protected int lengthToReceive;                // rx
+        protected int lengthToSend;                   // tx
         protected bool beginning;                     // rx
         protected volatile bool sending;              // tx
         protected byte[] lengthBytes = new byte[4];   // tx
@@ -130,11 +131,11 @@ namespace x2.Links.SocketLink
                 int payloadLength;
                 int numLengthBytes = recvBuffer.ReadUInt29(out payloadLength);
                 recvBuffer.Shrink(numLengthBytes);
-                length = payloadLength;
+                lengthToReceive = payloadLength;
             }
 
             // Handle split packets.
-            if (recvBuffer.Length < length)
+            if (recvBuffer.Length < lengthToReceive)
             {
                 BeginReceive(false);
                 return;
@@ -142,7 +143,7 @@ namespace x2.Links.SocketLink
 
             while (true)
             {
-                recvBuffer.MarkToRead(length);
+                recvBuffer.MarkToRead(lengthToReceive);
 
                 int typeId;
                 recvBuffer.ReadUInt29(out typeId);
@@ -175,9 +176,9 @@ namespace x2.Links.SocketLink
                 int payloadLength;
                 int numLengthBytes = recvBuffer.ReadUInt29(out payloadLength);
                 recvBuffer.Shrink(numLengthBytes);
-                length = payloadLength;
+                lengthToReceive = payloadLength;
 
-                if (recvBuffer.Length < length)
+                if (recvBuffer.Length < lengthToReceive)
                 {
                     BeginReceive(false);
                     return;
@@ -190,13 +191,14 @@ namespace x2.Links.SocketLink
         protected void SendInternal(int bytesTransferred)
         {
             Log.Trace("{0} {1} sent {2}/{3} byte(s)",
-                link.Name, Handle, bytesTransferred, length);
+                link.Name, Handle, bytesTransferred, lengthToSend);
 
-            if (bytesTransferred < length)
+            /* XXX TODO split send
+            if (bytesTransferred < lengthToSend)
             {
                 // Try to send the rest.
                 sendBuffer.Shrink(bytesTransferred);
-                length = sendBuffer.Length;
+                lengthToSend = sendBuffer.Length;
 
                 sendBufferList.Clear();
                 sendBuffer.ListOccupiedSegments(sendBufferList);
@@ -204,6 +206,7 @@ namespace x2.Links.SocketLink
                 SendImpl();
                 return;
             }
+            */
 
             sendBuffer.Trim();
 
@@ -214,7 +217,7 @@ namespace x2.Links.SocketLink
         {
             e.Serialize(sendBuffer);
             int numLengthBytes = Buffer.WriteUInt29(lengthBytes, sendBuffer.Length);
-            length = sendBuffer.Length + numLengthBytes;
+            lengthToSend = sendBuffer.Length + numLengthBytes;
 
             sendBufferList.Clear();
             sendBufferList.Add(new ArraySegment<byte>(lengthBytes, 0, numLengthBytes));
