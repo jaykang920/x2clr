@@ -13,10 +13,8 @@ namespace x2.Samples.Capitalizer
     using ClientCase = x2.Links.SocketLink.AsyncTcpClient;
     using ClientFlow = x2.Links.SocketLink.AsyncTcpClientFlow;
 
-    class CapitalizerClient : ClientFlow
+    class CapitalizerClient : ClientCase
     {
-        LinkSession session;
-
         public CapitalizerClient()
             : base("CapitalizerClient")
         {
@@ -24,20 +22,11 @@ namespace x2.Samples.Capitalizer
             RetryInterval = 1000;
         }
 
-        void Send(Event e)
-        {
-            Console.WriteLine("Sending: {0}", e);
-
-            session.Send(e);
-        }
-
         protected override void OnSessionConnected(LinkSessionConnected e)
         {
             if (e.Result)
             {
                 Console.WriteLine("Connected");
-
-                session = (LinkSession)e.Context;
 
                 Flow.Bind(new CapitalizeReq(), Send);
             }
@@ -54,18 +43,15 @@ namespace x2.Samples.Capitalizer
             Console.WriteLine("Disconnected");
         }
 
-        protected override void OnStart()
-        {
-            Console.WriteLine("Connecting...");
-
-            Connect("127.0.0.1", 5678);
-        }
-
         protected override void SetUp()
         {
             base.SetUp();
 
             Event.Register<CapitalizeResp>();
+
+            Console.WriteLine("Connecting...");
+
+            Connect("127.0.0.1", 5678);
         }
     }
 
@@ -92,8 +78,7 @@ namespace x2.Samples.Capitalizer
             x2.Log.Level = x2.LogLevel.All;
 
             Hub.Get()
-                .Attach(new CapitalizerClient())
-                .Attach(new OutputFlow());
+                .Attach(new OutputFlow().Add(new CapitalizerClient()));
 
             Flow.StartAll();
 

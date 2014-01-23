@@ -53,6 +53,9 @@ namespace x2.Links.SocketLink
 
             if (e.SocketError == SocketError.Success)
             {
+                // Adjust socket options.
+                socket.NoDelay = NoDelay;
+
                 Log.Info("{0} {1} connected to {2}", Name, socket.Handle, socket.RemoteEndPoint);
 
                 noti.Result = true;

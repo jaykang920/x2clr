@@ -41,6 +41,19 @@ namespace x2.Links.SocketLink
         /// </summary>
         public Socket Socket { get { return socket; } }
 
+        public string RemoteAddress
+        {
+            get
+            {
+                if (!socket.Connected)
+                {
+                    return "(Closed)";
+                }
+                var endpoint = socket.RemoteEndPoint as IPEndPoint;
+                return endpoint.Address.ToString();
+            }
+        }
+
         protected SocketLinkSession(SocketLink link, Socket socket)
             : base(socket.Handle)
         {
@@ -108,6 +121,9 @@ namespace x2.Links.SocketLink
         {
             recvBuffer.Stretch(bytesTransferred);
 
+            Log.Trace("{0} {1} received {2} byte(s)",
+                link.Name, Handle, bytesTransferred);
+
             if (beginning)
             {
                 recvBuffer.Rewind();
@@ -173,6 +189,9 @@ namespace x2.Links.SocketLink
 
         protected void SendInternal(int bytesTransferred)
         {
+            Log.Trace("{0} {1} sent {2}/{3} byte(s)",
+                link.Name, Handle, bytesTransferred, length);
+
             if (bytesTransferred < length)
             {
                 // Try to send the rest.

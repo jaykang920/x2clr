@@ -54,10 +54,15 @@ namespace x2.Links.SocketLink
         {
             if (e.SocketError == SocketError.Success)
             {
-                Log.Info("{0} {1} accepted from {2}",
-                    Name, e.AcceptSocket.Handle, e.AcceptSocket.RemoteEndPoint);
+                var clientSocket = e.AcceptSocket;
 
-                var session = new AsyncTcpLinkSession(this, e.AcceptSocket);
+                // Adjust client socket options.
+                clientSocket.NoDelay = NoDelay;
+
+                Log.Info("{0} {1} accepted from {2}",
+                    Name, clientSocket.Handle, clientSocket.RemoteEndPoint);
+
+                var session = new AsyncTcpLinkSession(this, clientSocket);
 
                 Flow.Publish(new LinkSessionConnected {
                     LinkName = Name,
@@ -140,6 +145,13 @@ namespace x2.Links.SocketLink
         private void OnLinkSessionDisconnected(LinkSessionDisconnected e)
         {
             OnSessionDisconnected(e);
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+
+            Close();
         }
     }
 }

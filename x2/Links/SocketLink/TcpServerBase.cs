@@ -45,9 +45,18 @@ namespace x2.Links.SocketLink
             get { return (socket != null && socket.IsBound ); }
         }
 
+        /// <summary>
+        /// Gets or sets a value that indicates whether the client sockets are
+        /// not to use the Nagle algorithm.
+        /// </summary>
+        public bool NoDelay { get; set; }
+
         public TcpServerBase(string name) : base(name)
         {
             backlog = Int32.MaxValue;
+
+            // Default socket options
+            NoDelay = true;
         }
 
         public override void Close()

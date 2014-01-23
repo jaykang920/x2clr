@@ -14,22 +14,44 @@ namespace x2.Links.SocketLink
 {
     public abstract class TcpClientBase : SocketLink
     {
-        protected SocketLinkSession session;
+        protected volatile SocketLinkSession session;
 
-        protected string remoteHost;
-        protected int remotePort;
+        protected volatile string remoteHost;
+        protected volatile int remotePort;
 
-        protected Stopwatch stopwatch;
-        protected int retryCount;
+        private Stopwatch stopwatch;
+        private int retryCount;
 
         public bool AutoReconnect { get; set; }
         public int MaxRetryCount { get; set; }  // 0 for unlimited
         public long RetryInterval { get; set; }  // in millisec
 
+        public bool Connected { get { return (session != null); } }
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether the underlying socket is
+        /// not to use the Nagle algorithm.
+        /// </summary>
+        public bool NoDelay { get; set; }
+
+        public string RemoteHost
+        {
+            get { return remoteHost; }
+            set { remoteHost = value; }
+        }
+        public int RemotePort
+        {
+            get { return remotePort; }
+            set { remotePort = value; }
+        }
+
         public TcpClientBase(string name)
             : base(name)
         {
             stopwatch = new Stopwatch();
+
+            // Default socket options
+            NoDelay = true;
         }
 
         public override void Close()
@@ -65,6 +87,16 @@ namespace x2.Links.SocketLink
             Connect(ip, port);
         }
 
+        public void Send(Event e)
+        {
+            if (session == null)
+            {
+                Log.Warn("{0} dropped event {1}", Name, e);
+                return;
+            }
+            session.Send(e);
+        }
+
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
             Close();
@@ -77,14 +109,13 @@ namespace x2.Links.SocketLink
 
         private void Connect(IPAddress ip, int port)
         {
-            if (socket != null)
-            {
-                throw new InvalidOperationException();
-            }
-
             try
             {
-                socket = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                if (socket == null)
+                {
+                    socket = new Socket(
+                        ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                }
 
                 BeginConnect(new IPEndPoint(ip, port));
 

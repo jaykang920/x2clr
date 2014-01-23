@@ -36,6 +36,9 @@ namespace x2.Links.SocketLink
             {
                 socket.EndConnect(asyncResult);
 
+                // Adjust socket options.
+                socket.NoDelay = NoDelay;
+
                 Log.Info("{0} {1} connected to {2}", Name, socket.Handle, socket.RemoteEndPoint);
 
                 noti.Result = true;

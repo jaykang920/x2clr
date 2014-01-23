@@ -36,6 +36,9 @@ namespace x2.Links.SocketLink
             {
                 var clientSocket = socket.EndAccept(asyncResult);
 
+                // Adjust client socket options.
+                clientSocket.NoDelay = NoDelay;
+
                 Log.Info("{0} {1} accepted from {2}",
                     Name, clientSocket.Handle, clientSocket.RemoteEndPoint);
 
@@ -63,6 +66,16 @@ namespace x2.Links.SocketLink
         private TcpServer link;
 
         public string Name { get; private set; }
+
+        public int Backlog
+        {
+            get { return link.Backlog; }
+            set { link.Backlog = value; }
+        }
+        public bool Listening
+        {
+            get { return link.Listening; }
+        }
 
         public TcpServerFlow(string name)
         {
