@@ -46,7 +46,12 @@ namespace x2.Links.SocketLink
                 ConnectInternal();
 
                 session = new TcpLinkSession(this, socket);
-                
+
+                if (BufferTransform != null)
+                {
+                    session.BufferTransform = BufferTransform;
+                }
+
                 noti.Context = session;
                 Flow.Publish(noti);
 
@@ -68,7 +73,7 @@ namespace x2.Links.SocketLink
 
     public class TcpClientFlow : SingleThreadedFlow
     {
-        private TcpClient link;
+        protected TcpClient link;
 
         public string Name { get; private set; }
 

@@ -55,6 +55,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BufferTransform.cs" />
     <Compile Include="Capo.cs" />
     <Compile Include="Coroutine.cs" />
     <Compile Include="Events\LinkClose.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Log.cs" />
     <Compile Include="Mapping.cs" />
     <Compile Include="Sequence.cs" />
+    <Compile Include="Transforms\Inverse.cs" />
     <Compile Include="Yields\WaitForMultipleEvents.cs" />
     <Compile Include="Yields\WaitForSeconds.cs" />
     <Compile Include="Flows\TimeFlow.cs" />

@@ -16,6 +16,7 @@ namespace x2
     public abstract class Link : Case
     {
         public string Name { get; private set; }
+        public IBufferTransform BufferTransform { get; set; }
 
         public Action<Event, LinkSession> Preprocessor { get; set; }
 
@@ -58,6 +59,7 @@ namespace x2
     public abstract class LinkSession
     {
         public IntPtr Handle { get; private set; }
+        public IBufferTransform BufferTransform { get; set; }
 
         public LinkSession(IntPtr handle)
         {
@@ -71,6 +73,7 @@ namespace x2
 
 
     // <to be deprecated>
+    /*
     public abstract class LinkFlow : SingleThreadedFlow
     {
         public string Name { get; private set; }
@@ -136,4 +139,5 @@ namespace x2
             public abstract void Send(LinkFlow link, Event e);
         }
     }
+    */
 }

@@ -66,6 +66,11 @@ namespace x2.Links.SocketLink
 
                 session = new AsyncTcpLinkSession(this, socket);
 
+                if (BufferTransform != null)
+                {
+                    session.BufferTransform = BufferTransform;
+                }
+
                 noti.Context = session;
                 Flow.Publish(noti);
 
@@ -85,7 +90,7 @@ namespace x2.Links.SocketLink
 
     public class AsyncTcpClientFlow : SingleThreadedFlow
     {
-        private AsyncTcpClient link;
+        protected AsyncTcpClient link;
 
         public string Name { get; private set; }
 

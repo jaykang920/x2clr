@@ -64,6 +64,11 @@ namespace x2.Links.SocketLink
 
                 var session = new AsyncTcpLinkSession(this, clientSocket);
 
+                if (BufferTransform != null)
+                {
+                    session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
+                }
+
                 Flow.Publish(new LinkSessionConnected {
                     LinkName = Name,
                     Result = true,
@@ -83,7 +88,7 @@ namespace x2.Links.SocketLink
 
     public class AsyncTcpServerFlow : SingleThreadedFlow
     {
-        private AsyncTcpServer link;
+        protected AsyncTcpServer link;
 
         public string Name { get; private set; }
 

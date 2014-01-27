@@ -145,6 +145,11 @@ namespace x2.Links.SocketLink
             {
                 recvBuffer.MarkToRead(lengthToReceive);
 
+                if (BufferTransform != null)
+                {
+                    BufferTransform.InverseTransform(recvBuffer, lengthToReceive);
+                }
+
                 int typeId;
                 recvBuffer.ReadUInt29(out typeId);
 
@@ -194,6 +199,7 @@ namespace x2.Links.SocketLink
                 link.Name, Handle, bytesTransferred, lengthToSend);
 
             /* XXX TODO split send
+             * Do we really have to consider this case?
             if (bytesTransferred < lengthToSend)
             {
                 // Try to send the rest.
@@ -216,6 +222,12 @@ namespace x2.Links.SocketLink
         private void BeginSend(Event e)
         {
             e.Serialize(sendBuffer);
+
+            if (BufferTransform != null)
+            {
+                BufferTransform.Transform(sendBuffer, sendBuffer.Length);
+            }
+
             int numLengthBytes = Buffer.WriteUInt29(lengthBytes, sendBuffer.Length);
             lengthToSend = sendBuffer.Length + numLengthBytes;
 

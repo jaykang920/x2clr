@@ -498,6 +498,9 @@ namespace x2
             back += numBytes;
         }
 
+        /// <summary>
+        /// Gets or sets the byte at the specified index.
+        /// </summary>
         public byte this[int index]
         {
             get

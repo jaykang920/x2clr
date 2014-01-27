@@ -61,6 +61,8 @@ namespace x2.Samples.Capitalizer
             : base("CapitalizerServer")
         {
             sessions = new Dictionary<IntPtr, Session>();
+
+            link.BufferTransform = new x2.Transforms.Inverse();
         }
 
         protected override void OnSessionConnected(LinkSessionConnected e)
