@@ -147,7 +147,16 @@ namespace x2.Links.SocketLink
 
                 if (BufferTransform != null)
                 {
-                    BufferTransform.InverseTransform(recvBuffer, lengthToReceive);
+                    try
+                    {
+                        BufferTransform.InverseTransform(recvBuffer, lengthToReceive);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("{0} {1} buffer transform error: {2}", link.Name, Handle, e.Message);
+                        recvBuffer.Shrink(lengthToReceive);
+                        break;
+                    }
                     recvBuffer.Rewind();
                 }
 
