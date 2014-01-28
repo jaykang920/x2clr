@@ -21,7 +21,7 @@ namespace x2.Samples.Capitalizer
             AutoReconnect = true;
             RetryInterval = 1000;
 
-            BufferTransform = new x2.Transforms.Inverse();
+            BufferTransform = new x2.Transforms.Cipher();
         }
 
         protected override void OnSessionConnected(LinkSessionConnected e)

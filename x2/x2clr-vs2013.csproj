@@ -84,6 +84,7 @@
     <Compile Include="Log.cs" />
     <Compile Include="Mapping.cs" />
     <Compile Include="Sequence.cs" />
+    <Compile Include="Transforms\Cipher.cs" />
     <Compile Include="Transforms\Inverse.cs" />
     <Compile Include="Yields\WaitForMultipleEvents.cs" />
     <Compile Include="Yields\WaitForSeconds.cs" />

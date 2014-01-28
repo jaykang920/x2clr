@@ -148,6 +148,7 @@ namespace x2.Links.SocketLink
                 if (BufferTransform != null)
                 {
                     BufferTransform.InverseTransform(recvBuffer, lengthToReceive);
+                    recvBuffer.Rewind();
                 }
 
                 int typeId;

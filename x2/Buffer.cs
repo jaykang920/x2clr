@@ -163,27 +163,59 @@ namespace x2
             }
         }
 
+        public void CopyFrom(byte[] buffer, int offset, int length)
+        {
+            EnsureCapacityToWrite(length);
+            int blockIndex = position >> blockSizeExponent;
+            int dstOffset = position & remainderMask;
+            int bytesToCopy, bytesCopied = 0;
+            while (bytesCopied < length)
+            {
+                bytesToCopy = Math.Min(BlockSize - dstOffset, length - bytesCopied);
+                System.Buffer.BlockCopy(buffer, offset + bytesCopied,
+                  blocks[blockIndex++], dstOffset, bytesToCopy);
+                dstOffset = 0;
+                bytesCopied += bytesToCopy;
+            }
+            Position = position + length;
+        }
+
         public void ListOccupiedSegments(IList<ArraySegment<byte>> blockList)
         {
-            int frontIndex = front >> blockSizeExponent;
-            int frontOffset = front & remainderMask;
-            int backIndex = back >> blockSizeExponent;
-            int backOffset = back & remainderMask;
-            if (frontIndex == backIndex)
+            ListSegments(blockList, front, back);
+        }
+
+        public void ListStartingSegments(IList<ArraySegment<byte>> blockList, int length)
+        {
+            ListSegments(blockList, front, front + length);
+        }
+
+        public void ListEndingSegments(IList<ArraySegment<byte>> blockList, int length)
+        {
+            ListSegments(blockList, back - length, back);
+        }
+
+        private void ListSegments(IList<ArraySegment<byte>> blockList, int begin, int end)
+        {
+            int beginIndex = begin >> blockSizeExponent;
+            int beginOffset = begin & remainderMask;
+            int endIndex = end >> blockSizeExponent;
+            int endOffset = end & remainderMask;
+            if (beginIndex == endIndex)
             {
-                blockList.Add(new ArraySegment<byte>(blocks[frontIndex], frontOffset,
-                                                     backOffset - frontOffset));
+                blockList.Add(new ArraySegment<byte>(blocks[beginIndex], beginOffset,
+                                                     endOffset - beginOffset));
                 return;
             }
-            blockList.Add(new ArraySegment<byte>(blocks[frontIndex], frontOffset,
-                                                 BlockSize - frontOffset));
-            for (int i = frontIndex + 1; i < backIndex; ++i)
+            blockList.Add(new ArraySegment<byte>(blocks[beginIndex], beginOffset,
+                                                 BlockSize - beginOffset));
+            for (int i = beginIndex + 1; i < endIndex; ++i)
             {
                 blockList.Add(new ArraySegment<byte>(blocks[i]));
             }
-            if (backOffset != 0)
+            if (endOffset != 0)
             {
-                blockList.Add(new ArraySegment<byte>(blocks[backIndex], 0, backOffset));
+                blockList.Add(new ArraySegment<byte>(blocks[endIndex], 0, endOffset));
             }
         }
 
@@ -591,19 +623,7 @@ namespace x2
         public void Write(byte[] value, int offset, int count)
         {
             WriteUInt29(count);
-            EnsureCapacityToWrite(count);
-            int blockIndex = position >> blockSizeExponent;
-            int dstOffset = position & remainderMask;
-            int bytesToCopy, bytesCopied = 0;
-            while (bytesCopied < count)
-            {
-                bytesToCopy = Math.Min(BlockSize - dstOffset, count - bytesCopied);
-                System.Buffer.BlockCopy(value, offset + bytesCopied,
-                  blocks[blockIndex++], dstOffset, bytesToCopy);
-                dstOffset = 0;
-                bytesCopied += bytesToCopy;
-            }
-            Position = position + count;
+            CopyFrom(value, offset, count);
         }
 
         public void Write(short value)
