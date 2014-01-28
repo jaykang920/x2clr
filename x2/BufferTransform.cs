@@ -2,6 +2,7 @@
 // See the file COPYING for license details.
 
 using System;
+using System.Collections.Generic;
 
 namespace x2
 {
@@ -20,5 +21,76 @@ namespace x2
         int InverseTransform(Buffer buffer, int length);
     }
 
-    // TODO: buffer transform stack
+    public class BufferTransformStack : IBufferTransform
+    {
+        private readonly IList<IBufferTransform> transforms;
+
+        public BufferTransformStack()
+        {
+            transforms = new List<IBufferTransform>();
+        }
+
+        private BufferTransformStack(IList<IBufferTransform> transforms)
+        {
+            this.transforms = new List<IBufferTransform>(transforms);
+        }
+
+        public object Clone()
+        {
+            return new BufferTransformStack(transforms);
+        }
+
+        public byte[] InitializeHandshake()
+        {
+            // TODO
+            return null;
+        }
+
+        public bool FinalizeHandshake(byte[] data)
+        {
+            // TODO
+            return true;
+        }
+
+        public BufferTransformStack Add(IBufferTransform transform)
+        {
+            if (!transforms.Contains(transform))
+            {
+                transforms.Add(transform);
+            }
+            return this;
+        }
+
+        public BufferTransformStack Remove(IBufferTransform transform)
+        {
+            transforms.Remove(transform);
+            return this;
+        }
+
+        public int Transform(Buffer buffer, int length)
+        {
+            var count = transforms.Count;
+            if (count > 0)
+            {
+                for (var i = 0; i < count; ++i)
+                {
+                    length = transforms[i].Transform(buffer, length);
+                }
+            }
+            return length;
+        }
+
+        public int InverseTransform(Buffer buffer, int length)
+        {
+            var count = transforms.Count;
+            if (count > 0)
+            {
+                for (var i = count - 1; i >= 0; --i)
+                {
+                    length = transforms[i].InverseTransform(buffer, length);
+                }
+            }
+            return length;
+        }
+    }
 }

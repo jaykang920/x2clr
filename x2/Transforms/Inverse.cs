@@ -26,8 +26,6 @@ namespace x2.Transforms
         {
             for (int i = buffer.Length - length; i < buffer.Length; ++i)
             {
-                Log.Trace("Inverse.Transform {0} -> {1}", buffer[i], (byte)~buffer[i]);
-
                 buffer[i] = (byte)~buffer[i];
             }
             return length;
@@ -37,8 +35,6 @@ namespace x2.Transforms
         {
             for (int i = 0; i < length; ++i)
             {
-                Log.Trace("Inverse.InverseTransform {0} -> {1}", buffer[i], (byte)~buffer[i]);
-
                 buffer[i] = (byte)~buffer[i];
             }
             return length;
