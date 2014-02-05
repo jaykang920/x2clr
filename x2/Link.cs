@@ -2,6 +2,7 @@
 // See the file COPYING for license details.
 
 using System;
+using System.Threading;
 
 using x2;
 using x2.Events;
@@ -69,5 +70,74 @@ namespace x2
         public abstract void Close();
 
         public abstract void Send(Event e);
+
+        #region Diagnostics
+
+        /// <summary>
+        /// Gets the diagnostics object.
+        /// </summary>
+        public Diagnostics Diag { get; protected set; }
+
+        /// <summary>
+        /// Internal diagnostics helper class.
+        /// </summary>
+        public class Diagnostics
+        {
+            protected readonly LinkSession owner;
+
+            protected long totalBytesReceived;
+            protected long totalBytesSent;
+            protected int bytesReceived;
+            protected int bytesSent;
+
+            public long TotalBytesReceived
+            {
+                get { return Interlocked.Read(ref totalBytesReceived); }
+            }
+
+            public long TotalBytesSent
+            {
+                get { return Interlocked.Read(ref totalBytesSent); }
+            }
+
+            public int BytesReceived
+            {
+                get { return bytesReceived; }
+            }
+
+            public int BytesSent
+            {
+                get { return bytesSent; }
+            }
+
+            internal Diagnostics(LinkSession owner)
+            {
+                this.owner = owner;
+            }
+
+            internal void AddBytesReceived(int bytesReceived)
+            {
+                Interlocked.Add(ref totalBytesReceived, (long)bytesReceived);
+                Interlocked.Add(ref this.bytesReceived, bytesReceived);
+            }
+
+            internal void AddBytesSent(int bytesSent)
+            {
+                Interlocked.Add(ref totalBytesSent, (long)bytesSent);
+                Interlocked.Add(ref this.bytesSent, bytesSent);
+            }
+
+            internal void ResetBytesReceived()
+            {
+                Interlocked.Exchange(ref this.bytesReceived, 0);
+            }
+
+            internal void ResetBytesSent()
+            {
+                Interlocked.Exchange(ref this.bytesSent, 0);
+            }
+        }
+
+        #endregion
     }
 }

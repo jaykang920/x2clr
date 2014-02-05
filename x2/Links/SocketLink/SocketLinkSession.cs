@@ -68,6 +68,8 @@ namespace x2.Links.SocketLink
 
             recvBufferList = new List<ArraySegment<byte>>();
             sendBufferList = new List<ArraySegment<byte>>();
+
+            Diag = new Diagnostics(this);
         }
 
         /// <summary>
@@ -120,10 +122,12 @@ namespace x2.Links.SocketLink
 
         protected void ReceiveInternal(int bytesTransferred)
         {
-            recvBuffer.Stretch(bytesTransferred);
+            Diag.AddBytesReceived(bytesTransferred);
 
             Log.Trace("{0} {1} received {2} byte(s)",
                 link.Name, Handle, bytesTransferred);
+
+            recvBuffer.Stretch(bytesTransferred);
 
             if (beginning)
             {
@@ -205,6 +209,8 @@ namespace x2.Links.SocketLink
 
         protected void SendInternal(int bytesTransferred)
         {
+            Diag.AddBytesSent(bytesTransferred);
+
             Log.Trace("{0} {1} sent {2}/{3} byte(s)",
                 link.Name, Handle, bytesTransferred, lengthToSend);
 

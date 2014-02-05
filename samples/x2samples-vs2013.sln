@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2cap.3s-vs2013", "cap\3\x2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2clr-vs2013", "..\x2\x2clr-vs2013.csproj", "{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoClient", "echo\EchoClient.csproj", "{456A46C1-F12A-4CCF-A065-76A9027104EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoServer", "echo\EchoServer.csproj", "{456A45C1-F12A-4CCF-A175-76A9027104F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{456A46C1-F12A-4CCF-A065-76A9027104EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{456A46C1-F12A-4CCF-A065-76A9027104EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{456A46C1-F12A-4CCF-A065-76A9027104EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{456A46C1-F12A-4CCF-A065-76A9027104EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{456A45C1-F12A-4CCF-A175-76A9027104F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{456A45C1-F12A-4CCF-A175-76A9027104F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{456A45C1-F12A-4CCF-A175-76A9027104F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{456A45C1-F12A-4CCF-A175-76A9027104F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

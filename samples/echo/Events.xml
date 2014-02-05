@@ -1,0 +1,8 @@
+<x2 namespace="x2.Samples.Echo">
+    <event name="EchoReq" id="1">
+        <property name="Message" type="string"/>
+    </event>
+    <event name="EchoResp" id="2">
+        <property name="Message" type="string"/>
+    </event>
+</x2>
