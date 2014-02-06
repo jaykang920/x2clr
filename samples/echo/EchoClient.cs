@@ -15,6 +15,8 @@ namespace x2.Samples.Echo
 
     class EchoClient : ClientCase
     {
+        string message = new String('x', 256);
+
         public EchoClient()
             : base("EchoClient")
         {
@@ -31,7 +33,12 @@ namespace x2.Samples.Echo
                 Flow.Bind(new EchoReq(), Send);
 
                 Bind(new TimeoutEvent { Key = session }, OnTimeout);
-                TimeFlow.Default.ReserveRepetition(new TimeoutEvent { Key = session }, new TimeSpan(0, 0, 10));
+                TimeFlow.Default.ReserveRepetition(new TimeoutEvent { Key = session }, new TimeSpan(0, 0, 1));
+
+                Bind(new EchoResp(), OnEchoResp);
+                Flow.Post(new EchoReq {
+                    Message = message
+                });
             }
             else
             {
@@ -69,18 +76,12 @@ namespace x2.Samples.Echo
             diag.ResetBytesReceived();
             diag.ResetBytesSent();
         }
-    }
 
-    class OutputFlow : SingleThreadedFlow
-    {
-        static void OnCapitalizeResp(EchoResp e)
+        void OnEchoResp(EchoResp e)
         {
-            //Console.WriteLine(e.Message);
-        }
-
-        protected override void SetUp()
-        {
-            //Subscribe(new EchoResp(), OnCapitalizeResp);
+            Flow.Post(new EchoReq {
+                Message = message
+            });
         }
     }
 
@@ -94,31 +95,18 @@ namespace x2.Samples.Echo
             x2.Log.Level = x2.LogLevel.Warning;
 
             Hub.Get()
-                .Attach(new OutputFlow().Add(new EchoClient()))
+                .Attach(new SingleThreadedFlow().Add(new EchoClient()))
                 .Attach(TimeFlow.Create());
 
             Flow.StartAll();
 
-            var s = new String('x', 4096);
-
             while (true)
             {
-                if (Console.KeyAvailable)
+                string message = Console.ReadLine();
+                if (message == "quit")
                 {
-                    var keyInfo = Console.ReadKey();
-                    if (keyInfo.Key == ConsoleKey.Escape)
-                    {
-                        break;
-                    }
+                    break;
                 }
-                else
-                {
-                    Hub.Get().Post(new EchoReq {
-                        Message = s
-                    });
-                }
-
-                Thread.Sleep(0);
             }
 
             Flow.StopAll();

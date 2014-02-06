@@ -66,14 +66,13 @@ namespace x2.Flows
         protected readonly object syncRoot;
         protected Thread thread;
 
-        public Time Time { get; private set; }
+        private volatile bool shouldStop;
 
-        protected long previousTicks;
+        public Time Time { get; private set; }
 
         protected FrameBasedFlow()
             : this(new UnboundedQueue<Event>())
         {
-            Time = new Time();
         }
         
         protected FrameBasedFlow(IQueue<Event> queue)
@@ -82,11 +81,16 @@ namespace x2.Flows
             this.queue = queue;
             syncRoot = new Object();
             thread = null;
+
+            Time = new Time();
         }
 
         public override void Feed(Event e)
         {
-            queue.Enqueue(e);
+            if (queue != null)
+            {
+                queue.Enqueue(e);
+            }
         }
 
         public override void StartUp()
@@ -102,7 +106,10 @@ namespace x2.Flows
                 caseStack.SetUp(this);
                 thread = new Thread(this.Run);
                 thread.Start();
-                queue.Enqueue(new FlowStart());
+                if (queue != null)
+                {
+                    queue.Enqueue(new FlowStart());
+                }
             }
         }
 
@@ -114,7 +121,14 @@ namespace x2.Flows
                 {
                     return;
                 }
-                queue.Close(new FlowStop());
+                if (queue != null)
+                {
+                    queue.Close(new FlowStop());
+                }
+                else
+                {
+                    shouldStop = true;
+                }
                 thread.Join();
                 thread = null;
 
@@ -126,20 +140,26 @@ namespace x2.Flows
         private void Run()
         {
             currentFlow = this;
-            handlerChain = new List<Handler>();
+            if (queue != null)
+            {
+                handlerChain = new List<Handler>();
+            }
 
             StartInternal();
 
-            while (true)
+            while (!shouldStop)
             {
-                Event e;
-                if (queue.TryDequeue(out e))
+                if (queue != null)
                 {
-                    Dispatch(e);
-
-                    if (e.GetTypeId() == (int)BuiltinType.FlowStop)
+                    Event e;
+                    if (queue.TryDequeue(out e))
                     {
-                        break;
+                        Dispatch(e);
+
+                        if (e.GetTypeId() == (int)BuiltinType.FlowStop)
+                        {
+                            break;
+                        }
                     }
                 }
 

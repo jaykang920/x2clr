@@ -88,7 +88,208 @@ namespace x2.Flows
         }
     }
 
-    // TODO: Repeated occurrence, scheduling, canceling, time-scale factor
+    // TODO: time scaling
+    public class Timer
+    {
+        private readonly PriorityQueue<DateTime, object> reserved;
+        private readonly Repeater repeater;
+
+        private readonly TimerCallback callback;
+
+        public Timer(TimerCallback callback)
+        {
+            reserved = new PriorityQueue<DateTime, object>();
+            repeater = new Repeater(this);
+
+            this.callback = callback;
+        }
+
+        public Token Reserve(object state, double seconds)
+        {
+            return Reserve(state, DateTime.Now.AddSeconds(seconds));
+        }
+
+        public Token Reserve(object state, TimeSpan delay)
+        {
+            return Reserve(state, DateTime.Now.Add(delay));
+        }
+
+        public Token Reserve(object state, DateTime when)
+        {
+            lock (reserved)
+            {
+                reserved.Enqueue(when, state);
+            }
+            return new Token(when, state);
+        }
+
+        public void Cancel(Token token)
+        {
+            lock (reserved)
+            {
+                reserved.Remove(token.key, token.value);
+            }
+        }
+
+        public void ReserveRepetition(object state, TimeSpan interval)
+        {
+            repeater.Add(state, new Tag(interval));
+        }
+
+        public void ReserveRepetition(object state, DateTime nextTime, TimeSpan interval)
+        {
+            repeater.Add(state, new Tag(nextTime, interval));
+        }
+
+        public void CancelRepetition(object state)
+        {
+            repeater.Remove(state);
+        }
+
+        public void Tick()
+        {
+            DateTime now = DateTime.Now;
+            IList<object> events = null;
+            lock (reserved)
+            {
+                if (reserved.Count != 0)
+                {
+                    DateTime next = reserved.Peek();
+                    if (now >= next)
+                    {
+                        events = reserved.DequeueBundle();
+                    }
+                }
+            }
+            if ((object)events != null)
+            {
+                for (int i = 0; i < events.Count; ++i)
+                {
+                    callback(events[i]);
+                }
+            }
+
+            repeater.Tick(now);
+        }
+
+        public struct Token
+        {
+            public DateTime key;
+            public object value;
+
+            public Token(DateTime key, object value)
+            {
+                this.key = key;
+                this.value = value;
+            }
+        }
+
+        private class Tag
+        {
+            public DateTime NextTime { get; set; }
+            public TimeSpan Interval { get; private set; }
+
+            public Tag(TimeSpan interval)
+                : this(DateTime.Now + interval, interval)
+            {
+            }
+
+            public Tag(DateTime nextTime, TimeSpan interval)
+            {
+                NextTime = nextTime;
+                Interval = interval;
+            }
+        }
+
+        private class Repeater
+        {
+            private readonly ReaderWriterLockSlim rwlock;
+            private readonly IDictionary<object, Tag> map;
+            private readonly Timer owner;
+
+            private Tag defaultCase;
+
+            public Repeater(Timer owner)
+            {
+                rwlock = new ReaderWriterLockSlim();
+                map = new Dictionary<object, Tag>();
+                this.owner = owner;
+            }
+
+            public void Add(object state, Tag timeTag)
+            {
+                rwlock.EnterWriteLock();
+                try
+                {
+                    if (state != null)
+                    {
+                        map[state] = timeTag;
+                    }
+                    else
+                    {
+                        defaultCase = timeTag;
+                    }
+                }
+                finally
+                {
+                    rwlock.ExitWriteLock();
+                }
+            }
+
+            public void Remove(object state)
+            {
+                rwlock.EnterWriteLock();
+                try
+                {
+                    if (state != null)
+                    {
+                        map.Remove(state);
+                    }
+                    else
+                    {
+                        defaultCase = null;
+                    }
+                }
+                finally
+                {
+                    rwlock.ExitWriteLock();
+                }
+            }
+
+            public void Tick(DateTime now)
+            {
+                rwlock.EnterReadLock();
+                try
+                {
+                    if (defaultCase != null)
+                    {
+                        TryFire(now, null, defaultCase);
+                    }
+                    if (map.Count != 0)
+                    {
+                        foreach (var pair in map)
+                        {
+                            TryFire(now, pair.Key, pair.Value);
+                        }
+                    }
+                }
+                finally
+                {   
+                    rwlock.ExitReadLock();
+                }
+            }
+
+            private void TryFire(DateTime now, object state, Tag tag)
+            {
+                if (now >= tag.NextTime)
+                {
+                    owner.callback(state);
+                    tag.NextTime = now + tag.Interval;
+                }
+            }
+        }
+    }
+
     public sealed class TimeFlow : FrameBasedFlow
     {
         private const string defaultName = "default";
@@ -96,8 +297,8 @@ namespace x2.Flows
         private static readonly Map map = new Map();
 
         private readonly string name;
-        private readonly PriorityQueue<DateTime, Event> reserved;
-        private readonly Generator generator;
+
+        public Timer Timer { get; private set; }
 
         /// <summary>
         /// Gets the default(anonymous) TimeFlow.
@@ -113,10 +314,10 @@ namespace x2.Flows
         }
 
         private TimeFlow(string name)
+            : base(null)
         {
+            Timer = new Timer(OnTimer);
             this.name = name;
-            reserved = new PriorityQueue<DateTime, Event>();
-            generator = new Generator(this);
         }
 
         /// <summary>
@@ -159,46 +360,39 @@ namespace x2.Flows
             return map.Get(name);
         }
 
-        public Token Reserve(Event e, double seconds)
+        public Timer.Token Reserve(Event e, double seconds)
         {
-            return Reserve(e, DateTime.Now.AddSeconds(seconds));
+            return Timer.Reserve(e, seconds);
         }
         
-        public Token Reserve(Event e, TimeSpan delay)
+        public Timer.Token Reserve(Event e, TimeSpan delay)
         {
-            return Reserve(e, DateTime.Now.Add(delay));
+            return Timer.Reserve(e, delay);
         }
 
-        public Token Reserve(Event e, DateTime when)
+        public Timer.Token Reserve(Event e, DateTime when)
         {
-            lock (reserved)
-            {
-                reserved.Enqueue(when, e);
-            }
-            return new Token(when, e);
+            return Timer.Reserve(e, when);
         }
 
-        public void Cancel(Token token)
+        public void Cancel(Timer.Token token)
         {
-            lock (reserved)
-            {
-                reserved.Remove(token.key, token.value);
-            }
+            Timer.Cancel(token);
         }
 
         public void ReserveRepetition(Event e, TimeSpan interval)
         {
-            generator.Add(e, new TimeTag(interval));
+            Timer.ReserveRepetition(e, interval);
         }
 
         public void ReserveRepetition(Event e, DateTime nextTime, TimeSpan interval)
         {
-            generator.Add(e, new TimeTag(nextTime, interval));
+            Timer.ReserveRepetition(e, nextTime, interval);
         }
 
         public void CancelRepetition(Event e)
         {
-            generator.Remove(e);
+            Timer.CancelRepetition(e);
         }
 
         protected override void Start() { }
@@ -206,28 +400,7 @@ namespace x2.Flows
 
         protected override void Update()
         {
-            DateTime now = DateTime.Now;
-            List<Event> events = null;
-            lock (reserved)
-            {
-                if (reserved.Count != 0)
-                {
-                    DateTime next = reserved.Peek();
-                    if (now >= next)
-                    {
-                        events = reserved.DequeueBundle();
-                    }
-                }
-            }
-            if ((object)events != null)
-            {
-                for (int i = 0; i < events.Count; ++i)
-                {
-                    PublishAway(events[i]);
-                }
-            }
-
-            generator.Tick(now);
+            Timer.Tick();
         }
 
         private class Map
@@ -275,94 +448,9 @@ namespace x2.Flows
             }
         }
 
-        public struct Token
+        void OnTimer(object state)
         {
-            public DateTime key;
-            public Event value;
-
-            public Token(DateTime key, Event value)
-            {
-                this.key = key;
-                this.value = value;
-            }
-        }
-
-        private class TimeTag
-        {
-            public DateTime NextTime { get; set; }
-            public TimeSpan Interval { get; private set; }
-
-            public TimeTag(TimeSpan interval)
-                : this(DateTime.Now + interval, interval)
-            {
-            }
-
-            public TimeTag(DateTime nextTime, TimeSpan interval)
-            {
-                NextTime = nextTime;
-                Interval = interval;
-            }
-        }
-
-        private class Generator
-        {
-            private readonly ReaderWriterLockSlim rwlock;
-            private readonly IDictionary<Event, TimeTag> map;
-            private readonly TimeFlow owner;
-
-            public Generator(TimeFlow owner)
-            {
-                rwlock = new ReaderWriterLockSlim();
-                map = new Dictionary<Event, TimeTag>();
-                this.owner = owner;
-            }
-
-            public void Add(Event e, TimeTag timeTag)
-            {
-                rwlock.EnterWriteLock();
-                try
-                {
-                    map[e] = timeTag;
-                }
-                finally
-                {
-                    rwlock.ExitWriteLock();
-                }
-            }
-
-            public void Remove(Event e)
-            {
-                rwlock.EnterWriteLock();
-                try
-                {
-                    map.Remove(e);
-                }
-                finally
-                {
-                    rwlock.ExitWriteLock();
-                }
-            }
-
-            public void Tick(DateTime now)
-            {
-                rwlock.EnterReadLock();
-                try
-                {
-                    foreach (var pair in map)
-                    {
-                        TimeTag timeTag = pair.Value;
-                        if (now >= timeTag.NextTime)
-                        {
-                            owner.PublishAway(pair.Key);
-                            timeTag.NextTime = now + timeTag.Interval;
-                        }
-                    }
-                }
-                finally
-                {
-                    rwlock.ExitReadLock();
-                }
-            }
+            PublishAway((Event)state);
         }
     }
 }
