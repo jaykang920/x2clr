@@ -33,6 +33,8 @@ namespace x2.Flows
             get { return new TimeSpan(deltaTicks).TotalSeconds; }
         }
 
+        public long CurrentTicks { get { return currentTicks; } }
+
         /// <summary>
         /// Gets the start DateTime of the current frame.
         /// </summary>
@@ -67,6 +69,8 @@ namespace x2.Flows
         protected Thread thread;
 
         private volatile bool shouldStop;
+
+        public long Resolution { get; set; }
 
         public Time Time { get; private set; }
 
@@ -149,23 +153,34 @@ namespace x2.Flows
 
             while (!shouldStop)
             {
+                UpdateInternal();
+
                 if (queue != null)
                 {
-                    Event e;
-                    if (queue.TryDequeue(out e))
+                    while (true)
                     {
-                        Dispatch(e);
-
-                        if (e.GetTypeId() == (int)BuiltinType.FlowStop)
+                        Event e;
+                        if (queue.TryDequeue(out e))
                         {
-                            break;
+                            Dispatch(e);
+
+                            if (e.GetTypeId() == (int)BuiltinType.FlowStop)
+                            {
+                                shouldStop = true;
+                                break;
+                            }
+                        }
+
+                        if ((DateTime.Now.Ticks - Time.CurrentTicks) < Resolution)
+                        {
+                            Thread.Sleep(0);
                         }
                     }
                 }
-
-                UpdateInternal();
-
-                Thread.Sleep(1);
+                else
+                {
+                    Thread.Sleep(1);
+                }
             }
 
             Stop();
