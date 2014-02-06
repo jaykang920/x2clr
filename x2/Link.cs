@@ -127,12 +127,12 @@ namespace x2
                 Interlocked.Add(ref this.bytesSent, bytesSent);
             }
 
-            internal void ResetBytesReceived()
+            public void ResetBytesReceived()
             {
                 Interlocked.Exchange(ref this.bytesReceived, 0);
             }
 
-            internal void ResetBytesSent()
+            public void ResetBytesSent()
             {
                 Interlocked.Exchange(ref this.bytesSent, 0);
             }

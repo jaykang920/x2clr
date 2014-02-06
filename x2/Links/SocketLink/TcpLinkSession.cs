@@ -14,18 +14,31 @@ namespace x2.Links.SocketLink
 {
     public class TcpLinkSession : SocketLinkSession
     {
+        private object syncRoot;
+
         public TcpLinkSession(SocketLink link, Socket socket)
             : base(link, socket)
         {
+            syncRoot = new Object();
         }
 
         protected override void ReceiveImpl()
         {
+            if (socket == null || !socket.Connected)
+            {
+                return;
+            }
+
             socket.BeginReceive(recvBufferList, SocketFlags.None, OnReceive, null);
         }
 
         protected override void SendImpl()
         {
+            if (socket == null || !socket.Connected)
+            {
+                return;
+            }
+
             socket.BeginSend(sendBufferList, SocketFlags.None, OnSend, null);
         }
 
@@ -38,7 +51,10 @@ namespace x2.Links.SocketLink
 
                 if (bytesTransferred > 0)
                 {
-                    ReceiveInternal(bytesTransferred);
+                    lock (syncRoot)
+                    {
+                        ReceiveInternal(bytesTransferred);
+                    }
                     return;
                 }
 

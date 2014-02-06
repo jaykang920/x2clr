@@ -16,7 +16,7 @@ namespace x2.Samples.Echo
     class EchoClient : ClientCase
     {
         public EchoClient()
-            : base("CapitalizerClient")
+            : base("EchoClient")
         {
             AutoReconnect = true;
             RetryInterval = 1000;
@@ -29,6 +29,9 @@ namespace x2.Samples.Echo
                 Console.WriteLine("Connected");
 
                 Flow.Bind(new EchoReq(), Send);
+
+                Bind(new TimeoutEvent { Key = session }, OnTimeout);
+                TimeFlow.Default.ReserveRepetition(new TimeoutEvent { Key = session }, new TimeSpan(0, 0, 10));
             }
             else
             {
@@ -38,6 +41,9 @@ namespace x2.Samples.Echo
 
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
+            Unbind(new TimeoutEvent { Key = session }, OnTimeout);
+            TimeFlow.Default.CancelRepetition(new TimeoutEvent { Key = session });
+
             Flow.Unbind(new EchoReq(), Send);
 
             Console.WriteLine("Disconnected");
@@ -53,18 +59,28 @@ namespace x2.Samples.Echo
 
             Connect("127.0.0.1", 5678);
         }
+
+        void OnTimeout(TimeoutEvent e)
+        {
+            LinkSession.Diagnostics diag = session.Diag;
+
+            Console.WriteLine("Rx = {0} Tx = {1}", diag.BytesReceived, diag.BytesSent);
+
+            diag.ResetBytesReceived();
+            diag.ResetBytesSent();
+        }
     }
 
     class OutputFlow : SingleThreadedFlow
     {
         static void OnCapitalizeResp(EchoResp e)
         {
-            Console.WriteLine(e.Message);
+            //Console.WriteLine(e.Message);
         }
 
         protected override void SetUp()
         {
-            Subscribe(new EchoResp(), OnCapitalizeResp);
+            //Subscribe(new EchoResp(), OnCapitalizeResp);
         }
     }
 
@@ -78,22 +94,31 @@ namespace x2.Samples.Echo
             x2.Log.Level = x2.LogLevel.Warning;
 
             Hub.Get()
-                .Attach(new OutputFlow().Add(new EchoClient()));
+                .Attach(new OutputFlow().Add(new EchoClient()))
+                .Attach(TimeFlow.Create());
 
             Flow.StartAll();
 
+            var s = new String('x', 4096);
+
             while (true)
             {
-                string message = Console.ReadLine();
-                if (message == "quit")
+                if (Console.KeyAvailable)
                 {
-                    break;
+                    var keyInfo = Console.ReadKey();
+                    if (keyInfo.Key == ConsoleKey.Escape)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    Hub.Get().Post(new EchoReq {
+                        Message = s
+                    });
                 }
 
-                var e = new EchoReq {
-                    Message = message
-                };
-                Hub.Get().Post(e);
+                Thread.Sleep(0);
             }
 
             Flow.StopAll();

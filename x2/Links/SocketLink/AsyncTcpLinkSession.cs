@@ -14,25 +14,31 @@ namespace x2.Links.SocketLink
 {
     public class AsyncTcpLinkSession : SocketLinkSession
     {
+        private object syncRoot;
+
         private SocketAsyncEventArgs recvEventArgs;
         private SocketAsyncEventArgs sendEventArgs;
 
         public AsyncTcpLinkSession(SocketLink link, Socket socket)
             : base(link, socket)
         {
+            syncRoot = new Object();
+
             recvEventArgs = new SocketAsyncEventArgs();
             sendEventArgs = new SocketAsyncEventArgs();
 
             recvEventArgs.Completed += OnReceiveCompleted;
             sendEventArgs.Completed += OnSendCompleted;
-
-            recvEventArgs.UserToken = this;
-            sendEventArgs.UserToken = this;
         }
 
         protected override void ReceiveImpl()
         {
             recvEventArgs.BufferList = recvBufferList;
+
+            if (socket == null || !socket.Connected)
+            {
+                return;
+            }
 
             bool pending = socket.ReceiveAsync(recvEventArgs);
             if (!pending)
@@ -45,6 +51,11 @@ namespace x2.Links.SocketLink
         {
             sendEventArgs.BufferList = sendBufferList;
 
+            if (socket == null || !socket.Connected)
+            {
+                return;
+            }
+
             bool pending = socket.SendAsync(sendEventArgs);
             if (!pending)
             {
@@ -55,17 +66,13 @@ namespace x2.Links.SocketLink
         // Completed event handler for ReceiveAsync
         private void OnReceiveCompleted(object sender, SocketAsyncEventArgs e)
         {
-            var session = (AsyncTcpLinkSession)e.UserToken;
-
-            session.OnReceive(e);
+            OnReceive(e);
         }
 
         // Completed event handler for SendAsync
         private void OnSendCompleted(object sender, SocketAsyncEventArgs e)
         {
-            var session = (AsyncTcpLinkSession)e.UserToken;
-
-            session.OnSend(e);
+            OnSend(e);
         }
 
         // Completion callback for ReceiveAsync
@@ -75,7 +82,10 @@ namespace x2.Links.SocketLink
             {
                 if (e.BytesTransferred > 0)
                 {
-                    ReceiveInternal(e.BytesTransferred);
+                    lock (syncRoot)
+                    {
+                        ReceiveInternal(e.BytesTransferred);
+                    }
                     return;
                 }
 
