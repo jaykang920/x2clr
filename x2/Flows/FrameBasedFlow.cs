@@ -176,7 +176,7 @@ namespace x2.Flows
 
                         if ((DateTime.Now.Ticks - Time.CurrentTicks) < Resolution)
                         {
-                            Thread.Sleep(0);
+                            Thread.Sleep(1);
                         }
                         else
                         {
@@ -188,7 +188,7 @@ namespace x2.Flows
                 {
                     var tickDelta = DateTime.Now.Ticks - Time.CurrentTicks;
                     var delay = (tickDelta < Resolution ?
-                        (int)((Resolution - tickDelta) / Time.TicksInMillisecond) : 0);
+                        (int)((Resolution - tickDelta) / Time.TicksInMillisecond) : 1);
                     Thread.Sleep(delay);
                 }
             }

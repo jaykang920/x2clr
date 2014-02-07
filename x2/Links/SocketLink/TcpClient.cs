@@ -82,6 +82,8 @@ namespace x2.Links.SocketLink
 
         public string Name { get; private set; }
 
+        public TcpClient Link { get { return link; } }
+
         public bool CloseOnHeartbeatFailure
         {
             get { return closeOnHeartbeatFailure; }
@@ -107,8 +109,13 @@ namespace x2.Links.SocketLink
         public Action<Event, LinkSession> Preprocessor { get; set; }
 
         public TcpClientFlow(string name)
+            : this(name, new TcpClient(name))
         {
-            link = new TcpClient(name);
+        }
+
+        public TcpClientFlow(string name, TcpClient link)
+        {
+            this.link = link;
             Add(link);
 
             link.HeartbeatEventHandler = OnHeartbeatEvent;
