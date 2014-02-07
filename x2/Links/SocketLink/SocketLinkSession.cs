@@ -42,6 +42,10 @@ namespace x2.Links.SocketLink
         /// </summary>
         public Socket Socket { get { return socket; } }
 
+        public bool Polarity { get; set; }
+
+        public x2.Flows.Timer.Token HeartbeatTimeoutToken { get; set; }
+
         public string RemoteAddress
         {
             get
@@ -167,23 +171,45 @@ namespace x2.Links.SocketLink
                 int typeId;
                 recvBuffer.ReadUInt29(out typeId);
 
-                Event retrieved = Event.Create(typeId);
-                if (retrieved == null)
+                // Heartbeat
+                if (typeId == HeartbeatEvent.TypeId)
                 {
-                    Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
+                    var heartbeat = new HeartbeatEvent();
+                    heartbeat.Load(recvBuffer);
+
+                    if (!Polarity)
+                    {
+                        // Heartbeat feedback
+                        Send(heartbeat);
+
+                        Log.Debug("{0} {1} heartbeat {2}", link.Name, Handle, heartbeat.Timestamp);
+                    }
+
+                    if (link.HeartbeatEventHandler != null)
+                    {
+                        link.HeartbeatEventHandler(this, heartbeat);
+                    }
                 }
                 else
                 {
-                    retrieved.Load(recvBuffer);
-                    retrieved.SessionHandle = Handle;
-                    if (link.Preprocessor != null)
+                    var retrieved = Event.Create(typeId);
+                    if (retrieved == null)
                     {
-                        link.Preprocessor(retrieved, this);
+                        Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
                     }
+                    else
+                    {
+                        retrieved.Load(recvBuffer);
+                        retrieved.SessionHandle = Handle;
+                        if (link.Preprocessor != null)
+                        {
+                            link.Preprocessor(retrieved, this);
+                        }
 
-                    Log.Info("{0} {1} received event {2}", link.Name, Handle, retrieved);
+                        Log.Info("{0} {1} received event {2}", link.Name, Handle, retrieved);
 
-                    link.Flow.Publish(retrieved);
+                        link.Flow.Publish(retrieved);
+                    }
                 }
 
                 recvBuffer.Trim();

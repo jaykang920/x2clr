@@ -66,6 +66,7 @@
     <Compile Include="Links\SocketLink\AsyncTcpClient.cs" />
     <Compile Include="Links\SocketLink\AsyncTcpLinkSession.cs" />
     <Compile Include="Links\SocketLink\AsyncTcpServer.cs" />
+    <Compile Include="Links\SocketLink\HeartbeatEvent.cs" />
     <Compile Include="Links\SocketLink\SocketLink.cs" />
     <Compile Include="Links\SocketLink\SocketLinkSession.cs" />
     <Compile Include="Links\SocketLink\TcpClient.cs">

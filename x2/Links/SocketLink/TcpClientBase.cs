@@ -28,6 +28,8 @@ namespace x2.Links.SocketLink
 
         public bool Connected { get { return (session != null); } }
 
+        public SocketLinkSession Session { get { return session; } }
+
         /// <summary>
         /// Gets or sets a value that indicates whether the underlying socket is
         /// not to use the Nagle algorithm.

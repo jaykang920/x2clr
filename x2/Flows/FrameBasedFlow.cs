@@ -15,6 +15,9 @@ namespace x2.Flows
     /// </summary>
     public class Time
     {
+        public const long TicksInMillisecond = 10000;  // 100-nanosecond tick
+        public const long TicksInSecond = 1000 * TicksInMillisecond;
+
         private long startTicks;
         private long lastTicks;
         private long currentTicks;
@@ -175,11 +178,18 @@ namespace x2.Flows
                         {
                             Thread.Sleep(0);
                         }
+                        else
+                        {
+                            break;
+                        }
                     }
                 }
                 else
                 {
-                    Thread.Sleep(1);
+                    var tickDelta = DateTime.Now.Ticks - Time.CurrentTicks;
+                    var delay = (tickDelta < Resolution ?
+                        (int)((Resolution - tickDelta) / Time.TicksInMillisecond) : 0);
+                    Thread.Sleep(delay);
                 }
             }
 

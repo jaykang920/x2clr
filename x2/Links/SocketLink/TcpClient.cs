@@ -46,6 +46,7 @@ namespace x2.Links.SocketLink
                 ConnectInternal();
 
                 session = new TcpLinkSession(this, socket);
+                session.Polarity = true;
 
                 if (BufferTransform != null)
                 {
@@ -71,11 +72,21 @@ namespace x2.Links.SocketLink
         }
     }
 
-    public class TcpClientFlow : SingleThreadedFlow
+    public class TcpClientFlow : FrameBasedFlow
     {
         protected TcpClient link;
 
+        private volatile bool closeOnHeartbeatFailure;
+
+        protected x2.Flows.Timer Timer { get; private set; }
+
         public string Name { get; private set; }
+
+        public bool CloseOnHeartbeatFailure
+        {
+            get { return closeOnHeartbeatFailure; }
+            set { closeOnHeartbeatFailure = value; }
+        }
 
         public bool AutoReconnect
         {
@@ -100,11 +111,19 @@ namespace x2.Links.SocketLink
             link = new TcpClient(name);
             Add(link);
 
+            link.HeartbeatEventHandler = OnHeartbeatEvent;
+
             Name = name;
+
+            Resolution = Time.TicksInSecond;  // 1-second frame resolution
+
+            Timer = new x2.Flows.Timer(OnTimer);
         }
 
         public void Close()
         {
+            Timer.Cancel(link.Session.HeartbeatTimeoutToken);
+
             link.Close();
         }
 
@@ -136,11 +155,50 @@ namespace x2.Links.SocketLink
         private void OnLinkSessionConnected(LinkSessionConnected e)
         {
             OnSessionConnected(e);
+
+            link.Session.HeartbeatTimeoutToken = Timer.Reserve(new Object(), 15);
+            Timer.ReserveRepetition(null, new TimeSpan(0, 0, 5));
         }
 
         private void OnLinkSessionDisconnected(LinkSessionDisconnected e)
         {
+            Timer.CancelRepetition(null);
+            if (link.Session != null)
+            {
+                Timer.Cancel(link.Session.HeartbeatTimeoutToken);
+            }
+
             OnSessionDisconnected(e);
+        }
+
+        protected override void Start() { }
+        protected override void Stop() { }
+
+        protected override void Update()
+        {
+            Timer.Tick();
+        }
+
+        void OnTimer(object state)
+        {
+            if (state == null)
+            {
+                link.Send(new HeartbeatEvent { Timestamp = DateTime.Now.Ticks });
+            }
+            else
+            {
+                // heartbeat timeout
+                //if (closeOnHeartbeatFailure)
+                //{
+                    Close();
+                //}
+            }
+        }
+
+        void OnHeartbeatEvent(SocketLinkSession session, HeartbeatEvent e)
+        {
+            Timer.Cancel(session.HeartbeatTimeoutToken);
+            session.HeartbeatTimeoutToken = Timer.Reserve(new Object(), 15);
         }
     }
 }

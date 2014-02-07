@@ -15,6 +15,8 @@ namespace x2.Links.SocketLink
     {
         protected Socket socket;  // underlying socket
 
+        public Action<SocketLinkSession, HeartbeatEvent> HeartbeatEventHandler { get; set; }
+
         protected SocketLink(string name)
             : base(name)
         {

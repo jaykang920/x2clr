@@ -13,7 +13,7 @@ namespace x2.Samples.Echo
     using ClientCase = x2.Links.SocketLink.AsyncTcpClient;
     using ClientFlow = x2.Links.SocketLink.AsyncTcpClientFlow;
 
-    class EchoClient : ClientCase
+    class EchoClient : ClientFlow
     {
         string message = new String('x', 256);
 
@@ -30,10 +30,10 @@ namespace x2.Samples.Echo
             {
                 Console.WriteLine("Connected");
 
-                Flow.Bind(new EchoReq(), Send);
+                Flow.Bind(new EchoReq(), link.Send);
 
-                Bind(new TimeoutEvent { Key = session }, OnTimeout);
-                TimeFlow.Default.ReserveRepetition(new TimeoutEvent { Key = session }, new TimeSpan(0, 0, 1));
+                Bind(new TimeoutEvent { Key = link.Session }, OnTimeout);
+                TimeFlow.Default.ReserveRepetition(new TimeoutEvent { Key = link.Session }, new TimeSpan(0, 0, 1));
 
                 Bind(new EchoResp(), OnEchoResp);
                 Flow.Post(new EchoReq {
@@ -48,10 +48,10 @@ namespace x2.Samples.Echo
 
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
-            Unbind(new TimeoutEvent { Key = session }, OnTimeout);
-            TimeFlow.Default.CancelRepetition(new TimeoutEvent { Key = session });
+            Unbind(new TimeoutEvent { Key = link.Session }, OnTimeout);
+            TimeFlow.Default.CancelRepetition(new TimeoutEvent { Key = link.Session });
 
-            Flow.Unbind(new EchoReq(), Send);
+            Flow.Unbind(new EchoReq(), link.Send);
 
             Console.WriteLine("Disconnected");
         }
@@ -69,7 +69,7 @@ namespace x2.Samples.Echo
 
         void OnTimeout(TimeoutEvent e)
         {
-            LinkSession.Diagnostics diag = session.Diag;
+            LinkSession.Diagnostics diag = link.Session.Diag;
 
             Console.WriteLine("Rx = {0} Tx = {1}", diag.BytesReceived, diag.BytesSent);
 
@@ -95,7 +95,7 @@ namespace x2.Samples.Echo
             x2.Log.Level = x2.LogLevel.Warning;
 
             Hub.Get()
-                .Attach(new SingleThreadedFlow().Add(new EchoClient()))
+                .Attach(new EchoClient())
                 .Attach(TimeFlow.Create());
 
             Flow.StartAll();
