@@ -7,13 +7,22 @@ using System.Threading;
 
 namespace x2
 {
+    /// <summary>
+    /// Represents an event distribution bus.
+    /// </summary>
     public sealed class Hub
     {
         private const string defaultName = "default";
 
         private static readonly HubMap hubMap;
+
         private readonly FlowSet flowSet;
         private readonly string name;
+
+        /// <summary>
+        /// Gets the the default(anonymous) hub.
+        /// </summary>
+        public static Hub Default { get { return Get(); } }
 
         /// <summary>
         /// Gets the name of this hub.
@@ -26,22 +35,15 @@ namespace x2
         static Hub()
         {
             hubMap = new HubMap();
+
             // Create the default(anonymous) hub.
-            Create();
+            hubMap.Create(defaultName);
         }
 
         private Hub(string name)
         {
             flowSet = new FlowSet();
             this.name = name;
-        }
-
-        /// <summary>
-        /// Creates a default(anonymous) hub.
-        /// </summary>
-        public static Hub Create()
-        {
-            return Create(defaultName);
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace x2
         /// </summary>
         public static Hub Get()
         {
-            return Get(defaultName);
+            return hubMap.Get(defaultName);
         }
 
         /// <summary>
@@ -158,24 +160,16 @@ namespace x2
 
         private class HubMap
         {
-            private readonly Dictionary<string, Hub> hubs = new Dictionary<string, Hub>();
-            private readonly ReaderWriterLockSlim rwlock = new ReaderWriterLockSlim();
+            private readonly IDictionary<string, Hub> hubs;
+            private readonly ReaderWriterLockSlim rwlock;
 
-            internal Hub Get(string name)
+            public HubMap()
             {
-                rwlock.EnterReadLock();
-                try
-                {
-                    Hub hub;
-                    return hubs.TryGetValue(name, out hub) ? hub : null;
-                }
-                finally
-                {
-                    rwlock.ExitReadLock();
-                }
+                hubs = new Dictionary<string, Hub>();
+                rwlock = new ReaderWriterLockSlim();
             }
 
-            internal Hub Create(string name)
+            public Hub Create(string name)
             {
                 rwlock.EnterWriteLock();
                 try
@@ -194,12 +188,26 @@ namespace x2
                 }
             }
 
-            internal void StartAllFlows()
+            public Hub Get(string name)
             {
                 rwlock.EnterReadLock();
                 try
                 {
-                    foreach (Hub hub in hubs.Values)
+                    Hub hub;
+                    return hubs.TryGetValue(name, out hub) ? hub : null;
+                }
+                finally
+                {
+                    rwlock.ExitReadLock();
+                }
+            }
+
+            public void StartAllFlows()
+            {
+                rwlock.EnterReadLock();
+                try
+                {
+                    foreach (var hub in hubs.Values)
                     {
                         hub.StartAttachedFlows();
                     }
@@ -210,12 +218,12 @@ namespace x2
                 }
             }
 
-            internal void StopAllFlows()
+            public void StopAllFlows()
             {
                 rwlock.EnterReadLock();
                 try
                 {
-                    foreach (Hub hub in hubs.Values)
+                    foreach (var hub in hubs.Values)
                     {
                         hub.StopAttachedFlows();
                     }
@@ -229,10 +237,16 @@ namespace x2
 
         private class FlowSet
         {
-            private readonly List<Flow> flows = new List<Flow>();
-            private readonly ReaderWriterLockSlim rwlock = new ReaderWriterLockSlim();
+            private readonly IList<Flow> flows;
+            private readonly ReaderWriterLockSlim rwlock;
 
-            internal bool Add(Flow flow)
+            public FlowSet()
+            {
+                flows = new List<Flow>();
+                rwlock = new ReaderWriterLockSlim();
+            }
+
+            public bool Add(Flow flow)
             {
                 rwlock.EnterWriteLock();
                 try
@@ -250,14 +264,14 @@ namespace x2
                 }
             }
 
-            internal void Feed(Event e)
+            public void Feed(Event e)
             {
                 rwlock.EnterReadLock();
                 try
                 {
-                    foreach (Flow flow in flows)
+                    for (int i = 0; i < flows.Count; ++i)
                     {
-                        flow.Feed(e);
+                        flows[i].Feed(e);
                     }
                 }
                 finally
@@ -266,13 +280,14 @@ namespace x2
                 }
             }
 
-            internal void Feed(Event e, Flow except)
+            public void Feed(Event e, Flow except)
             {
                 rwlock.EnterReadLock();
                 try
                 {
-                    foreach (Flow flow in flows)
+                    for (int i = 0; i < flows.Count; ++i)
                     {
+                        var flow = flows[i];
                         if (Object.ReferenceEquals(flow, except))
                         {
                             continue;
@@ -286,7 +301,7 @@ namespace x2
                 }
             }
 
-            internal bool Remove(Flow flow)
+            public bool Remove(Flow flow)
             {
                 rwlock.EnterWriteLock();
                 try
@@ -299,14 +314,14 @@ namespace x2
                 }
             }
 
-            internal void StartAll()
+            public void StartAll()
             {
                 rwlock.EnterReadLock();
                 try
                 {
-                    foreach (Flow flow in flows)
+                    for (int i = 0; i < flows.Count; ++i)
                     {
-                        flow.StartUp();
+                        flows[i].StartUp();
                     }
                 }
                 finally
@@ -315,14 +330,14 @@ namespace x2
                 }
             }
 
-            internal void StopAll()
+            public void StopAll()
             {
                 rwlock.EnterReadLock();
                 try
                 {
-                    foreach (Flow flow in flows)
+                    for (int i = 0; i < flows.Count; ++i)
                     {
-                        flow.ShutDown();
+                        flows[i].ShutDown();
                     }
                 }
                 finally

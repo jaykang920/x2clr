@@ -10,6 +10,9 @@ using x2.Events;
 
 namespace x2
 {
+    /// <summary>
+    /// Represents an independent execution flow.
+    /// </summary>
     public abstract class Flow
     {
         [ThreadStatic]
