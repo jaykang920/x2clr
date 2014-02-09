@@ -294,38 +294,27 @@ namespace x2.Flows
     {
         private const string defaultName = "default";
 
-        private static readonly Map map = new Map();
+        private static readonly Map map;
 
-        private readonly string name;
-
-        public Timer Timer { get; private set; }
+        private Timer timer;
 
         /// <summary>
         /// Gets the default(anonymous) TimeFlow.
         /// </summary>
         public static TimeFlow Default { get { return Get(); } }
 
-        /// <summary>
-        /// Gets the name of this TimeFlow.
-        /// </summary>
-        public string Name
+        static TimeFlow()
         {
-            get { return name; }
+            map = new Map();
+
+            map.Create(defaultName);
         }
 
         private TimeFlow(string name)
             : base(null)
         {
-            Timer = new Timer(OnTimer);
+            timer = new Timer(OnTimer);
             this.name = name;
-        }
-
-        /// <summary>
-        /// Creates a default(anonymous) TimeFlow.
-        /// </summary>
-        public static TimeFlow Create()
-        {
-            return Create(defaultName);
         }
 
         /// <summary>
@@ -362,37 +351,37 @@ namespace x2.Flows
 
         public Timer.Token Reserve(Event e, double seconds)
         {
-            return Timer.Reserve(e, seconds);
+            return timer.Reserve(e, seconds);
         }
         
         public Timer.Token Reserve(Event e, TimeSpan delay)
         {
-            return Timer.Reserve(e, delay);
+            return timer.Reserve(e, delay);
         }
 
         public Timer.Token Reserve(Event e, DateTime when)
         {
-            return Timer.Reserve(e, when);
+            return timer.Reserve(e, when);
         }
 
         public void Cancel(Timer.Token token)
         {
-            Timer.Cancel(token);
+            timer.Cancel(token);
         }
 
         public void ReserveRepetition(Event e, TimeSpan interval)
         {
-            Timer.ReserveRepetition(e, interval);
+            timer.ReserveRepetition(e, interval);
         }
 
         public void ReserveRepetition(Event e, DateTime nextTime, TimeSpan interval)
         {
-            Timer.ReserveRepetition(e, nextTime, interval);
+            timer.ReserveRepetition(e, nextTime, interval);
         }
 
         public void CancelRepetition(Event e)
         {
-            Timer.CancelRepetition(e);
+            timer.CancelRepetition(e);
         }
 
         protected override void Start() { }
@@ -400,7 +389,7 @@ namespace x2.Flows
 
         protected override void Update()
         {
-            Timer.Tick();
+            timer.Tick();
         }
 
         private class Map
@@ -408,24 +397,10 @@ namespace x2.Flows
             private readonly IDictionary<string, TimeFlow> timeFlows;
             private readonly ReaderWriterLockSlim rwlock;
 
-            internal Map()
+            public Map()
             {
                 timeFlows = new Dictionary<string, TimeFlow>();
                 rwlock = new ReaderWriterLockSlim();
-            }
-
-            internal TimeFlow Get(string name)
-            {
-                rwlock.EnterReadLock();
-                try
-                {
-                    TimeFlow timeFlow;
-                    return timeFlows.TryGetValue(name, out timeFlow) ? timeFlow : null;
-                }
-                finally
-                {
-                    rwlock.ExitReadLock();
-                }
             }
 
             internal TimeFlow Create(string name)
@@ -444,6 +419,20 @@ namespace x2.Flows
                 finally
                 {
                     rwlock.ExitWriteLock();
+                }
+            }
+
+            internal TimeFlow Get(string name)
+            {
+                rwlock.EnterReadLock();
+                try
+                {
+                    TimeFlow timeFlow;
+                    return timeFlows.TryGetValue(name, out timeFlow) ? timeFlow : null;
+                }
+                finally
+                {
+                    rwlock.ExitReadLock();
                 }
             }
         }

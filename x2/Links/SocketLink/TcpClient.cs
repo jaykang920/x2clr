@@ -80,8 +80,6 @@ namespace x2.Links.SocketLink
 
         protected x2.Flows.Timer Timer { get; private set; }
 
-        public string Name { get; private set; }
-
         public TcpClient Link { get { return link; } }
 
         public bool CloseOnHeartbeatFailure
@@ -120,7 +118,7 @@ namespace x2.Links.SocketLink
 
             link.HeartbeatEventHandler = OnHeartbeatEvent;
 
-            Name = name;
+            this.name = name;
 
             Resolution = Time.TicksInSecond;  // 1-second frame resolution
 

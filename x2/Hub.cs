@@ -20,7 +20,7 @@ namespace x2
         private readonly string name;
 
         /// <summary>
-        /// Gets the the default(anonymous) hub.
+        /// Gets the the default(anonymous) Hub.
         /// </summary>
         public static Hub Default { get { return Get(); } }
 
@@ -36,7 +36,6 @@ namespace x2
         {
             hubMap = new HubMap();
 
-            // Create the default(anonymous) hub.
             hubMap.Create(defaultName);
         }
 
@@ -47,7 +46,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Creates a named hub.
+        /// Creates a named Hub.
         /// </summary>
         public static Hub Create(string name)
         {
@@ -59,7 +58,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Gets the default(anonymous) hub.
+        /// Gets the default(anonymous) Hub.
         /// </summary>
         public static Hub Get()
         {
@@ -67,7 +66,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Gets the named hub.
+        /// Gets the named Hub.
         /// </summary>
         public static Hub Get(string name)
         {

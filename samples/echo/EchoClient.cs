@@ -79,7 +79,7 @@ namespace x2.Samples.Echo
 
             Hub.Get()
                 .Attach(new EchoClient())
-                .Attach(TimeFlow.Create());
+                .Attach(TimeFlow.Default);
 
             /*
             for (int i = 0; i < 2; ++i)

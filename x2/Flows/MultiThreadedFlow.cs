@@ -41,6 +41,7 @@ namespace x2.Flows
                 for (int i = 0; i < numThreads; ++i)
                 {
                     Thread thread = new Thread(this.Run);
+                    thread.Name = String.Format("{0} {1}", name, i + 1);
                     threads.Add(thread);
                     thread.Start();
                 }

@@ -22,8 +22,8 @@ namespace x2
         protected static List<Handler> handlerChain;
 
         protected readonly Binder binder;
-
         protected readonly CaseStack caseStack;
+        protected string name;
 
         private Hub hub;
 
@@ -42,6 +42,11 @@ namespace x2
         /// Gets or sets the exception handler for this flow.
         /// </summary>
         public Action<Exception> ExceptionHandler { get; set; }
+
+        /// <summary>
+        /// Gets the name of this flow.
+        /// </summary>
+        public string Name { get { return name; } }
 
         /// <summary>
         /// Gets the hub to which this flow is attached.
@@ -114,6 +119,7 @@ namespace x2
         {
             this.binder = binder;
             caseStack = new CaseStack();
+            name = GetType().Name;
 
             ExceptionHandler = DefaultExceptionHandler;
         }

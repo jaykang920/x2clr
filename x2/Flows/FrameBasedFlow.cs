@@ -112,6 +112,7 @@ namespace x2.Flows
                 SetUp();
                 caseStack.SetUp(this);
                 thread = new Thread(this.Run);
+                thread.Name = name;
                 thread.Start();
                 if (queue != null)
                 {
