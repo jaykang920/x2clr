@@ -36,6 +36,8 @@ namespace x2.Links.SocketLink
             {
                 var clientSocket = socket.EndAccept(asyncResult);
 
+                Diag.IncrementConnectionCount();
+
                 // Adjust client socket options.
                 clientSocket.NoDelay = NoDelay;
 

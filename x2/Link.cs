@@ -138,6 +138,6 @@ namespace x2
             }
         }
 
-        #endregion
+        #endregion  // Diagnostics
     }
 }

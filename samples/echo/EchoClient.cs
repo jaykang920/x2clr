@@ -15,7 +15,7 @@ namespace x2.Samples.Echo
 
     class EchoClient : ClientFlow
     {
-        string message = new String('x', 256);
+        string message = new String('x', 4000);
 
         public EchoClient()
             : base("EchoClient")
@@ -30,13 +30,11 @@ namespace x2.Samples.Echo
             {
                 Console.WriteLine("Connected");
 
-                Flow.Bind(new EchoReq(), link.Send);
+                var linkSession = e.Context as LinkSession;
 
-                Bind(new TimeoutEvent { Key = link.Session }, OnTimeout);
-                TimeFlow.Default.ReserveRepetition(new TimeoutEvent { Key = link.Session }, new TimeSpan(0, 0, 1));
+                Bind(new EchoResp { SessionHandle = linkSession.Handle }, OnEchoResp);
 
-                Bind(new EchoResp(), OnEchoResp);
-                Flow.Post(new EchoReq {
+                link.Send(new EchoReq {
                     Message = message
                 });
             }
@@ -48,11 +46,6 @@ namespace x2.Samples.Echo
 
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
-            Unbind(new TimeoutEvent { Key = link.Session }, OnTimeout);
-            TimeFlow.Default.CancelRepetition(new TimeoutEvent { Key = link.Session });
-
-            Flow.Unbind(new EchoReq(), link.Send);
-
             Console.WriteLine("Disconnected");
         }
 
@@ -67,19 +60,9 @@ namespace x2.Samples.Echo
             Connect("127.0.0.1", 5678);
         }
 
-        void OnTimeout(TimeoutEvent e)
-        {
-            LinkSession.Diagnostics diag = link.Session.Diag;
-
-            Console.WriteLine("Rx = {0} Tx = {1}", diag.BytesReceived, diag.BytesSent);
-
-            diag.ResetBytesReceived();
-            diag.ResetBytesSent();
-        }
-
         void OnEchoResp(EchoResp e)
         {
-            Flow.Post(new EchoReq {
+            link.Send(new EchoReq {
                 Message = message
             });
         }
@@ -97,6 +80,13 @@ namespace x2.Samples.Echo
             Hub.Get()
                 .Attach(new EchoClient())
                 .Attach(TimeFlow.Create());
+
+            /*
+            for (int i = 0; i < 2; ++i)
+            {
+                Hub.Get().Attach(new EchoClient());
+            }
+            */
 
             Flow.StartAll();
 

@@ -94,13 +94,18 @@ namespace x2.Links.SocketLink
             }
             else
             {
-                Log.Warn("{0} {1} recv error {2}", link.Name, Handle, e.SocketError);
+                if (e.SocketError == SocketError.OperationAborted)
+                {
+                    // Socket has been closed.
+                    return;
+                }
+                else
+                {
+                    Log.Warn("{0} {1} recv error {2}", link.Name, Handle, e.SocketError);
+                }
             }
 
-            link.Flow.Publish(new LinkSessionDisconnected {
-                LinkName = link.Name,
-                Context = this
-            });
+            link.OnDisconnect(this);
         }
 
         // Completion callback for SendAsync
@@ -112,12 +117,17 @@ namespace x2.Links.SocketLink
             }
             else
             {
-                Log.Warn("{0} {1} send error {2}", link.Name, Handle, e.SocketError);
+                if (e.SocketError == SocketError.OperationAborted)
+                {
+                    // Socket has been closed.
+                    return;
+                }
+                else
+                {
+                    Log.Warn("{0} {1} send error {2}", link.Name, Handle, e.SocketError);
+                }
 
-                link.Flow.Publish(new LinkSessionDisconnected {
-                    LinkName = link.Name,
-                    Context = this
-                });
+                link.OnDisconnect(this);
             }
         }
     }

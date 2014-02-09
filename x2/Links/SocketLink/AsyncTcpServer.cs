@@ -22,6 +22,7 @@ namespace x2.Links.SocketLink
         public AsyncTcpServer(string name)
             : base(name)
         {
+            Diag = new Diagnostics(this);
         }
 
         protected override void AcceptImpl()
@@ -54,6 +55,8 @@ namespace x2.Links.SocketLink
         {
             if (e.SocketError == SocketError.Success)
             {
+                Diag.IncrementConnectionCount();
+
                 var clientSocket = e.AcceptSocket;
 
                 // Adjust client socket options.
@@ -81,7 +84,14 @@ namespace x2.Links.SocketLink
             }
             else
             {
-                Log.Warn("{0} accept error {1}", Name, e.SocketError);
+                if (e.SocketError == SocketError.OperationAborted)
+                {
+                    // Listening socket has been closed.
+                }
+                else
+                {
+                    Log.Error("{0} accept error {1}", Name, e.SocketError);
+                }
             }
         }
     }
@@ -115,8 +125,13 @@ namespace x2.Links.SocketLink
         public Action<Event, LinkSession> Preprocessor { get; set; }
 
         public AsyncTcpServerFlow(string name)
+            : this(name, new AsyncTcpServer(name))
         {
-            link = new AsyncTcpServer(name);
+        }
+
+        public AsyncTcpServerFlow(string name, AsyncTcpServer link)
+        {
+            this.link = link;
             Add(link);
 
             link.HeartbeatEventHandler = OnHeartbeatEvent;

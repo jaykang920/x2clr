@@ -5,6 +5,7 @@ using System;
 using System.Net.Sockets;
 
 using x2;
+using x2.Events;
 
 namespace x2.Links.SocketLink
 {
@@ -20,6 +21,14 @@ namespace x2.Links.SocketLink
         protected SocketLink(string name)
             : base(name)
         {
+        }
+
+        public virtual void OnDisconnect(SocketLinkSession session)
+        {
+            Flow.Publish(new LinkSessionDisconnected {
+                LinkName = Name,
+                Context = session
+            });
         }
     }
 }

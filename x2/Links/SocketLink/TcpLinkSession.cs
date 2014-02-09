@@ -60,21 +60,23 @@ namespace x2.Links.SocketLink
 
                 // (bytesTransferred == 0) implies a graceful shutdown
                 Log.Info("{0} {1} disconnected", link.Name, Handle);
-
-                link.Flow.Publish(new LinkSessionDisconnected {
-                    LinkName = link.Name,
-                    Context = this
-                });
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Log.Warn("{0} {1} recv error: {2}", link.Name, Handle, ex.Message);
+                var se = e as SocketException;
+                if (se != null)
+                {
+                    if (se.SocketErrorCode == SocketError.OperationAborted)
+                    {
+                        // Socket has been closed.
+                        return;
+                    }
+                }
 
-                link.Flow.Publish(new LinkSessionDisconnected {
-                    LinkName = link.Name,
-                    Context = this
-                });
+                Log.Warn("{0} {1} recv error: {2}", link.Name, Handle, e.Message);
             }
+
+            link.OnDisconnect(this);
         }
 
         // Asynchronous callback for BeginSend
@@ -86,14 +88,21 @@ namespace x2.Links.SocketLink
 
                 SendInternal(bytesTransferred);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Log.Warn("{0} {1} send error: {2}", link.Name, Handle, ex.Message);
+                var se = e as SocketException;
+                if (se != null)
+                {
+                    if (se.SocketErrorCode == SocketError.OperationAborted)
+                    {
+                        // Socket has been closed.
+                        return;
+                    }
+                }
 
-                link.Flow.Publish(new LinkSessionDisconnected {
-                    LinkName = link.Name,
-                    Context = this
-                });
+                Log.Warn("{0} {1} send error: {2}", link.Name, Handle, e.Message);
+
+                link.OnDisconnect(this);
             }
         }
     }
