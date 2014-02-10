@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 using x2.Events;
@@ -20,6 +21,9 @@ namespace x2
 
         [ThreadStatic]
         protected static List<Handler> handlerChain;
+
+        [ThreadStatic]
+        protected static Stopwatch stopwatch;
 
         protected readonly Binder binder;
         protected readonly CaseStack caseStack;
@@ -38,6 +42,9 @@ namespace x2
         /// </summary>
         public static Action<Exception> DefaultExceptionHandler { get; set; }
 
+        public static LogLevel DefaultSlowHandlerLogLevel { get; set; }
+        public static int DefaultSlowHandlerLogThreshold { get; set; }  // in millisec
+
         /// <summary>
         /// Gets or sets the exception handler for this flow.
         /// </summary>
@@ -53,9 +60,25 @@ namespace x2
         /// </summary>
         public Hub Hub { get { return hub; } }
 
+        public LogLevel SlowHandlerLogLevel { get; set; }
+        public int SlowHandlerLogThreshold { get; set; }
+
         static Flow()
         {
             DefaultExceptionHandler = OnException;
+            DefaultSlowHandlerLogLevel = LogLevel.Warning;
+            DefaultSlowHandlerLogThreshold = 100;
+        }
+
+        protected Flow(Binder binder)
+        {
+            this.binder = binder;
+            caseStack = new CaseStack();
+            name = GetType().Name;
+
+            ExceptionHandler = DefaultExceptionHandler;
+            SlowHandlerLogLevel = DefaultSlowHandlerLogLevel;
+            SlowHandlerLogThreshold = DefaultSlowHandlerLogThreshold;
         }
 
         public static Binder.Token Bind<T>(T e, Action<T> action)
@@ -113,15 +136,6 @@ namespace x2
         public static void Unbind(Binder.Token binderToken)
         {
             currentFlow.Unsubscribe(binderToken);
-        }
-
-        protected Flow(Binder binder)
-        {
-            this.binder = binder;
-            caseStack = new CaseStack();
-            name = GetType().Name;
-
-            ExceptionHandler = DefaultExceptionHandler;
         }
 
         public static void Post(Event e)
@@ -277,11 +291,25 @@ namespace x2
                 // unhandled event
                 return;
             }
-            foreach (var handler in handlerChain)
+            for (int i = 0; i < handlerChain.Count; ++i)
             {
+                var handler = handlerChain[i];
                 try
                 {
+                    stopwatch.Reset();
+                    stopwatch.Start();
+
                     handler.Invoke(e);
+                    
+                    stopwatch.Stop();
+                    if (stopwatch.ElapsedMilliseconds >= SlowHandlerLogThreshold)
+                    {
+                        Log.Emit(SlowHandlerLogLevel,
+                            "{0} slow handler {1}ms {2}.{3} on {4}", 
+                            Name, stopwatch.ElapsedMilliseconds,
+                            handler.Action.Method.DeclaringType,
+                            handler.Action.Method.Name, e);
+                    }
                 }
                 catch (Exception ex)
                 {

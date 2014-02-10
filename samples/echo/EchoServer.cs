@@ -120,7 +120,7 @@ namespace x2.Samples.Echo
             x2.Log.Level = x2.LogLevel.Warning;
 
             Hub.Get()
-                .Attach(new SingleThreadedFlow()
+                .Attach(new SingleThreadedFlow { SlowHandlerLogThreshold = 0 }
                     .Add(new EchoCase()))
                 .Attach(new EchoServerFlow());
 

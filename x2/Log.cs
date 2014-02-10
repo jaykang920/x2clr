@@ -25,114 +25,72 @@ namespace x2
         public static LogLevel Level { get; set; }
         public static LogHandler Handler { get; set; }
 
-        #region Trace
-
-        public static void Trace(object message)
+        public static void Emit(LogLevel level, object message)
         {
-            if ((Handler == null) || Level > LogLevel.Trace)
+            if (Handler == null || Level > level)
             {
                 return;
             }
-            Handler(LogLevel.Trace, message);
+            Handler(level, message);
+        }
+
+        public static void Emit(LogLevel level, string format, params object[] args)
+        {
+            if ((Handler == null) || Level > level)
+            {
+                return;
+            }
+            Handler(level, String.Format(format, args));
+        }
+
+        public static void Trace(object message)
+        {
+            Emit(LogLevel.Trace, message);
         }
 
         public static void Trace(string format, params object[] args)
         {
-            if ((Handler == null) || Level > LogLevel.Trace)
-            {
-                return;
-            }
-            Handler(LogLevel.Trace, String.Format(format, args));
+            Emit(LogLevel.Trace, format, args);
         }
-
-        #endregion
-
-        #region Debug
 
         public static void Debug(object message)
         {
-            if ((Handler == null) || Level > LogLevel.Debug)
-            {
-                return;
-            }
-            Handler(LogLevel.Debug, message);
+            Emit(LogLevel.Debug, message);
         }
 
         public static void Debug(string format, params object[] args)
         {
-            if ((Handler == null) || Level > LogLevel.Debug)
-            {
-                return;
-            }
-            Handler(LogLevel.Debug, String.Format(format, args));
+            Emit(LogLevel.Debug, format, args);
         }
-
-        #endregion
-
-        #region Info
 
         public static void Info(object message)
         {
-            if ((Handler == null) || Level > LogLevel.Info)
-            {
-                return;
-            }
-            Handler(LogLevel.Info, message);
+            Emit(LogLevel.Info, message);
         }
 
         public static void Info(string format, params object[] args)
         {
-            if ((Handler == null) || Level > LogLevel.Info)
-            {
-                return;
-            }
-            Handler(LogLevel.Info, String.Format(format, args));
+            Emit(LogLevel.Info, format, args);
         }
-
-        #endregion
-
-        #region Warning
 
         public static void Warn(object message)
         {
-            if ((Handler == null) || Level > LogLevel.Warning)
-            {
-                return;
-            }
-            Handler(LogLevel.Warning, message);
+            Emit(LogLevel.Warning, message);
         }
 
         public static void Warn(string format, params object[] args)
         {
-            if ((Handler == null) || Level > LogLevel.Warning)
-            {
-                return;
-            }
-            Handler(LogLevel.Warning, String.Format(format, args));
+            Emit(LogLevel.Warning, format, args);
         }
-
-        #endregion
-
-        #region Error
 
         public static void Error(object message)
         {
-            if ((Handler == null) || Level > LogLevel.Error)
-            {
-                return;
-            }
-            Handler(LogLevel.Error, message);
+            Emit(LogLevel.Error, message);
         }
 
         public static void Error(string format, params object[] args)
         {
-            if ((Handler == null) || Level > LogLevel.Error)
-            {
-                return;
-            }
-            Handler(LogLevel.Error, String.Format(format, args));
+            Emit(LogLevel.Error, format, args);
         }
-
-        #endregion
     }
 }

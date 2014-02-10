@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 using x2.Events;
@@ -46,6 +47,7 @@ namespace x2.Flows
                 SetUp();
                 caseStack.SetUp(this);
                 handlerChain = new List<Handler>();
+                stopwatch = new Stopwatch();
 
                 currentFlow = this;
 

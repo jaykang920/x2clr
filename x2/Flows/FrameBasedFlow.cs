@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 using x2.Events;
@@ -152,6 +153,7 @@ namespace x2.Flows
             {
                 handlerChain = new List<Handler>();
             }
+            stopwatch = new Stopwatch();
 
             StartInternal();
 
