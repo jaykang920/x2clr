@@ -56,6 +56,8 @@ namespace x2.Transforms
 
         public int Transform(Buffer buffer, int length)
         {
+            Log.Trace("Cipher.Transform: input length {0}", length);
+
             int result;
             using (var ms = new MemoryStream(length + BlockSizeInBytes))
             {
@@ -69,8 +71,8 @@ namespace x2.Transforms
                     {
                         var segment = buffers[i];
 
-                        Log.Trace("Cipher.Transform: input {0} {1}",
-                            length, BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
+                        Log.Trace("Cipher.Transform: input block {0}",
+                            BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
 
                         cs.Write(segment.Array, segment.Offset, segment.Count);
                     }
@@ -90,6 +92,8 @@ namespace x2.Transforms
 
         public int InverseTransform(Buffer buffer, int length)
         {
+            Log.Trace("Cipher.InverseTransform: input length {0}", length);
+
             int result;
             using (var ms = new MemoryStream(length))
             {
@@ -103,8 +107,8 @@ namespace x2.Transforms
                     {
                         var segment = buffers[i];
 
-                        Log.Trace("Cipher.InverseTransform: input {0} {1}",
-                            length, BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
+                        Log.Trace("Cipher.InverseTransform: input block {0}",
+                            BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
 
                         cs.Write(segment.Array, segment.Offset, segment.Count);
                     }
