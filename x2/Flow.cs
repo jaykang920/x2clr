@@ -291,7 +291,7 @@ namespace x2
                 // unhandled event
                 return;
             }
-            for (int i = 0; i < handlerChain.Count; ++i)
+            for (int i = 0, count = handlerChain.Count; i < count; ++i)
             {
                 var handler = handlerChain[i];
                 try
