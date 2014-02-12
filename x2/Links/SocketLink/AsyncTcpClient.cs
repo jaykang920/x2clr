@@ -203,10 +203,17 @@ namespace x2.Links.SocketLink
             else
             {
                 // heartbeat timeout
-                //if (closeOnHeartbeatFailure)
-                //{
+                if (closeOnHeartbeatFailure)
+                {
+                    Timer.Cancel(link.Session.HeartbeatTimeoutToken);
                     Close();
-                //}
+                }
+                else
+                {
+                    Log.Warn("{0} {1} heartbeat timeout", Name, link.Session.Handle);
+                    Timer.Cancel(link.Session.HeartbeatTimeoutToken);
+                    link.Session.HeartbeatTimeoutToken = Timer.Reserve(new Object(), 15);
+                }
             }
         }
 

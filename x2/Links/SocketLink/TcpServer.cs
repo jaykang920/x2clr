@@ -165,10 +165,18 @@ namespace x2.Links.SocketLink
             if (state != null)
             {
                 // heartbeat timeout
-                //if (closeOnHeartbeatFailure)
-                //{
-                    ((LinkSession)state).Close();
-                //}
+                var session = (SocketLinkSession)state;
+                if (closeOnHeartbeatFailure)
+                {
+                    Timer.Cancel(session.HeartbeatTimeoutToken);
+                    session.Close();
+                }
+                else
+                {
+                    Log.Warn("{0} {1} heartbeat timeout", Name, session.Handle);
+                    Timer.Cancel(session.HeartbeatTimeoutToken);
+                    session.HeartbeatTimeoutToken = Timer.Reserve(session, 15);
+                }
             }
         }
 

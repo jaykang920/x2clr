@@ -10,7 +10,9 @@ using x2.Flows;
 
 namespace x2.Yields
 {
-    // YieldInstruction that waits for multiple events infinitely.
+    /// <summary>
+    /// YieldInstruction that waits for multiple events.
+    /// </summary>
     public class WaitForMultipleEvents : YieldInstruction
     {
         private readonly Coroutine coroutine;
@@ -54,6 +56,21 @@ namespace x2.Yields
                 coroutine.Context = actual;
                 coroutine.Continue();
                 coroutine.Context = null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// YieldInstruction that posts requests and waits for multiple responses.
+    /// </summary>
+    public class WaitForMultipleResponses : WaitForMultipleEvents
+    {
+        public WaitForMultipleResponses(Coroutine coroutine, Event[] requests, params Event[] responses)
+            : base(coroutine, responses)
+        {
+            for (int i = 0; i < requests.Length; ++i)
+            {
+                requests[i].Post();
             }
         }
     }

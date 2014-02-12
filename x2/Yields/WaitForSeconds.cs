@@ -9,7 +9,9 @@ using x2.Flows;
 
 namespace x2.Yields
 {
-    // YieldInstruction that waits for the specified time in seconds.
+    /// <summary>
+    /// YieldInstruction that waits for the specified time in seconds.
+    /// </summary>
     public class WaitForSeconds : YieldInstruction
     {
         private readonly Coroutine coroutine;

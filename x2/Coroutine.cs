@@ -35,14 +35,14 @@ namespace x2
 
         public Coroutine()
         {
-
         }
 
-        public void Start(IEnumerator routine)
+        public IEnumerator Start(IEnumerator routine)
         {
             this.routine = routine;
             running = (routine != null);
             MoveNext();
+            return this;
         }
 
         public override bool MoveNext()

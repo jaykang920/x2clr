@@ -9,7 +9,9 @@ using x2.Flows;
 
 namespace x2.Yields
 {
-    // YieldInstruction that waits for a single event infinitely.
+    /// <summary>
+    /// YieldInstruction that waits for a single event.
+    /// </summary>
     public class WaitForSingleEvent : YieldInstruction
     {
         private readonly Coroutine coroutine;
@@ -35,6 +37,18 @@ namespace x2.Yields
             coroutine.Context = e;
             coroutine.Continue();
             coroutine.Context = null;
+        }
+    }
+
+    /// <summary>
+    /// YieldInstruction that posts a request and waits for a single response.
+    /// </summary>
+    public class WaitForSingleResponse : WaitForSingleEvent
+    {
+        public WaitForSingleResponse(Coroutine coroutine, Event request, Event response)
+            : base(coroutine, response)
+        {
+            request.Post();
         }
     }
 }
