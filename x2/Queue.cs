@@ -14,7 +14,7 @@ namespace x2
 
         T Dequeue();
 
-        void Enqueue(T item);
+        int Enqueue(T item);
         bool TryDequeue(out T value);
     }
 }

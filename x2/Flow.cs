@@ -42,6 +42,9 @@ namespace x2
         /// </summary>
         public static Action<Exception> DefaultExceptionHandler { get; set; }
 
+        public static LogLevel DefaultQueueLengthLogLevel { get; set; }
+        public static int DefaultQueueLengthLogThreshold { get; set; }  // in millisec
+
         public static LogLevel DefaultSlowHandlerLogLevel { get; set; }
         public static int DefaultSlowHandlerLogThreshold { get; set; }  // in millisec
 
@@ -60,12 +63,19 @@ namespace x2
         /// </summary>
         public Hub Hub { get { return hub; } }
 
+        public LogLevel QueueLengthLogLevel { get; set; }
+        public int QueueLengthLogThreshold { get; set; }
+
         public LogLevel SlowHandlerLogLevel { get; set; }
         public int SlowHandlerLogThreshold { get; set; }
 
         static Flow()
         {
             DefaultExceptionHandler = OnException;
+
+            DefaultQueueLengthLogLevel = LogLevel.Warning;
+            DefaultQueueLengthLogThreshold = 100;
+
             DefaultSlowHandlerLogLevel = LogLevel.Warning;
             DefaultSlowHandlerLogThreshold = 100;
         }
@@ -77,6 +87,10 @@ namespace x2
             name = GetType().Name;
 
             ExceptionHandler = DefaultExceptionHandler;
+
+            QueueLengthLogLevel = DefaultQueueLengthLogLevel;
+            QueueLengthLogThreshold = DefaultQueueLengthLogThreshold;
+
             SlowHandlerLogLevel = DefaultSlowHandlerLogLevel;
             SlowHandlerLogThreshold = DefaultSlowHandlerLogThreshold;
         }

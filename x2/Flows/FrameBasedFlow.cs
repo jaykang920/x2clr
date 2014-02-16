@@ -97,7 +97,12 @@ namespace x2.Flows
         {
             if (queue != null)
             {
-                queue.Enqueue(e);
+                var queueLength = queue.Enqueue(e);
+                if (queueLength >= QueueLengthLogThreshold)
+                {
+                    Log.Emit(QueueLengthLogLevel,
+                        "{0} queue length {1}", Name, queueLength);
+                }
             }
         }
 

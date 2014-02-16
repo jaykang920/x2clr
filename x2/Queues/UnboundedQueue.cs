@@ -60,16 +60,16 @@ namespace x2.Queues
             }
         }
 
-        public void Enqueue(T item)
+        public int Enqueue(T item)
         {
             lock (queue)
             {
-                if (closing)
+                if (!closing)
                 {
-                    return;
+                    queue.Enqueue(item);
+                    Monitor.Pulse(queue);
                 }
-                queue.Enqueue(item);
-                Monitor.Pulse(queue);
+                return queue.Count;
             }
         }
 

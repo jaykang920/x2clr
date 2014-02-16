@@ -28,7 +28,12 @@ namespace x2.Flows
 
         public override void Feed(Event e)
         {
-            queue.Enqueue(e);
+            var queueLength = queue.Enqueue(e);
+            if (queueLength >= QueueLengthLogThreshold)
+            {
+                Log.Emit(QueueLengthLogLevel,
+                    "{0} queue length {1}", Name, queueLength);
+            }
         }
 
         protected void Run()
