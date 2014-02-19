@@ -14,6 +14,11 @@ namespace x2
 
         public int Count { get { return store.Count; } }
 
+        /// <summary>
+        /// Gets the value of the item at the specified index.
+        /// </summary>
+        public T this[int index] { get { return store[index]; } }
+
         public Sequence()
             : base(0)
         {

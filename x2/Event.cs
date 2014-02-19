@@ -169,7 +169,7 @@ namespace x2
 
             if (fingerprint[0])
             {
-                hash.Update(sessionHandle.ToInt64());
+                hash.Update(sessionHandle.GetHashCode());
             }
 
             return hash.Code;
