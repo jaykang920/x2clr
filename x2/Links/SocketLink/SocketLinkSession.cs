@@ -206,7 +206,7 @@ namespace x2.Links.SocketLink
                             link.Preprocessor(retrieved, this);
                         }
 
-                        Log.Info("{0} {1} received event {2}", link.Name, Handle, retrieved);
+                        Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
 
                         link.Flow.Publish(retrieved);
                     }
@@ -279,7 +279,7 @@ namespace x2.Links.SocketLink
 
             SendImpl();
 
-            Log.Info("{0} {1} sent event {2}", link.Name, Handle, e);
+            Log.Debug("{0} {1} sent event {2}", link.Name, Handle, e);
         }
 
         private void TrySendNext()

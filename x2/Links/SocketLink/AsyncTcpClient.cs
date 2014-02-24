@@ -205,13 +205,15 @@ namespace x2.Links.SocketLink
                 // heartbeat timeout
                 if (closeOnHeartbeatFailure)
                 {
-                    Timer.Cancel(link.Session.HeartbeatTimeoutToken);
                     Close();
                 }
                 else
                 {
+                    if (link.Session == null)
+                    {
+                        return;
+                    }
                     Log.Warn("{0} {1} heartbeat timeout", Name, link.Session.Handle);
-                    Timer.Cancel(link.Session.HeartbeatTimeoutToken);
                     link.Session.HeartbeatTimeoutToken = Timer.Reserve(new Object(), 15);
                 }
             }
