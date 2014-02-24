@@ -19,12 +19,23 @@ namespace x2.Flows
             : this(new UnboundedQueue<Event>(), numThreads)
         {
         }
-        
+
         public MultiThreadedFlow(IQueue<Event> queue, int numThreads)
             : base(queue, new SynchronizedBinding())
         {
             threads = new List<Thread>();
             this.numThreads = numThreads;
+        }
+
+        public MultiThreadedFlow(string name, int numThreads)
+            : this(name, new UnboundedQueue<Event>(), numThreads)
+        {
+        }
+
+        public MultiThreadedFlow(string name, IQueue<Event> queue, int numThreads)
+            : this(queue, numThreads)
+        {
+            this.name = name;
         }
 
         public override void StartUp()

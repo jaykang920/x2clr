@@ -25,6 +25,17 @@ namespace x2.Flows
             thread = null;
         }
 
+        public SingleThreadedFlow(string name)
+            : this(name, new UnboundedQueue<Event>())
+        {
+        }
+
+        public SingleThreadedFlow(string name, IQueue<Event> queue)
+            : this(queue)
+        {
+            this.name = name;
+        }
+
         public override void StartUp()
         {
             lock (syncRoot)
