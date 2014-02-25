@@ -65,11 +65,6 @@ namespace x2
             return factory.Create(typeId);
         }
 
-        public static Event New()
-        {
-            return new Event();
-        }
-
         #region Factory registration methods
 
         public static void Register(int typeId, Func<Event> factoryMethod)

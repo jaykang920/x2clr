@@ -31,11 +31,6 @@ namespace x2.Samples.Capitalizer
                     1);
         }
 
-        new public static CapitalizeReq New()
-        {
-            return new CapitalizeReq();
-        }
-
         public CapitalizeReq()
             : base(tag.NumProps)
         {
@@ -165,11 +160,6 @@ namespace x2.Samples.Capitalizer
         {
             tag = new Tag(Event.tag, typeof(CapitalizeResp), 1,
                     2);
-        }
-
-        new public static CapitalizeResp New()
-        {
-            return new CapitalizeResp();
         }
 
         public CapitalizeResp()

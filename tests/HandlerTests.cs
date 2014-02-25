@@ -58,7 +58,7 @@ namespace x2.Tests
             Assert.False(handler2.Action.Equals(handler3.Action));
 
             // Invocation
-            Event e = Event.New();
+            Event e = new Event();
             handler1.Invoke(e);
             Assert.AreEqual(1, IntBox.StaticValue);
             handler2.Invoke(e);
@@ -85,7 +85,7 @@ namespace x2.Tests
             Assert.False(handler3.Action.Equals(handler4.Action));
 
             // Invocation
-            Event e = Event.New();
+            Event e = new Event();
             handler1.Invoke(e);
             Assert.AreEqual(1, intBox1.Value);
             handler2.Invoke(e);

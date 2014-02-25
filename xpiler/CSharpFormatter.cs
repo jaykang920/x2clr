@@ -287,19 +287,6 @@ namespace x2
             }
             Out.WriteLine(");");
             Indent(1); Out.WriteLine("}");
-
-            Out.WriteLine();
-            if (def.BaseClass == "Cell" || def.BaseClass == "x2.Cell")
-            {
-                Indent(1); Out.WriteLine("public static {0} New()", def.Name);
-            }
-            else
-            {
-                Indent(1); Out.WriteLine("new public static {0} New()", def.Name);
-            }
-            Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("return new {0}();", def.Name);
-            Indent(1); Out.WriteLine("}");
         }
 
         private void FormatConstructor(CellDef def)

@@ -11,14 +11,14 @@ namespace x2.Samples.Capitalizer
     {
         static void OnCapitalizeReq(CapitalizeReq req)
         {
-            var resp = CapitalizeResp.New();
+            var resp = new CapitalizeResp();
             resp.Result = req.Message.ToUpper();
             Flow.PostAway(resp);
         }
 
         protected override void SetUp()
         {
-            Subscribe(CapitalizeReq.New(), OnCapitalizeReq);
+            Subscribe(new CapitalizeReq(), OnCapitalizeReq);
         }
     }
 
@@ -31,7 +31,7 @@ namespace x2.Samples.Capitalizer
 
         protected override void SetUp()
         {
-            Subscribe(CapitalizeResp.New(), OnCapitalizeResp);
+            Subscribe(new CapitalizeResp(), OnCapitalizeResp);
         }
     }
 
@@ -53,7 +53,7 @@ namespace x2.Samples.Capitalizer
                     break;
                 }
 
-                var e = CapitalizeReq.New();
+                var e = new CapitalizeReq();
                 e.Message = message;
                 Hub.Get().Post(e);
             }

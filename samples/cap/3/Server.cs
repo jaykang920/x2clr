@@ -17,7 +17,7 @@ namespace x2.Samples.Capitalizer
     {
         static void OnCapitalizeReq(CapitalizeReq req)
         {
-            var resp = CapitalizeResp.New();
+            var resp = new CapitalizeResp();
             resp.SessionHandle = req.SessionHandle;
             resp.Result = req.Message.ToUpper();
             Flow.PostAway(resp);
@@ -25,7 +25,7 @@ namespace x2.Samples.Capitalizer
 
         protected override void SetUp()
         {
-            Subscribe(CapitalizeReq.New(), OnCapitalizeReq);
+            Subscribe(new CapitalizeReq(), OnCapitalizeReq);
         }
     }
 
@@ -37,14 +37,14 @@ namespace x2.Samples.Capitalizer
 
             public void OnConnect()
             {
-                var e = CapitalizeResp.New();
+                var e = new CapitalizeResp();
                 e.SessionHandle = LinkSession.Handle;
                 Flow.Bind(e, Send);
             }
 
             public void OnDisconnect()
             {
-                var e = CapitalizeResp.New();
+                var e = new CapitalizeResp();
                 e.SessionHandle = LinkSession.Handle;
                 Flow.Unbind(e, Send);
             }
