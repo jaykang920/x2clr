@@ -45,7 +45,8 @@ namespace x2
         }
 
         /// <summary>
-        /// Determines whether the specified object is equal to this one.
+        /// Determines whether the specified object is equal to the current
+        /// object.
         /// </summary>
         public override bool Equals(object obj)
         {

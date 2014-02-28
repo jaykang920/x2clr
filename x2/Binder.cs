@@ -21,20 +21,23 @@ namespace x2
 
         public virtual Token Bind(Event e, Handler handler)
         {
-            filter.Add(e.GetTypeId(), e.GetFingerprint());
             HandlerSet handlers;
             if (!handlerMap.TryGetValue(e, out handlers))
             {
                 handlers = new HandlerSet();
                 handlerMap.Add(e, handlers);
             }
-            handlers.Add(handler);
 
             var token = new Token(e, handler);
-            if (handler.Action.Target is EventSink)
+            if (handlers.Add(handler))
             {
-                var eventSink = (EventSink)handler.Action.Target;
-                eventSink.AddBinding(token);
+                filter.Add(e.GetTypeId(), e.GetFingerprint());
+
+                if (handler.Action.Target is EventSink)
+                {
+                    var eventSink = (EventSink)handler.Action.Target;
+                    eventSink.AddBinding(token);
+                }
             }
             return token;
         }
@@ -88,12 +91,17 @@ namespace x2
         private void UnbindInternal(Event e, Handler handler)
         {
             HandlerSet handlers;
-            if (handlerMap.TryGetValue(e, out handlers))
+            if (!handlerMap.TryGetValue(e, out handlers))
             {
-                if (handlers.Remove(handler))
-                {
-                    handlerMap.Remove(e);
-                }
+                return;
+            }
+            if (!handlers.Remove(handler))
+            {
+                return;
+            }
+            if (handlers.Count == 0)
+            {
+                handlerMap.Remove(e);
             }
             filter.Remove(e.GetTypeId(), e.GetFingerprint());
         }
@@ -204,20 +212,23 @@ namespace x2
 
         private class HandlerSet
         {
-            private readonly List<Handler> handlers;
+            private readonly IList<Handler> handlers;
+
+            public int Count { get { return handlers.Count; } }
 
             public HandlerSet()
             {
                 handlers = new List<Handler>();
             }
 
-            public void Add(Handler handler)
+            public bool Add(Handler handler)
             {
                 if (handlers.Contains(handler))
                 {
-                    return;
+                    return false;
                 }
                 handlers.Add(handler);
+                return true;
             }
 
             public IEnumerable<Handler> GetEnumerable()
@@ -227,8 +238,7 @@ namespace x2
 
             public bool Remove(Handler handler)
             {
-                handlers.Remove(handler);
-                return (handlers.Count == 0);
+                return handlers.Remove(handler);
             }
         }
 

@@ -3,26 +3,23 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace x2
 {
     /// <summary>
-    /// Defines a method to handle events.
-    /// </summary>
-    public interface IHandler
-    {
-        void Invoke(Event e);
-    }
-
-    /// <summary>
     /// Abstract base class for concrete event handlers.
     /// </summary>
-    public abstract class Handler : IHandler
+    public abstract class Handler
     {
+        /// <summary>
+        /// Gets the underlying delegate of this handler.
+        /// </summary>
         public abstract Delegate Action { get; }
 
+        /// <summary>
+        /// Determines whether the specified object is equal to the current
+        /// object.
+        /// </summary>
         public override bool Equals(object obj)
         {
             if (Object.ReferenceEquals(this, obj))
@@ -38,14 +35,24 @@ namespace x2
             return Action.Equals(other.Action);
         }
 
+        /// <summary>
+        /// Returns the hash code for the current object.
+        /// </summary>
         public override int GetHashCode()
         {
             return Action.GetHashCode();
         }
 
+        /// <summary>
+        /// Invokes the underlying delegate of this handler with the specified
+        /// event.
+        /// </summary>
         public abstract void Invoke(Event e);
     }
 
+    /// <summary>
+    /// Represents a generic method handler.
+    /// </summary>
     public class MethodHandler<T> : Handler
         where T : Event
     {
@@ -64,6 +71,9 @@ namespace x2
         }
     }
 
+    /// <summary>
+    /// Represents a coroutine method handler.
+    /// </summary>
     public class CoroutineHandler<T> : Handler
         where T : Event
     {
@@ -83,6 +93,9 @@ namespace x2
         }
     }
 
+    /// <summary>
+    /// Represents a conditional generic method handler.
+    /// </summary>
     public class ConditionalMethodHandler<T> : MethodHandler<T>
         where T : Event
     {
@@ -94,27 +107,6 @@ namespace x2
             this.predicate = predicate;
         }
 
-        /*
-        public override bool Equals(object obj)
-        {
-            if (!base.Equals(obj))
-            {
-                return false;
-            }
-
-            var other = (ConditionalMethodHandler<T>)obj;
-            return predicate.Equals(other.predicate);
-        }
-
-        public override int GetHashCode()
-        {
-            Hash hash = new Hash(Hash.Seed);
-            hash.Update(base.GetHashCode());
-            hash.Update(predicate.GetHashCode());
-            return hash.Code;
-        }
-        */
-
         public override void Invoke(Event e)
         {
             if (predicate((T)e))
@@ -124,6 +116,9 @@ namespace x2
         }
     }
 
+    /// <summary>
+    /// Represents a conditional coroutine method handler.
+    /// </summary>
     public class ConditionalCoroutineHandler<T> : CoroutineHandler<T>
         where T : Event
     {
@@ -134,27 +129,6 @@ namespace x2
         {
             this.predicate = predicate;
         }
-
-        /*
-        public override bool Equals(object obj)
-        {
-            if (!base.Equals(obj))
-            {
-                return false;
-            }
-
-            var other = (ConditionalCoroutineHandler<T>)obj;
-            return predicate.Equals(other.predicate);
-        }
-
-        public override int GetHashCode()
-        {
-            Hash hash = new Hash(Hash.Seed);
-            hash.Update(base.GetHashCode());
-            hash.Update(predicate.GetHashCode());
-            return hash.Code;
-        }
-        */
 
         public override void Invoke(Event e)
         {

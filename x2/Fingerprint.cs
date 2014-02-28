@@ -126,7 +126,8 @@ namespace x2
         }
 
         /// <summary>
-        /// Determines whether the specified object is equal to this Fingerprint.
+        /// Determines whether the specified object is equal to the current
+        /// object.
         /// </summary>
         public override bool Equals(object obj)
         {
@@ -157,7 +158,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Returns the hash code for this instance.
+        /// Returns the hash code for the current object.
         /// </summary>
         public override int GetHashCode()
         {
