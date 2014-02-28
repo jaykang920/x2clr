@@ -73,7 +73,10 @@ namespace x2
 
         public virtual void Unbind(Event e, Handler handler)
         {
-            UnbindInternal(e, handler);
+            if (!UnbindInternal(e, handler))
+            {
+                return;
+            }
 
             var token = new Token(e, handler);
             if (handler.Action.Target is EventSink)
@@ -88,22 +91,23 @@ namespace x2
             UnbindInternal(token.key, token.value);
         }
 
-        private void UnbindInternal(Event e, Handler handler)
+        private bool UnbindInternal(Event e, Handler handler)
         {
             HandlerSet handlers;
             if (!handlerMap.TryGetValue(e, out handlers))
             {
-                return;
+                return false;
             }
             if (!handlers.Remove(handler))
             {
-                return;
+                return false;
             }
             if (handlers.Count == 0)
             {
                 handlerMap.Remove(e);
             }
             filter.Remove(e.GetTypeId(), e.GetFingerprint());
+            return true;
         }
 
         public struct Token

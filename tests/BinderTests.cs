@@ -44,6 +44,63 @@ namespace x2.Tests
         }
 
         [Test]
+        public void TestDuplicateBinding()
+        {
+            Binder binder = new Binder();
+            List<Handler> handlerChain = new List<Handler>();
+
+            binder.Bind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSampleEvent1));
+            binder.Bind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSampleEvent1));
+
+            binder.Unbind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSampleEvent1));
+
+            Assert.AreEqual(0, binder.BuildHandlerChain(new SampleEvent1 { Foo = 1 }, handlerChain));
+
+            // with EventSink
+
+            var sink = new SampleEventSink();
+            sink.Bind(new SampleEvent1 { Foo = 1 }, sink.OnSampleEvent1);
+            sink.Bind(new SampleEvent1 { Foo = 1 }, sink.OnSampleEvent1);
+
+            sink.Unbind(new SampleEvent1 { Foo = 1 }, sink.OnSampleEvent1);
+
+            handlerChain.Clear();
+            Assert.AreEqual(0, binder.BuildHandlerChain(new SampleEvent1 { Foo = 1 }, handlerChain));
+        }
+
+        [Test]
+        public void TestDuplicateUnbinding()
+        {
+            Binder binder = new Binder();
+
+            binder.Bind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSampleEvent1));
+            binder.Bind(new SampleEvent1 { Foo = 2 }, new MethodHandler<SampleEvent1>(OnSpecificSampleEvent1));
+
+            binder.Unbind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSampleEvent1));
+            binder.Unbind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSampleEvent1));
+
+            List<Handler> handlerChain = new List<Handler>();
+
+            handlerChain.Clear();
+            Assert.AreEqual(0, binder.BuildHandlerChain(new SampleEvent1 { Foo = 1 }, handlerChain));
+            Assert.AreEqual(1, binder.BuildHandlerChain(new SampleEvent1 { Foo = 2 }, handlerChain));
+            Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSpecificSampleEvent1), handlerChain[0]);
+
+            // with EventSink
+
+            var sink = new SampleEventSink();
+            sink.Bind(new SampleEvent1 { Foo = 1 }, sink.OnSampleEvent1);
+
+            sink.Unbind(new SampleEvent1 { Foo = 1 }, sink.OnSampleEvent1);
+            sink.Bind(new SampleEvent1 { Foo = 1 }, sink.OnSampleEvent1);
+
+            handlerChain.Clear();
+            Assert.AreEqual(0, binder.BuildHandlerChain(new SampleEvent1 { Foo = 1 }, handlerChain));
+            Assert.AreEqual(1, binder.BuildHandlerChain(new SampleEvent1 { Foo = 2 }, handlerChain));
+            Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSpecificSampleEvent1), handlerChain[0]);
+        }
+
+        [Test]
         public void TestHandlerChainBuilding()
         {
             Binder binder = new Binder();
@@ -124,6 +181,17 @@ namespace x2.Tests
 
         void OnSpecificSampleEvent1(SampleEvent1 e)
         {
+        }
+
+        class SampleEventSink : EventSink
+        {
+            public void OnSampleEvent1(SampleEvent1 e)
+            {
+            }
+
+            public void OnSpecificSampleEvent1(SampleEvent1 e)
+            {
+            }
         }
     }
 }
