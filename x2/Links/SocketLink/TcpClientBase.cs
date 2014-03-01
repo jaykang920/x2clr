@@ -23,6 +23,7 @@ namespace x2.Links.SocketLink
         private int retryCount;
 
         public bool AutoReconnect { get; set; }
+        public int ReconnectDelay { get; set; }  // in millisec
         public int MaxRetryCount { get; set; }  // 0 for unlimited
         public long RetryInterval { get; set; }  // in millisec
 
@@ -105,6 +106,8 @@ namespace x2.Links.SocketLink
 
             if (AutoReconnect)
             {
+                Thread.Sleep(ReconnectDelay);
+
                 Connect(remoteHost, remotePort);
             }
         }
