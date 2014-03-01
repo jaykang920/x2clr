@@ -94,12 +94,7 @@ namespace x2.Links.SocketLink
             }
             else
             {
-                if (e.SocketError == SocketError.OperationAborted)
-                {
-                    // Socket has been closed.
-                    return;
-                }
-                else
+                if (e.SocketError != SocketError.OperationAborted)
                 {
                     Log.Warn("{0} {1} recv error {2}", link.Name, Handle, e.SocketError);
                 }

@@ -195,6 +195,7 @@ namespace x2.Links.SocketLink
                 // heartbeat timeout
                 if (closeOnHeartbeatFailure)
                 {
+                    Log.Error("{0} {1} heartbeat timeout", Name, link.Session.Handle);
                     Close();
                 }
                 else

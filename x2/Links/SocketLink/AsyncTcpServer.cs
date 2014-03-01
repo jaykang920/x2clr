@@ -210,6 +210,7 @@ namespace x2.Links.SocketLink
                 var session = (SocketLinkSession)state;
                 if (closeOnHeartbeatFailure)
                 {
+                    Log.Error("{0} {1} heartbeat timeout", Name, session.Handle);
                     session.Close();
                 }
                 else

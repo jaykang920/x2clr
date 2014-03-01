@@ -63,16 +63,6 @@ namespace x2.Links.SocketLink
             }
             catch (Exception e)
             {
-                var se = e as SocketException;
-                if (se != null)
-                {
-                    if (se.SocketErrorCode == SocketError.OperationAborted)
-                    {
-                        // Socket has been closed.
-                        return;
-                    }
-                }
-
                 Log.Warn("{0} {1} recv error: {2}", link.Name, Handle, e.Message);
             }
 

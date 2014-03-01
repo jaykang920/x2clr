@@ -81,15 +81,18 @@ namespace x2.Links.SocketLink
         /// </summary>
         public override void Close()
         {
-            if (socket == null) { return; }
-
+            if (socket == null)
+            {
+                return;
+            }
             if (socket.Connected)
             {
                 socket.Shutdown(SocketShutdown.Both);
             }
             socket.Close();
-
             socket = null;
+
+            Log.Info("{0} {1} closed", link.Name, Handle);
         }
 
         /// <summary>
