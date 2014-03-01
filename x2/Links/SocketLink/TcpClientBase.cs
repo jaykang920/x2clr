@@ -22,10 +22,11 @@ namespace x2.Links.SocketLink
         private Stopwatch stopwatch;
         private int retryCount;
 
-        public bool AutoReconnect { get; set; }
-        public int ReconnectDelay { get; set; }  // in millisec
         public int MaxRetryCount { get; set; }  // 0 for unlimited
         public long RetryInterval { get; set; }  // in millisec
+
+        public bool AutoReconnect { get; set; }
+        public int ReconnectDelay { get; set; }  // in millisec
 
         public bool Connected { get { return (session != null); } }
 
