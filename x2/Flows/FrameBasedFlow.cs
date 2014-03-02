@@ -168,7 +168,7 @@ namespace x2.Flows
 
                 if (queue != null)
                 {
-                    while (true)
+                    while ((DateTime.Now.Ticks - Time.CurrentTicks) < Resolution)
                     {
                         Event e;
                         if (queue.TryDequeue(out e))
@@ -181,22 +181,13 @@ namespace x2.Flows
                                 break;
                             }
                         }
-
-                        if ((DateTime.Now.Ticks - Time.CurrentTicks) < Resolution)
-                        {
-                            Thread.Sleep(1);
-                        }
-                        else
-                        {
-                            break;
-                        }
                     }
                 }
                 else
                 {
                     var tickDelta = DateTime.Now.Ticks - Time.CurrentTicks;
                     var delay = (tickDelta < Resolution ?
-                        (int)((Resolution - tickDelta) / Time.TicksInMillisecond) : 1);
+                        (int)((Resolution - tickDelta) / Time.TicksInMillisecond) : 0);
                     Thread.Sleep(delay);
                 }
             }
