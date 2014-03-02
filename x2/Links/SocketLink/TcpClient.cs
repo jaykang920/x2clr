@@ -87,6 +87,7 @@ namespace x2.Links.SocketLink
             get { return closeOnHeartbeatFailure; }
             set { closeOnHeartbeatFailure = value; }
         }
+        public double HeartbeatTimeout { get; set; }  // in seconds
 
         public bool AutoReconnect
         {
@@ -121,6 +122,7 @@ namespace x2.Links.SocketLink
             this.name = name;
 
             Resolution = Time.TicksInSecond;  // 1-second frame resolution
+            HeartbeatTimeout = 15;
 
             Timer = new x2.Flows.Timer(OnTimer);
         }

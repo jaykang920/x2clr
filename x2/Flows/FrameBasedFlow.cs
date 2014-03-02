@@ -186,6 +186,7 @@ namespace x2.Flows
                         else
                         {
                             Thread.Sleep(1);
+                            break;
                         }
                     }
                 }
