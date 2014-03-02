@@ -90,6 +90,8 @@ namespace x2.Flows
             syncRoot = new Object();
             thread = null;
 
+            Resolution = Time.TicksInMillisecond;  // default 1ms resolution
+
             Time = new Time();
         }
 
@@ -180,6 +182,10 @@ namespace x2.Flows
                                 shouldStop = true;
                                 break;
                             }
+                        }
+                        else
+                        {
+                            Thread.Sleep(1);
                         }
                     }
                 }
