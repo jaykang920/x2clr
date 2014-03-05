@@ -183,7 +183,7 @@ namespace x2
         /// </summary>
         private static void OnException(Exception e)
         {
-            throw new Exception("", e);
+            throw new Exception(null, e);
         }
 
         public void Publish(Event e)
@@ -328,6 +328,9 @@ namespace x2
                 }
                 catch (Exception ex)
                 {
+                    Log.Error("{0} handler exception {1} {2} {3}",
+                        Name, handler.Action, e, ex);
+
                     ExceptionHandler(ex);
                 }
             }
