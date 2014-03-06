@@ -328,9 +328,6 @@ namespace x2
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("{0} handler exception {1} {2} {3}",
-                        Name, handler.Action, e, ex);
-
                     ExceptionHandler(ex);
                 }
             }

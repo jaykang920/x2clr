@@ -65,6 +65,16 @@ namespace x2
             }
         }
 
+        public void Bind<T>(T e, Action<T> handler, Predicate<T> predicate)
+            where T : Event
+        {
+            var flow = Flow;
+            if (flow != null)
+            {
+                flow.Subscribe(e, handler, predicate);
+            }
+        }
+
         public void Bind<T>(T e, Func<Coroutine, T, IEnumerator> handler)
             where T : Event
         {
@@ -72,6 +82,17 @@ namespace x2
             if (flow != null)
             {
                 flow.Subscribe(e, handler);
+            }
+        }
+
+        public void Bind<T>(T e, Func<Coroutine, T, IEnumerator> handler,
+            Predicate<T> predicate)
+            where T : Event
+        {
+            var flow = Flow;
+            if (flow != null)
+            {
+                flow.Subscribe(e, handler, predicate);
             }
         }
 
@@ -85,6 +106,16 @@ namespace x2
             }
         }
 
+        public void Unbind<T>(T e, Action<T> handler, Predicate<T> predicate)
+            where T : Event
+        {
+            var flow = Flow;
+            if (flow != null)
+            {
+                flow.Unsubscribe(e, handler, predicate);
+            }
+        }
+
         public void Unbind<T>(T e, Func<Coroutine, T, IEnumerator> handler)
             where T : Event
         {
@@ -92,6 +123,17 @@ namespace x2
             if (flow != null)
             {
                 flow.Unsubscribe(e, handler);
+            }
+        }
+
+        public void Unbind<T>(T e, Func<Coroutine, T, IEnumerator> handler,
+            Predicate<T> predicate)
+            where T : Event
+        {
+            var flow = Flow;
+            if (flow != null)
+            {
+                flow.Unsubscribe(e, handler, predicate);
             }
         }
 
