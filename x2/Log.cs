@@ -22,7 +22,7 @@ namespace x2
     /// <summary>
     /// Represents the method that handles log calls.
     /// </summary>
-    public delegate void LogHandler(LogLevel level, object message);
+    public delegate void LogHandler(LogLevel level, string message);
 
     /// <summary>
     /// Represents the logging helper class.
@@ -39,7 +39,7 @@ namespace x2
         /// </summary>
         public static LogHandler Handler { get; set; }
 
-        public static void Emit(LogLevel level, object message)
+        public static void Emit(LogLevel level, string message)
         {
             if (Handler == null || Level > level)
             {
@@ -86,7 +86,7 @@ namespace x2
 
         #region Trace
 
-        public static void Trace(object message)
+        public static void Trace(string message)
         {
             Emit(LogLevel.Trace, message);
         }
@@ -115,7 +115,7 @@ namespace x2
 
         #region Debug
 
-        public static void Debug(object message)
+        public static void Debug(string message)
         {
             Emit(LogLevel.Debug, message);
         }
@@ -144,7 +144,7 @@ namespace x2
 
         #region Info
 
-        public static void Info(object message)
+        public static void Info(string message)
         {
             Emit(LogLevel.Info, message);
         }
@@ -173,7 +173,7 @@ namespace x2
 
         #region Warn
 
-        public static void Warn(object message)
+        public static void Warn(string message)
         {
             Emit(LogLevel.Warning, message);
         }
@@ -202,7 +202,7 @@ namespace x2
 
         #region Error
 
-        public static void Error(object message)
+        public static void Error(string message)
         {
             Emit(LogLevel.Error, message);
         }
