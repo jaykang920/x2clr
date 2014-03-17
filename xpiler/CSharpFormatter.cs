@@ -106,6 +106,7 @@ namespace x2
         {
             nativeTypes = new Dictionary<string, string>();
             nativeTypes.Add("bool", "bool");
+            nativeTypes.Add("byte", "byte");
             nativeTypes.Add("int8", "sbyte");
             nativeTypes.Add("int16", "short");
             nativeTypes.Add("int32", "int");
@@ -119,6 +120,7 @@ namespace x2
 
             defaultValues = new Dictionary<string, string>();
             defaultValues.Add("bool", "false");
+            defaultValues.Add("byte", "0");
             defaultValues.Add("int8", "0");
             defaultValues.Add("int16", "0");
             defaultValues.Add("int32", "0");
