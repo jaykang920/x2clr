@@ -205,6 +205,24 @@ namespace x2
         }
 
         /// <summary>
+        /// Determines whether this event object is a kind of the specified type
+        /// identifier in the custom type hierarchy.
+        /// </summary>
+        public bool IsKindOf(int typeId)
+        {
+            Tag tag = (Tag)GetTypeTag();
+            while (tag != null)
+            {
+                if (tag.TypeId == typeId)
+                {
+                    return true;
+                }
+                tag = (Tag)tag.Base;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Loads the instance members of this object from the specified Buffer.
         /// </summary>
         /// <param name="buffer">The buffer to read from.</param>
