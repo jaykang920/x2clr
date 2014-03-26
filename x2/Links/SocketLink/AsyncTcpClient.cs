@@ -120,7 +120,11 @@ namespace x2.Links.SocketLink
             set { link.RetryInterval = value; }
         }
 
-        public Action<Event, LinkSession> Preprocessor { get; set; }
+        public Action<Event, LinkSession> Preprocessor
+        {
+            get { return link.Preprocessor; }
+            set { link.Preprocessor = value; }
+        }
 
         public AsyncTcpClientFlow(string name)
         {

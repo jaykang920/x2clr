@@ -121,7 +121,11 @@ namespace x2.Links.SocketLink
             get { return link.Listening; }
         }
 
-        public Action<Event, LinkSession> Preprocessor { get; set; }
+        public Action<Event, LinkSession> Preprocessor
+        {
+            get { return link.Preprocessor; }
+            set { link.Preprocessor = value; }
+        }
 
         public AsyncTcpServerFlow(string name)
             : this(name, new AsyncTcpServer(name))
