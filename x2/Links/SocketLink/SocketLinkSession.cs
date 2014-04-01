@@ -202,16 +202,23 @@ namespace x2.Links.SocketLink
                     }
                     else
                     {
-                        retrieved.Load(recvBuffer);
-                        retrieved.SessionHandle = Handle;
-                        if (link.Preprocessor != null)
+                        try
                         {
-                            link.Preprocessor(retrieved, this);
+                            retrieved.Load(recvBuffer);
+                            retrieved.SessionHandle = Handle;
+                            if (link.Preprocessor != null)
+                            {
+                                link.Preprocessor(retrieved, this);
+                            }
+
+                            Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
+
+                            link.Flow.Publish(retrieved);
                         }
-
-                        Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
-
-                        link.Flow.Publish(retrieved);
+                        catch (Exception e)
+                        {
+                            Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, typeId, e.ToString());
+                        }
                     }
                 }
 
