@@ -127,8 +127,13 @@ namespace x2.Links.SocketLink
         }
 
         public AsyncTcpClientFlow(string name)
+            : this(name, new AsyncTcpClient(name))
         {
-            link = new AsyncTcpClient(name);
+        }
+
+        public AsyncTcpClientFlow(string name, AsyncTcpClient link)
+        {
+            this.link = link;
             Add(link);
 
             link.HeartbeatEventHandler = OnHeartbeatEvent;
