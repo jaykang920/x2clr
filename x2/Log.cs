@@ -207,6 +207,11 @@ namespace x2
             Emit(LogLevel.Error, message);
         }
 
+        public static void Error(string message, Exception exception)
+        {
+            Emit(LogLevel.Error, String.Format("{0} {1}", message, exception.ToString()));
+        }
+
         public static void Error(string format, object arg0)
         {
             Emit(LogLevel.Error, format, arg0);

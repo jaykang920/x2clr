@@ -59,34 +59,41 @@ namespace x2.Transforms
             Log.Trace("Cipher.Transform: input length {0}", length);
 
             int result;
-            using (var ms = new MemoryStream(length + BlockSizeInBytes))
+
+            var ms = new MemoryStream(length + BlockSizeInBytes);
+            var encryptor = algorithm.CreateEncryptor(key, iv);
+            using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
             {
-                var encryptor = algorithm.CreateEncryptor(key, iv);
-                using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                var buffers = new List<ArraySegment<byte>>();
+                buffer.ListEndingSegments(buffers, length);
+
+                for (var i = 0; i < buffers.Count; ++i)
                 {
-                    var buffers = new List<ArraySegment<byte>>();
-                    buffer.ListEndingSegments(buffers, length);
+                    var segment = buffers[i];
 
-                    for (var i = 0; i < buffers.Count; ++i)
+                    if (Log.Level <= LogLevel.Trace)
                     {
-                        var segment = buffers[i];
-
                         Log.Trace("Cipher.Transform: input block {0}",
                             BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
-
-                        cs.Write(segment.Array, segment.Offset, segment.Count);
                     }
-                    cs.FlushFinalBlock();
 
-                    result = (int)ms.Length;
+                    cs.Write(segment.Array, segment.Offset, segment.Count);
+                }
+                cs.FlushFinalBlock();
+
+                result = (int)ms.Length;
+                var streamBuffer = ms.GetBuffer();
+
+                if (Log.Level <= LogLevel.Trace)
+                {
+                    Log.Trace("Cipher.Transform: output {0} {1}",
+                        result, BitConverter.ToString(streamBuffer, 0, result));
                 }
 
                 buffer.Rewind();
-                buffer.CopyFrom(ms.GetBuffer(), 0, result);
-
-                Log.Trace("Cipher.Transform: output {0} {1}",
-                    result, BitConverter.ToString(ms.GetBuffer(), 0, result));
+                buffer.CopyFrom(streamBuffer, 0, result);
             }
+
             return result;
         }
 
@@ -95,33 +102,39 @@ namespace x2.Transforms
             Log.Trace("Cipher.InverseTransform: input length {0}", length);
 
             int result;
-            using (var ms = new MemoryStream(length))
+
+            var ms = new MemoryStream(length);
+            var decryptor = algorithm.CreateDecryptor(key, iv);
+            using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
             {
-                var decryptor = algorithm.CreateDecryptor(key, iv);
-                using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
+                var buffers = new List<ArraySegment<byte>>();
+                buffer.ListStartingSegments(buffers, length);
+
+                for (var i = 0; i < buffers.Count; ++i)
                 {
-                    var buffers = new List<ArraySegment<byte>>();
-                    buffer.ListStartingSegments(buffers, length);
+                    var segment = buffers[i];
 
-                    for (var i = 0; i < buffers.Count; ++i)
+                    if (Log.Level <= LogLevel.Trace)
                     {
-                        var segment = buffers[i];
-
                         Log.Trace("Cipher.InverseTransform: input block {0}",
                             BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
-
-                        cs.Write(segment.Array, segment.Offset, segment.Count);
                     }
-                    cs.FlushFinalBlock();
 
-                    result = (int)ms.Length;
+                    cs.Write(segment.Array, segment.Offset, segment.Count);
+                }
+                cs.FlushFinalBlock();
+
+                result = (int)ms.Length;
+                var streamBuffer = ms.GetBuffer();
+
+                if (Log.Level <= LogLevel.Trace)
+                {
+                    Log.Trace("Cipher.InverseTransform: output {0} {1}",
+                        result, BitConverter.ToString(streamBuffer, 0, result));
                 }
 
                 buffer.Rewind();
-                buffer.CopyFrom(ms.GetBuffer(), 0, result);
-
-                Log.Trace("Cipher.InverseTransform: output {0} {1}",
-                    result, BitConverter.ToString(ms.GetBuffer(), 0, result));
+                buffer.CopyFrom(streamBuffer, 0, result);
             }
             return result;
         }

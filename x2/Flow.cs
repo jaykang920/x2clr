@@ -40,7 +40,7 @@ namespace x2
         /// <summary>
         /// Gets or sets the default exception handler for all flows.
         /// </summary>
-        public static Action<Exception> DefaultExceptionHandler { get; set; }
+        public static Action<string, Exception> DefaultExceptionHandler { get; set; }
 
         public static LogLevel DefaultSlowHandlerLogLevel { get; set; }
         public static int DefaultSlowHandlerLogThreshold { get; set; }  // in millisec
@@ -48,7 +48,7 @@ namespace x2
         /// <summary>
         /// Gets or sets the exception handler for this flow.
         /// </summary>
-        public Action<Exception> ExceptionHandler { get; set; }
+        public Action<string, Exception> ExceptionHandler { get; set; }
 
         /// <summary>
         /// Gets the name of this flow.
@@ -169,9 +169,9 @@ namespace x2
         /// <summary>
         /// Default exception handler.
         /// </summary>
-        private static void OnException(Exception e)
+        private static void OnException(string message, Exception e)
         {
-            throw new Exception(null, e);
+            throw new Exception(message, e);
         }
 
         public void Publish(Event e)
@@ -294,9 +294,11 @@ namespace x2
                 // unhandled event
                 return;
             }
+
+            Handler handler;
             for (int i = 0, count = handlerChain.Count; i < count; ++i)
             {
-                var handler = handlerChain[i];
+                handler = handlerChain[i];
                 try
                 {
                     stopwatch.Reset();
@@ -316,7 +318,9 @@ namespace x2
                 }
                 catch (Exception ex)
                 {
-                    ExceptionHandler(ex);
+                    ExceptionHandler(
+                        String.Format("{0} {1} {2}", Name, handler.ToString(), e.ToString()),
+                        ex);
                 }
             }
         }
