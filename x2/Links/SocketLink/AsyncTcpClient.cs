@@ -62,6 +62,7 @@ namespace x2.Links.SocketLink
 
                 ConnectInternal();
 
+                connectEventArgs.Dispose();
                 connectEventArgs = null;
 
                 session = new AsyncTcpLinkSession(this, socket);

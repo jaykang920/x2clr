@@ -77,7 +77,7 @@ namespace x2
         /// Gets the diagnostics object.
         /// </summary>
         public Diagnostics Diag { get; protected set; }
-
+        
         /// <summary>
         /// Internal diagnostics helper class.
         /// </summary>

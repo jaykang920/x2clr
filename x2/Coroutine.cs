@@ -6,6 +6,8 @@ using System.Collections;
 
 namespace x2
 {
+    // x2 Coroutine and YieldInstructions will not work in MultiThreadedFlow!
+
     public abstract class YieldInstruction : IEnumerator
     {
         // Alias of MoveNext()

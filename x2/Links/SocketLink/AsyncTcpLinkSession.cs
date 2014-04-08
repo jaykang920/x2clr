@@ -31,6 +31,27 @@ namespace x2.Links.SocketLink
             sendEventArgs.Completed += OnSendCompleted;
         }
 
+        /// <summary>
+        /// Closes this session.
+        /// </summary>
+        public override void Close()
+        {
+            base.Close();
+
+            Log.Error("AsyncTcpLinkSession.Close {0}", Handle);
+
+            if (recvEventArgs != null)
+            {
+                recvEventArgs.Dispose();
+                recvEventArgs = null;
+            }
+            if (sendEventArgs != null)
+            {
+                sendEventArgs.Dispose();
+                sendEventArgs = null;
+            }
+        }
+
         protected override void ReceiveImpl()
         {
             recvEventArgs.BufferList = recvBufferList;

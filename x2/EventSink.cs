@@ -139,12 +139,18 @@ namespace x2
 
         internal void AddBinding(Binder.Token binderToken)
         {
-            bindings.Add(binderToken);
+            lock (bindings)
+            {
+                bindings.Add(binderToken);
+            }
         }
 
         internal void RemoveBinding(Binder.Token binderToken)
         {
-            bindings.Remove(binderToken);
+            lock (bindings)
+            {
+                bindings.Remove(binderToken);
+            }
         }
 
         public void CleanUp()
@@ -154,11 +160,21 @@ namespace x2
             {
                 return;
             }
-            foreach (var binding in bindings)
+
+            lock (bindings)
             {
-                flow.Unsubscribe(binding);
+                if (bindings.Count == 0)
+                {
+                    return;
+                }
+
+                foreach (var binding in bindings)
+                {
+                    flow.Unsubscribe(binding);
+                }
+
+                bindings.Clear();
             }
-            bindings.Clear();
         }
     }
 }

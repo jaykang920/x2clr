@@ -113,6 +113,12 @@ namespace x2.Links.SocketLink
             base.OnDisconnect(session);
         }
 
+        protected override void OnSessionDisconnected(LinkSessionDisconnected e)
+        {
+            var session = (SocketLinkSession)e.Context;
+            session.Close();
+        }
+
         #region Diagnostics
 
         /// <summary>
