@@ -38,8 +38,6 @@ namespace x2.Links.SocketLink
         {
             base.Close();
 
-            Log.Error("AsyncTcpLinkSession.Close {0}", Handle);
-
             if (recvEventArgs != null)
             {
                 recvEventArgs.Dispose();
@@ -54,6 +52,11 @@ namespace x2.Links.SocketLink
 
         protected override void ReceiveImpl()
         {
+            if (recvEventArgs == null)
+            {
+                return;
+            }
+
             recvEventArgs.BufferList = recvBufferList;
 
             if (socket == null || !socket.Connected)
@@ -70,6 +73,11 @@ namespace x2.Links.SocketLink
 
         protected override void SendImpl()
         {
+            if (sendEventArgs == null)
+            {
+                return;
+            }
+
             sendEventArgs.BufferList = sendBufferList;
 
             if (socket == null || !socket.Connected)
