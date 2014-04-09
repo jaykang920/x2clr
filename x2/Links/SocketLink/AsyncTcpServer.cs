@@ -62,7 +62,7 @@ namespace x2.Links.SocketLink
                 // Adjust client socket options.
                 clientSocket.NoDelay = NoDelay;
 
-                Log.Info("{0} {1} accepted from {2}",
+                Log.Info("{5} {1} accepted from {2}",
                     Name, clientSocket.Handle, clientSocket.RemoteEndPoint);
 
                 var session = new AsyncTcpLinkSession(this, clientSocket);
@@ -182,7 +182,7 @@ namespace x2.Links.SocketLink
             OnSessionConnected(e);
 
             SocketLinkSession linkSession = (SocketLinkSession)e.Context;
-            linkSession.HeartbeatTimeoutToken = Timer.Reserve(linkSession, 15);
+            linkSession.HeartbeatTimeoutToken = Timer.Reserve(linkSession, HeartbeatTimeout);
         }
 
         private void OnLinkSessionDisconnected(LinkSessionDisconnected e)
@@ -234,7 +234,7 @@ namespace x2.Links.SocketLink
         void OnHeartbeatEvent(SocketLinkSession session, HeartbeatEvent e)
         {
             Timer.Cancel(session.HeartbeatTimeoutToken);
-            session.HeartbeatTimeoutToken = Timer.Reserve(session, 15);
+            session.HeartbeatTimeoutToken = Timer.Reserve(session, HeartbeatTimeout);
         }
     }
 }

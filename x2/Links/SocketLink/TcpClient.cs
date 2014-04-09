@@ -167,17 +167,15 @@ namespace x2.Links.SocketLink
         {
             OnSessionConnected(e);
 
-            link.Session.HeartbeatTimeoutToken = Timer.Reserve(new Object(), 15);
+            link.Session.HeartbeatTimeoutToken = Timer.Reserve(link.Session, HeartbeatTimeout);
             Timer.ReserveRepetition(null, new TimeSpan(0, 0, 5));
         }
 
         private void OnLinkSessionDisconnected(LinkSessionDisconnected e)
         {
+            SocketLinkSession linkSession = (SocketLinkSession)e.Context;
+            Timer.Cancel(linkSession.HeartbeatTimeoutToken);
             Timer.CancelRepetition(null);
-            if (link.Session != null)
-            {
-                Timer.Cancel(link.Session.HeartbeatTimeoutToken);
-            }
 
             OnSessionDisconnected(e);
         }
@@ -199,19 +197,20 @@ namespace x2.Links.SocketLink
             else
             {
                 // heartbeat timeout
+                var session = (SocketLinkSession)state;
                 if (closeOnHeartbeatFailure)
                 {
-                    Log.Error("{0} {1} heartbeat timeout", Name, link.Session.Handle);
-                    Close();
+                    Log.Error("{0} {1} heartbeat timeout", Name, session.Handle);
+                    session.Close();
                 }
                 else
                 {
-                    if (link.Session == null)
+                    if (session.Socket == null || !session.Socket.Connected)
                     {
                         return;
                     }
-                    Log.Warn("{0} {1} heartbeat timeout", Name, link.Session.Handle);
-                    link.Session.HeartbeatTimeoutToken = Timer.Reserve(new Object(), 15);
+                    Log.Warn("{0} {1} heartbeat timeout", Name, session.Handle);
+                    session.HeartbeatTimeoutToken = Timer.Reserve(session, HeartbeatTimeout);
                 }
             }
         }
@@ -219,7 +218,7 @@ namespace x2.Links.SocketLink
         void OnHeartbeatEvent(SocketLinkSession session, HeartbeatEvent e)
         {
             Timer.Cancel(session.HeartbeatTimeoutToken);
-            session.HeartbeatTimeoutToken = Timer.Reserve(new Object(), 15);
+            session.HeartbeatTimeoutToken = Timer.Reserve(session, HeartbeatTimeout);
         }
     }
 }

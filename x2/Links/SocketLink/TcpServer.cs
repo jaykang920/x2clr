@@ -143,7 +143,7 @@ namespace x2.Links.SocketLink
             OnSessionConnected(e);
 
             SocketLinkSession linkSession = (SocketLinkSession)e.Context;
-            linkSession.HeartbeatTimeoutToken = Timer.Reserve(linkSession, 15);
+            linkSession.HeartbeatTimeoutToken = Timer.Reserve(linkSession, HeartbeatTimeout);
         }
 
         private void OnLinkSessionDisconnected(LinkSessionDisconnected e)
@@ -180,7 +180,7 @@ namespace x2.Links.SocketLink
                         return;
                     }
                     Log.Warn("{0} {1} heartbeat timeout", Name, session.Handle);
-                    session.HeartbeatTimeoutToken = Timer.Reserve(session, 15);
+                    session.HeartbeatTimeoutToken = Timer.Reserve(session, HeartbeatTimeout);
                 }
             }
         }
@@ -188,7 +188,7 @@ namespace x2.Links.SocketLink
         void OnHeartbeatEvent(SocketLinkSession session, HeartbeatEvent e)
         {
             Timer.Cancel(session.HeartbeatTimeoutToken);
-            session.HeartbeatTimeoutToken = Timer.Reserve(session, 15);
+            session.HeartbeatTimeoutToken = Timer.Reserve(session, HeartbeatTimeout);
         }
     }
 }
