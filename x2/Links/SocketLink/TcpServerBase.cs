@@ -97,7 +97,7 @@ namespace x2.Links.SocketLink
 
                 Log.Info("{0} listening on {1}", Name, endpoint);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 socket = null;
                 throw;

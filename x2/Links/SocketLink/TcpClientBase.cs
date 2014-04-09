@@ -127,7 +127,7 @@ namespace x2.Links.SocketLink
 
                 Log.Info("{0} connecting to {1}:{2}", Name, ip, port);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 socket = null;
                 throw;
