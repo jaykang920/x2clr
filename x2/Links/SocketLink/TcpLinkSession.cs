@@ -28,8 +28,14 @@ namespace x2.Links.SocketLink
             {
                 return;
             }
-
-            socket.BeginReceive(recvBufferList, SocketFlags.None, OnReceive, null);
+            try
+            {
+                socket.BeginReceive(recvBufferList, SocketFlags.None, OnReceive, null);
+            }
+            catch (ObjectDisposedException ode)
+            {
+                Log.Info("{0} {1} recv error {2}", link.Name, Handle, ode.Message);
+            }
         }
 
         protected override void SendImpl()
@@ -38,8 +44,14 @@ namespace x2.Links.SocketLink
             {
                 return;
             }
-
-            socket.BeginSend(sendBufferList, SocketFlags.None, OnSend, null);
+            try
+            {
+                socket.BeginSend(sendBufferList, SocketFlags.None, OnSend, null);
+            }
+            catch (ObjectDisposedException ode)
+            {
+                Log.Info("{0} {1} send error {2}", link.Name, Handle, ode.Message);
+            }
         }
 
         // Asynchronous callback for BeginReceive

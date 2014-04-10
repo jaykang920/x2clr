@@ -63,11 +63,17 @@ namespace x2.Links.SocketLink
             {
                 return;
             }
-
-            bool pending = socket.ReceiveAsync(recvEventArgs);
-            if (!pending)
+            try
             {
-                OnReceive(recvEventArgs);
+                bool pending = socket.ReceiveAsync(recvEventArgs);
+                if (!pending)
+                {
+                    OnReceive(recvEventArgs);
+                }
+            }
+            catch (ObjectDisposedException ode)
+            {
+                Log.Info("{0} {1} recv error {2}", link.Name, Handle, ode.Message);
             }
         }
 
@@ -84,11 +90,17 @@ namespace x2.Links.SocketLink
             {
                 return;
             }
-
-            bool pending = socket.SendAsync(sendEventArgs);
-            if (!pending)
+            try
             {
-                OnSend(sendEventArgs);
+                bool pending = socket.SendAsync(sendEventArgs);
+                if (!pending)
+                {
+                    OnSend(sendEventArgs);
+                }
+            }
+            catch (ObjectDisposedException ode)
+            {
+                Log.Info("{0} {1} send error {2}", link.Name, Handle, ode.Message);
             }
         }
 
