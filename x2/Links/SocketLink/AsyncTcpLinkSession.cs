@@ -52,19 +52,14 @@ namespace x2.Links.SocketLink
 
         protected override void ReceiveImpl()
         {
-            if (recvEventArgs == null)
-            {
-                return;
-            }
-
-            recvEventArgs.BufferList = recvBufferList;
-
-            if (socket == null || !socket.Connected)
+            if (recvEventArgs == null || socket == null)
             {
                 return;
             }
             try
             {
+                recvEventArgs.BufferList = recvBufferList;
+
                 bool pending = socket.ReceiveAsync(recvEventArgs);
                 if (!pending)
                 {
@@ -79,19 +74,14 @@ namespace x2.Links.SocketLink
 
         protected override void SendImpl()
         {
-            if (sendEventArgs == null)
-            {
-                return;
-            }
-
-            sendEventArgs.BufferList = sendBufferList;
-
-            if (socket == null || !socket.Connected)
+            if (sendEventArgs == null || socket == null)
             {
                 return;
             }
             try
             {
+                sendEventArgs.BufferList = sendBufferList;
+
                 bool pending = socket.SendAsync(sendEventArgs);
                 if (!pending)
                 {
