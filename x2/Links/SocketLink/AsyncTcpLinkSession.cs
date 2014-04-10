@@ -36,17 +36,20 @@ namespace x2.Links.SocketLink
         /// </summary>
         public override void Close()
         {
-            base.Close();
+            lock (syncRoot)
+            {
+                base.Close();
 
-            if (recvEventArgs != null)
-            {
-                recvEventArgs.Dispose();
-                recvEventArgs = null;
-            }
-            if (sendEventArgs != null)
-            {
-                sendEventArgs.Dispose();
-                sendEventArgs = null;
+                if (recvEventArgs != null)
+                {
+                    recvEventArgs.Dispose();
+                    recvEventArgs = null;
+                }
+                if (sendEventArgs != null)
+                {
+                    sendEventArgs.Dispose();
+                    sendEventArgs = null;
+                }
             }
         }
 
