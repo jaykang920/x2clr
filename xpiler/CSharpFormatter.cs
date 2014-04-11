@@ -150,6 +150,8 @@ namespace x2
                 return;
             }
 
+            PreprocessConsts(def);
+
             Indent(0); Out.WriteLine("public static class {0}", def.Name);
             Indent(0); Out.WriteLine("{");
             foreach (var constant in def.Constants)
@@ -514,6 +516,17 @@ namespace x2
                 Out.WriteLine("{0} = {1};", property.NativeName, property.DefaultValue);
             }
             Indent(1); Out.WriteLine("}");
+        }
+
+        private static void PreprocessConsts(ConstsDef def)
+        {
+            if (def.Type == "string")
+            {
+                foreach (var constant in def.Constants)
+                {
+                    constant.Value = "\"" + constant.Value + "\"";
+                }
+            }
         }
 
         private static void PreprocessProperties(CellDef def)

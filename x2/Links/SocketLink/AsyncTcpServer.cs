@@ -62,7 +62,7 @@ namespace x2.Links.SocketLink
                 // Adjust client socket options.
                 clientSocket.NoDelay = NoDelay;
 
-                Log.Info("{5} {1} accepted from {2}",
+                Log.Info("{0} {1} accepted from {2}",
                     Name, clientSocket.Handle, clientSocket.RemoteEndPoint);
 
                 var session = new AsyncTcpLinkSession(this, clientSocket);
