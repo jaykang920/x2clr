@@ -119,7 +119,7 @@ namespace x2.Samples.Echo
             };
             x2.Log.Level = x2.LogLevel.Warning;
 
-            Hub.Get()
+            Hub.Instance
                 .Attach(new SingleThreadedFlow()
                     .Add(new EchoCase()))
                 .Attach(new EchoServerFlow());

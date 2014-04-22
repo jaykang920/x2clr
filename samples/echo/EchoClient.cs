@@ -77,14 +77,14 @@ namespace x2.Samples.Echo
             };
             x2.Log.Level = x2.LogLevel.Warning;
 
-            Hub.Get()
+            Hub.Instance
                 .Attach(new EchoClient())
                 .Attach(TimeFlow.Default);
 
             /*
             for (int i = 0; i < 2; ++i)
             {
-                Hub.Get().Attach(new EchoClient());
+                Hub.Instance.Attach(new EchoClient());
             }
             */
 

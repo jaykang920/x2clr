@@ -81,7 +81,7 @@ namespace x2.Samples.Capitalizer
             };
             x2.Log.Level = x2.LogLevel.All;
 
-            Hub.Get()
+            Hub.Instance
                 .Attach(new OutputFlow().Add(new CapitalizerClient()));
 
             Flow.StartAll();
@@ -97,7 +97,7 @@ namespace x2.Samples.Capitalizer
                 var e = new CapitalizeReq {
                     Message = message
                 };
-                Hub.Get().Post(e);
+                Hub.Post(e);
             }
 
             Flow.StopAll();

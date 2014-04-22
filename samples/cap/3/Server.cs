@@ -120,7 +120,7 @@ namespace x2.Samples.Capitalizer
             };
             x2.Log.Level = x2.LogLevel.All;
 
-            Hub.Get()
+            Hub.Instance
                 .Attach(new CapitalizerFlow())
                 .Attach(new CapitalizerServer());
 

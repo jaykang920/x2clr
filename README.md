@@ -8,5 +8,5 @@ https://github.com/jaykang920/x2clr
 Requirements
 ------------
 
-* Visual Studio 2008 (9.0) or newer equivalent to compile C# 3.0.
-* .NET framework 3.5 or newer equivalent to run.
+* Visual Studio 2008 (9.0) or newer equivalent to compile C# 3.0
+* .NET framework 3.5 or newer equivalent to run

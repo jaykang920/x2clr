@@ -142,12 +142,12 @@ namespace x2
 
         public static void Post(Event e)
         {
-            currentFlow.hub.Post(e);
+            Hub.Post(e);
         }
 
         public static void PostAway(Event e)
         {
-            currentFlow.hub.Post(e, currentFlow);
+            Hub.Post(e, currentFlow);
         }
 
         /// <summary>
@@ -176,12 +176,12 @@ namespace x2
 
         public void Publish(Event e)
         {
-            hub.Post(e);
+            Hub.Post(e);
         }
 
         protected void PublishAway(Event e)
         {
-            hub.Post(e, currentFlow);
+            Hub.Post(e, currentFlow);
         }
 
         public Binder.Token Subscribe<T>(T e, Action<T> action)
@@ -247,28 +247,16 @@ namespace x2
         public abstract void StartUp();
         public abstract void ShutDown();
 
-        public void AttachTo(Hub hub)
+        public Flow Attach()
         {
-            if ((object)this.hub != null && !Object.ReferenceEquals(this.hub, hub))
-            {
-                throw new InvalidOperationException();
-            }
-            if (hub.AttachInternal(this))
-            {
-                this.hub = hub;
-            }
+            Hub.Instance.Attach(this);
+            return this;
         }
 
-        public void DetachFrom(Hub hub)
+        public Flow Detach()
         {
-            if ((object)this.hub == null || !Object.ReferenceEquals(this.hub, hub))
-            {
-                throw new InvalidOperationException();
-            }
-            if (hub.DetachInternal(this))
-            {
-                this.hub = null;
-            }
+            Hub.Instance.Detach(this);
+            return this;
         }
 
         public Flow Add(ICase c)

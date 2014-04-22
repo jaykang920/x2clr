@@ -39,7 +39,7 @@ namespace x2.Samples.Capitalizer
     {
         static void Main(string[] args)
         {
-            Hub.Get()
+            Hub.Instance
                 .Attach(new CapitalizerFlow())
                 .Attach(new OutputFlow());
 
@@ -55,7 +55,7 @@ namespace x2.Samples.Capitalizer
 
                 var e = new CapitalizeReq();
                 e.Message = message;
-                Hub.Get().Post(e);
+                Hub.Post(e);
             }
 
             Flow.StopAll();

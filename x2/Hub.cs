@@ -8,341 +8,142 @@ using System.Threading;
 namespace x2
 {
     /// <summary>
-    /// Represents an event distribution bus.
+    /// Represents the singleton event distribution bus.
     /// </summary>
     public sealed class Hub
     {
-        private const string defaultName = "default";
+        private static readonly IList<Flow> flows;
 
-        private static readonly HubMap hubMap;
+        // TODO: channel subscription
 
-        private readonly FlowSet flowSet;
-        private readonly string name;
+        private static readonly ReaderWriterLockSlim rwlock;
 
-        /// <summary>
-        /// Gets the the default(anonymous) Hub.
-        /// </summary>
-        public static Hub Default { get { return Get(); } }
+        private static readonly Hub instance;
 
         /// <summary>
-        /// Gets the name of this hub.
+        /// Gets the singleton instance of the hub.
         /// </summary>
-        public string Name
-        {
-            get { return name; }
-        }
+        public static Hub Instance { get { return instance; } }
 
         static Hub()
         {
-            hubMap = new HubMap();
+            flows = new List<Flow>();
+            rwlock = new ReaderWriterLockSlim();
 
-            hubMap.Create(defaultName);
+            instance = new Hub();
         }
 
-        private Hub(string name)
+        private Hub()
         {
-            flowSet = new FlowSet();
-            this.name = name;
         }
 
         /// <summary>
-        /// Creates a named Hub.
-        /// </summary>
-        public static Hub Create(string name)
-        {
-            if (name == null)
-            {
-                throw new NullReferenceException();
-            }
-            return hubMap.Create(name);
-        }
-
-        /// <summary>
-        /// Gets the default(anonymous) Hub.
-        /// </summary>
-        public static Hub Get()
-        {
-            return hubMap.Get(defaultName);
-        }
-
-        /// <summary>
-        /// Gets the named Hub.
-        /// </summary>
-        public static Hub Get(string name)
-        {
-            if (name == null)
-            {
-                throw new NullReferenceException();
-            }
-            return hubMap.Get(name);
-        }
-
-        /// <summary>
-        /// Starts all the flows attached to the hubs in the current process.
+        /// Starts all the flows attached to the hub.
         /// </summary>
         public static void StartAllFlows()
         {
-            hubMap.StartAllFlows();
+            using (new ReadLockSlim(rwlock))
+            {
+                for (int i = 0, count = flows.Count; i < count; ++i)
+                {
+                    flows[i].StartUp();
+                }
+            }
         }
 
         /// <summary>
-        /// Stops all the flows attached to the hubs in the current process.
+        /// Stops all the flows attached to the hub.
         /// </summary>
         public static void StopAllFlows()
         {
-            hubMap.StopAllFlows();
+            using (new ReadLockSlim(rwlock))
+            {
+                for (int i = 0, count = flows.Count; i < count; ++i)
+                {
+                    flows[i].ShutDown();
+                }
+            }
         }
 
         /// <summary>
-        /// Attaches the specified flow to this hub.
+        /// Attaches the specified flow to the hub.
         /// </summary>
         public Hub Attach(Flow flow)
         {
-            flow.AttachTo(this);
+            if (flow == null)
+            {
+                throw new NullReferenceException();
+            }
+            using (new WriteLockSlim(rwlock))
+            {
+                if (!flows.Contains(flow))
+                {
+                    flows.Add(flow);
+                }
+            }
             return this;
         }
 
         /// <summary>
-        /// Detaches the specified flow from this hub.
+        /// Detaches the specified flow from the hub.
         /// </summary>
         public Hub Detach(Flow flow)
         {
-            flow.DetachFrom(this);
+            if (flow == null)
+            {
+                throw new NullReferenceException();
+            }
+            using (new WriteLockSlim(rwlock))
+            {
+                flows.Remove(flow);
+            }
             return this;
         }
 
-        internal bool AttachInternal(Flow flow)
-        {
-            if (flow == null)
-            {
-                throw new NullReferenceException();
-            }
-            return flowSet.Add(flow);
-        }
-
-        internal bool DetachInternal(Flow flow)
-        {
-            if (flow == null)
-            {
-                throw new NullReferenceException();
-            }
-            return flowSet.Remove(flow);
-        }
-
-        public void Post(Event e)
+        /// <summary>
+        /// Posts up the specified event to the hub.
+        /// </summary>
+        public static void Post(Event e)
         {
             if (e == null)
             {
                 throw new NullReferenceException();
             }
-            flowSet.Feed(e);
+            rwlock.EnterReadLock();
+            try
+            {
+                for (int i = 0, count = flows.Count; i < count; ++i)
+                {
+                    flows[i].Feed(e);
+                }
+            }
+            finally
+            {
+                rwlock.ExitReadLock();
+            }
         }
 
-        public void Post(Event e, Flow except)
+        // deprecated
+        public static void Post(Event e, Flow except)
         {
             if (e == null)
             {
                 throw new NullReferenceException();
             }
-            flowSet.Feed(e, except);
-        }
-
-        private void StartAttachedFlows()
-        {
-            flowSet.StartAll();
-        }
-
-        private void StopAttachedFlows()
-        {
-            flowSet.StopAll();
-        }
-
-        private class HubMap
-        {
-            private readonly IDictionary<string, Hub> hubs;
-            private readonly ReaderWriterLockSlim rwlock;
-
-            public HubMap()
+            rwlock.EnterReadLock();
+            try
             {
-                hubs = new Dictionary<string, Hub>();
-                rwlock = new ReaderWriterLockSlim();
-            }
-
-            public Hub Create(string name)
-            {
-                rwlock.EnterWriteLock();
-                try
+                for (int i = 0, count = flows.Count; i < count; ++i)
                 {
-                    Hub hub;
-                    if (!hubs.TryGetValue(name, out hub))
-                    {
-                        hub = new Hub(name);
-                        hubs.Add(name, hub);
-                    }
-                    return hub;
-                }
-                finally
-                {
-                    rwlock.ExitWriteLock();
-                }
-            }
-
-            public Hub Get(string name)
-            {
-                rwlock.EnterReadLock();
-                try
-                {
-                    Hub hub;
-                    return hubs.TryGetValue(name, out hub) ? hub : null;
-                }
-                finally
-                {
-                    rwlock.ExitReadLock();
-                }
-            }
-
-            public void StartAllFlows()
-            {
-                rwlock.EnterReadLock();
-                try
-                {
-                    foreach (var hub in hubs.Values)
-                    {
-                        hub.StartAttachedFlows();
-                    }
-                }
-                finally
-                {
-                    rwlock.ExitReadLock();
-                }
-            }
-
-            public void StopAllFlows()
-            {
-                rwlock.EnterReadLock();
-                try
-                {
-                    foreach (var hub in hubs.Values)
-                    {
-                        hub.StopAttachedFlows();
-                    }
-                }
-                finally
-                {
-                    rwlock.ExitReadLock();
-                }
-            }
-        }
-
-        private class FlowSet
-        {
-            private readonly IList<Flow> flows;
-            private readonly ReaderWriterLockSlim rwlock;
-
-            public FlowSet()
-            {
-                flows = new List<Flow>();
-                rwlock = new ReaderWriterLockSlim();
-            }
-
-            public bool Add(Flow flow)
-            {
-                rwlock.EnterWriteLock();
-                try
-                {
-                    if (flows.Contains(flow))
-                    {
-                        return false;
-                    }
-                    flows.Add(flow);
-                    return true;
-                }
-                finally
-                {
-                    rwlock.ExitWriteLock();
-                }
-            }
-
-            public void Feed(Event e)
-            {
-                rwlock.EnterReadLock();
-                try
-                {
-                    for (int i = 0; i < flows.Count; ++i)
+                    if (!Object.ReferenceEquals(flows[i], except))
                     {
                         flows[i].Feed(e);
                     }
                 }
-                finally
-                {
-                    rwlock.ExitReadLock();
-                }
             }
-
-            public void Feed(Event e, Flow except)
+            finally
             {
-                rwlock.EnterReadLock();
-                try
-                {
-                    for (int i = 0; i < flows.Count; ++i)
-                    {
-                        var flow = flows[i];
-                        if (Object.ReferenceEquals(flow, except))
-                        {
-                            continue;
-                        }
-                        flow.Feed(e);
-                    }
-                }
-                finally
-                {
-                    rwlock.ExitReadLock();
-                }
-            }
-
-            public bool Remove(Flow flow)
-            {
-                rwlock.EnterWriteLock();
-                try
-                {
-                    return flows.Remove(flow);
-                }
-                finally
-                {
-                    rwlock.ExitWriteLock();
-                }
-            }
-
-            public void StartAll()
-            {
-                rwlock.EnterReadLock();
-                try
-                {
-                    for (int i = 0; i < flows.Count; ++i)
-                    {
-                        flows[i].StartUp();
-                    }
-                }
-                finally
-                {
-                    rwlock.ExitReadLock();
-                }
-            }
-
-            public void StopAll()
-            {
-                rwlock.EnterReadLock();
-                try
-                {
-                    for (int i = 0; i < flows.Count; ++i)
-                    {
-                        flows[i].ShutDown();
-                    }
-                }
-                finally
-                {
-                    rwlock.ExitReadLock();
-                }
+                rwlock.ExitReadLock();
             }
         }
     }
