@@ -439,7 +439,7 @@ namespace x2.Flows
 
         void OnTimer(object state)
         {
-            PublishAway((Event)state);
+            Publish((Event)state);
         }
     }
 }

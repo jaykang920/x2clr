@@ -20,7 +20,7 @@ namespace x2.Samples.Capitalizer
             var resp = new CapitalizeResp();
             resp.SessionHandle = req.SessionHandle;
             resp.Result = req.Message.ToUpper();
-            Flow.PostAway(resp);
+            Flow.Post(resp);
         }
 
         protected override void SetUp()

@@ -122,29 +122,5 @@ namespace x2
                 rwlock.ExitReadLock();
             }
         }
-
-        // deprecated
-        public static void Post(Event e, Flow except)
-        {
-            if (e == null)
-            {
-                throw new NullReferenceException();
-            }
-            rwlock.EnterReadLock();
-            try
-            {
-                for (int i = 0, count = flows.Count; i < count; ++i)
-                {
-                    if (!Object.ReferenceEquals(flows[i], except))
-                    {
-                        flows[i].Feed(e);
-                    }
-                }
-            }
-            finally
-            {
-                rwlock.ExitReadLock();
-            }
-        }
     }
 }

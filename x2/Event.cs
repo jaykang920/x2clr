@@ -254,11 +254,6 @@ namespace x2
             Flow.Post(this);
         }
 
-        public void PostAway()
-        {
-            Flow.PostAway(this);
-        }
-
         #endregion
 
         /// <summary>

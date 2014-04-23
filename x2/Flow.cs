@@ -145,11 +145,6 @@ namespace x2
             Hub.Post(e);
         }
 
-        public static void PostAway(Event e)
-        {
-            Hub.Post(e, currentFlow);
-        }
-
         /// <summary>
         /// Starts all the flows attached to the hubs in the current process.
         /// </summary>
@@ -177,11 +172,6 @@ namespace x2
         public void Publish(Event e)
         {
             Hub.Post(e);
-        }
-
-        protected void PublishAway(Event e)
-        {
-            Hub.Post(e, currentFlow);
         }
 
         public Binder.Token Subscribe<T>(T e, Action<T> action)
