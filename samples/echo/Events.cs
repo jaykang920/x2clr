@@ -31,6 +31,11 @@ namespace x2.Samples.Echo
                     1);
         }
 
+        new public static EchoReq New()
+        {
+            return new EchoReq();
+        }
+
         public EchoReq()
             : base(tag.NumProps)
         {
@@ -160,6 +165,11 @@ namespace x2.Samples.Echo
         {
             tag = new Tag(Event.tag, typeof(EchoResp), 1,
                     2);
+        }
+
+        new public static EchoResp New()
+        {
+            return new EchoResp();
         }
 
         public EchoResp()

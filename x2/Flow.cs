@@ -29,7 +29,7 @@ namespace x2
         protected readonly CaseStack caseStack;
         protected string name;
 
-        private Hub hub;
+        private volatile bool attached;
 
         public/*internal*/ static Flow CurrentFlow
         {
@@ -54,11 +54,6 @@ namespace x2
         /// Gets the name of this flow.
         /// </summary>
         public string Name { get { return name; } }
-
-        /// <summary>
-        /// Gets the hub to which this flow is attached.
-        /// </summary>
-        public Hub Hub { get { return hub; } }
 
         public LogLevel SlowHandlerLogLevel { get; set; }
         public int SlowHandlerLogThreshold { get; set; }
