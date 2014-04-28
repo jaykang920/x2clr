@@ -37,6 +37,8 @@ namespace x2.Links.SocketLink
         protected volatile bool sending;              // tx
         protected byte[] lengthBytes = new byte[4];   // tx
 
+        public SocketLink Link { get { return link; } }
+
         /// <summary>
         /// Gets the underlying socket object.
         /// </summary>
@@ -308,5 +310,45 @@ namespace x2.Links.SocketLink
 
             BeginSend(e);
         }
+
+        #region Diagnostics
+
+        /// <summary>
+        /// Internal diagnostics helper class.
+        /// </summary>
+        public class Diagnostics : LinkDiagnostics
+        {
+            protected SocketLinkSession owner;
+
+            public Diagnostics(SocketLinkSession owner)
+            {
+                this.owner = owner;
+            }
+
+            internal override void AddBytesReceived(long bytesReceived)
+            {
+                base.AddBytesReceived(bytesReceived);
+
+                if (owner.Link.Diag != null)
+                {
+                    owner.Link.Diag.AddBytesReceived(bytesReceived);
+                }
+            }
+
+            internal override void AddBytesSent(long bytesSent)
+            {
+                base.AddBytesSent(bytesSent);
+
+                Interlocked.Add(ref totalBytesSent, bytesSent);
+                Interlocked.Add(ref this.bytesSent, bytesSent);
+
+                if (owner.Link.Diag != null)
+                {
+                    owner.Link.Diag.AddBytesSent(bytesSent);
+                }
+            }
+        }
+
+        #endregion  // Diagnostics
     }
 }

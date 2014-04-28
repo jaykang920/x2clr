@@ -57,6 +57,8 @@ namespace x2.Links.SocketLink
 
             // Default socket options
             NoDelay = true;
+
+            Diag = new Diagnostics();
         }
 
         public override void Close()
@@ -108,7 +110,7 @@ namespace x2.Links.SocketLink
 
         public override void OnDisconnect(SocketLinkSession session)
         {
-            Diag.DecrementConnectionCount();
+            ((Diagnostics)Diag).DecrementConnectionCount();
 
             base.OnDisconnect(session);
         }
@@ -122,52 +124,15 @@ namespace x2.Links.SocketLink
         #region Diagnostics
 
         /// <summary>
-        /// Gets the diagnostics object.
-        /// </summary>
-        public Diagnostics Diag { get; protected set; }
-
-        /// <summary>
         /// Internal diagnostics helper class.
         /// </summary>
-        public class Diagnostics
+        public class Diagnostics : LinkDiagnostics
         {
-            protected readonly TcpServerBase owner;
-
             protected int connectionCount;
-
-            protected long totalBytesReceived;
-            protected long totalBytesSent;
-            protected long bytesReceived;
-            protected long bytesSent;
 
             public int ConnectionCount
             {
                 get { return connectionCount; }
-            }
-
-            public long TotalBytesReceived
-            {
-                get { return Interlocked.Read(ref totalBytesReceived); }
-            }
-
-            public long TotalBytesSent
-            {
-                get { return Interlocked.Read(ref totalBytesSent); }
-            }
-
-            public long BytesReceived
-            {
-                get { return Interlocked.Read(ref bytesReceived); }
-            }
-
-            public long BytesSent
-            {
-                get { return Interlocked.Read(ref bytesSent); }
-            }
-
-            internal Diagnostics(TcpServerBase owner)
-            {
-                this.owner = owner;
             }
 
             internal void IncrementConnectionCount()
@@ -178,28 +143,6 @@ namespace x2.Links.SocketLink
             internal void DecrementConnectionCount()
             {
                 Interlocked.Decrement(ref connectionCount);
-            }
-
-            internal void AddBytesReceived(long bytesReceived)
-            {
-                Interlocked.Add(ref totalBytesReceived, bytesReceived);
-                Interlocked.Add(ref this.bytesReceived, bytesReceived);
-            }
-
-            internal void AddBytesSent(long bytesSent)
-            {
-                Interlocked.Add(ref totalBytesSent, bytesSent);
-                Interlocked.Add(ref this.bytesSent, bytesSent);
-            }
-
-            public void ResetBytesReceived()
-            {
-                Interlocked.Exchange(ref this.bytesReceived, 0L);
-            }
-
-            public void ResetBytesSent()
-            {
-                Interlocked.Exchange(ref this.bytesSent, 0L);
             }
         }
 

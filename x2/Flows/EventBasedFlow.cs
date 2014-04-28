@@ -40,7 +40,7 @@ namespace x2.Flows
             while (true)
             {
                 Event e = queue.Dequeue();
-                if (e == null)
+                if (Object.ReferenceEquals(e, null))
                 {
                     break;
                 }

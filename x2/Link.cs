@@ -52,6 +52,15 @@ namespace x2
         {
             OnSessionDisconnected(e);
         }
+
+        #region Diagnostics
+
+        /// <summary>
+        /// Gets the diagnostics object.
+        /// </summary>
+        public LinkDiagnostics Diag { get; protected set; }
+
+        #endregion  // Diagnostics
     }
 
     /// <summary>
@@ -76,68 +85,65 @@ namespace x2
         /// <summary>
         /// Gets the diagnostics object.
         /// </summary>
-        public Diagnostics Diag { get; protected set; }
+        public LinkDiagnostics Diag { get; protected set; }
         
-        /// <summary>
-        /// Internal diagnostics helper class.
-        /// </summary>
-        public class Diagnostics
-        {
-            protected readonly LinkSession owner;
-
-            protected long totalBytesReceived;
-            protected long totalBytesSent;
-            protected int bytesReceived;
-            protected int bytesSent;
-
-            public long TotalBytesReceived
-            {
-                get { return Interlocked.Read(ref totalBytesReceived); }
-            }
-
-            public long TotalBytesSent
-            {
-                get { return Interlocked.Read(ref totalBytesSent); }
-            }
-
-            public int BytesReceived
-            {
-                get { return bytesReceived; }
-            }
-
-            public int BytesSent
-            {
-                get { return bytesSent; }
-            }
-
-            internal Diagnostics(LinkSession owner)
-            {
-                this.owner = owner;
-            }
-
-            internal void AddBytesReceived(int bytesReceived)
-            {
-                Interlocked.Add(ref totalBytesReceived, (long)bytesReceived);
-                Interlocked.Add(ref this.bytesReceived, bytesReceived);
-            }
-
-            internal void AddBytesSent(int bytesSent)
-            {
-                Interlocked.Add(ref totalBytesSent, (long)bytesSent);
-                Interlocked.Add(ref this.bytesSent, bytesSent);
-            }
-
-            public void ResetBytesReceived()
-            {
-                Interlocked.Exchange(ref this.bytesReceived, 0);
-            }
-
-            public void ResetBytesSent()
-            {
-                Interlocked.Exchange(ref this.bytesSent, 0);
-            }
-        }
-
         #endregion  // Diagnostics
     }
+
+    #region Diagnostics
+
+    /// <summary>
+    /// Internal diagnostics helper class.
+    /// </summary>
+    public class LinkDiagnostics
+    {
+        protected long totalBytesReceived;
+        protected long totalBytesSent;
+        protected long bytesReceived;
+        protected long bytesSent;
+
+        public long TotalBytesReceived
+        {
+            get { return Interlocked.Read(ref totalBytesReceived); }
+        }
+
+        public long TotalBytesSent
+        {
+            get { return Interlocked.Read(ref totalBytesSent); }
+        }
+
+        public long BytesReceived
+        {
+            get { return Interlocked.Read(ref bytesReceived); }
+        }
+
+        public long BytesSent
+        {
+            get { return Interlocked.Read(ref bytesSent); }
+        }
+
+        internal virtual void AddBytesReceived(long bytesReceived)
+        {
+            Interlocked.Add(ref totalBytesReceived, bytesReceived);
+            Interlocked.Add(ref this.bytesReceived, bytesReceived);
+        }
+
+        internal virtual void AddBytesSent(long bytesSent)
+        {
+            Interlocked.Add(ref totalBytesSent, bytesSent);
+            Interlocked.Add(ref this.bytesSent, bytesSent);
+        }
+
+        public void ResetBytesReceived()
+        {
+            Interlocked.Exchange(ref this.bytesReceived, 0L);
+        }
+
+        public void ResetBytesSent()
+        {
+            Interlocked.Exchange(ref this.bytesSent, 0L);
+        }
+    }
+
+    #endregion  // Diagnostics
 }

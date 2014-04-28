@@ -105,7 +105,7 @@ namespace x2
         /// </summary>
         public static void Post(Event e)
         {
-            if (e == null)
+            if (Object.ReferenceEquals(e, null))
             {
                 throw new NullReferenceException();
             }

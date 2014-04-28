@@ -22,7 +22,6 @@ namespace x2.Links.SocketLink
         public AsyncTcpServer(string name)
             : base(name)
         {
-            Diag = new Diagnostics(this);
         }
 
         protected override void AcceptImpl()
@@ -55,7 +54,7 @@ namespace x2.Links.SocketLink
         {
             if (e.SocketError == SocketError.Success)
             {
-                Diag.IncrementConnectionCount();
+                ((Diagnostics)Diag).IncrementConnectionCount();
 
                 var clientSocket = e.AcceptSocket;
 
