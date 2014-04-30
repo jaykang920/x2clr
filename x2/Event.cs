@@ -23,7 +23,7 @@ namespace x2
         public static int TypeId { get { return tag.TypeId; } }
 
         private string _channel = String.Empty;
-        private IntPtr sessionHandle;
+        private IntPtr _handle;
 
         /// <summary>
         /// Name of the hub channel which this event is assigned to.
@@ -31,16 +31,19 @@ namespace x2
         public string _Channel
         {
             get { return _channel; }
-            set { _channel = value;  }
+            set { _channel = value; }
         }
 
-        public IntPtr SessionHandle
+        /// <summary>
+        /// Link session handle associated with this event.
+        /// </summary>
+        public IntPtr _Handle
         {
-            get { return sessionHandle; }
+            get { return _handle; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                sessionHandle = value;
+                _handle = value;
             }
         }
 
@@ -150,7 +153,7 @@ namespace x2
             }
 
             Event o = (Event)other;
-            if (sessionHandle != o.sessionHandle)
+            if (_handle != o._handle)
             {
                 return false;
             }
@@ -179,7 +182,7 @@ namespace x2
 
             if (fingerprint[0])
             {
-                hash.Update(sessionHandle.GetHashCode());
+                hash.Update(_handle.GetHashCode());
             }
 
             return hash.Code;
@@ -205,7 +208,7 @@ namespace x2
             Event o = (Event)other;
             if (fingerprint[0])
             {
-                if (sessionHandle != o.sessionHandle)
+                if (_handle != o._handle)
                 {
                     return false;
                 }

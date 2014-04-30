@@ -207,7 +207,7 @@ namespace x2.Links.SocketLink
                         try
                         {
                             retrieved.Load(recvBuffer);
-                            retrieved.SessionHandle = Handle;
+                            retrieved._Handle = Handle;
                             if (link.Preprocessor != null)
                             {
                                 link.Preprocessor(retrieved, this);
