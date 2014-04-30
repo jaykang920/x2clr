@@ -29,8 +29,6 @@ namespace x2
         protected readonly CaseStack caseStack;
         protected string name;
 
-        private volatile bool attached;
-
         public/*internal*/ static Flow CurrentFlow
         {
             get { return currentFlow; }
@@ -253,6 +251,24 @@ namespace x2
         public Flow Remove(ICase c)
         {
             caseStack.Remove(c);
+            return this;
+        }
+
+        /// <summary>
+        /// Makes this flow subscribe to the specified channel.
+        /// </summary>
+        public Flow SubscribeTo(string channel)
+        {
+            Hub.Subscribe(this, channel);
+            return this;
+        }
+
+        /// <summary>
+        /// Makes this flow unsubscribe from the specified channel.
+        /// </summary>
+        public Flow UnsubscribeFrom(string channel)
+        {
+            Hub.Unsubscribe(this, channel);
             return this;
         }
 

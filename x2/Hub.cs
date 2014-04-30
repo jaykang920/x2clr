@@ -12,9 +12,10 @@ namespace x2
     /// </summary>
     public sealed class Hub
     {
-        private static readonly IList<Flow> flows;
-
-        // TODO: channel subscription
+        // List of all the flows attached to the hub.
+        private static readonly List<Flow> flows;
+        // Explicit channel subscription map.
+        private static readonly Dictionary<string, List<Flow>> subscriptions;
 
         private static readonly ReaderWriterLockSlim rwlock;
 
@@ -28,13 +29,91 @@ namespace x2
         static Hub()
         {
             flows = new List<Flow>();
+            subscriptions = new Dictionary<string, List<Flow>>();
+
             rwlock = new ReaderWriterLockSlim();
 
             instance = new Hub();
         }
 
+        // Private constructor to prevent explicit instantiation.
         private Hub()
         {
+        }
+
+        /// <summary>
+        /// Attaches the specified flow to the hub.
+        /// </summary>
+        public Hub Attach(Flow flow)
+        {
+            if (Object.ReferenceEquals(flow, null))
+            {
+                throw new NullReferenceException();
+            }
+            using (new WriteLockSlim(rwlock))
+            {
+                if (!flows.Contains(flow))
+                {
+                    flows.Add(flow);
+                }
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Detaches the specified flow from the hub.
+        /// </summary>
+        public Hub Detach(Flow flow)
+        {
+            if (Object.ReferenceEquals(flow, null))
+            {
+                throw new NullReferenceException();
+            }
+            using (new WriteLockSlim(rwlock))
+            {
+                flows.Remove(flow);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Posts up the specified event to the hub.
+        /// </summary>
+        public static void Post(Event e)
+        {
+            if (Object.ReferenceEquals(e, null))
+            {
+                throw new NullReferenceException();
+            }
+            rwlock.EnterReadLock();  // not using ReadLockSlim intentionally
+            try
+            {
+                string channel = e._Channel;
+                if (String.IsNullOrEmpty(channel))
+                {
+                    // Distribute the event throughout all the attached flows.
+                    for (int i = 0, count = flows.Count; i < count; ++i)
+                    {
+                        flows[i].Feed(e);
+                    }
+                }
+                else
+                {
+                    // Or pass it to the explicit subscribers.
+                    List<Flow> subscribers;
+                    if (subscriptions.TryGetValue(channel, out subscribers))
+                    {
+                        for (int i = 0, count = subscribers.Count; i < count; ++i)
+                        {
+                            subscribers[i].Feed(e);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                rwlock.ExitReadLock();
+            }
         }
 
         /// <summary>
@@ -66,60 +145,56 @@ namespace x2
         }
 
         /// <summary>
-        /// Attaches the specified flow to the hub.
+        /// Makes the given flow subscribe to the specifieid channel.
         /// </summary>
-        public Hub Attach(Flow flow)
+        internal static void Subscribe(Flow flow, string channel)
         {
-            if (flow == null)
+            if (String.IsNullOrEmpty(channel))
             {
-                throw new NullReferenceException();
+                throw new ArgumentException();
             }
             using (new WriteLockSlim(rwlock))
             {
-                if (!flows.Contains(flow))
+                List<Flow> subscribers;
+                if (subscriptions.TryGetValue(channel, out subscribers))
                 {
-                    flows.Add(flow);
+                    if (subscribers.Contains(flow))
+                    {
+                        return;
+                    }
                 }
+                else
+                {
+                    subscribers = new List<Flow>();
+                    subscriptions.Add(channel, subscribers);
+                }
+                subscribers.Add(flow);
             }
-            return this;
         }
 
         /// <summary>
-        /// Detaches the specified flow from the hub.
+        /// Makes the given flow unsubscribe from the specified channel.
         /// </summary>
-        public Hub Detach(Flow flow)
+        internal static void Unsubscribe(Flow flow, string channel)
         {
-            if (flow == null)
+            if (String.IsNullOrEmpty(channel))
             {
-                throw new NullReferenceException();
+                throw new ArgumentException();
             }
             using (new WriteLockSlim(rwlock))
             {
-                flows.Remove(flow);
-            }
-            return this;
-        }
-
-        /// <summary>
-        /// Posts up the specified event to the hub.
-        /// </summary>
-        public static void Post(Event e)
-        {
-            if (Object.ReferenceEquals(e, null))
-            {
-                throw new NullReferenceException();
-            }
-            rwlock.EnterReadLock();
-            try
-            {
-                for (int i = 0, count = flows.Count; i < count; ++i)
+                List<Flow> subscribers;
+                if (!subscriptions.TryGetValue(channel, out subscribers))
                 {
-                    flows[i].Feed(e);
+                    return;
                 }
-            }
-            finally
-            {
-                rwlock.ExitReadLock();
+                if (subscribers.Remove(flow))
+                {
+                    if (subscribers.Count == 0)
+                    {
+                        subscriptions.Remove(channel);
+                    }
+                }
             }
         }
     }

@@ -22,7 +22,17 @@ namespace x2
 
         public static int TypeId { get { return tag.TypeId; } }
 
+        private string _channel = String.Empty;
         private IntPtr sessionHandle;
+
+        /// <summary>
+        /// Name of the hub channel which this event is assigned to.
+        /// </summary>
+        public string _Channel
+        {
+            get { return _channel; }
+            set { _channel = value;  }
+        }
 
         public IntPtr SessionHandle
         {
