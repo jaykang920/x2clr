@@ -50,7 +50,7 @@ namespace x2
             {
                 throw new NullReferenceException();
             }
-            using (new WriteLockSlim(rwlock))
+            using (new WriteLock(rwlock))
             {
                 if (!flows.Contains(flow))
                 {
@@ -69,7 +69,7 @@ namespace x2
             {
                 throw new NullReferenceException();
             }
-            using (new WriteLockSlim(rwlock))
+            using (new WriteLock(rwlock))
             {
                 flows.Remove(flow);
             }
@@ -121,7 +121,7 @@ namespace x2
         /// </summary>
         public static void StartAllFlows()
         {
-            using (new ReadLockSlim(rwlock))
+            using (new ReadLock(rwlock))
             {
                 for (int i = 0, count = flows.Count; i < count; ++i)
                 {
@@ -135,7 +135,7 @@ namespace x2
         /// </summary>
         public static void StopAllFlows()
         {
-            using (new ReadLockSlim(rwlock))
+            using (new ReadLock(rwlock))
             {
                 for (int i = 0, count = flows.Count; i < count; ++i)
                 {
@@ -153,7 +153,7 @@ namespace x2
             {
                 throw new ArgumentException();
             }
-            using (new WriteLockSlim(rwlock))
+            using (new WriteLock(rwlock))
             {
                 List<Flow> subscribers;
                 if (subscriptions.TryGetValue(channel, out subscribers))
@@ -181,7 +181,7 @@ namespace x2
             {
                 throw new ArgumentException();
             }
-            using (new WriteLockSlim(rwlock))
+            using (new WriteLock(rwlock))
             {
                 List<Flow> subscribers;
                 if (!subscriptions.TryGetValue(channel, out subscribers))
