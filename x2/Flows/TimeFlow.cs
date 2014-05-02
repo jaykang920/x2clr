@@ -307,7 +307,9 @@ namespace x2.Flows
         {
             map = new Map();
 
-            map.Create(defaultName);
+            TimeFlow defaultFlow = map.Create(defaultName);
+            Hub.Instance.Attach(defaultFlow);
+            defaultFlow.StartUp();
         }
 
         private TimeFlow(string name)

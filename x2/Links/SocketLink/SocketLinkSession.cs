@@ -34,7 +34,7 @@ namespace x2.Links.SocketLink
         protected int lengthToReceive;                // rx
         protected int lengthToSend;                   // tx
         protected bool beginning;                     // rx
-        protected volatile bool sending;              // tx
+        protected bool sending;                       // tx
         protected byte[] lengthBytes = new byte[4];   // tx
 
         public SocketLink Link { get { return link; } }

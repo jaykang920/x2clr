@@ -93,7 +93,7 @@ namespace x2
     #region Diagnostics
 
     /// <summary>
-    /// Internal diagnostics helper class.
+    /// Link diagnostics helper class.
     /// </summary>
     public class LinkDiagnostics
     {
