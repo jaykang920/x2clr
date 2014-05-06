@@ -13,8 +13,8 @@ namespace x2
     public sealed class Hub
     {
         // List of all the flows attached to the hub.
-        private static readonly List<Flow> flows;
-        // Explicit channel subscription map.
+        private static readonly List<Flow> attached;
+        // Hub channel subscription map.
         private static readonly Dictionary<string, List<Flow>> subscriptions;
 
         private static readonly ReaderWriterLockSlim rwlock;
@@ -28,7 +28,7 @@ namespace x2
 
         static Hub()
         {
-            flows = new List<Flow>();
+            attached = new List<Flow>();
             subscriptions = new Dictionary<string, List<Flow>>();
 
             rwlock = new ReaderWriterLockSlim();
@@ -52,9 +52,10 @@ namespace x2
             }
             using (new WriteLock(rwlock))
             {
-                if (!flows.Contains(flow))
+                if (!attached.Contains(flow))
                 {
-                    flows.Add(flow);
+                    attached.Add(flow);
+                    SubscribeInternal(flow, String.Empty);
                 }
             }
             return this;
@@ -71,7 +72,10 @@ namespace x2
             }
             using (new WriteLock(rwlock))
             {
-                flows.Remove(flow);
+                if (attached.Remove(flow))
+                {
+                    UnsubscribeInternal(flow, String.Empty);
+                }
             }
             return this;
         }
@@ -89,24 +93,17 @@ namespace x2
             try
             {
                 string channel = e._Channel;
-                if (String.IsNullOrEmpty(channel))
+                if (Object.ReferenceEquals(channel, null))
                 {
-                    // Distribute the event throughout all the attached flows.
-                    for (int i = 0, count = flows.Count; i < count; ++i)
-                    {
-                        flows[i].Feed(e);
-                    }
+                    channel = String.Empty;
                 }
-                else
+
+                List<Flow> subscribers;
+                if (subscriptions.TryGetValue(channel, out subscribers))
                 {
-                    // Or pass it to the explicit subscribers.
-                    List<Flow> subscribers;
-                    if (subscriptions.TryGetValue(channel, out subscribers))
+                    for (int i = 0, count = subscribers.Count; i < count; ++i)
                     {
-                        for (int i = 0, count = subscribers.Count; i < count; ++i)
-                        {
-                            subscribers[i].Feed(e);
-                        }
+                        subscribers[i].Feed(e);
                     }
                 }
             }
@@ -123,9 +120,9 @@ namespace x2
         {
             using (new ReadLock(rwlock))
             {
-                for (int i = 0, count = flows.Count; i < count; ++i)
+                for (int i = 0, count = attached.Count; i < count; ++i)
                 {
-                    flows[i].StartUp();
+                    attached[i].StartUp();
                 }
             }
         }
@@ -137,9 +134,9 @@ namespace x2
         {
             using (new ReadLock(rwlock))
             {
-                for (int i = 0, count = flows.Count; i < count; ++i)
+                for (int i = 0, count = attached.Count; i < count; ++i)
                 {
-                    flows[i].ShutDown();
+                    attached[i].ShutDown();
                 }
             }
         }
@@ -149,26 +146,18 @@ namespace x2
         /// </summary>
         internal static void Subscribe(Flow flow, string channel)
         {
-            if (String.IsNullOrEmpty(channel))
+            if (Object.ReferenceEquals(flow, null) ||
+                Object.ReferenceEquals(channel, null))
             {
-                throw new ArgumentException();
+                throw new NullReferenceException();
             }
             using (new WriteLock(rwlock))
             {
-                List<Flow> subscribers;
-                if (subscriptions.TryGetValue(channel, out subscribers))
+                if (!attached.Contains(flow))
                 {
-                    if (subscribers.Contains(flow))
-                    {
-                        return;
-                    }
+                    throw new InvalidOperationException();
                 }
-                else
-                {
-                    subscribers = new List<Flow>();
-                    subscriptions.Add(channel, subscribers);
-                }
-                subscribers.Add(flow);
+                SubscribeInternal(flow, channel);
             }
         }
 
@@ -177,23 +166,51 @@ namespace x2
         /// </summary>
         internal static void Unsubscribe(Flow flow, string channel)
         {
-            if (String.IsNullOrEmpty(channel))
+            if (Object.ReferenceEquals(flow, null) ||
+                Object.ReferenceEquals(channel, null))
             {
-                throw new ArgumentException();
+                throw new NullReferenceException();
             }
             using (new WriteLock(rwlock))
             {
-                List<Flow> subscribers;
-                if (!subscriptions.TryGetValue(channel, out subscribers))
+                if (!attached.Contains(flow))
+                {
+                    throw new InvalidOperationException();
+                }
+                UnsubscribeInternal(flow, channel);
+            }
+        }
+
+        private static void SubscribeInternal(Flow flow, string channel)
+        {
+            List<Flow> subscribers;
+            if (subscriptions.TryGetValue(channel, out subscribers))
+            {
+                if (subscribers.Contains(flow))
                 {
                     return;
                 }
-                if (subscribers.Remove(flow))
+            }
+            else
+            {
+                subscribers = new List<Flow>();
+                subscriptions.Add(channel, subscribers);
+            }
+            subscribers.Add(flow);
+        }
+
+        private static void UnsubscribeInternal(Flow flow, string channel)
+        {
+            List<Flow> subscribers;
+            if (!subscriptions.TryGetValue(channel, out subscribers))
+            {
+                return;
+            }
+            if (subscribers.Remove(flow))
+            {
+                if (subscribers.Count == 0)
                 {
-                    if (subscribers.Count == 0)
-                    {
-                        subscriptions.Remove(channel);
-                    }
+                    subscriptions.Remove(channel);
                 }
             }
         }
