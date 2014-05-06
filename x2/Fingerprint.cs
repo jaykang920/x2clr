@@ -219,6 +219,8 @@ namespace x2
 
         public void Dump(Buffer buffer)
         {
+            buffer.WriteVariable(length);
+
             int count = 0;
             for (int j = 0; (j < 4) && (count < LengthInBytes); ++j, ++count)
             {
@@ -239,9 +241,13 @@ namespace x2
 
         public void Load(Buffer buffer)
         {
+            int length;
+            buffer.ReadVariable(out length);
+            int lengthInBytes = ((length - 1) >> 3) + 1;
+
             int count = 0;
             block = 0;
-            for (int j = 0; (j < 4) && (count < LengthInBytes); ++j, ++count)
+            for (int j = 0; (j < 4) && (count < lengthInBytes); ++j, ++count)
             {
                 block |= ((int)buffer.ReadByte() << (j << 3));
             }
@@ -252,7 +258,7 @@ namespace x2
             for (int i = 0; i < blocks.Length; ++i)
             {
                 blocks[i] = 0;
-                for (int j = 0; (j < 4) && (count < LengthInBytes); ++j, ++count)
+                for (int j = 0; (j < 4) && (count < lengthInBytes); ++j, ++count)
                 {
                     blocks[i] |= ((int)buffer.ReadByte() << (j << 3));
                 }

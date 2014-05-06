@@ -35,7 +35,7 @@ namespace x2.Links.SocketLink
         protected int lengthToSend;                   // tx
         protected bool beginning;                     // rx
         protected bool sending;                       // tx
-        protected byte[] lengthBytes = new byte[4];   // tx
+        protected byte[] lengthBytes = new byte[5];   // tx
 
         public SocketLink Link { get { return link; } }
 
@@ -142,7 +142,7 @@ namespace x2.Links.SocketLink
             {
                 recvBuffer.Rewind();
                 int payloadLength;
-                int numLengthBytes = recvBuffer.ReadUInt29(out payloadLength);
+                int numLengthBytes = recvBuffer.ReadVariable(out payloadLength);
                 recvBuffer.Shrink(numLengthBytes);
                 lengthToReceive = payloadLength;
             }
@@ -174,7 +174,7 @@ namespace x2.Links.SocketLink
                 }
 
                 int typeId;
-                recvBuffer.ReadUInt29(out typeId);
+                recvBuffer.Read(out typeId);
 
                 // Heartbeat
                 if (typeId == HeartbeatEvent.TypeId)
@@ -231,7 +231,7 @@ namespace x2.Links.SocketLink
                 }
 
                 int payloadLength;
-                int numLengthBytes = recvBuffer.ReadUInt29(out payloadLength);
+                int numLengthBytes = recvBuffer.ReadVariable(out payloadLength);
                 recvBuffer.Shrink(numLengthBytes);
                 lengthToReceive = payloadLength;
 
@@ -282,7 +282,7 @@ namespace x2.Links.SocketLink
                 BufferTransform.Transform(sendBuffer, sendBuffer.Length);
             }
 
-            int numLengthBytes = Buffer.WriteUInt29(lengthBytes, sendBuffer.Length);
+            int numLengthBytes = Buffer.WriteVariable(lengthBytes, sendBuffer.Length);
             lengthToSend = sendBuffer.Length + numLengthBytes;
 
             sendBufferList.Clear();

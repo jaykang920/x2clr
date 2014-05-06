@@ -453,7 +453,7 @@ namespace x2
         {
             Indent(1); Out.WriteLine("public override void Serialize(x2.Buffer buffer)");
             Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("buffer.WriteUInt29(tag.TypeId);");
+            Indent(2); Out.WriteLine("buffer.Write(tag.TypeId);");
             Indent(2); Out.WriteLine("this.Dump(buffer);");
             Indent(1); Out.WriteLine("}");
         }

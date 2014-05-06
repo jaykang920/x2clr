@@ -100,22 +100,18 @@ namespace x2
             CleanUp();
         }
 
-        public static int Write(byte[] buffer, int value)
+        /// <summary>
+        /// Encodes a variable-length 32-bit unsigned integer into the given
+        /// buffer, and returns the number of resultant bytes.
+        /// </summary>
+        public static int WriteVariable(byte[] buffer, int value)
         {
-            if (buffer.Length < 4)
+            if (value < 0)
             {
-                throw new ArgumentException();
+                throw new ArgumentOutOfRangeException();
             }
-            buffer[0] = (byte)(value >> 24);
-            buffer[1] = (byte)(value >> 16);
-            buffer[2] = (byte)(value >> 8);
-            buffer[3] = (byte)value;
-            return 4;
-        }
 
-        public static int WriteUInt29(byte[] buffer, int value)
-        {
-            if ((value & 0xFFFFFF80) == 0)
+            if ((value & 0xffffff80) == 0)
             {
                 if (buffer.Length < 1)
                 {
@@ -124,17 +120,19 @@ namespace x2
                 buffer[0] = (byte)value;
                 return 1;
             }
-            else if ((value & 0xFFFFC000) == 0)
+
+            if ((value & 0xffffc000) == 0)
             {
                 if (buffer.Length < 2)
                 {
                     throw new ArgumentException();
                 }
                 buffer[0] = (byte)((value >> 7) | 0x80);
-                buffer[1] = (byte)(value & 0x7F);
+                buffer[1] = (byte)(value & 0x7f);
                 return 2;
             }
-            else if ((value & 0xFFE00000) == 0)
+
+            if ((value & 0xffe00000) == 0)
             {
                 if (buffer.Length < 3)
                 {
@@ -142,25 +140,33 @@ namespace x2
                 }
                 buffer[0] = (byte)((value >> 14) | 0x80);
                 buffer[1] = (byte)((value >> 7) | 0x80);
-                buffer[2] = (byte)(value & 0x7F);
+                buffer[2] = (byte)(value & 0x7f);
                 return 3;
             }
-            else if ((value & 0xC0000000) == 0)
+
+            if ((value & 0xf0000000) == 0)
             {
                 if (buffer.Length < 4)
                 {
                     throw new ArgumentException();
                 }
-                buffer[0] = (byte)((value >> 22) | 0x80);
-                buffer[1] = (byte)((value >> 15) | 0x80);
-                buffer[2] = (byte)((value >> 8) | 0x80);
-                buffer[3] = (byte)value;
+                buffer[0] = (byte)((value >> 21) | 0x80);
+                buffer[1] = (byte)((value >> 14) | 0x80);
+                buffer[2] = (byte)((value >> 7) | 0x80);
+                buffer[3] = (byte)(value & 0x7f);
                 return 4;
             }
-            else
+
+            if (buffer.Length < 5)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentException();
             }
+            buffer[0] = (byte)((value >> 25) | 0x80);
+            buffer[1] = (byte)((value >> 18) | 0x80);
+            buffer[2] = (byte)((value >> 11) | 0x80);
+            buffer[3] = (byte)((value >> 4) | 0x80);
+            buffer[4] = (byte)(value & 0x0f);
+            return 5;
         }
 
         public void CopyFrom(byte[] buffer, int offset, int length)
@@ -253,7 +259,7 @@ namespace x2
         public void Read(out byte[] value)
         {
             int length;
-            ReadUInt29(out length);
+            ReadVariable(out length);
             CheckLengthToRead(length);
             value = new byte[length];
             int blockIndex = position >> blockSizeExponent;
@@ -348,7 +354,7 @@ namespace x2
         public void Read(out string value)
         {
             int length;
-            ReadUInt29(out length);
+            ReadVariable(out length);
             if (length == 0)
             {
                 value = String.Empty;
@@ -427,36 +433,16 @@ namespace x2
             return GetByte();
         }
 
-        public int ReadUInt29(out int value)
+        public int ReadVariable(out int value)
         {
-            CheckLengthToRead(1);
-            int i;
-            byte b = GetByte();
-            if ((b & 0x80) == 0)
+            uint unsigned;
+            int result = ReadVariable(out unsigned);
+            if (unsigned > Int32.MaxValue)
             {
-                value = b;
-                return 1;
+                throw new OverflowException();
             }
-            CheckLengthToRead(1);
-            i = (b & 0x7F) << 7;
-            b = GetByte();
-            if ((b & 0x80) == 0)
-            {
-                value = (i | b);
-                return 2;
-            }
-            CheckLengthToRead(1);
-            i = (i | (b & 0x7F)) << 7;
-            b = GetByte();
-            if ((b & 0x80) == 0)
-            {
-                value = (i | b);
-                return 3;
-            }
-            CheckLengthToRead(1);
-            i = (i | (b & 0x7F)) << 8;
-            value = (i | GetByte());
-            return 4;
+            value = (int)unsigned;
+            return result;
         }
 
         /// <summary>
@@ -622,7 +608,7 @@ namespace x2
 
         public void Write(byte[] value, int offset, int count)
         {
-            WriteUInt29(count);
+            WriteVariable(count);
             CopyFrom(value, offset, count);
         }
 
@@ -701,7 +687,7 @@ namespace x2
                     length += 2;
                 }
             }
-            WriteUInt29(length);
+            WriteVariable(length);
             EnsureCapacityToWrite(length);
             foreach (char c in value)
             {
@@ -728,44 +714,13 @@ namespace x2
             Write(value.Ticks);
         }
 
-        public void WriteUInt29(int value)
+        public void WriteVariable(int value)
         {
-            // 0x00000000 - 0x0000007F : 0xxxxxxx
-            // 0x00000080 - 0x00003FFF : 1xxxxxxx 0xxxxxxx
-            // 0x00004000 - 0x001FFFFF : 1xxxxxxx 1xxxxxxx 0xxxxxxx
-            // 0x00200000 - 0x3FFFFFFF : 1xxxxxxx 1xxxxxxx 1xxxxxxx xxxxxxxx
-            // 0x40000000 - 0xFFFFFFFF : throw range exception
-
-            if ((value & 0xFFFFFF80) == 0)
-            {
-                EnsureCapacityToWrite(1);
-                PutByte((byte)value);
-            }
-            else if ((value & 0xFFFFC000) == 0)
-            {
-                EnsureCapacityToWrite(2);
-                PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7F));
-            }
-            else if ((value & 0xFFE00000) == 0)
-            {
-                EnsureCapacityToWrite(3);
-                PutByte((byte)((value >> 14) | 0x80));
-                PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7F));
-            }
-            else if ((value & 0xC0000000) == 0)
-            {
-                EnsureCapacityToWrite(4);
-                PutByte((byte)((value >> 22) | 0x80));
-                PutByte((byte)((value >> 15) | 0x80));
-                PutByte((byte)((value >> 8) | 0x80));
-                PutByte((byte)value);
-            }
-            else
+            if (value < 0)
             {
                 throw new ArgumentOutOfRangeException();
             }
+            WriteVariable((uint)value);
         }
 
         /// <summary>

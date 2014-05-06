@@ -246,7 +246,7 @@ namespace x2
 
         public override void Serialize(Buffer buffer)
         {
-            buffer.WriteUInt29(tag.TypeId);
+            buffer.Write(tag.TypeId);
             this.Dump(buffer);
         }
 
