@@ -243,6 +243,10 @@ namespace x2
         {
             int length;
             buffer.ReadVariable(out length);
+            if (this.length < length)
+            {
+                length = this.length;
+            }
             int lengthInBytes = ((length - 1) >> 3) + 1;
 
             int count = 0;
