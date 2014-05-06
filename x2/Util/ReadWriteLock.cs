@@ -7,7 +7,7 @@ using System.Threading;
 namespace x2
 {
     /// <summary>
-    /// Provides a disposalbe read lock.
+    /// Provides a disposable read lock.
     /// </summary>
     public class ReadLock : IDisposable
     {
@@ -33,7 +33,7 @@ namespace x2
     }
 
     /// <summary>
-    /// Provides a disposalbe write lock.
+    /// Provides a disposable write lock.
     /// </summary>
     public class WriteLock : IDisposable
     {
