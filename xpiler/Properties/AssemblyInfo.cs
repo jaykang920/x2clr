@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("x2clr")]
-[assembly: AssemblyCopyright("Copyright © 2013 Jae-jun Kang")]
+[assembly: AssemblyCopyright("Copyright © 2013, 2014 Jae-jun Kang")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
