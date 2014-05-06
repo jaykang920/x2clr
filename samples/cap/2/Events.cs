@@ -31,6 +31,11 @@ namespace x2.Samples.Capitalizer
                     1);
         }
 
+        new public static CapitalizeReq New()
+        {
+            return new CapitalizeReq();
+        }
+
         public CapitalizeReq()
             : base(tag.NumProps)
         {
@@ -112,7 +117,7 @@ namespace x2.Samples.Capitalizer
 
         public override void Serialize(x2.Buffer buffer)
         {
-            buffer.WriteUInt29(tag.TypeId);
+            buffer.Write(tag.TypeId);
             this.Dump(buffer);
         }
 
@@ -160,6 +165,11 @@ namespace x2.Samples.Capitalizer
         {
             tag = new Tag(Event.tag, typeof(CapitalizeResp), 1,
                     2);
+        }
+
+        new public static CapitalizeResp New()
+        {
+            return new CapitalizeResp();
         }
 
         public CapitalizeResp()
@@ -243,7 +253,7 @@ namespace x2.Samples.Capitalizer
 
         public override void Serialize(x2.Buffer buffer)
         {
-            buffer.WriteUInt29(tag.TypeId);
+            buffer.Write(tag.TypeId);
             this.Dump(buffer);
         }
 

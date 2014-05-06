@@ -18,7 +18,7 @@ namespace x2.Samples.Capitalizer
         static void OnCapitalizeReq(CapitalizeReq req)
         {
             var resp = new CapitalizeResp();
-            resp.SessionHandle = req.SessionHandle;
+            resp._Handle = req._Handle;
             resp.Result = req.Message.ToUpper();
             Flow.Post(resp);
         }
@@ -38,14 +38,14 @@ namespace x2.Samples.Capitalizer
             public void OnConnect()
             {
                 var e = new CapitalizeResp();
-                e.SessionHandle = LinkSession.Handle;
+                e._Handle = LinkSession.Handle;
                 Flow.Bind(e, Send);
             }
 
             public void OnDisconnect()
             {
                 var e = new CapitalizeResp();
-                e.SessionHandle = LinkSession.Handle;
+                e._Handle = LinkSession.Handle;
                 Flow.Unbind(e, Send);
             }
 
@@ -124,18 +124,19 @@ namespace x2.Samples.Capitalizer
                 .Attach(new CapitalizerFlow())
                 .Attach(new CapitalizerServer());
 
-            Flow.StartAll();
-
-            while (true)
+            using (var flows = new Hub.Flows())
             {
-                string message = Console.ReadLine();
-                if (message == "quit")
+                flows.Start();
+
+                while (true)
                 {
-                    break;
+                    string message = Console.ReadLine();
+                    if (message == "quit")
+                    {
+                        break;
+                    }
                 }
             }
-
-            Flow.StopAll();
         }
     }
 }

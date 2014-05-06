@@ -43,22 +43,23 @@ namespace x2.Samples.Capitalizer
                 .Attach(new CapitalizerFlow())
                 .Attach(new OutputFlow());
 
-            Flow.StartAll();
-
-            while (true)
+            using (var flows = new Hub.Flows())
             {
-                string message = Console.ReadLine();
-                if (message == "quit")
+                flows.Start();
+
+                while (true)
                 {
-                    break;
+                    string message = Console.ReadLine();
+                    if (message == "quit")
+                    {
+                        break;
+                    }
+
+                    var e = new CapitalizeReq();
+                    e.Message = message;
+                    Hub.Post(e);
                 }
-
-                var e = new CapitalizeReq();
-                e.Message = message;
-                Hub.Post(e);
             }
-
-            Flow.StopAll();
         }
     }
 }

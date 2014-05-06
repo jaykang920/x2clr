@@ -17,37 +17,32 @@ namespace x2.Tests
     {
         new protected static readonly Tag tag;
 
-        private int foo;
-        private string bar;
+        private int foo_;
+        private string bar_;
 
         public int Foo
         {
-            get { return foo; }
+            get { return foo_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                foo = value;
+                foo_ = value;
             }
         }
 
         public string Bar
         {
-            get { return bar; }
+            get { return bar_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 1);
-                bar = value;
+                bar_ = value;
             }
         }
 
         static SampleCell1()
         {
             tag = new Tag(null, typeof(SampleCell1), 2);
-        }
-
-        public static SampleCell1 New()
-        {
-            return new SampleCell1();
         }
 
         public SampleCell1()
@@ -69,11 +64,11 @@ namespace x2.Tests
                 return false;
             }
             SampleCell1 o = (SampleCell1)other;
-            if (foo != o.foo)
+            if (foo_ != o.foo_)
             {
                 return false;
             }
-            if (bar != o.bar)
+            if (bar_ != o.bar_)
             {
                 return false;
             }
@@ -90,11 +85,11 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                hash.Update(foo);
+                hash.Update(foo_);
             }
             if (touched[1])
             {
-                hash.Update(bar);
+                hash.Update(bar_);
             }
             return hash.Code;
         }
@@ -114,14 +109,14 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (foo != o.foo)
+                if (foo_ != o.foo_)
                 {
                     return false;
                 }
             }
             if (touched[1])
             {
-                if (bar != o.bar)
+                if (bar_ != o.bar_)
                 {
                     return false;
                 }
@@ -135,18 +130,12 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out foo);
+                buffer.Read(out foo_);
             }
             if (touched[1])
             {
-                buffer.Read(out bar);
+                buffer.Read(out bar_);
             }
-        }
-
-        public SampleCell1 Run(Action<SampleCell1> action)
-        {
-            action(this);
-            return this;
         }
 
         protected override void Dump(x2.Buffer buffer)
@@ -155,25 +144,25 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(foo);
+                buffer.Write(foo_);
             }
             if (touched[1])
             {
-                buffer.Write(bar);
+                buffer.Write(bar_);
             }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Foo={0}", foo);
-            stringBuilder.AppendFormat(" Bar=\"{0}\"", bar.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Foo={0}", foo_);
+            stringBuilder.AppendFormat(" Bar=\"{0}\"", bar_.Replace("\"", "\\\""));
         }
 
         private void Initialize()
         {
-            foo = 0;
-            bar = "";
+            foo_ = 0;
+            bar_ = "";
         }
     }
 
@@ -181,26 +170,21 @@ namespace x2.Tests
     {
         new protected static readonly Tag tag;
 
-        private bool baz;
+        private bool baz_;
 
         public bool Baz
         {
-            get { return baz; }
+            get { return baz_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                baz = value;
+                baz_ = value;
             }
         }
 
         static SampleCell2()
         {
             tag = new Tag(SampleCell1.tag, typeof(SampleCell2), 1);
-        }
-
-        new public static SampleCell2 New()
-        {
-            return new SampleCell2();
         }
 
         public SampleCell2()
@@ -222,7 +206,7 @@ namespace x2.Tests
                 return false;
             }
             SampleCell2 o = (SampleCell2)other;
-            if (baz != o.baz)
+            if (baz_ != o.baz_)
             {
                 return false;
             }
@@ -239,7 +223,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                hash.Update(baz);
+                hash.Update(baz_);
             }
             return hash.Code;
         }
@@ -259,7 +243,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (baz != o.baz)
+                if (baz_ != o.baz_)
                 {
                     return false;
                 }
@@ -273,14 +257,8 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out baz);
+                buffer.Read(out baz_);
             }
-        }
-
-        public SampleCell2 Run(Action<SampleCell2> action)
-        {
-            action(this);
-            return this;
         }
 
         protected override void Dump(x2.Buffer buffer)
@@ -289,19 +267,19 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(baz);
+                buffer.Write(baz_);
             }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Baz={0}", baz);
+            stringBuilder.AppendFormat(" Baz={0}", baz_);
         }
 
         private void Initialize()
         {
-            baz = false;
+            baz_ = false;
         }
     }
 
@@ -309,26 +287,21 @@ namespace x2.Tests
     {
         new protected static readonly Tag tag;
 
-        private bool qux;
+        private bool qux_;
 
         public bool Qux
         {
-            get { return qux; }
+            get { return qux_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                qux = value;
+                qux_ = value;
             }
         }
 
         static SampleCell3()
         {
             tag = new Tag(SampleCell1.tag, typeof(SampleCell3), 1);
-        }
-
-        new public static SampleCell3 New()
-        {
-            return new SampleCell3();
         }
 
         public SampleCell3()
@@ -350,7 +323,7 @@ namespace x2.Tests
                 return false;
             }
             SampleCell3 o = (SampleCell3)other;
-            if (qux != o.qux)
+            if (qux_ != o.qux_)
             {
                 return false;
             }
@@ -367,7 +340,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                hash.Update(qux);
+                hash.Update(qux_);
             }
             return hash.Code;
         }
@@ -387,7 +360,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (qux != o.qux)
+                if (qux_ != o.qux_)
                 {
                     return false;
                 }
@@ -401,14 +374,8 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out qux);
+                buffer.Read(out qux_);
             }
-        }
-
-        public SampleCell3 Run(Action<SampleCell3> action)
-        {
-            action(this);
-            return this;
         }
 
         protected override void Dump(x2.Buffer buffer)
@@ -417,19 +384,19 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(qux);
+                buffer.Write(qux_);
             }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Qux={0}", qux);
+            stringBuilder.AppendFormat(" Qux={0}", qux_);
         }
 
         private void Initialize()
         {
-            qux = false;
+            qux_ = false;
         }
     }
 
@@ -437,26 +404,21 @@ namespace x2.Tests
     {
         new protected static readonly Tag tag;
 
-        private bool quux;
+        private bool quux_;
 
         public bool Quux
         {
-            get { return quux; }
+            get { return quux_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                quux = value;
+                quux_ = value;
             }
         }
 
         static SampleCell4()
         {
             tag = new Tag(SampleCell2.tag, typeof(SampleCell4), 1);
-        }
-
-        new public static SampleCell4 New()
-        {
-            return new SampleCell4();
         }
 
         public SampleCell4()
@@ -478,7 +440,7 @@ namespace x2.Tests
                 return false;
             }
             SampleCell4 o = (SampleCell4)other;
-            if (quux != o.quux)
+            if (quux_ != o.quux_)
             {
                 return false;
             }
@@ -495,7 +457,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                hash.Update(quux);
+                hash.Update(quux_);
             }
             return hash.Code;
         }
@@ -515,7 +477,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (quux != o.quux)
+                if (quux_ != o.quux_)
                 {
                     return false;
                 }
@@ -529,14 +491,8 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out quux);
+                buffer.Read(out quux_);
             }
-        }
-
-        public SampleCell4 Run(Action<SampleCell4> action)
-        {
-            action(this);
-            return this;
         }
 
         protected override void Dump(x2.Buffer buffer)
@@ -545,19 +501,19 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(quux);
+                buffer.Write(quux_);
             }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Quux={0}", quux);
+            stringBuilder.AppendFormat(" Quux={0}", quux_);
         }
 
         private void Initialize()
         {
-            quux = false;
+            quux_ = false;
         }
     }
 
@@ -567,26 +523,26 @@ namespace x2.Tests
 
         new public static int TypeId { get { return tag.TypeId; } }
 
-        private int foo;
-        private string bar;
+        private int foo_;
+        private string bar_;
 
         public int Foo
         {
-            get { return foo; }
+            get { return foo_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                foo = value;
+                foo_ = value;
             }
         }
 
         public string Bar
         {
-            get { return bar; }
+            get { return bar_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 1);
-                bar = value;
+                bar_ = value;
             }
         }
 
@@ -620,11 +576,11 @@ namespace x2.Tests
                 return false;
             }
             SampleEvent1 o = (SampleEvent1)other;
-            if (foo != o.foo)
+            if (foo_ != o.foo_)
             {
                 return false;
             }
-            if (bar != o.bar)
+            if (bar_ != o.bar_)
             {
                 return false;
             }
@@ -641,11 +597,11 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                hash.Update(foo);
+                hash.Update(foo_);
             }
             if (touched[1])
             {
-                hash.Update(bar);
+                hash.Update(bar_);
             }
             return hash.Code;
         }
@@ -670,14 +626,14 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (foo != o.foo)
+                if (foo_ != o.foo_)
                 {
                     return false;
                 }
             }
             if (touched[1])
             {
-                if (bar != o.bar)
+                if (bar_ != o.bar_)
                 {
                     return false;
                 }
@@ -691,23 +647,17 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out foo);
+                buffer.Read(out foo_);
             }
             if (touched[1])
             {
-                buffer.Read(out bar);
+                buffer.Read(out bar_);
             }
-        }
-
-        public SampleEvent1 Run(Action<SampleEvent1> action)
-        {
-            action(this);
-            return this;
         }
 
         public override void Serialize(x2.Buffer buffer)
         {
-            buffer.WriteUInt29(tag.TypeId);
+            buffer.Write(tag.TypeId);
             this.Dump(buffer);
         }
 
@@ -717,25 +667,25 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(foo);
+                buffer.Write(foo_);
             }
             if (touched[1])
             {
-                buffer.Write(bar);
+                buffer.Write(bar_);
             }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Foo={0}", foo);
-            stringBuilder.AppendFormat(" Bar=\"{0}\"", bar.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Foo={0}", foo_);
+            stringBuilder.AppendFormat(" Bar=\"{0}\"", bar_.Replace("\"", "\\\""));
         }
 
         private void Initialize()
         {
-            foo = 0;
-            bar = "";
+            foo_ = 0;
+            bar_ = "";
         }
     }
 
@@ -745,15 +695,15 @@ namespace x2.Tests
 
         new public static int TypeId { get { return tag.TypeId; } }
 
-        private bool baz;
+        private bool baz_;
 
         public bool Baz
         {
-            get { return baz; }
+            get { return baz_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                baz = value;
+                baz_ = value;
             }
         }
 
@@ -787,7 +737,7 @@ namespace x2.Tests
                 return false;
             }
             SampleEvent2 o = (SampleEvent2)other;
-            if (baz != o.baz)
+            if (baz_ != o.baz_)
             {
                 return false;
             }
@@ -804,7 +754,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                hash.Update(baz);
+                hash.Update(baz_);
             }
             return hash.Code;
         }
@@ -829,7 +779,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (baz != o.baz)
+                if (baz_ != o.baz_)
                 {
                     return false;
                 }
@@ -843,19 +793,13 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out baz);
+                buffer.Read(out baz_);
             }
-        }
-
-        public SampleEvent2 Run(Action<SampleEvent2> action)
-        {
-            action(this);
-            return this;
         }
 
         public override void Serialize(x2.Buffer buffer)
         {
-            buffer.WriteUInt29(tag.TypeId);
+            buffer.Write(tag.TypeId);
             this.Dump(buffer);
         }
 
@@ -865,19 +809,19 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(baz);
+                buffer.Write(baz_);
             }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Baz={0}", baz);
+            stringBuilder.AppendFormat(" Baz={0}", baz_);
         }
 
         private void Initialize()
         {
-            baz = false;
+            baz_ = false;
         }
     }
 
@@ -887,15 +831,15 @@ namespace x2.Tests
 
         new public static int TypeId { get { return tag.TypeId; } }
 
-        private bool qux;
+        private bool qux_;
 
         public bool Qux
         {
-            get { return qux; }
+            get { return qux_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                qux = value;
+                qux_ = value;
             }
         }
 
@@ -929,7 +873,7 @@ namespace x2.Tests
                 return false;
             }
             SampleEvent3 o = (SampleEvent3)other;
-            if (qux != o.qux)
+            if (qux_ != o.qux_)
             {
                 return false;
             }
@@ -946,7 +890,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                hash.Update(qux);
+                hash.Update(qux_);
             }
             return hash.Code;
         }
@@ -971,7 +915,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (qux != o.qux)
+                if (qux_ != o.qux_)
                 {
                     return false;
                 }
@@ -985,19 +929,13 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out qux);
+                buffer.Read(out qux_);
             }
-        }
-
-        public SampleEvent3 Run(Action<SampleEvent3> action)
-        {
-            action(this);
-            return this;
         }
 
         public override void Serialize(x2.Buffer buffer)
         {
-            buffer.WriteUInt29(tag.TypeId);
+            buffer.Write(tag.TypeId);
             this.Dump(buffer);
         }
 
@@ -1007,19 +945,19 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(qux);
+                buffer.Write(qux_);
             }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Qux={0}", qux);
+            stringBuilder.AppendFormat(" Qux={0}", qux_);
         }
 
         private void Initialize()
         {
-            qux = false;
+            qux_ = false;
         }
     }
 
@@ -1029,15 +967,15 @@ namespace x2.Tests
 
         new public static int TypeId { get { return tag.TypeId; } }
 
-        private bool quux;
+        private bool quux_;
 
         public bool Quux
         {
-            get { return quux; }
+            get { return quux_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                quux = value;
+                quux_ = value;
             }
         }
 
@@ -1071,7 +1009,7 @@ namespace x2.Tests
                 return false;
             }
             SampleEvent4 o = (SampleEvent4)other;
-            if (quux != o.quux)
+            if (quux_ != o.quux_)
             {
                 return false;
             }
@@ -1088,7 +1026,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                hash.Update(quux);
+                hash.Update(quux_);
             }
             return hash.Code;
         }
@@ -1113,7 +1051,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (quux != o.quux)
+                if (quux_ != o.quux_)
                 {
                     return false;
                 }
@@ -1127,19 +1065,13 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out quux);
+                buffer.Read(out quux_);
             }
-        }
-
-        public SampleEvent4 Run(Action<SampleEvent4> action)
-        {
-            action(this);
-            return this;
         }
 
         public override void Serialize(x2.Buffer buffer)
         {
-            buffer.WriteUInt29(tag.TypeId);
+            buffer.Write(tag.TypeId);
             this.Dump(buffer);
         }
 
@@ -1149,19 +1081,19 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(quux);
+                buffer.Write(quux_);
             }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Quux={0}", quux);
+            stringBuilder.AppendFormat(" Quux={0}", quux_);
         }
 
         private void Initialize()
         {
-            quux = false;
+            quux_ = false;
         }
     }
 }

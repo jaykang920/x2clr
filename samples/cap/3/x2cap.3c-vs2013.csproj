@@ -43,7 +43,7 @@
     <Compile Include="Client.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\x2\x2clr-vs2008.csproj">
+    <ProjectReference Include="..\..\..\x2\x2clr-vs2013.csproj">
       <Project>{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}</Project>
       <Name>x2clr-vs2008</Name>
     </ProjectReference>

@@ -18,7 +18,7 @@ namespace x2.Samples.Echo
         static void OnEchoReq(EchoReq req)
         {
             var resp = new EchoResp {
-                SessionHandle = req.SessionHandle,
+                _Handle = req._Handle,
                 Message = req.Message
             };
             Flow.Post(resp);
@@ -39,7 +39,7 @@ namespace x2.Samples.Echo
             public void OnConnect()
             {
                 var e = new EchoResp {
-                    SessionHandle = LinkSession.Handle
+                    _Handle = LinkSession.Handle
                 };
                 Flow.Bind(e, Send);
             }
@@ -47,7 +47,7 @@ namespace x2.Samples.Echo
             public void OnDisconnect()
             {
                 var e = new EchoResp {
-                    SessionHandle = LinkSession.Handle
+                    _Handle = LinkSession.Handle
                 };
                 Flow.Unbind(e, Send);
             }
@@ -124,18 +124,19 @@ namespace x2.Samples.Echo
                     .Add(new EchoCase()))
                 .Attach(new EchoServerFlow());
 
-            Flow.StartAll();
-
-            while (true)
+            using (var flows = new Hub.Flows())
             {
-                string message = Console.ReadLine();
-                if (message == "quit")
+                flows.Start();
+
+                while (true)
                 {
-                    break;
+                    string message = Console.ReadLine();
+                    if (message == "quit")
+                    {
+                        break;
+                    }
                 }
             }
-
-            Flow.StopAll();
         }
     }
 }

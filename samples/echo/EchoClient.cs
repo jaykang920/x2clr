@@ -32,7 +32,7 @@ namespace x2.Samples.Echo
 
                 var linkSession = e.Context as LinkSession;
 
-                Bind(new EchoResp { SessionHandle = linkSession.Handle }, OnEchoResp);
+                Bind(new EchoResp { _Handle = linkSession.Handle }, OnEchoResp);
 
                 link.Send(new EchoReq {
                     Message = message
@@ -88,18 +88,19 @@ namespace x2.Samples.Echo
             }
             */
 
-            Flow.StartAll();
-
-            while (true)
+            using (var flows = new Hub.Flows())
             {
-                string message = Console.ReadLine();
-                if (message == "quit")
+                flows.Start();
+
+                while (true)
                 {
-                    break;
+                    string message = Console.ReadLine();
+                    if (message == "quit")
+                    {
+                        break;
+                    }
                 }
             }
-
-            Flow.StopAll();
         }
     }
 }
