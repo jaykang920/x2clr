@@ -139,22 +139,6 @@ namespace x2
         }
 
         /// <summary>
-        /// Starts all the flows attached to the hubs in the current process.
-        /// </summary>
-        public static void StartAll()
-        {
-            Hub.StartAllFlows();
-        }
-
-        /// <summary>
-        /// Stops all the flows attached to the hubs in the current process.
-        /// </summary>
-        public static void StopAll()
-        {
-            Hub.StopAllFlows();
-        }
-
-        /// <summary>
         /// Default exception handler.
         /// </summary>
         private static void OnException(string message, Exception e)
