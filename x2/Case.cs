@@ -74,7 +74,7 @@ namespace x2
 
         public void SetUp(Flow holder)
         {
-            IEnumerable<ICase> snapshot;
+            List<ICase> snapshot;
             lock (cases)
             {
                 if (activated)
@@ -84,15 +84,15 @@ namespace x2
                 activated = true;
                 snapshot = new List<ICase>(cases);
             }
-            foreach (ICase c in snapshot)
+            for (int i = 0, count = snapshot.Count; i < count; ++i)
             {
-                c.SetUp(holder);
+                snapshot[i].SetUp(holder);
             }
         }
 
         public void TearDown(Flow holder)
         {
-            IEnumerable<ICase> snapshot;
+            List<ICase> snapshot;
             lock (cases)
             {
                 if (!activated)
@@ -100,11 +100,11 @@ namespace x2
                     return;
                 }
                 activated = false;
-                snapshot = new Stack<ICase>(cases);
+                snapshot = new List<ICase>(cases);
             }
-            foreach (ICase c in snapshot)
+            for (int i = snapshot.Count - 1; i >= 0; --i)
             {
-                c.TearDown(holder);
+                snapshot[i].TearDown(holder);
             }
         }
     }

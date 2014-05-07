@@ -98,8 +98,10 @@ namespace x2
         public static void Register(Assembly assembly)
         {
             Type eventType = typeof(Event);
-            foreach (var type in assembly.GetTypes())
+            var types = assembly.GetTypes();
+            for (int i = 0, count = types.Length; i < count; ++i)
             {
+                var type = types[i];
                 if (eventType.IsAssignableFrom(type))
                 {
                     Register(type);

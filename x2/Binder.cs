@@ -49,11 +49,12 @@ namespace x2
             while (tag != null)
             {
                 int typeId = tag.TypeId;
-                IEnumerable<Slot> slots = filter.Get(typeId);
+                IList<Slot> slots = filter.Get(typeId);
                 if (slots != null)
                 {
-                    foreach (Fingerprint slot in slots)
+                    for (int i = 0, count = slots.Count; i < count; ++i)
                     {
+                        var slot = slots[i];
                         if (slot.IsEquivalent(fingerprint))
                         {
                             EventEquivalent equivalent = new EventEquivalent(e, slot, typeId);
@@ -185,7 +186,7 @@ namespace x2
                 }
             }
 
-            internal IEnumerable<Slot> Get(int typeId)
+            internal IList<Slot> Get(int typeId)
             {
                 List<Slot> slots;
                 map.TryGetValue(typeId, out slots);

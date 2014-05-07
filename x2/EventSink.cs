@@ -168,9 +168,9 @@ namespace x2
                     return;
                 }
 
-                foreach (var binding in bindings)
+                for (int i = 0, count = bindings.Count; i < count; ++i)
                 {
-                    flow.Unsubscribe(binding);
+                    flow.Unsubscribe(bindings[i]);
                 }
 
                 bindings.Clear();

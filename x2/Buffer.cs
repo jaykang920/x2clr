@@ -565,9 +565,9 @@ namespace x2
             {
                 List<byte[]> blocksToRemove = blocks.GetRange(index, count);
                 blocks.RemoveRange(index, count);
-                foreach (byte[] block in blocksToRemove)
+                for (int i = 0; i < blocksToRemove.Count; ++i)
                 {
-                    blockPool.Release(blockSizeExponent, block);
+                    blockPool.Release(blockSizeExponent, blocksToRemove[i]);
                 }
             }
             Position = front;
@@ -672,8 +672,10 @@ namespace x2
         public void Write(string value)
         {
             int length = 0;
-            foreach (char c in value)
+            for (int i = 0, count = value.Length; i < count; ++i)
             {
+                var c = value[i];
+
                 if ((c & 0xFF80) == 0)
                 {
                     ++length;
@@ -689,8 +691,10 @@ namespace x2
             }
             WriteVariable(length);
             EnsureCapacityToWrite(length);
-            foreach (char c in value)
+            for (int i = 0, count = value.Length; i < count; ++i)
             {
+                var c = value[i];
+
                 if ((c & 0xFF80) == 0)
                 {
                     PutByte((byte)c);
@@ -944,9 +948,9 @@ namespace x2
             {
                 return;
             }
-            foreach (var block in blocks)
+            for (int i = 0, count = blocks.Count; i < count; ++i)
             {
-                blockPool.Release(blockSizeExponent, block);
+                blockPool.Release(blockSizeExponent, blocks[i]);
             }
             blocks.Clear();
             currentBlock = null;

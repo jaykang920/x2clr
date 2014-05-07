@@ -100,10 +100,10 @@ namespace x2
 
         public override void Load(Buffer buffer)
         {
-            int numItems;
-            buffer.ReadVariable(out numItems);
+            int count;
+            buffer.ReadVariable(out count);
 
-            for (int i = 0; i < numItems; ++i)
+            for (int i = 0; i < count; ++i)
             {
                 T item = new T();
                 ((Cell)item).Load(buffer);
@@ -116,9 +116,9 @@ namespace x2
             int numItems = (int)store.Count;
             buffer.WriteVariable(numItems);
 
-            foreach (T item in store)
+            for (int i = 0, count = store.Count; i < count; ++i)
             {
-                ((Cell)item).Serialize(buffer);
+                ((Cell)store[i]).Serialize(buffer);
             }
         }
 
@@ -126,10 +126,10 @@ namespace x2
         {
             Type itemType = typeof(T);
             stringBuilder.Append(" {");
-            foreach (T item in store)
+            for (int i = 0, count = store.Count; i < count; ++i)
             {
                 stringBuilder.Append(" ");
-                stringBuilder.Append(item.ToString());
+                stringBuilder.Append(store[i].ToString());
             }
             stringBuilder.Append(" }");
             return;
