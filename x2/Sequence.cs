@@ -101,7 +101,7 @@ namespace x2
         public override void Load(Buffer buffer)
         {
             int numItems;
-            buffer.Read(out numItems);
+            buffer.ReadVariable(out numItems);
 
             for (int i = 0; i < numItems; ++i)
             {
@@ -113,9 +113,8 @@ namespace x2
 
         protected override void Dump(Buffer buffer)
         {
-            base.Dump(buffer);
             int numItems = (int)store.Count;
-            buffer.Write(numItems);
+            buffer.WriteVariable(numItems);
 
             foreach (T item in store)
             {
