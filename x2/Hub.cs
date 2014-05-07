@@ -263,7 +263,7 @@ namespace x2
         {
             defaultSubscribers.Remove(flow);
 
-            List<string> keysToRemove = new List<string>();
+            var keysToRemove = new List<string>();
 
             foreach (var pair in subscriptions)
             {

@@ -22,7 +22,7 @@ namespace x2
 
         public static int TypeId { get { return tag.TypeId; } }
 
-        private string _channel = String.Empty;
+        private string _channel;
         private IntPtr _handle;
 
         /// <summary>
