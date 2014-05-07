@@ -220,21 +220,22 @@ namespace x2
         public void Dump(Buffer buffer)
         {
             buffer.WriteVariable(length);
+            int lengthInBytes = LengthInBytes;
 
             int count = 0;
-            for (int j = 0; (j < 4) && (count < LengthInBytes); ++j, ++count)
+            for (int i = 0; (i < 4) && (count < lengthInBytes); ++i, ++count)
             {
-                buffer.Write((byte)(block >> (j << 3)));
+                buffer.Write((byte)(block >> (i << 3)));
             }
             if (blocks == null)
             {
                 return;
             }
-            foreach (var each in blocks)
+            for (int i = 0; i < blocks.Length; ++i)
             {
-                for (int j = 0; (j < 4) && (count < LengthInBytes); ++j, ++count)
+                for (int j = 0; (j < 4) && (count < lengthInBytes); ++j, ++count)
                 {
-                    buffer.Write((byte)(each >> (j << 3)));
+                    buffer.Write((byte)(blocks[i] >> (j << 3)));
                 }
             }
         }
@@ -243,17 +244,18 @@ namespace x2
         {
             int length;
             buffer.ReadVariable(out length);
-            if (this.length < length)
-            {
-                length = this.length;
-            }
             int lengthInBytes = ((length - 1) >> 3) + 1;
+            int effectiveBytes = LengthInBytes;
 
             int count = 0;
             block = 0;
-            for (int j = 0; (j < 4) && (count < lengthInBytes); ++j, ++count)
+            for (int i = 0; (i < 4) && (count < lengthInBytes); ++i, ++count)
             {
-                block |= ((int)buffer.ReadByte() << (j << 3));
+                int mask = (int)buffer.ReadByte() << (i << 3);
+                if (count < effectiveBytes)
+                {
+                    block |= mask;
+                }
             }
             if (blocks == null)
             {
@@ -264,7 +266,11 @@ namespace x2
                 blocks[i] = 0;
                 for (int j = 0; (j < 4) && (count < lengthInBytes); ++j, ++count)
                 {
-                    blocks[i] |= ((int)buffer.ReadByte() << (j << 3));
+                    int mask = (int)buffer.ReadByte() << (j << 3);
+                    if (count < effectiveBytes)
+                    {
+                        blocks[i] |= mask;
+                    }
                 }
             }
         }
