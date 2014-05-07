@@ -251,10 +251,10 @@ namespace x2
             block = 0;
             for (int i = 0; (i < 4) && (count < lengthInBytes); ++i, ++count)
             {
-                int mask = (int)buffer.ReadByte() << (i << 3);
+                int mask = (int)buffer.ReadByte();
                 if (count < effectiveBytes)
                 {
-                    block |= mask;
+                    block |= (mask << (i << 3));
                 }
             }
             if (blocks == null)
@@ -266,10 +266,10 @@ namespace x2
                 blocks[i] = 0;
                 for (int j = 0; (j < 4) && (count < lengthInBytes); ++j, ++count)
                 {
-                    int mask = (int)buffer.ReadByte() << (j << 3);
+                    int mask = (int)buffer.ReadByte();
                     if (count < effectiveBytes)
                     {
-                        blocks[i] |= mask;
+                        blocks[i] |= (mask << (j << 3));
                     }
                 }
             }
