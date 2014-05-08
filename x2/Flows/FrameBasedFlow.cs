@@ -37,23 +37,31 @@ namespace x2.Flows
             get { return new TimeSpan(deltaTicks).TotalSeconds; }
         }
 
+        /// <summary>
+        /// Number of ticks representing the start UTC DateTime of the current frame.
+        /// </summary>
         public long CurrentTicks { get { return currentTicks; } }
 
         /// <summary>
-        /// Gets the start DateTime of the current frame.
+        /// Gets the start local DateTime of the current frame.
         /// </summary>
-        public DateTime Now { get { return new DateTime(currentTicks); } }
+        public DateTime Now { get { return new DateTime(currentTicks).ToLocalTime(); } }
+
+        /// <summary>
+        /// Gets the start UTC DateTime of the current frame.
+        /// </summary>
+        public DateTime UtcNow { get { return new DateTime(currentTicks); } }
 
         public void Initialize()
         {
-            startTicks = DateTime.Now.Ticks;
+            startTicks = DateTime.UtcNow.Ticks;
             lastTicks = startTicks;
             currentTicks = lastTicks;
         }
 
         public void BeforeUpdate()
         {
-            currentTicks = DateTime.Now.Ticks;
+            currentTicks = DateTime.UtcNow.Ticks;
             deltaTicks = currentTicks - lastTicks;
         }
 
@@ -165,7 +173,7 @@ namespace x2.Flows
 
                 if (queue != null)
                 {
-                    while ((DateTime.Now.Ticks - Time.CurrentTicks) < Resolution)
+                    while ((DateTime.UtcNow.Ticks - Time.CurrentTicks) < Resolution)
                     {
                         Event e;
                         if (queue.TryDequeue(out e))
@@ -187,7 +195,7 @@ namespace x2.Flows
                 }
                 else
                 {
-                    var tickDelta = DateTime.Now.Ticks - Time.CurrentTicks;
+                    var tickDelta = DateTime.UtcNow.Ticks - Time.CurrentTicks;
                     var delay = (tickDelta < Resolution ?
                         (int)((Resolution - tickDelta) / Time.TicksInMillisecond) : 0);
                     Thread.Sleep(delay);

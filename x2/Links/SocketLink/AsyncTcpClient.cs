@@ -208,7 +208,7 @@ namespace x2.Links.SocketLink
         {
             if (state == null)
             {
-                link.Send(new HeartbeatEvent { Timestamp = DateTime.Now.Ticks });
+                link.Send(new HeartbeatEvent { Timestamp = DateTime.UtcNow.Ticks });
             }
             else
             {

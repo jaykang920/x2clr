@@ -106,21 +106,26 @@ namespace x2.Flows
 
         public Token Reserve(object state, double seconds)
         {
-            return Reserve(state, DateTime.Now.AddSeconds(seconds));
+            return ReserveAtUniversalTime(state, DateTime.UtcNow.AddSeconds(seconds));
         }
 
         public Token Reserve(object state, TimeSpan delay)
         {
-            return Reserve(state, DateTime.Now.Add(delay));
+            return ReserveAtUniversalTime(state, DateTime.UtcNow.Add(delay));
         }
 
-        public Token Reserve(object state, DateTime when)
+        public Token ReserveAtLocalTime(object state, DateTime localTime)
+        {
+            return ReserveAtUniversalTime(state, localTime.ToUniversalTime());
+        }
+
+        public Token ReserveAtUniversalTime(object state, DateTime universalTime)
         {
             lock (reserved)
             {
-                reserved.Enqueue(when, state);
+                reserved.Enqueue(universalTime, state);
             }
-            return new Token(when, state);
+            return new Token(universalTime, state);
         }
 
         public void Cancel(Token token)
@@ -136,6 +141,7 @@ namespace x2.Flows
             repeater.Add(state, new Tag(interval));
         }
 
+        // nextTime in UTC
         public void ReserveRepetition(object state, DateTime nextTime, TimeSpan interval)
         {
             repeater.Add(state, new Tag(nextTime, interval));
@@ -148,14 +154,14 @@ namespace x2.Flows
 
         public void Tick()
         {
-            DateTime now = DateTime.Now;
+            DateTime utcNow = DateTime.UtcNow;
             IList<object> events = null;
             lock (reserved)
             {
                 if (reserved.Count != 0)
                 {
                     DateTime next = reserved.Peek();
-                    if (now >= next)
+                    if (utcNow >= next)
                     {
                         events = reserved.DequeueBundle();
                     }
@@ -169,7 +175,7 @@ namespace x2.Flows
                 }
             }
 
-            repeater.Tick(now);
+            repeater.Tick(utcNow);
         }
 
         public struct Token
@@ -190,7 +196,7 @@ namespace x2.Flows
             public TimeSpan Interval { get; private set; }
 
             public Tag(TimeSpan interval)
-                : this(DateTime.Now + interval, interval)
+                : this(DateTime.UtcNow + interval, interval)
             {
             }
 
@@ -361,9 +367,14 @@ namespace x2.Flows
             return timer.Reserve(e, delay);
         }
 
-        public Timer.Token Reserve(Event e, DateTime when)
+        public Timer.Token ReserveAtLocalTime(object state, DateTime localTime)
         {
-            return timer.Reserve(e, when);
+            return timer.ReserveAtLocalTime(state, localTime);
+        }
+
+        public Timer.Token ReserveAtUniversalTime(object state, DateTime universalTime)
+        {
+            return timer.ReserveAtUniversalTime(state, universalTime);
         }
 
         public void Cancel(Timer.Token token)
