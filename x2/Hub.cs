@@ -143,12 +143,14 @@ namespace x2
         /// </summary>
         public static void StartAttachedFlows()
         {
+            List<Flow> flows;
             using (new ReadLock(rwlock))
             {
-                for (int i = 0, count = attached.Count; i < count; ++i)
-                {
-                    attached[i].StartUp();
-                }
+                flows = new List<Flow>(attached);
+            }
+            for (int i = 0, count = flows.Count; i < count; ++i)
+            {
+                flows[i].StartUp();
             }
         }
 
@@ -157,12 +159,14 @@ namespace x2
         /// </summary>
         public static void StopAttachedFlows()
         {
+            List<Flow> flows;
             using (new ReadLock(rwlock))
             {
-                for (int i = 0, count = attached.Count; i < count; ++i)
-                {
-                    attached[i].ShutDown();
-                }
+                flows = new List<Flow>(attached);
+            }
+            for (int i = 0, count = flows.Count; i < count; ++i)
+            {
+                flows[i].ShutDown();
             }
         }
 
