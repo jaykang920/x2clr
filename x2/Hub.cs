@@ -53,7 +53,7 @@ namespace x2
         {
             if (Object.ReferenceEquals(flow, null))
             {
-                throw new NullReferenceException();
+                throw new ArgumentNullException();
             }
             using (new WriteLock(rwlock))
             {
@@ -73,7 +73,7 @@ namespace x2
         {
             if (Object.ReferenceEquals(flow, null))
             {
-                throw new NullReferenceException();
+                throw new ArgumentNullException();
             }
             using (new WriteLock(rwlock))
             {
@@ -107,7 +107,7 @@ namespace x2
         {
             if (Object.ReferenceEquals(e, null))
             {
-                throw new NullReferenceException();
+                throw new ArgumentNullException();
             }
 
             rwlock.EnterReadLock();  // not using ReadLock intentionally
@@ -173,7 +173,7 @@ namespace x2
         {
             if (Object.ReferenceEquals(flow, null))
             {
-                throw new NullReferenceException();
+                throw new ArgumentNullException();
             }
             using (new WriteLock(rwlock))
             {
@@ -192,7 +192,7 @@ namespace x2
         {
             if (Object.ReferenceEquals(flow, null))
             {
-                throw new NullReferenceException();
+                throw new ArgumentNullException();
             }
             using (new WriteLock(rwlock))
             {

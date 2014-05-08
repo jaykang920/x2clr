@@ -61,7 +61,7 @@ namespace x2
                             HandlerSet handlers;
                             if (handlerMap.TryGetValue(equivalent, out handlers))
                             {
-                                handlerChain.AddRange(handlers.GetEnumerable());
+                                handlerChain.AddRange(handlers.GetList());
                             }
                         }
                     }
@@ -236,7 +236,7 @@ namespace x2
                 return true;
             }
 
-            public IEnumerable<Handler> GetEnumerable()
+            public IList<Handler> GetList()
             {
                 return handlers;
             }

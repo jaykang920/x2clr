@@ -326,7 +326,7 @@ namespace x2.Flows
         {
             if (name == null)
             {
-                throw new NullReferenceException();
+                throw new ArgumentNullException();
             }
             return map.Create(name);
         }
@@ -346,7 +346,7 @@ namespace x2.Flows
         {
             if (name == null)
             {
-                throw new NullReferenceException();
+                throw new ArgumentNullException();
             }
             return map.Get(name);
         }

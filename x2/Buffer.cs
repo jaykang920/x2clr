@@ -958,13 +958,15 @@ namespace x2
 
         class BlockPool
         {
+            private const int poolCapacity = 10000;
+
             private readonly Pool<byte[]>[] pools = new Pool<byte[]>[32];
 
             internal BlockPool()
             {
                 for (int i = 0; i < 32; ++i)
                 {
-                    pools[i] = new Pool<byte[]>();
+                    pools[i] = new Pool<byte[]>(poolCapacity);
                 }
             }
 
