@@ -127,8 +127,8 @@ namespace x2
                 {
                     throw new ArgumentException();
                 }
-                buffer[0] = (byte)((value >> 7) | 0x80);
-                buffer[1] = (byte)(value & 0x7f);
+                buffer[0] = (byte)(value | 0x80);
+                buffer[1] = (byte)((value >> 7) & 0x7f);
                 return 2;
             }
 
@@ -138,9 +138,9 @@ namespace x2
                 {
                     throw new ArgumentException();
                 }
-                buffer[0] = (byte)((value >> 14) | 0x80);
+                buffer[0] = (byte)(value | 0x80);
                 buffer[1] = (byte)((value >> 7) | 0x80);
-                buffer[2] = (byte)(value & 0x7f);
+                buffer[2] = (byte)((value >> 14) & 0x7f);
                 return 3;
             }
 
@@ -150,10 +150,10 @@ namespace x2
                 {
                     throw new ArgumentException();
                 }
-                buffer[0] = (byte)((value >> 21) | 0x80);
-                buffer[1] = (byte)((value >> 14) | 0x80);
-                buffer[2] = (byte)((value >> 7) | 0x80);
-                buffer[3] = (byte)(value & 0x7f);
+                buffer[0] = (byte)(value | 0x80);
+                buffer[1] = (byte)((value >> 7) | 0x80);
+                buffer[2] = (byte)((value >> 14) | 0x80);
+                buffer[3] = (byte)((value >> 21) & 0x7f);
                 return 4;
             }
 
@@ -161,11 +161,11 @@ namespace x2
             {
                 throw new ArgumentException();
             }
-            buffer[0] = (byte)((value >> 25) | 0x80);
-            buffer[1] = (byte)((value >> 18) | 0x80);
-            buffer[2] = (byte)((value >> 11) | 0x80);
-            buffer[3] = (byte)((value >> 4) | 0x80);
-            buffer[4] = (byte)(value & 0x0f);
+            buffer[0] = (byte)(value | 0x80);
+            buffer[3] = (byte)((value >> 7) | 0x80);
+            buffer[2] = (byte)((value >> 14) | 0x80);
+            buffer[3] = (byte)((value >> 21) | 0x80);
+            buffer[4] = (byte)((value >> 28) & 0x0f);
             return 5;
         }
 
@@ -291,11 +291,7 @@ namespace x2
             // Zigzag decoding
             uint u;
             int bytes = ReadVariable(out u);
-            value = (int)(u >> 1);
-            if ((u & 1) != 0)
-            {
-                value = ~value;
-            }
+            value = (int)((int)(u >> 1) ^ -((int)u & 1));
             return bytes;
         }
 
@@ -307,11 +303,7 @@ namespace x2
             // Zigzag decoding
             ulong u;
             int bytes = ReadVariable(out u);
-            value = (long)(u >> 1);
-            if ((u & 1) != 0)
-            {
-                value = ~value;
-            }
+            value = (long)((long)(u >> 1) ^ -((long)u & 1));
             return bytes;
         }
 
@@ -340,14 +332,14 @@ namespace x2
         public void Read(out float value)
         {
             int i;
-            Read(out i);
+            ReadFixed(out i);
             value = System.BitConverter.ToSingle(System.BitConverter.GetBytes(i), 0);
         }
 
         public void Read(out double value)
         {
             long l;
-            Read(out l);
+            ReadFixed(out l);
             value = System.BitConverter.ToDouble(System.BitConverter.GetBytes(l), 0);
         }
 
@@ -422,9 +414,10 @@ namespace x2
 
         public void Read(out DateTime value)
         {
-            long ticks;
-            Read(out ticks);
-            value = new DateTime(ticks);
+            long usecs;
+            ReadFixed(out usecs);
+            DateTime unixEpoch = new DateTime(621355968000000000);
+            value = unixEpoch.AddTicks(usecs * 10);
         }
 
         public byte ReadByte()
@@ -451,20 +444,19 @@ namespace x2
         public int ReadVariable(out uint value)
         {
             value = 0U;
-            for (int i = 1; i < 5; ++i)
+            int i, shift = 0;
+            for (i = 0; i < 5; ++i)
             {
                 CheckLengthToRead(1);
                 byte b = GetByte();
+                value |= (((uint)b & 0x7fU) << shift);
                 if ((b & 0x80) == 0)
                 {
-                    value |= b;
-                    return i;
+                    break;
                 }
-                value = (value | (b & 0x7fU)) << (i == 4 ? 4 : 7);
+                shift += 7;
             }
-            CheckLengthToRead(1);
-            value |= GetByte();
-            return 5;
+            return (i < 5 ? (i + 1) : 5);
         }
 
         /// <summary>
@@ -473,20 +465,19 @@ namespace x2
         public int ReadVariable(out ulong value)
         {
             value = 0UL;
-            for (int i = 1; i < 10; ++i)
+            int i, shift = 0;
+            for (i = 0; i < 10; ++i)
             {
                 CheckLengthToRead(1);
                 byte b = GetByte();
+                value |= (((ulong)b & 0x7fU) << shift);
                 if ((b & 0x80) == 0)
                 {
-                    value |= b;
-                    return i;
+                    break;
                 }
-                value = (value | (b & 0x7fUL)) << (i == 9 ? 1 : 7);
+                shift += 7;
             }
-            CheckLengthToRead(1);
-            value |= GetByte();
-            return 10;
+            return (i < 10 ? (i + 1) : 10);
         }
 
         public void Rewind()
@@ -661,12 +652,12 @@ namespace x2
         
         public void Write(float value)
         {
-            Write(System.BitConverter.ToInt32(System.BitConverter.GetBytes(value), 0));
+            WriteFixed(System.BitConverter.ToInt32(System.BitConverter.GetBytes(value), 0));
         }
 
         public void Write(double value)
         {
-            Write(System.BitConverter.ToInt64(System.BitConverter.GetBytes(value), 0));
+            WriteFixed(System.BitConverter.ToInt64(System.BitConverter.GetBytes(value), 0));
         }
 
         public void Write(string value)
@@ -715,7 +706,8 @@ namespace x2
 
         public void Write(DateTime value)
         {
-            Write(value.Ticks);
+            long usecs = (value.Ticks - 621355968000000000) / 10;
+            WriteFixed(usecs);
         }
 
         public void WriteVariable(int value)
@@ -748,36 +740,36 @@ namespace x2
             if ((value & 0xffffc000) == 0)
             {
                 EnsureCapacityToWrite(2);
-                PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7f));
+                PutByte((byte)(value | 0x80));
+                PutByte((byte)((value >> 7) & 0x7f));
                 return;
             }
             
             if ((value & 0xffe00000) == 0)
             {
                 EnsureCapacityToWrite(3);
-                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)(value | 0x80));
                 PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7f));
+                PutByte((byte)((value >> 14) & 0x7f));
                 return;
             }
             
             if ((value & 0xf0000000) == 0)
             {
                 EnsureCapacityToWrite(4);
-                PutByte((byte)((value >> 21) | 0x80));
-                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)(value | 0x80));
                 PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7f));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 21) & 0x7f));
                 return;
             }
             
             EnsureCapacityToWrite(5);
-            PutByte((byte)((value >> 25) | 0x80));
-            PutByte((byte)((value >> 18) | 0x80));
-            PutByte((byte)((value >> 11) | 0x80));
-            PutByte((byte)((value >> 4) | 0x80));
-            PutByte((byte)(value & 0x0f));
+            PutByte((byte)(value | 0x80));
+            PutByte((byte)((value >> 7) | 0x80));
+            PutByte((byte)((value >> 14) | 0x80));
+            PutByte((byte)((value >> 21) | 0x80));
+            PutByte((byte)((value >> 28) & 0x0f));
         }
 
         /// <summary>
@@ -795,106 +787,106 @@ namespace x2
             if ((value & 0xffffffffffffc000L) == 0)
             {
                 EnsureCapacityToWrite(2);
-                PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7f));
+                PutByte((byte)(value | 0x80));
+                PutByte((byte)((value >> 7) & 0x7f));
                 return;
             }
 
             if ((value & 0xffffffffffe00000L) == 0)
             {
                 EnsureCapacityToWrite(3);
-                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)(value | 0x80));
                 PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7f));
+                PutByte((byte)((value >> 14) & 0x7f));
                 return;
             }
 
             if ((value & 0xfffffffff0000000L) == 0)
             {
                 EnsureCapacityToWrite(4);
-                PutByte((byte)((value >> 21) | 0x80));
-                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)(value | 0x80));
                 PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7f));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 21) & 0x7f));
                 return;
             }
 
             if ((value & 0xfffffff800000000L) == 0)
             {
                 EnsureCapacityToWrite(5);
-                PutByte((byte)((value >> 28) | 0x80));
-                PutByte((byte)((value >> 21) | 0x80));
-                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)(value | 0x80));
                 PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7f));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 21) | 0x80));
+                PutByte((byte)((value >> 28) & 0x7f));
                 return;
             }
 
             if ((value & 0xfffffc0000000000L) == 0)
             {
                 EnsureCapacityToWrite(6);
-                PutByte((byte)((value >> 35) | 0x80));
-                PutByte((byte)((value >> 28) | 0x80));
-                PutByte((byte)((value >> 21) | 0x80));
-                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)(value | 0x80));
                 PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7f));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 21) | 0x80));
+                PutByte((byte)((value >> 28) | 0x80));
+                PutByte((byte)((value >> 35) & 0x7f));
                 return;
             }
 
             if ((value & 0xfffe000000000000L) == 0)
             {
                 EnsureCapacityToWrite(7);
-                PutByte((byte)((value >> 42) | 0x80));
-                PutByte((byte)((value >> 35) | 0x80));
-                PutByte((byte)((value >> 28) | 0x80));
-                PutByte((byte)((value >> 21) | 0x80));
-                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)(value | 0x80));
                 PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7f));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 21) | 0x80));
+                PutByte((byte)((value >> 28) | 0x80));
+                PutByte((byte)((value >> 35) | 0x80));
+                PutByte((byte)((value >> 42) & 0x7f));
                 return;
             }
 
             if ((value & 0xff00000000000000L) == 0)
             {
                 EnsureCapacityToWrite(8);
-                PutByte((byte)((value >> 49) | 0x80));
-                PutByte((byte)((value >> 42) | 0x80));
-                PutByte((byte)((value >> 35) | 0x80));
-                PutByte((byte)((value >> 28) | 0x80));
-                PutByte((byte)((value >> 21) | 0x80));
-                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)(value | 0x80));
                 PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7f));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 21) | 0x80));
+                PutByte((byte)((value >> 28) | 0x80));
+                PutByte((byte)((value >> 35) | 0x80));
+                PutByte((byte)((value >> 42) | 0x80));
+                PutByte((byte)((value >> 49) & 0x7f));
                 return;
             }
 
             if ((value & 0x8000000000000000L) == 0)
             {
                 EnsureCapacityToWrite(9);
-                PutByte((byte)((value >> 56) | 0x80));
-                PutByte((byte)((value >> 49) | 0x80));
-                PutByte((byte)((value >> 42) | 0x80));
-                PutByte((byte)((value >> 35) | 0x80));
-                PutByte((byte)((value >> 28) | 0x80));
-                PutByte((byte)((value >> 21) | 0x80));
-                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)(value | 0x80));
                 PutByte((byte)((value >> 7) | 0x80));
-                PutByte((byte)(value & 0x7f));
+                PutByte((byte)((value >> 14) | 0x80));
+                PutByte((byte)((value >> 21) | 0x80));
+                PutByte((byte)((value >> 28) | 0x80));
+                PutByte((byte)((value >> 35) | 0x80));
+                PutByte((byte)((value >> 42) | 0x80));
+                PutByte((byte)((value >> 49) | 0x80));
+                PutByte((byte)((value >> 56) & 0x7f));
                 return;
             }
 
             EnsureCapacityToWrite(10);
-            PutByte((byte)((value >> 57) | 0x80));
-            PutByte((byte)((value >> 50) | 0x80));
-            PutByte((byte)((value >> 43) | 0x80));
-            PutByte((byte)((value >> 36) | 0x80));
-            PutByte((byte)((value >> 29) | 0x80));
-            PutByte((byte)((value >> 22) | 0x80));
-            PutByte((byte)((value >> 15) | 0x80));
-            PutByte((byte)((value >> 8) | 0x80));
-            PutByte((byte)((value >> 1) | 0x80));
-            PutByte((byte)(value & 0x01));
+            PutByte((byte)(value | 0x80));
+            PutByte((byte)((value >> 7) | 0x80));
+            PutByte((byte)((value >> 14) | 0x80));
+            PutByte((byte)((value >> 21) | 0x80));
+            PutByte((byte)((value >> 28) | 0x80));
+            PutByte((byte)((value >> 35) | 0x80));
+            PutByte((byte)((value >> 42) | 0x80));
+            PutByte((byte)((value >> 49) | 0x80));
+            PutByte((byte)((value >> 56) | 0x80));
+            PutByte((byte)((value >> 63) & 0x01));
         }
 
         private void CheckLengthToRead(int numBytes)

@@ -127,7 +127,7 @@ namespace x2
             defaultValues.Add("int64", "0");
             defaultValues.Add("float32", ".0f");
             defaultValues.Add("float64", ".0f");
-            defaultValues.Add("datetime", "new DateTime(0)");
+            defaultValues.Add("datetime", "new DateTime(621355968000000000)");
             defaultValues.Add("string", "");
         }
 
