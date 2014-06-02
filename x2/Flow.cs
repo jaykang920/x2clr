@@ -283,7 +283,7 @@ namespace x2
                     if (stopwatch.ElapsedMilliseconds >= SlowHandlerLogThreshold)
                     {
                         Log.Emit(SlowHandlerLogLevel,
-                            "{0} slow handler {1}ms {2}.{3} on {4}", 
+                            "{0} slow handler {1:#,0}ms {2}.{3} on {4}", 
                             Name, stopwatch.ElapsedMilliseconds,
                             handler.Action.Method.DeclaringType,
                             handler.Action.Method.Name, e);
