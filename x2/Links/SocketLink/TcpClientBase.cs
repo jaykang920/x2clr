@@ -101,6 +101,16 @@ namespace x2.Links.SocketLink
             session.Send(e);
         }
 
+        protected override void OnKeepaliveTick()
+        {
+            if (!Connected)
+            {
+                return;
+            }
+
+            Keepalive(session);
+        }
+
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
             Close();

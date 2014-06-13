@@ -2,6 +2,7 @@
 // See the file COPYING for license details.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 using x2;
@@ -16,6 +17,8 @@ namespace x2
     /// </summary>
     public abstract class Link : Case
     {
+        private static HashSet<string> names = new HashSet<string>();
+
         public string Name { get; private set; }
         public IBufferTransform BufferTransform { get; set; }
 
@@ -23,7 +26,26 @@ namespace x2
 
         public Link(string name)
         {
-            Name = name;
+            lock (names)
+            {
+                if (names.Contains(name))
+                {
+                    throw new ArgumentException("duplicate link name");
+                }
+                else
+                {
+                    Name = name;
+                    names.Add(name);
+                }
+            }
+        }
+
+        ~Link()
+        {
+            lock (names)
+            {
+                names.Remove(Name);
+            }
         }
 
         public abstract void Close();

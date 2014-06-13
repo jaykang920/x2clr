@@ -71,6 +71,8 @@ namespace x2.Links.SocketLink
                     session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
                 }
 
+                sessions.Add(clientSocket.Handle, session);
+
                 Flow.Publish(new LinkSessionConnected {
                     LinkName = Name,
                     Result = true,
@@ -92,148 +94,6 @@ namespace x2.Links.SocketLink
                     Log.Error("{0} accept error {1}", Name, e.SocketError);
                 }
             }
-        }
-    }
-
-    public class AsyncTcpServerFlow : FrameBasedFlow
-    {
-        protected AsyncTcpServer link;
-
-        private volatile bool closeOnHeartbeatFailure;
-
-        protected x2.Flows.Timer Timer { get; private set; }
-
-        public bool CloseOnHeartbeatFailure
-        {
-            get { return closeOnHeartbeatFailure; }
-            set { closeOnHeartbeatFailure = value; }
-        }
-        public double HeartbeatTimeout { get; set; }  // in seconds
-
-        public int Backlog
-        {
-            get { return link.Backlog; }
-            set { link.Backlog = value; }
-        }
-        public bool Listening
-        {
-            get { return link.Listening; }
-        }
-
-        public Action<Event, LinkSession> Preprocessor
-        {
-            get { return link.Preprocessor; }
-            set { link.Preprocessor = value; }
-        }
-
-        public AsyncTcpServerFlow(string name)
-            : this(name, new AsyncTcpServer(name))
-        {
-        }
-
-        public AsyncTcpServerFlow(string name, AsyncTcpServer link)
-        {
-            this.link = link;
-            Add(link);
-
-            link.HeartbeatEventHandler = OnHeartbeatEvent;
-
-            this.name = name;
-
-            Resolution = Time.TicksInSecond;  // 1-second frame resolution
-            HeartbeatTimeout = 15;
-
-            Timer = new x2.Flows.Timer(OnTimer);
-        }
-
-        public void Close()
-        {
-            link.Close();
-        }
-
-        public void Listen(int port)
-        {
-            link.Listen(port);
-        }
-
-        protected override void SetUp()
-        {
-            base.SetUp();
-
-            Subscribe(new LinkSessionConnected { LinkName = Name }, OnLinkSessionConnected);
-            Subscribe(new LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
-        }
-
-        protected override void TearDown()
-        {
-            Unsubscribe(new LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
-            Unsubscribe(new LinkSessionConnected() { LinkName = Name }, OnLinkSessionConnected);
-
-            base.TearDown();
-        }
-
-        protected virtual void OnSessionConnected(LinkSessionConnected e) { }
-
-        protected virtual void OnSessionDisconnected(LinkSessionDisconnected e) { }
-
-        private void OnLinkSessionConnected(LinkSessionConnected e)
-        {
-            OnSessionConnected(e);
-
-            SocketLinkSession linkSession = (SocketLinkSession)e.Context;
-            linkSession.HeartbeatTimeoutToken = Timer.Reserve(linkSession, HeartbeatTimeout);
-        }
-
-        private void OnLinkSessionDisconnected(LinkSessionDisconnected e)
-        {
-            SocketLinkSession linkSession = (SocketLinkSession)e.Context;
-            Timer.Cancel(linkSession.HeartbeatTimeoutToken);
-
-            OnSessionDisconnected(e);
-        }
-
-        protected override void OnStop()
-        {
-            base.OnStop();
-
-            Close();
-        }
-
-        protected override void Start() { }
-        protected override void Stop() { }
-
-        protected override void Update()
-        {
-            Timer.Tick();
-        }
-
-        void OnTimer(object state)
-        {
-            if (state != null)
-            {
-                // heartbeat timeout
-                var session = (SocketLinkSession)state;
-                if (closeOnHeartbeatFailure)
-                {
-                    Log.Error("{0} {1} heartbeat timeout", Name, session.Handle);
-                    session.Close();
-                }
-                else
-                {
-                    if (session.Socket == null || !session.Socket.Connected)
-                    {
-                        return;
-                    }
-                    Log.Warn("{0} {1} heartbeat timeout", Name, session.Handle);
-                    session.HeartbeatTimeoutToken = Timer.Reserve(session, HeartbeatTimeout);
-                }
-            }
-        }
-
-        void OnHeartbeatEvent(SocketLinkSession session, HeartbeatEvent e)
-        {
-            Timer.Cancel(session.HeartbeatTimeoutToken);
-            session.HeartbeatTimeoutToken = Timer.Reserve(session, HeartbeatTimeout);
         }
     }
 }

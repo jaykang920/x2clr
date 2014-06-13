@@ -11,7 +11,6 @@ using x2.Links.SocketLink;
 namespace x2.Samples.Capitalizer
 {
     using ServerCase = x2.Links.SocketLink.AsyncTcpServer;
-    using ServerFlow = x2.Links.SocketLink.AsyncTcpServerFlow;
 
     class CapitalizerFlow : SingleThreadedFlow
     {
@@ -29,6 +28,89 @@ namespace x2.Samples.Capitalizer
         }
     }
 
+    class CapitalizerServer : AsyncTcpServer
+    {
+        class Session
+        {
+            public LinkSession LinkSession { get; set; }
+
+            public void OnConnect()
+            {
+                var e = new CapitalizeResp();
+                e._Handle = LinkSession.Handle;
+                Flow.Bind(e, Send);
+            }
+
+            public void OnDisconnect()
+            {
+                var e = new CapitalizeResp();
+                e._Handle = LinkSession.Handle;
+                Flow.Unbind(e, Send);
+            }
+
+            void Send(Event e)
+            {
+                LinkSession.Send(e);
+            }
+        }
+
+        private readonly IDictionary<IntPtr, Session> sessions;
+
+        public CapitalizerServer()
+            : base("CapitalizerServer")
+        {
+            sessions = new Dictionary<IntPtr, Session>();
+
+            BufferTransform = new BufferTransformStack()
+                .Add(new x2.Transforms.Cipher())
+                .Add(new x2.Transforms.Inverse());
+
+            IncomingKeepaliveEnabled = true;
+            OutgoingKeepaliveEnabled = true;
+        }
+
+        protected override void OnSessionConnected(LinkSessionConnected e)
+        {
+            if (e.Result == false)
+            {
+                return;
+            }
+
+            var linkSession = (LinkSession)e.Context;
+            var session = new Session { LinkSession = linkSession };
+            sessions.Add(linkSession.Handle, session);
+            session.OnConnect();
+
+            Console.WriteLine("Accepted socket handle {0}", linkSession.Handle);
+        }
+
+        protected override void OnSessionDisconnected(LinkSessionDisconnected e)
+        {
+            Console.WriteLine("Disconnected");
+
+            LinkSession linkSession = (LinkSession)e.Context;
+            Session session;
+            if (sessions.TryGetValue(linkSession.Handle, out session) == false)
+            {
+                return;
+            }
+            session.OnDisconnect();
+            sessions.Remove(linkSession.Handle);
+        }
+
+        protected override void SetUp()
+        {
+            base.SetUp();
+
+            Event.Register<CapitalizeReq>();
+
+            Console.WriteLine("Listening on 5678...");
+
+            Listen(5678);
+        }
+    }
+
+    /*
     class CapitalizerServer : ServerFlow
     {
         class Session
@@ -110,6 +192,7 @@ namespace x2.Samples.Capitalizer
             Event.Register<CapitalizeReq>();
         }
     }
+    */
 
     class ServerProgram
     {
@@ -122,7 +205,7 @@ namespace x2.Samples.Capitalizer
 
             Hub.Instance
                 .Attach(new CapitalizerFlow())
-                .Attach(new CapitalizerServer());
+                .Attach(new SingleThreadedFlow().Add(new CapitalizerServer()));
 
             using (var flows = new Hub.Flows())
             {

@@ -37,6 +37,10 @@ namespace x2.Links.SocketLink
         protected bool sending;                       // tx
         protected byte[] lengthBytes = new byte[5];   // tx
 
+        protected volatile bool hasReceived;
+        protected volatile bool hasSent;
+        protected int failureCount;
+
         public SocketLink Link { get { return link; } }
 
         /// <summary>
@@ -44,9 +48,11 @@ namespace x2.Links.SocketLink
         /// </summary>
         public Socket Socket { get { return socket; } }
 
+        /// <summary>
+        /// Gets a boolean value indicating whether this session is an active
+        /// (client) session. A passive (server-side) session will return false.
+        /// </summary>
         public bool Polarity { get; set; }
-
-        public x2.Flows.Timer.Token HeartbeatTimeoutToken { get; set; }
 
         public string RemoteAddress
         {
@@ -59,6 +65,17 @@ namespace x2.Links.SocketLink
                 var endpoint = socket.RemoteEndPoint as IPEndPoint;
                 return endpoint.Address.ToString();
             }
+        }
+
+        public bool HasReceived
+        {
+            get { return hasReceived; }
+            set { hasReceived = value; }
+        }
+        public bool HasSent
+        {
+            get { return hasSent; }
+            set { hasSent = value; }
         }
 
         protected SocketLinkSession(SocketLink link, Socket socket)
@@ -95,6 +112,16 @@ namespace x2.Links.SocketLink
             socket = null;
 
             Log.Info("{0} {1} closed", link.Name, Handle);
+        }
+
+        public int IncrementFailureCount()
+        {
+            return Interlocked.Increment(ref failureCount);
+        }
+
+        public void ResetFailureCount()
+        {
+            Interlocked.Exchange(ref failureCount, 0);
         }
 
         /// <summary>
@@ -176,51 +203,29 @@ namespace x2.Links.SocketLink
                 int typeId;
                 recvBuffer.Read(out typeId);
 
-                // Heartbeat
-                if (typeId == HeartbeatEvent.TypeId)
+                var retrieved = Event.Create(typeId);
+                if (retrieved == null)
                 {
-                    var heartbeat = new HeartbeatEvent();
-                    heartbeat.Load(recvBuffer);
-
-                    if (!Polarity)
-                    {
-                        // Heartbeat feedback
-                        Send(heartbeat);
-
-                        Log.Debug("{0} {1} heartbeat {2}", link.Name, Handle, heartbeat.Timestamp);
-                    }
-
-                    if (link.HeartbeatEventHandler != null)
-                    {
-                        link.HeartbeatEventHandler(this, heartbeat);
-                    }
+                    Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
                 }
                 else
                 {
-                    var retrieved = Event.Create(typeId);
-                    if (retrieved == null)
+                    try
                     {
-                        Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
+                        retrieved.Load(recvBuffer);
+                        retrieved._Handle = Handle;
+                        if (link.Preprocessor != null)
+                        {
+                            link.Preprocessor(retrieved, this);
+                        }
+
+                        Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
+
+                        link.Flow.Publish(retrieved);
                     }
-                    else
+                    catch (Exception e)
                     {
-                        try
-                        {
-                            retrieved.Load(recvBuffer);
-                            retrieved._Handle = Handle;
-                            if (link.Preprocessor != null)
-                            {
-                                link.Preprocessor(retrieved, this);
-                            }
-
-                            Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
-
-                            link.Flow.Publish(retrieved);
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, typeId, e.ToString());
-                        }
+                        Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, typeId, e.ToString());
                     }
                 }
 

@@ -20,6 +20,7 @@ namespace x2.Links.SocketLink
     public abstract class TcpServerBase : SocketLink
     {
         protected int backlog;
+        protected Dictionary<IntPtr, SocketLinkSession> sessions;
 
         /// <summary>
         /// Gets or sets the maximum length of the pending connections queue.
@@ -54,6 +55,7 @@ namespace x2.Links.SocketLink
         public TcpServerBase(string name) : base(name)
         {
             backlog = Int32.MaxValue;
+            sessions = new Dictionary<IntPtr, SocketLinkSession>();
 
             // Default socket options
             NoDelay = true;
@@ -106,10 +108,25 @@ namespace x2.Links.SocketLink
             }
         }
 
+        protected override void OnKeepaliveTick()
+        {
+            if (!Listening)
+            {
+                return;
+            }
+
+            foreach (var session in sessions.Values)
+            {
+                Keepalive(session);
+            }
+        }
+
         protected abstract void AcceptImpl();
 
         public override void OnDisconnect(SocketLinkSession session)
         {
+            sessions.Remove(session.Handle);
+
             ((Diagnostics)Diag).DecrementConnectionCount();
 
             base.OnDisconnect(session);

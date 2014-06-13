@@ -11,7 +11,6 @@ using x2.Links.SocketLink;
 namespace x2.Samples.Capitalizer
 {
     using ClientCase = x2.Links.SocketLink.AsyncTcpClient;
-    using ClientFlow = x2.Links.SocketLink.AsyncTcpClientFlow;
 
     class CapitalizerClient : ClientCase
     {

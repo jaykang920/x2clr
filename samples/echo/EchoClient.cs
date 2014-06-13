@@ -11,13 +11,12 @@ using x2.Links.SocketLink;
 namespace x2.Samples.Echo
 {
     using ClientCase = x2.Links.SocketLink.AsyncTcpClient;
-    using ClientFlow = x2.Links.SocketLink.AsyncTcpClientFlow;
 
-    class EchoClient : ClientFlow
+    class EchoClientCase : ClientCase
     {
         string message = new String('x', 4000);
 
-        public EchoClient()
+        public EchoClientCase()
             : base("EchoClient")
         {
             AutoReconnect = true;
@@ -34,7 +33,7 @@ namespace x2.Samples.Echo
 
                 Bind(new EchoResp { _Handle = linkSession.Handle }, OnEchoResp);
 
-                link.Send(new EchoReq {
+                Send(new EchoReq {
                     Message = message
                 });
             }
@@ -62,7 +61,7 @@ namespace x2.Samples.Echo
 
         void OnEchoResp(EchoResp e)
         {
-            link.Send(new EchoReq {
+            Send(new EchoReq {
                 Message = message
             });
         }
@@ -78,7 +77,7 @@ namespace x2.Samples.Echo
             x2.Log.Level = x2.LogLevel.Warning;
 
             Hub.Instance
-                .Attach(new EchoClient())
+                .Attach(new SingleThreadedFlow().Add(new EchoClientCase()))
                 .Attach(TimeFlow.Default);
 
             /*

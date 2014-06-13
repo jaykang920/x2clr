@@ -8,17 +8,19 @@ namespace x2.Events
     // Internal event types
     public enum BuiltinType
     {
+        // Flow events
         FlowStart = -1,
         FlowStop = -2,
 
-        // Link events
-        LinkOpen = -3,
-        LinkRetry = -4,
-        LinkClose = -5,
-        LinkSessionConnected = -6,
-        LinkSessionDisconnected = -7,
-        
         // TimeFlow events
-        TimeoutEvent = -8,
+        TimeoutEvent = -3,
+
+        // Link events
+        LinkSessionConnected = -4,
+        LinkSessionDisconnected = -5,
+
+        // SocketLink events
+        KeepaliveTick = -6,
+        KeepaliveEvent = -7
     }
 }

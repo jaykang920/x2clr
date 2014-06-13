@@ -11,7 +11,6 @@ using x2.Links.SocketLink;
 namespace x2.Samples.Echo
 {
     using ServerCase = x2.Links.SocketLink.AsyncTcpServer;
-    using ServerFlow = x2.Links.SocketLink.AsyncTcpServerFlow;
 
     class EchoCase : Case
     {
@@ -30,7 +29,7 @@ namespace x2.Samples.Echo
         }
     }
 
-    class EchoServerFlow : ServerFlow
+    class EchoServerCase : ServerCase
     {
         class Session
         {
@@ -60,7 +59,7 @@ namespace x2.Samples.Echo
 
         private readonly IDictionary<IntPtr, Session> sessions;
 
-        public EchoServerFlow()
+        public EchoServerCase()
             : base("EchoServer")
         {
             sessions = new Dictionary<IntPtr, Session>();
@@ -95,18 +94,15 @@ namespace x2.Samples.Echo
             sessions.Remove(linkSession.Handle);
         }
 
-        protected override void OnStart()
-        {
-            Console.WriteLine("Listening on 5678...");
-
-            Listen(5678);
-        }
-
         protected override void SetUp()
         {
             base.SetUp();
 
             Event.Register<EchoReq>();
+
+            Console.WriteLine("Listening on 5678...");
+
+            Listen(5678);
         }
     }
 
@@ -121,8 +117,8 @@ namespace x2.Samples.Echo
 
             Hub.Instance
                 .Attach(new SingleThreadedFlow()
-                    .Add(new EchoCase()))
-                .Attach(new EchoServerFlow());
+                    .Add(new EchoCase())
+                    .Add(new EchoServerCase()));
 
             using (var flows = new Hub.Flows())
             {
