@@ -51,6 +51,11 @@ namespace x2.Links.SocketLink
                     session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
                 }
 
+                lock (sessions)
+                {
+                    sessions.Add(clientSocket.Handle, session);
+                }
+
                 Flow.Publish(new LinkSessionConnected {
                     LinkName = Name,
                     Result = true,

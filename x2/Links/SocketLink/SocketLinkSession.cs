@@ -19,6 +19,8 @@ namespace x2.Links.SocketLink
     /// </summary>
     public abstract class SocketLinkSession : LinkSession
     {
+        protected object syncRoot = new Object();
+
         protected SocketLink link;  // associated Link
         protected Socket socket;    // underlying socket
 
@@ -158,6 +160,8 @@ namespace x2.Links.SocketLink
 
         protected void ReceiveInternal(int bytesTransferred)
         {
+            hasReceived = true;
+
             Diag.AddBytesReceived(bytesTransferred);
 
             Log.Trace("{0} {1} received {2} byte(s)",
@@ -203,29 +207,40 @@ namespace x2.Links.SocketLink
                 int typeId;
                 recvBuffer.Read(out typeId);
 
-                var retrieved = Event.Create(typeId);
-                if (retrieved == null)
+                if (typeId == (int)BuiltinType.KeepaliveEvent)
                 {
-                    Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
+                    var e = new KeepaliveEvent();
+                    e.Load(recvBuffer);
+                    e = null;
+                    // Mark
                 }
                 else
                 {
-                    try
+
+                    var retrieved = Event.Create(typeId);
+                    if (retrieved == null)
                     {
-                        retrieved.Load(recvBuffer);
-                        retrieved._Handle = Handle;
-                        if (link.Preprocessor != null)
-                        {
-                            link.Preprocessor(retrieved, this);
-                        }
-
-                        Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
-
-                        link.Flow.Publish(retrieved);
+                        Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
                     }
-                    catch (Exception e)
+                    else
                     {
-                        Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, typeId, e.ToString());
+                        try
+                        {
+                            retrieved.Load(recvBuffer);
+                            retrieved._Handle = Handle;
+                            if (link.Preprocessor != null)
+                            {
+                                link.Preprocessor(retrieved, this);
+                            }
+
+                            Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
+
+                            link.Flow.Publish(retrieved);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, typeId, e.ToString());
+                        }
                     }
                 }
 
@@ -280,6 +295,11 @@ namespace x2.Links.SocketLink
 
         private void BeginSend(Event e)
         {
+            if (e.GetTypeId() != (int)BuiltinType.KeepaliveEvent)
+            {
+                hasSent = true;
+            }
+
             e.Serialize(sendBuffer);
 
             if (BufferTransform != null)

@@ -115,9 +115,12 @@ namespace x2.Links.SocketLink
                 return;
             }
 
-            foreach (var session in sessions.Values)
+            lock (sessions)
             {
-                Keepalive(session);
+                foreach (var session in sessions.Values)
+                {
+                    Keepalive(session);
+                }
             }
         }
 
@@ -125,7 +128,10 @@ namespace x2.Links.SocketLink
 
         public override void OnDisconnect(SocketLinkSession session)
         {
-            sessions.Remove(session.Handle);
+            lock (sessions)
+            {
+                sessions.Remove(session.Handle);
+            }
 
             ((Diagnostics)Diag).DecrementConnectionCount();
 

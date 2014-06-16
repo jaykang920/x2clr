@@ -15,9 +15,12 @@ namespace x2.Links.SocketLink
     /// </summary>
     public abstract class SocketLink : Link
     {
+        protected object syncRoot = new Object();
+
         protected Socket socket;  // underlying socket
 
         protected bool incomingKeepaliveEnabled;
+        protected int maxSuccessiveFailureCount;
         protected bool outgoingKeepaliveEnabled;
 
         /// <summary>
@@ -32,6 +35,15 @@ namespace x2.Links.SocketLink
         {
             get { return incomingKeepaliveEnabled; }
             set { incomingKeepaliveEnabled = value; }
+        }
+        /// <summary>
+        /// Gets or sets the maximum number of successive keepalive failure to
+        /// tolerate before forced close.
+        /// </summary>
+        public int MaxSuccessiveFailureCount
+        {
+            get { return maxSuccessiveFailureCount; }
+            set { maxSuccessiveFailureCount = value; }
         }
         /// <summary>
         /// Gets or sets whether to emit outgoing keepalive events.
@@ -59,23 +71,27 @@ namespace x2.Links.SocketLink
         {
             base.SetUp();
 
-            var e = new KeepaliveTick { LinkName = Name };
+            Flow.SubscribeTo(Name);
+
+            var e = new KeepaliveTick { _Channel = Name, LinkName = Name };
             Bind(e, OnKeepaliveTickEvent);
             TimeFlow.Default.ReserveRepetition(e, new TimeSpan(0, 0, 5));
         }
 
         protected override void TearDown()
         {
-            var e = new KeepaliveTick { LinkName = Name };
+            var e = new KeepaliveTick { _Channel = Name, LinkName = Name };
             TimeFlow.Default.CancelRepetition(e);
             Unbind(e, OnKeepaliveTickEvent);
+
+            Flow.UnsubscribeFrom(Name);
 
             base.TearDown();
         }
 
         protected abstract void OnKeepaliveTick();
 
-        protected void Keepalive(SocketLinkSession session)
+        protected bool Keepalive(SocketLinkSession session)
         {
             if (incomingKeepaliveEnabled)
             {
@@ -86,10 +102,13 @@ namespace x2.Links.SocketLink
                 }
                 else
                 {
-                    if (session.IncrementFailureCount() > 1)
+                    if (session.IncrementFailureCount() > maxSuccessiveFailureCount)
                     {
+                        Log.Error("{0} {1} closed due to the keepalive failure",
+                            Name, session.Handle);
+
                         session.Close();
-                        return;
+                        return false;
                     }
                 }
             }
@@ -105,6 +124,8 @@ namespace x2.Links.SocketLink
                     session.Send(new KeepaliveEvent());
                 }
             }
+            
+            return true;
         }
 
         private void OnKeepaliveTickEvent(KeepaliveTick e)

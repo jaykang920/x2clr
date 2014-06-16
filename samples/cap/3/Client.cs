@@ -17,16 +17,22 @@ namespace x2.Samples.Capitalizer
         public CapitalizerClient()
             : base("CapitalizerClient")
         {
-            AutoReconnect = true;
+            AutoReconnect = false;
             RetryInterval = 1000;
 
             BufferTransform = new BufferTransformStack()
                 .Add(new x2.Transforms.Cipher())
                 .Add(new x2.Transforms.Inverse());
+
+            IncomingKeepaliveEnabled = true;
+            MaxSuccessiveFailureCount = 3;
+            OutgoingKeepaliveEnabled = true;
         }
 
         protected override void OnSessionConnected(LinkSessionConnected e)
         {
+            base.OnSessionConnected(e);
+
             if (e.Result)
             {
                 Console.WriteLine("Connected");
@@ -41,6 +47,8 @@ namespace x2.Samples.Capitalizer
 
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
+            base.OnSessionDisconnected(e);
+
             Flow.Unbind(new CapitalizeReq(), Send);
 
             Console.WriteLine("Disconnected");

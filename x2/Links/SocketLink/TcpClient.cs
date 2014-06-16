@@ -45,12 +45,17 @@ namespace x2.Links.SocketLink
 
                 ConnectInternal();
 
-                session = new TcpLinkSession(this, socket);
-                session.Polarity = true;
+                var newSession = new TcpLinkSession(this, socket);
+                newSession.Polarity = true;
 
                 if (BufferTransform != null)
                 {
-                    session.BufferTransform = BufferTransform;
+                    newSession.BufferTransform = BufferTransform;
+                }
+
+                lock (syncRoot)
+                {
+                    session = newSession;
                 }
 
                 noti.Context = session;

@@ -60,15 +60,18 @@ namespace x2.Links.SocketLink
 
         public override void Close()
         {
-            if (session == null)
+            lock (syncRoot)
             {
-                return;
+                if (session == null)
+                {
+                    return;
+                }
+
+                session.Close();
+
+                session = null;
+                socket = null;
             }
-
-            session.Close();
-
-            session = null;
-            socket = null;
         }
 
         public void Connect(string host, int port)
@@ -108,7 +111,18 @@ namespace x2.Links.SocketLink
                 return;
             }
 
-            Keepalive(session);
+            lock (syncRoot)
+            {
+                if (session == null)
+                {
+                    return;
+                }
+            }
+
+            if (!Keepalive(session))
+            {
+                Close();
+            }
         }
 
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
@@ -127,10 +141,13 @@ namespace x2.Links.SocketLink
         {
             try
             {
-                if (socket == null)
+                lock (syncRoot)
                 {
-                    socket = new Socket(
-                        ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    if (socket == null)
+                    {
+                        socket = new Socket(
+                            ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    }
                 }
 
                 BeginConnect(new IPEndPoint(ip, port));

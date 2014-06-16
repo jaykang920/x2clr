@@ -66,6 +66,7 @@ namespace x2.Samples.Capitalizer
                 .Add(new x2.Transforms.Inverse());
 
             IncomingKeepaliveEnabled = true;
+            MaxSuccessiveFailureCount = 3;
             OutgoingKeepaliveEnabled = true;
         }
 

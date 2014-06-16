@@ -65,12 +65,17 @@ namespace x2.Links.SocketLink
                 connectEventArgs.Dispose();
                 connectEventArgs = null;
 
-                session = new AsyncTcpLinkSession(this, socket);
-                session.Polarity = true;
+                var newSession = new AsyncTcpLinkSession(this, socket);
+                newSession.Polarity = true;
 
                 if (BufferTransform != null)
                 {
-                    session.BufferTransform = BufferTransform;
+                    newSession.BufferTransform = BufferTransform;
+                }
+
+                lock (syncRoot)
+                {
+                    session = newSession;
                 }
 
                 noti.Context = session;

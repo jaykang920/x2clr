@@ -26,20 +26,20 @@ namespace x2.Links.SocketLink
 
         protected override void AcceptImpl()
         {
-            if (acceptEventArgs == null)
-            {
-                acceptEventArgs = new SocketAsyncEventArgs();
-                acceptEventArgs.Completed += OnAcceptCompleted;
-            }
-            else
-            {
-                acceptEventArgs.AcceptSocket = null;
-            }
+            acceptEventArgs = new SocketAsyncEventArgs();
+            acceptEventArgs.Completed += OnAcceptCompleted;
 
-            bool pending = socket.AcceptAsync(acceptEventArgs);
+            AcceptImpl(acceptEventArgs);
+        }
+
+        private void AcceptImpl(SocketAsyncEventArgs e)
+        {
+            e.AcceptSocket = null;
+
+            bool pending = socket.AcceptAsync(e);
             if (!pending)
             {
-                OnAccept(acceptEventArgs);
+                OnAccept(e);
             }
         }
 
@@ -71,7 +71,10 @@ namespace x2.Links.SocketLink
                     session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
                 }
 
-                sessions.Add(clientSocket.Handle, session);
+                lock (sessions)
+                {
+                    sessions.Add(clientSocket.Handle, session);
+                }
 
                 Flow.Publish(new LinkSessionConnected {
                     LinkName = Name,
@@ -81,7 +84,7 @@ namespace x2.Links.SocketLink
 
                 session.BeginReceive(true);
 
-                AcceptImpl();
+                AcceptImpl(e);
             }
             else
             {
