@@ -207,7 +207,7 @@ namespace x2.Links.SocketLink
                 int typeId;
                 recvBuffer.Read(out typeId);
 
-                if (typeId == (int)BuiltinType.KeepaliveEvent)
+                if (typeId == (int)SocketLinkEventType.KeepaliveEvent)
                 {
                     var e = new KeepaliveEvent();
                     e.Load(recvBuffer);
@@ -295,7 +295,7 @@ namespace x2.Links.SocketLink
 
         private void BeginSend(Event e)
         {
-            if (e.GetTypeId() != (int)BuiltinType.KeepaliveEvent)
+            if (e.GetTypeId() != (int)SocketLinkEventType.KeepaliveEvent)
             {
                 hasSent = true;
             }

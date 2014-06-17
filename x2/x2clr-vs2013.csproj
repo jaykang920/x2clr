@@ -57,7 +57,6 @@
   <ItemGroup>
     <Compile Include="BufferTransform.cs" />
     <Compile Include="Coroutine.cs" />
-    <Compile Include="Events\SocketLinkEvents.cs" />
     <Compile Include="Events\TimeFlowEvents.cs" />
     <Compile Include="Flows\EventBasedFlow.cs" />
     <Compile Include="Flows\FrameBasedFlow.cs" />
@@ -65,6 +64,7 @@
     <Compile Include="Links\SocketLink\AsyncTcpLinkSession.cs" />
     <Compile Include="Links\SocketLink\AsyncTcpServer.cs" />
     <Compile Include="Links\SocketLink\SocketLink.cs" />
+    <Compile Include="Links\SocketLink\SocketLinkEvents.cs" />
     <Compile Include="Links\SocketLink\SocketLinkSession.cs" />
     <Compile Include="Links\SocketLink\TcpClient.cs">
       <SubType>Code</SubType>

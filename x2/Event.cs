@@ -49,8 +49,6 @@ namespace x2
 
         static Event()
         {
-            Event.Register<x2.Events.KeepaliveEvent>();
-
             tag = new Tag(null, typeof(Event), 1, 0);
         }
 

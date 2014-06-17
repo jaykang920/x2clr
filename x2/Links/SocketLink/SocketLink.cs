@@ -54,6 +54,11 @@ namespace x2.Links.SocketLink
             set { outgoingKeepaliveEnabled = value; }
         }
 
+        static SocketLink()
+        {
+            Event.Register<KeepaliveEvent>();
+        }
+
         protected SocketLink(string name)
             : base(name)
         {

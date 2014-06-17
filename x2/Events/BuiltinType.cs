@@ -19,8 +19,6 @@ namespace x2.Events
         LinkSessionConnected = -4,
         LinkSessionDisconnected = -5,
 
-        // SocketLink events
-        KeepaliveTick = -6,
-        KeepaliveEvent = -7
+        // -10 to -99 : reserved for links
     }
 }

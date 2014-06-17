@@ -5,8 +5,103 @@ using System.Text;
 
 using x2;
 
-namespace x2.Events
+namespace x2.Links.SocketLink
 {
+    public static class SocketLinkEventType
+    {
+        public const int KeepaliveEvent = -10;
+        public const int KeepaliveTick = -11;
+    }
+
+    public class KeepaliveEvent : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        static KeepaliveEvent()
+        {
+            tag = new Tag(Event.tag, typeof(KeepaliveEvent), 0,
+                    (int)SocketLinkEventType.KeepaliveEvent);
+        }
+
+        new public static KeepaliveEvent New()
+        {
+            return new KeepaliveEvent();
+        }
+
+        public KeepaliveEvent()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected KeepaliveEvent(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        public override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override bool IsEquivalent(Cell other)
+        {
+            if (!base.IsEquivalent(other))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override void Load(x2.Buffer buffer)
+        {
+            base.Load(buffer);
+        }
+
+        public override void Serialize(x2.Buffer buffer)
+        {
+            buffer.Write(tag.TypeId);
+            this.Dump(buffer);
+        }
+
+        protected override void Dump(x2.Buffer buffer)
+        {
+            base.Dump(buffer);
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+        }
+
+        private void Initialize()
+        {
+        }
+    }
+
     public class KeepaliveTick : Event
     {
         new protected static readonly Tag tag;
@@ -28,7 +123,7 @@ namespace x2.Events
         static KeepaliveTick()
         {
             tag = new Tag(Event.tag, typeof(KeepaliveTick), 1,
-                    (int)BuiltinType.KeepaliveTick);
+                    (int)SocketLinkEventType.KeepaliveTick);
         }
 
         new public static KeepaliveTick New()
@@ -140,95 +235,6 @@ namespace x2.Events
         private void Initialize()
         {
             linkName_ = "";
-        }
-    }
-
-    public class KeepaliveEvent : Event
-    {
-        new protected static readonly Tag tag;
-
-        new public static int TypeId { get { return tag.TypeId; } }
-
-        static KeepaliveEvent()
-        {
-            tag = new Tag(Event.tag, typeof(KeepaliveEvent), 0,
-                    (int)BuiltinType.KeepaliveEvent);
-        }
-
-        new public static KeepaliveEvent New()
-        {
-            return new KeepaliveEvent();
-        }
-
-        public KeepaliveEvent()
-            : base(tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected KeepaliveEvent(int length)
-            : base(length + tag.NumProps)
-        {
-            Initialize();
-        }
-
-        public override bool EqualsTo(Cell other)
-        {
-            if (!base.EqualsTo(other))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode(Fingerprint fingerprint)
-        {
-            var hash = new Hash(base.GetHashCode(fingerprint));
-            return hash.Code;
-        }
-
-        public override int GetTypeId()
-        {
-            return tag.TypeId;
-        }
-
-        public override Cell.Tag GetTypeTag() 
-        {
-            return tag;
-        }
-
-        public override bool IsEquivalent(Cell other)
-        {
-            if (!base.IsEquivalent(other))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override void Load(x2.Buffer buffer)
-        {
-            base.Load(buffer);
-        }
-
-        public override void Serialize(x2.Buffer buffer)
-        {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
-        }
-
-        protected override void Dump(x2.Buffer buffer)
-        {
-            base.Dump(buffer);
-        }
-
-        protected override void Describe(StringBuilder stringBuilder)
-        {
-            base.Describe(stringBuilder);
-        }
-
-        private void Initialize()
-        {
         }
     }
 }
