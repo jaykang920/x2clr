@@ -207,40 +207,36 @@ namespace x2.Links.SocketLink
                 int typeId;
                 recvBuffer.Read(out typeId);
 
-                if (typeId == (int)SocketLinkEventType.KeepaliveEvent)
+                var retrieved = Event.Create(typeId);
+                if (retrieved == null)
                 {
-                    var e = new KeepaliveEvent();
-                    e.Load(recvBuffer);
-                    e = null;
-                    // Mark
+                    Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
                 }
                 else
                 {
-
-                    var retrieved = Event.Create(typeId);
-                    if (retrieved == null)
+                    try
                     {
-                        Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
+                        retrieved.Load(recvBuffer);
+                        retrieved._Handle = Handle;
+                        if (link.Preprocessor != null)
+                        {
+                            link.Preprocessor(retrieved, this);
+                        }
+
+                        Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
+
+                        switch (typeId)
+                        {
+                            case (int)SocketLinkEventType.KeepaliveEvent:
+                                break;
+                            default:
+                                link.Flow.Publish(retrieved);
+                                break;
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
-                        try
-                        {
-                            retrieved.Load(recvBuffer);
-                            retrieved._Handle = Handle;
-                            if (link.Preprocessor != null)
-                            {
-                                link.Preprocessor(retrieved, this);
-                            }
-
-                            Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
-
-                            link.Flow.Publish(retrieved);
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, typeId, e.ToString());
-                        }
+                        Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, typeId, e.ToString());
                     }
                 }
 

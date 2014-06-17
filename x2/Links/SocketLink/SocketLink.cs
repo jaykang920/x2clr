@@ -126,6 +126,8 @@ namespace x2.Links.SocketLink
                 }
                 else
                 {
+                    Log.Trace("{0} {1} sent keepalive event", Name, session.Handle);
+
                     session.Send(new KeepaliveEvent());
                 }
             }
