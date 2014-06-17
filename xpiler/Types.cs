@@ -62,6 +62,10 @@ namespace x2
                 IsPrimitive = true,
                 DetailRequired = false
             });
+            types.Add("bytes", new TypeProperty {
+                IsPrimitive = true,
+                DetailRequired = false
+            });
             types.Add("int8", new TypeProperty
             {
                 IsPrimitive = true,

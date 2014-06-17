@@ -10,6 +10,41 @@ namespace x2.Tests
     public class BufferTests
     {
         [Test]
+        public void TestByteArray()
+        {
+            var buffer = new Buffer(2);
+
+            byte[] bytes1 = new byte[4] { 1, 2, 3, 4 };
+            byte[] bytes2 = new byte[9] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+            buffer.Write(bytes1);
+            buffer.Write(bytes2);
+
+            buffer.Rewind();
+
+            byte[] bytesRetrieved1, bytesRetrieved2;
+
+            buffer.Read(out bytesRetrieved1);
+            buffer.Read(out bytesRetrieved2);
+
+            Assert.AreEqual(4, bytesRetrieved1.Length);
+            Assert.AreEqual(1, bytesRetrieved1[0]);
+            Assert.AreEqual(2, bytesRetrieved1[1]);
+            Assert.AreEqual(3, bytesRetrieved1[2]);
+            Assert.AreEqual(4, bytesRetrieved1[3]);
+            Assert.AreEqual(9, bytesRetrieved2.Length);
+            Assert.AreEqual(1, bytesRetrieved2[0]);
+            Assert.AreEqual(2, bytesRetrieved2[1]);
+            Assert.AreEqual(3, bytesRetrieved2[2]);
+            Assert.AreEqual(4, bytesRetrieved2[3]);
+            Assert.AreEqual(5, bytesRetrieved2[4]);
+            Assert.AreEqual(6, bytesRetrieved2[5]);
+            Assert.AreEqual(7, bytesRetrieved2[6]);
+            Assert.AreEqual(8, bytesRetrieved2[7]);
+            Assert.AreEqual(9, bytesRetrieved2[8]);
+        }
+
+        [Test]
         public void TestFloat32()
         {
             var buffer = new Buffer(1);

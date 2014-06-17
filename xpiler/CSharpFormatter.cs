@@ -107,6 +107,7 @@ namespace x2
             nativeTypes = new Dictionary<string, string>();
             nativeTypes.Add("bool", "bool");
             nativeTypes.Add("byte", "byte");
+            nativeTypes.Add("bytes", "byte[]");
             nativeTypes.Add("int8", "sbyte");
             nativeTypes.Add("int16", "short");
             nativeTypes.Add("int32", "int");
@@ -116,11 +117,12 @@ namespace x2
             nativeTypes.Add("string", "string");
             nativeTypes.Add("datetime", "DateTime");
             nativeTypes.Add("list", "Sequence");
-            //nativeTypes.Add("map", "MapCell");
+            //nativeTypes.Add("map", "Mapping");
 
             defaultValues = new Dictionary<string, string>();
             defaultValues.Add("bool", "false");
             defaultValues.Add("byte", "0");
+            defaultValues.Add("bytes", "null");
             defaultValues.Add("int8", "0");
             defaultValues.Add("int16", "0");
             defaultValues.Add("int32", "0");
