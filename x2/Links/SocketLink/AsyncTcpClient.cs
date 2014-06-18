@@ -78,8 +78,16 @@ namespace x2.Links.SocketLink
                     session = newSession;
                 }
 
-                noti.Context = session;
-                Flow.Publish(noti);
+                if (BufferTransform != null)
+                {
+                    byte[] data = session.BufferTransform.InitializeHandshake();
+                    session.Send(new HandshakeReq { Data = data });
+                }
+                else
+                {
+                    noti.Context = session;
+                    Flow.Publish(noti);
+                }
 
                 session.BeginReceive(true);
             }

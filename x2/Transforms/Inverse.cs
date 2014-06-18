@@ -7,6 +7,9 @@ namespace x2.Transforms
 {
     public class Inverse : IBufferTransform
     {
+        public int HandshakeBlockLength { get { return 0; } }
+        public bool Established { get { return true; } }
+
         public object Clone()
         {
             return new Inverse();
@@ -17,7 +20,12 @@ namespace x2.Transforms
             return null;
         }
 
-        public bool FinalizeHandshake(byte[] data)
+        public byte[] Handshake(byte[] challenge)
+        {
+            return null;
+        }
+
+        public bool FinalizeHandshake(byte[] response)
         {
             return true;
         }

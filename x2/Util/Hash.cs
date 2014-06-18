@@ -35,6 +35,16 @@ namespace x2
             return ((seed << 5) + seed) ^ (int)value;
         }
 
+        public static int Update(int seed, byte[] value)
+        {
+            int result = seed;
+            for (int i = 0; i < value.Length; ++i)
+            {
+                result = Update(result, value[i]);
+            }
+            return result;
+        }
+
         public static int Update(int seed, short value)
         {
             return ((seed << 5) + seed) ^ (int)value;
@@ -101,6 +111,11 @@ namespace x2
         }
 
         public void Update(byte value)
+        {
+            Code = Update(Code, value);
+        }
+
+        public void Update(byte[] value)
         {
             Code = Update(Code, value);
         }

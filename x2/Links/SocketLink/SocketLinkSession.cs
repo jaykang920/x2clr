@@ -43,6 +43,9 @@ namespace x2.Links.SocketLink
         protected volatile bool hasSent;
         protected int failureCount;
 
+        protected volatile bool rxTransformReady;
+        protected volatile bool txTransformReady;
+
         public SocketLink Link { get { return link; } }
 
         /// <summary>
@@ -78,6 +81,17 @@ namespace x2.Links.SocketLink
         {
             get { return hasSent; }
             set { hasSent = value; }
+        }
+
+        public bool RxTransformReady
+        {
+            get { return rxTransformReady; }
+            set { rxTransformReady = value; }
+        }
+        public bool TxTransformReady
+        {
+            get { return txTransformReady; }
+            set { txTransformReady = value; }
         }
 
         protected SocketLinkSession(SocketLink link, Socket socket)
@@ -189,19 +203,18 @@ namespace x2.Links.SocketLink
             {
                 recvBuffer.MarkToRead(lengthToReceive);
 
-                if (BufferTransform != null)
+                if (BufferTransform != null && RxTransformReady)
                 {
                     try
                     {
                         BufferTransform.InverseTransform(recvBuffer, lengthToReceive);
+                        recvBuffer.Rewind();
                     }
                     catch (Exception e)
                     {
                         Log.Error("{0} {1} buffer transform error: {2}", link.Name, Handle, e.Message);
-                        recvBuffer.Shrink(lengthToReceive);
-                        break;
+                        goto next;
                     }
-                    recvBuffer.Rewind();
                 }
 
                 int typeId;
@@ -229,6 +242,45 @@ namespace x2.Links.SocketLink
                         {
                             case (int)SocketLinkEventType.KeepaliveEvent:
                                 break;
+                            case (int)SocketLinkEventType.HandshakeReq:
+                                {
+                                    var e = (HandshakeReq)retrieved;
+                                    byte[] response = BufferTransform.Handshake(e.Data);
+                                    Send(new HandshakeResp { Data = response });
+                                }
+                                break;
+                            case (int)SocketLinkEventType.HandshakeResp:
+                                {
+                                    var ack = new HandshakeAck();
+                                    var e = (HandshakeResp)retrieved;
+                                    if (BufferTransform.FinalizeHandshake(e.Data))
+                                    {
+                                        ack.Result = true;
+                                    }
+                                    else
+                                    {
+                                        //
+                                    }
+                                    Send(ack);
+                                }
+                                break;
+                            case (int)SocketLinkEventType.HandshakeAck:
+                                {
+                                    var e = (HandshakeAck)retrieved;
+
+                                    if (e.Result)
+                                    {
+                                        RxTransformReady = true;
+                                        TxTransformReady = true;
+                                    }
+
+                                    link.Flow.Publish(new LinkSessionConnected {
+                                        LinkName = link.Name,
+                                        Result = e.Result,
+                                        Context = this
+                                    });
+                                }
+                                break;
                             default:
                                 link.Flow.Publish(retrieved);
                                 break;
@@ -239,7 +291,7 @@ namespace x2.Links.SocketLink
                         Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, typeId, e.ToString());
                     }
                 }
-
+            next:
                 recvBuffer.Trim();
                 if (recvBuffer.IsEmpty)
                 {
@@ -298,7 +350,7 @@ namespace x2.Links.SocketLink
 
             e.Serialize(sendBuffer);
 
-            if (BufferTransform != null)
+            if (BufferTransform != null && TxTransformReady)
             {
                 BufferTransform.Transform(sendBuffer, sendBuffer.Length);
             }

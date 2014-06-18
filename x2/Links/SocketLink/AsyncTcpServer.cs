@@ -76,11 +76,19 @@ namespace x2.Links.SocketLink
                     sessions.Add(clientSocket.Handle, session);
                 }
 
-                Flow.Publish(new LinkSessionConnected {
-                    LinkName = Name,
-                    Result = true,
-                    Context = session
-                });
+                if (BufferTransform != null)
+                {
+                    byte[] data = session.BufferTransform.InitializeHandshake();
+                    session.Send(new HandshakeReq { Data = data });
+                }
+                else
+                {
+                    Flow.Publish(new LinkSessionConnected {
+                        LinkName = Name,
+                        Result = true,
+                        Context = session
+                    });
+                }
 
                 session.BeginReceive(true);
 

@@ -18,6 +18,11 @@ namespace x2.Transforms
         private int KeySizeInBytes { get { return (algorithm.KeySize / 8); } }
         private int BlockSizeInBytes { get { return (algorithm.BlockSize / 8); } }
 
+        private bool established;
+
+        public int HandshakeBlockLength { get { return 8; } }
+        public bool Established { get { return established; } }
+
         public Cipher()
         {
             algorithm = AesCryptoServiceProvider.Create();
@@ -45,10 +50,16 @@ namespace x2.Transforms
         public byte[] InitializeHandshake()
         {
             // TODO
-            return null;
+            return new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
         }
 
-        public bool FinalizeHandshake(byte[] data)
+        public byte[] Handshake(byte[] challenge)
+        {
+            // TODO
+            return new byte[] { 9, 10, 11, 12, 13, 14, 15, 16 };
+        }
+
+        public bool FinalizeHandshake(byte[] response)
         {
             // TODO
             return true;

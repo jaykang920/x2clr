@@ -8,15 +8,18 @@ namespace x2
 {
     public interface IBufferTransform : ICloneable
     {
+        int HandshakeBlockLength { get; }
+
         byte[] InitializeHandshake();
-        bool FinalizeHandshake(byte[] data);
+        byte[] Handshake(byte[] challenge);
+        bool FinalizeHandshake(byte[] response);
 
         /// <summary>
-        /// Transform the specified ending byte(s) of the buffer.
+        /// Transform the specified trailing byte(s) of the buffer.
         /// </summary>
         int Transform(Buffer buffer, int length);
         /// <summary>
-        /// Inverse transform the specified starting byte(s) of the buffer.
+        /// Inverse transform the specified leading byte(s) of the buffer.
         /// </summary>
         int InverseTransform(Buffer buffer, int length);
     }
@@ -24,6 +27,19 @@ namespace x2
     public class BufferTransformStack : IBufferTransform
     {
         private readonly IList<IBufferTransform> transforms;
+
+        public int HandshakeBlockLength
+        {
+            get
+            {
+                int result = 0;
+                for (int i = 0, count = transforms.Count; i < count; ++i)
+                {
+                    result += transforms[i].HandshakeBlockLength;
+                }
+                return result;
+            }
+        }
 
         public BufferTransformStack()
         {
@@ -37,18 +53,52 @@ namespace x2
 
         public object Clone()
         {
+            // XXX : to be fixed
             return new BufferTransformStack(transforms);
         }
 
         public byte[] InitializeHandshake()
         {
-            // TODO
-            return null;
+            byte[] result = null;
+            for (int i = 0, count = transforms.Count; i < count; ++i)
+            {
+                result = Combine(result, transforms[i].InitializeHandshake());
+            }
+            return result;
         }
 
-        public bool FinalizeHandshake(byte[] data)
+        public byte[] Handshake(byte[] challenge)
         {
-            // TODO
+            byte[] result = null;
+            int offset = 0;
+            for (int i = 0, count = transforms.Count; i < count; ++i)
+            {
+                var transform = transforms[i];
+                var blockLength = transform.HandshakeBlockLength;
+                var block = new byte[blockLength];
+                System.Buffer.BlockCopy(challenge, offset, block, 0, blockLength);
+
+                result = Combine(result, transforms[i].Handshake(block));
+            }
+            return result;
+        }
+
+        public bool FinalizeHandshake(byte[] response)
+        {
+            int offset = 0;
+            for (int i = 0, count = transforms.Count; i < count; ++i)
+            {
+                var transform = transforms[i];
+                var blockLength = transform.HandshakeBlockLength;
+                var block = new byte[blockLength];
+                System.Buffer.BlockCopy(response, offset, block, 0, blockLength);
+
+                if (!transforms[i].FinalizeHandshake(block))
+                {
+                    return false;
+                }
+                offset += blockLength;
+            }
             return true;
         }
 
@@ -70,12 +120,9 @@ namespace x2
         public int Transform(Buffer buffer, int length)
         {
             var count = transforms.Count;
-            if (count > 0)
+            for (var i = 0; i < count; ++i)
             {
-                for (var i = 0; i < count; ++i)
-                {
-                    length = transforms[i].Transform(buffer, length);
-                }
+                length = transforms[i].Transform(buffer, length);
             }
             return length;
         }
@@ -83,14 +130,27 @@ namespace x2
         public int InverseTransform(Buffer buffer, int length)
         {
             var count = transforms.Count;
-            if (count > 0)
+            for (var i = count - 1; i >= 0; --i)
             {
-                for (var i = count - 1; i >= 0; --i)
-                {
-                    length = transforms[i].InverseTransform(buffer, length);
-                }
+                length = transforms[i].InverseTransform(buffer, length);
             }
             return length;
+        }
+
+        private static byte[] Combine(byte[] first, byte[] second)
+        {
+            if (second == null)
+            {
+                return first;
+            }
+            if (first == null)
+            {
+                return second;
+            }
+            byte[] result = new byte[first.Length + second.Length];
+            System.Buffer.BlockCopy(first, 0, result, 0, first.Length);
+            System.Buffer.BlockCopy(second, 0, result, first.Length, second.Length);
+            return result;
         }
     }
 }

@@ -12,8 +12,8 @@ namespace x2.Links.SocketLink
         public const int KeepaliveEvent = -10;
         public const int KeepaliveTick = -11;
         public const int HandshakeReq = -20;
-        public const int HandshakeResp = -20;
-        public const int HandshakeAck = -20;
+        public const int HandshakeResp = -21;
+        public const int HandshakeAck = -22;
         public const int SessionKeyReq = -30;
         public const int SessionKeyResp = -31;
     }
@@ -521,9 +521,21 @@ namespace x2.Links.SocketLink
 
         new public static int TypeId { get { return tag.TypeId; } }
 
+        private bool result_;
+
+        public bool Result
+        {
+            get { return result_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                result_ = value;
+            }
+        }
+
         static HandshakeAck()
         {
-            tag = new Tag(Event.tag, typeof(HandshakeAck), 0,
+            tag = new Tag(Event.tag, typeof(HandshakeAck), 1,
                     (int)SocketLinkEventType.HandshakeAck);
         }
 
@@ -550,12 +562,26 @@ namespace x2.Links.SocketLink
             {
                 return false;
             }
+            HandshakeAck o = (HandshakeAck)other;
+            if (result_ != o.result_)
+            {
+                return false;
+            }
             return true;
         }
 
         public override int GetHashCode(Fingerprint fingerprint)
         {
             var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(result_);
+            }
             return hash.Code;
         }
 
@@ -575,12 +601,26 @@ namespace x2.Links.SocketLink
             {
                 return false;
             }
+            HandshakeAck o = (HandshakeAck)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (result_ != o.result_)
+                {
+                    return false;
+                }
+            }
             return true;
         }
 
         public override void Load(x2.Buffer buffer)
         {
             base.Load(buffer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                buffer.Read(out result_);
+            }
         }
 
         public override void Serialize(x2.Buffer buffer)
@@ -592,15 +632,22 @@ namespace x2.Links.SocketLink
         protected override void Dump(x2.Buffer buffer)
         {
             base.Dump(buffer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                buffer.Write(result_);
+            }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Result={0}", result_);
         }
 
         private void Initialize()
         {
+            result_ = false;
         }
     }
 }

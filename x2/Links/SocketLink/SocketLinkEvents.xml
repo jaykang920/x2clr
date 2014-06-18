@@ -5,8 +5,8 @@
         <const name="KeepaliveTick">-11</const>
 
         <const name="HandshakeReq">-20</const>
-        <const name="HandshakeResp">-20</const>
-        <const name="HandshakeAck">-20</const>
+        <const name="HandshakeResp">-21</const>
+        <const name="HandshakeAck">-22</const>
 
         <const name="SessionKeyReq">-30</const>
         <const name="SessionKeyResp">-31</const>
@@ -25,6 +25,7 @@
         <property name="Data" type="bytes"/>
     </event>
     <event name="HandshakeAck" id="SocketLinkEventType.HandshakeAck">
+        <property name="Result" type="bool"/>
     </event>
 
 </x2>

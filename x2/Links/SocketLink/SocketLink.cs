@@ -57,6 +57,10 @@ namespace x2.Links.SocketLink
         static SocketLink()
         {
             Event.Register<KeepaliveEvent>();
+
+            Event.Register<HandshakeReq>();
+            Event.Register<HandshakeResp>();
+            Event.Register<HandshakeAck>();
         }
 
         protected SocketLink(string name)
