@@ -18,10 +18,7 @@ namespace x2.Transforms
         private int KeySizeInBytes { get { return (algorithm.KeySize / 8); } }
         private int BlockSizeInBytes { get { return (algorithm.BlockSize / 8); } }
 
-        private bool established;
-
         public int HandshakeBlockLength { get { return 8; } }
-        public bool Established { get { return established; } }
 
         public Cipher()
         {

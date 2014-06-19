@@ -101,7 +101,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a variable-length 32-bit unsigned integer into the given
+        /// Encodes a variable-length 32-bit non-negative integer into the given
         /// buffer, and returns the number of resultant bytes.
         /// </summary>
         public static int WriteVariable(byte[] buffer, int value)
@@ -110,7 +110,15 @@ namespace x2
             {
                 throw new ArgumentOutOfRangeException();
             }
+            return WriteVariable(buffer, (uint)value);
+        }
 
+        /// <summary>
+        /// Encodes a variable-length 32-bit unsigned integer into the given
+        /// buffer, and returns the number of resultant bytes.
+        /// </summary>
+        public static int WriteVariable(byte[] buffer, uint value)
+        {
             if ((value & 0xffffff80) == 0)
             {
                 if (buffer.Length < 1)
@@ -426,6 +434,9 @@ namespace x2
             return GetByte();
         }
 
+        /// <summary>
+        /// Decodes variable-length 32-bit non-negative integer from this buffer.
+        /// </summary>
         public int ReadVariable(out int value)
         {
             uint unsigned;
@@ -439,7 +450,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Decode variable-length 32-bit unsigned integer from this buffer.
+        /// Decodes variable-length 32-bit unsigned integer from this buffer.
         /// </summary>
         public int ReadVariable(out uint value)
         {

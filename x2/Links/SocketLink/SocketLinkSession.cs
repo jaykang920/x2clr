@@ -37,7 +37,8 @@ namespace x2.Links.SocketLink
         protected int lengthToSend;                   // tx
         protected bool beginning;                     // rx
         protected bool sending;                       // tx
-        protected byte[] lengthBytes = new byte[5];   // tx
+        protected bool transformed;                   // rx
+        protected byte[] headerBytes = new byte[5];   // tx
 
         protected volatile bool hasReceived;
         protected volatile bool hasSent;
@@ -156,7 +157,23 @@ namespace x2.Links.SocketLink
                 sending = true;
             }
 
-            BeginSend(e);
+            BeginSend(e, true);
+        }
+
+        public void SendUntransformed(Event e)
+        {
+            lock (sendQueue)
+            {
+                if (sending)
+                {
+                    sendQueue.Enqueue(e);
+                    return;
+                }
+
+                sending = true;
+            }
+
+            BeginSend(e, false);
         }
 
         internal void BeginReceive(bool beginning)
@@ -186,10 +203,11 @@ namespace x2.Links.SocketLink
             if (beginning)
             {
                 recvBuffer.Rewind();
-                int payloadLength;
-                int numLengthBytes = recvBuffer.ReadVariable(out payloadLength);
-                recvBuffer.Shrink(numLengthBytes);
-                lengthToReceive = payloadLength;
+                uint header;
+                int headerLength = recvBuffer.ReadVariable(out header);
+                recvBuffer.Shrink(headerLength);
+                lengthToReceive = (int)(header >> 1);
+                transformed = ((header & 1) != 0);
             }
 
             // Handle split packets.
@@ -203,7 +221,7 @@ namespace x2.Links.SocketLink
             {
                 recvBuffer.MarkToRead(lengthToReceive);
 
-                if (BufferTransform != null && RxTransformReady)
+                if (BufferTransform != null && RxTransformReady && transformed)
                 {
                     try
                     {
@@ -246,7 +264,7 @@ namespace x2.Links.SocketLink
                                 {
                                     var e = (HandshakeReq)retrieved;
                                     byte[] response = BufferTransform.Handshake(e.Data);
-                                    Send(new HandshakeResp { Data = response });
+                                    SendUntransformed(new HandshakeResp { Data = response });
                                 }
                                 break;
                             case (int)SocketLinkEventType.HandshakeResp:
@@ -261,7 +279,7 @@ namespace x2.Links.SocketLink
                                     {
                                         //
                                     }
-                                    Send(ack);
+                                    SendUntransformed(ack);
                                 }
                                 break;
                             case (int)SocketLinkEventType.HandshakeAck:
@@ -298,10 +316,11 @@ namespace x2.Links.SocketLink
                     break;
                 }
 
-                int payloadLength;
-                int numLengthBytes = recvBuffer.ReadVariable(out payloadLength);
-                recvBuffer.Shrink(numLengthBytes);
-                lengthToReceive = payloadLength;
+                uint header;
+                int headerLength = recvBuffer.ReadVariable(out header);
+                recvBuffer.Shrink(headerLength);
+                lengthToReceive = (int)(header >> 1);
+                transformed = ((header & 1) != 0);
 
                 if (recvBuffer.Length < lengthToReceive)
                 {
@@ -341,7 +360,7 @@ namespace x2.Links.SocketLink
             TrySendNext();
         }
 
-        private void BeginSend(Event e)
+        private void BeginSend(Event e, bool transform)
         {
             if (e.GetTypeId() != (int)SocketLinkEventType.KeepaliveEvent)
             {
@@ -350,16 +369,19 @@ namespace x2.Links.SocketLink
 
             e.Serialize(sendBuffer);
 
-            if (BufferTransform != null && TxTransformReady)
+            uint header = 0;
+            if (BufferTransform != null && TxTransformReady && transform)
             {
                 BufferTransform.Transform(sendBuffer, sendBuffer.Length);
+                header = 1;
             }
+            header |= ((uint)sendBuffer.Length << 1);
 
-            int numLengthBytes = Buffer.WriteVariable(lengthBytes, sendBuffer.Length);
-            lengthToSend = sendBuffer.Length + numLengthBytes;
+            int headerLength = Buffer.WriteVariable(headerBytes, header);
+            lengthToSend = sendBuffer.Length + headerLength;
 
             sendBufferList.Clear();
-            sendBufferList.Add(new ArraySegment<byte>(lengthBytes, 0, numLengthBytes));
+            sendBufferList.Add(new ArraySegment<byte>(headerBytes, 0, headerLength));
             sendBuffer.ListOccupiedSegments(sendBufferList);
 
             SendImpl();
@@ -381,7 +403,7 @@ namespace x2.Links.SocketLink
                 e = sendQueue.Dequeue();
             }
 
-            BeginSend(e);
+            BeginSend(e, true);
         }
 
         #region Diagnostics

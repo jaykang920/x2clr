@@ -8,7 +8,6 @@ namespace x2.Transforms
     public class Inverse : IBufferTransform
     {
         public int HandshakeBlockLength { get { return 0; } }
-        public bool Established { get { return true; } }
 
         public object Clone()
         {

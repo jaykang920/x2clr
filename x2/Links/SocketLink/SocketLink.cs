@@ -132,7 +132,7 @@ namespace x2.Links.SocketLink
                 {
                     Log.Trace("{0} {1} sent keepalive event", Name, session.Handle);
 
-                    session.Send(new KeepaliveEvent());
+                    session.SendUntransformed(new KeepaliveEvent());
                 }
             }
             

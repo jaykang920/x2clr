@@ -14,12 +14,9 @@ namespace x2.Links.SocketLink
 {
     public class TcpLinkSession : SocketLinkSession
     {
-        private object syncRoot;
-
         public TcpLinkSession(SocketLink link, Socket socket)
             : base(link, socket)
         {
-            syncRoot = new Object();
         }
 
         protected override void ReceiveImpl()

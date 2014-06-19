@@ -14,16 +14,12 @@ namespace x2.Links.SocketLink
 {
     public class AsyncTcpLinkSession : SocketLinkSession
     {
-        private object syncRoot;
-
         private SocketAsyncEventArgs recvEventArgs;
         private SocketAsyncEventArgs sendEventArgs;
 
         public AsyncTcpLinkSession(SocketLink link, Socket socket)
             : base(link, socket)
         {
-            syncRoot = new Object();
-
             recvEventArgs = new SocketAsyncEventArgs();
             sendEventArgs = new SocketAsyncEventArgs();
 
