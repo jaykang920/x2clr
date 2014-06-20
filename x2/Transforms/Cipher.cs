@@ -179,8 +179,9 @@ namespace x2.Transforms
                 {
                     var segment = buffers[i];
                     int bytesToCopy = Math.Min(segment.Count, DecryptingBlockSizeInBytes);
-                    System.Buffer.BlockCopy(segment.Array, segment.Offset,
-                        decryptingIV, EncryptingBlockSizeInBytes - bytesCopied - bytesToCopy, bytesToCopy);
+                    System.Buffer.BlockCopy(segment.Array, segment.Offset + segment.Count - bytesToCopy,
+                        decryptingIV, DecryptingBlockSizeInBytes - bytesCopied - bytesToCopy, bytesToCopy);
+                    bytesCopied += bytesToCopy;
                 }
 
                 for (var i = 0; i < buffers.Count; ++i)
