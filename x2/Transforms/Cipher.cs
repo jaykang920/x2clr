@@ -4,39 +4,50 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 
 namespace x2.Transforms
 {
+    // Important!
+    // Illustration purpose only. Do NOT use this as is in production.
     public class Cipher : IBufferTransform
     {
-        SymmetricAlgorithm algorithm;
+        private static byte[] sharedSecret = {
+             1, 11, 12,  5,
+            10,  2,  6, 13,
+             9,  7,  3, 14,
+             8, 16, 15,  4,
 
-        private byte[] key;
-        private byte[] iv;
+            10,  9,  8,  7,
+            11,  2,  1,  6,
+            12,  3,  4,  5,
+            13, 14, 15, 16
+        };
 
-        private int KeySizeInBytes { get { return (algorithm.KeySize / 8); } }
-        private int BlockSizeInBytes { get { return (algorithm.BlockSize / 8); } }
+        SymmetricAlgorithm encryptingAlgorithm;
+        SymmetricAlgorithm decryptingAlgorithm;
 
-        public int HandshakeBlockLength { get { return 8; } }
+        private byte[] encryptingKey;
+        private byte[] decryptingKey;
+
+        private byte[] encryptingIV;
+        private byte[] decryptingIV;
+
+        private int EncryptingKeySizeInBytes { get { return (encryptingAlgorithm.KeySize / 8); } }
+        private int EncryptingBlockSizeInBytes { get { return (encryptingAlgorithm.BlockSize / 8); } }
+        private int DecryptingKeySizeInBytes { get { return (decryptingAlgorithm.KeySize / 8); } }
+        private int DecryptingBlockSizeInBytes { get { return (decryptingAlgorithm.BlockSize / 8); } }
+
+        public int HandshakeBlockLength { get { return 32; } }
 
         public Cipher()
         {
-            algorithm = AesCryptoServiceProvider.Create();
-            algorithm.Mode = CipherMode.CBC;
+            encryptingAlgorithm = AesCryptoServiceProvider.Create();
+            encryptingAlgorithm.Mode = CipherMode.CBC;
 
-            key = new byte[KeySizeInBytes];
-            iv = new byte[BlockSizeInBytes];
-
-            // TODO: handshaking and dynamic generation
-            for (int i = 0; i < KeySizeInBytes; ++i)
-            {
-                key[i] = (byte)i;
-            }
-            for (int i = 0; i < BlockSizeInBytes; ++i)
-            {
-                iv[i] = (byte)i;
-            }
+            decryptingAlgorithm = AesCryptoServiceProvider.Create();
+            decryptingAlgorithm.Mode = CipherMode.CBC;
         }
 
         public object Clone()
@@ -46,20 +57,60 @@ namespace x2.Transforms
 
         public byte[] InitializeHandshake()
         {
-            // TODO
-            return new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+            var challenge = new byte[HandshakeBlockLength];
+            var rng = new RNGCryptoServiceProvider();
+            rng.GetBytes(challenge);
+
+            decryptingKey = challenge;
+
+            return challenge;
         }
 
         public byte[] Handshake(byte[] challenge)
         {
-            // TODO
-            return new byte[] { 9, 10, 11, 12, 13, 14, 15, 16 };
+            var data = new byte[HandshakeBlockLength];
+            var response = new byte[HandshakeBlockLength];
+            for (int i = 0; i < HandshakeBlockLength; ++i)
+            {
+                data[i] = (byte)(challenge[i] ^ ~sharedSecret[i]);
+                response[i] = (byte)(challenge[i] ^ sharedSecret[i]);
+            }
+
+            encryptingKey = new byte[EncryptingKeySizeInBytes];
+            encryptingIV = new byte[EncryptingBlockSizeInBytes];
+
+            System.Buffer.BlockCopy(data, 0, encryptingKey, 0, EncryptingKeySizeInBytes);
+            System.Buffer.BlockCopy(data, HandshakeBlockLength - EncryptingBlockSizeInBytes,
+                encryptingIV, 0, EncryptingBlockSizeInBytes);
+
+            return response;
         }
 
         public bool FinalizeHandshake(byte[] response)
         {
-            // TODO
-            return true;
+            var actual = new byte[HandshakeBlockLength];
+            for (int i = 0; i < HandshakeBlockLength; ++i)
+            {
+                actual[i] = (byte)(response[i] ^ sharedSecret[i]);
+            }
+
+            bool result = actual.SequenceEqual(decryptingKey);
+
+            if (result)
+            {
+                decryptingKey = new byte[DecryptingKeySizeInBytes];
+                decryptingIV = new byte[DecryptingBlockSizeInBytes];
+
+                for (int i = 0; i < HandshakeBlockLength; ++i)
+                {
+                    actual[i] = (byte)(actual[i] ^ ~sharedSecret[i]);
+                }
+                System.Buffer.BlockCopy(actual, 0, decryptingKey, 0, DecryptingKeySizeInBytes);
+                System.Buffer.BlockCopy(actual, HandshakeBlockLength - DecryptingBlockSizeInBytes,
+                    decryptingIV, 0, DecryptingBlockSizeInBytes);
+            }
+
+            return result;
         }
 
         public int Transform(Buffer buffer, int length)
@@ -68,8 +119,8 @@ namespace x2.Transforms
 
             int result;
 
-            var ms = new MemoryStream(length + BlockSizeInBytes);
-            var encryptor = algorithm.CreateEncryptor(key, iv);
+            var ms = new MemoryStream(length + EncryptingBlockSizeInBytes);
+            var encryptor = encryptingAlgorithm.CreateEncryptor(encryptingKey, encryptingIV);
             using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
             {
                 var buffers = new List<ArraySegment<byte>>();
@@ -98,6 +149,10 @@ namespace x2.Transforms
                         result, BitConverter.ToString(streamBuffer, 0, result));
                 }
 
+                // Store the last ciphertext block as a next encrypting IV.
+                System.Buffer.BlockCopy(streamBuffer, result - EncryptingBlockSizeInBytes,
+                    encryptingIV, 0, EncryptingBlockSizeInBytes);
+
                 buffer.Rewind();
                 buffer.CopyFrom(streamBuffer, 0, result);
             }
@@ -112,11 +167,21 @@ namespace x2.Transforms
             int result;
 
             var ms = new MemoryStream(length);
-            var decryptor = algorithm.CreateDecryptor(key, iv);
+            var decryptor = decryptingAlgorithm.CreateDecryptor(decryptingKey, decryptingIV);
             using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
             {
                 var buffers = new List<ArraySegment<byte>>();
                 buffer.ListStartingSegments(buffers, length);
+
+                // Store the last ciphertext block as a next decrypting IV.
+                int bytesCopied = 0;
+                for (var i = buffers.Count - 1; bytesCopied < DecryptingBlockSizeInBytes && i >= 0; --i)
+                {
+                    var segment = buffers[i];
+                    int bytesToCopy = Math.Min(segment.Count, DecryptingBlockSizeInBytes);
+                    System.Buffer.BlockCopy(segment.Array, segment.Offset,
+                        decryptingIV, EncryptingBlockSizeInBytes - bytesCopied - bytesToCopy, bytesToCopy);
+                }
 
                 for (var i = 0; i < buffers.Count; ++i)
                 {
