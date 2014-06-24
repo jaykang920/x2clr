@@ -48,12 +48,15 @@ namespace x2
 
         private BufferTransformStack(IList<IBufferTransform> transforms)
         {
-            this.transforms = new List<IBufferTransform>(transforms);
+            this.transforms = new List<IBufferTransform>();
+            for (int i = 0, count = transforms.Count; i < count; ++i)
+            {
+                this.transforms.Add((IBufferTransform)transforms[i].Clone());
+            }
         }
 
         public object Clone()
         {
-            // XXX : to be fixed
             return new BufferTransformStack(transforms);
         }
 
