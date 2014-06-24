@@ -24,9 +24,11 @@ namespace x2
 
         private string _channel;
         private IntPtr _handle;
+        private bool _transform = true;
 
         /// <summary>
-        /// Name of the hub channel which this event is assigned to.
+        /// Gets or sets the name of the hub channel which this event is
+        /// assigned to.
         /// </summary>
         public string _Channel
         {
@@ -35,7 +37,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Link session handle associated with this event.
+        /// Gets or sets the link session handle associated with this event.
         /// </summary>
         public IntPtr _Handle
         {
@@ -45,6 +47,16 @@ namespace x2
                 fingerprint.Touch(tag.Offset + 0);
                 _handle = value;
             }
+        }
+
+        /// <summary>
+        /// Gets or sets a boolean value indicating whether this event is to be
+        /// transformed or not when it is transferred through a link.
+        /// </summary>
+        public bool _Transform
+        {
+            get { return _transform; }
+            set { _transform = value; }
         }
 
         static Event()

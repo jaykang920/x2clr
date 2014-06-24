@@ -157,23 +157,7 @@ namespace x2.Links.SocketLink
                 sending = true;
             }
 
-            BeginSend(e, true);
-        }
-
-        public void SendUntransformed(Event e)
-        {
-            lock (sendQueue)
-            {
-                if (sending)
-                {
-                    sendQueue.Enqueue(e);
-                    return;
-                }
-
-                sending = true;
-            }
-
-            BeginSend(e, false);
+            BeginSend(e);
         }
 
         internal void BeginReceive(bool beginning)
@@ -264,22 +248,26 @@ namespace x2.Links.SocketLink
                                 {
                                     var e = (HandshakeReq)retrieved;
                                     byte[] response = BufferTransform.Handshake(e.Data);
-                                    SendUntransformed(new HandshakeResp { Data = response });
+                                    Send(new HandshakeResp {
+                                        _Transform = false,
+                                        Data = response
+                                    });
                                 }
                                 break;
                             case (int)SocketLinkEventType.HandshakeResp:
                                 {
-                                    var ack = new HandshakeAck();
+                                    var ack = new HandshakeAck { _Transform = false };
                                     var e = (HandshakeResp)retrieved;
                                     if (BufferTransform.FinalizeHandshake(e.Data))
                                     {
+                                        RxTransformReady = true;
                                         ack.Result = true;
                                     }
                                     else
                                     {
                                         //
                                     }
-                                    SendUntransformed(ack);
+                                    Send(ack);
                                 }
                                 break;
                             case (int)SocketLinkEventType.HandshakeAck:
@@ -288,7 +276,6 @@ namespace x2.Links.SocketLink
 
                                     if (e.Result)
                                     {
-                                        RxTransformReady = true;
                                         TxTransformReady = true;
                                     }
 
@@ -360,7 +347,7 @@ namespace x2.Links.SocketLink
             TrySendNext();
         }
 
-        private void BeginSend(Event e, bool transform)
+        private void BeginSend(Event e)
         {
             if (e.GetTypeId() != (int)SocketLinkEventType.KeepaliveEvent)
             {
@@ -370,7 +357,7 @@ namespace x2.Links.SocketLink
             e.Serialize(sendBuffer);
 
             uint header = 0;
-            if (BufferTransform != null && TxTransformReady && transform)
+            if (BufferTransform != null && TxTransformReady && e._Transform)
             {
                 BufferTransform.Transform(sendBuffer, sendBuffer.Length);
                 header = 1;
@@ -403,7 +390,7 @@ namespace x2.Links.SocketLink
                 e = sendQueue.Dequeue();
             }
 
-            BeginSend(e, true);
+            BeginSend(e);
         }
 
         #region Diagnostics

@@ -8,8 +8,8 @@
         <const name="HandshakeResp">-21</const>
         <const name="HandshakeAck">-22</const>
 
-        <const name="SessionKeyReq">-30</const>
-        <const name="SessionKeyResp">-31</const>
+        <const name="SessionTokenReq">-30</const>
+        <const name="SessionTokenResp">-31</const>
     </consts>
 
     <event name="KeepaliveEvent" id="SocketLinkEventType.KeepaliveEvent">
@@ -26,6 +26,13 @@
     </event>
     <event name="HandshakeAck" id="SocketLinkEventType.HandshakeAck">
         <property name="Result" type="bool"/>
+    </event>
+
+    <event name="SessionTokenReq" id="SocketLinkEventType.SessionTokenReq">
+        <property name="Value" type="string"/>
+    </event>
+    <event name="SessionTokenResp" id="SocketLinkEventType.SessionTokenResp">
+        <property name="Value" type="string"/>
     </event>
 
 </x2>

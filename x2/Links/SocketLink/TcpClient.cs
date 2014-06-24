@@ -61,7 +61,10 @@ namespace x2.Links.SocketLink
                 if (BufferTransform != null)
                 {
                     byte[] data = session.BufferTransform.InitializeHandshake();
-                    session.Send(new HandshakeReq { Data = data });
+                    session.Send(new HandshakeReq {
+                        _Transform = false,
+                        Data = data
+                    });
                 }
                 else
                 {

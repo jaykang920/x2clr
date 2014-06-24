@@ -14,8 +14,8 @@ namespace x2.Links.SocketLink
         public const int HandshakeReq = -20;
         public const int HandshakeResp = -21;
         public const int HandshakeAck = -22;
-        public const int SessionKeyReq = -30;
-        public const int SessionKeyResp = -31;
+        public const int SessionTokenReq = -30;
+        public const int SessionTokenResp = -31;
     }
 
     public class KeepaliveEvent : Event
@@ -648,6 +648,278 @@ namespace x2.Links.SocketLink
         private void Initialize()
         {
             result_ = false;
+        }
+    }
+
+    public class SessionTokenReq : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        private string value_;
+
+        public string Value
+        {
+            get { return value_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                value_ = value;
+            }
+        }
+
+        static SessionTokenReq()
+        {
+            tag = new Tag(Event.tag, typeof(SessionTokenReq), 1,
+                    (int)SocketLinkEventType.SessionTokenReq);
+        }
+
+        new public static SessionTokenReq New()
+        {
+            return new SessionTokenReq();
+        }
+
+        public SessionTokenReq()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected SessionTokenReq(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        public override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            SessionTokenReq o = (SessionTokenReq)other;
+            if (value_ != o.value_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(value_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override bool IsEquivalent(Cell other)
+        {
+            if (!base.IsEquivalent(other))
+            {
+                return false;
+            }
+            SessionTokenReq o = (SessionTokenReq)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (value_ != o.value_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Load(x2.Buffer buffer)
+        {
+            base.Load(buffer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                buffer.Read(out value_);
+            }
+        }
+
+        public override void Serialize(x2.Buffer buffer)
+        {
+            buffer.Write(tag.TypeId);
+            this.Dump(buffer);
+        }
+
+        protected override void Dump(x2.Buffer buffer)
+        {
+            base.Dump(buffer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                buffer.Write(value_);
+            }
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Value=\"{0}\"", value_.Replace("\"", "\\\""));
+        }
+
+        private void Initialize()
+        {
+            value_ = "";
+        }
+    }
+
+    public class SessionTokenResp : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        private string value_;
+
+        public string Value
+        {
+            get { return value_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                value_ = value;
+            }
+        }
+
+        static SessionTokenResp()
+        {
+            tag = new Tag(Event.tag, typeof(SessionTokenResp), 1,
+                    (int)SocketLinkEventType.SessionTokenResp);
+        }
+
+        new public static SessionTokenResp New()
+        {
+            return new SessionTokenResp();
+        }
+
+        public SessionTokenResp()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected SessionTokenResp(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        public override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            SessionTokenResp o = (SessionTokenResp)other;
+            if (value_ != o.value_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(value_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override bool IsEquivalent(Cell other)
+        {
+            if (!base.IsEquivalent(other))
+            {
+                return false;
+            }
+            SessionTokenResp o = (SessionTokenResp)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (value_ != o.value_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Load(x2.Buffer buffer)
+        {
+            base.Load(buffer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                buffer.Read(out value_);
+            }
+        }
+
+        public override void Serialize(x2.Buffer buffer)
+        {
+            buffer.Write(tag.TypeId);
+            this.Dump(buffer);
+        }
+
+        protected override void Dump(x2.Buffer buffer)
+        {
+            base.Dump(buffer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                buffer.Write(value_);
+            }
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Value=\"{0}\"", value_.Replace("\"", "\\\""));
+        }
+
+        private void Initialize()
+        {
+            value_ = "";
         }
     }
 }
