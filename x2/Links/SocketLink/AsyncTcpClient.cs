@@ -43,63 +43,30 @@ namespace x2.Links.SocketLink
         // Completed event handler for ConnectAsync
         private void OnConnectCompleted(object sender, SocketAsyncEventArgs e)
         {
-            OnConnect(e);
+            lock (syncRoot)
+            {
+                OnConnect(e);
+            }
         }
 
         // Completion callback for ConnectAsync
         private void OnConnect(SocketAsyncEventArgs e)
         {
-            var noti = new LinkSessionConnected { LinkName = Name };
-
             if (e.SocketError == SocketError.Success)
             {
-                // Adjust socket options.
-                socket.NoDelay = NoDelay;
-
-                Log.Info("{0} {1} connected to {2}", Name, socket.Handle, socket.RemoteEndPoint);
-
-                noti.Result = true;
-
-                ConnectInternal();
-
+                connectEventArgs.Completed -= OnConnectCompleted;
                 connectEventArgs.Dispose();
                 connectEventArgs = null;
 
-                var newSession = new AsyncTcpLinkSession(this, socket);
-                newSession.Polarity = true;
+                Log.Info("{0} {1} connected to {2}",
+                    Name, socket.Handle, socket.RemoteEndPoint);
 
-                if (BufferTransform != null)
-                {
-                    newSession.BufferTransform = BufferTransform;
-                }
-
-                lock (syncRoot)
-                {
-                    session = newSession;
-                }
-
-                if (BufferTransform != null)
-                {
-                    byte[] data = session.BufferTransform.InitializeHandshake();
-                    session.Send(new HandshakeReq {
-                        _Transform = false,
-                        Data = data
-                    });
-                }
-                else
-                {
-                    noti.Context = session;
-                    Flow.Publish(noti);
-                }
-
-                session.BeginReceive(true);
+                ConnectInternal(new AsyncTcpLinkSession(this, socket));
             }
             else
             {
-                Log.Warn("{0} connect error {1}", Name, e.SocketError);
-
-                noti.Context = e.RemoteEndPoint;
-                Flow.Publish(noti);
+                Log.Warn("{0} error connecting to {1} : {2}",
+                    Name, e.RemoteEndPoint, e.SocketError);
 
                 RetryInternal(e.RemoteEndPoint);
             }

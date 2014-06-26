@@ -133,11 +133,6 @@ namespace x2
             currentFlow.Unsubscribe(binderToken);
         }
 
-        public static void Post(Event e)
-        {
-            Hub.Post(e);
-        }
-
         /// <summary>
         /// Default exception handler.
         /// </summary>

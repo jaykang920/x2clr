@@ -14,7 +14,8 @@ namespace x2.Links.SocketLink
 {
     public abstract class TcpClientBase : SocketLink
     {
-        protected volatile SocketLinkSession session;
+        protected volatile SocketLinkSession session;  // current link session
+        //protected SocketLinkSession tempSession;  // temporary link session
 
         protected volatile string remoteHost;
         protected volatile int remotePort;
@@ -30,13 +31,17 @@ namespace x2.Links.SocketLink
 
         public bool Connected { get { return (session != null); } }
 
-        public SocketLinkSession Session { get { return session; } }
-
-        /// <summary>
-        /// Gets or sets a value that indicates whether the underlying socket is
-        /// not to use the Nagle algorithm.
-        /// </summary>
-        public bool NoDelay { get; set; }
+        public SocketLinkSession Session {
+            get { return session; }
+            set
+            {
+                lock (syncRoot)
+                {
+                    session = value;
+                    //tempSession = null;
+                }
+            }
+        }
 
         public string RemoteHost
         {
@@ -53,9 +58,6 @@ namespace x2.Links.SocketLink
             : base(name)
         {
             stopwatch = new Stopwatch();
-
-            // Default socket options
-            NoDelay = true;
         }
 
         public override void Close()
@@ -86,7 +88,7 @@ namespace x2.Links.SocketLink
             }
             catch (Exception e)
             {
-                Log.Error("{0} error resolving target host {1} - {2}",
+                Log.Error("{0} error resolving target host {1} : {2}",
                     Name, host, e.Message);
                 throw;
             }
@@ -96,12 +98,15 @@ namespace x2.Links.SocketLink
 
         public void Send(Event e)
         {
-            if (session == null)
+            lock (syncRoot)
             {
-                Log.Warn("{0} dropped event {1}", Name, e);
-                return;
+                if (session == null)
+                {
+                    Log.Warn("{0} dropped event {1}", Name, e);
+                    return;
+                }
+                session.Send(e);
             }
-            session.Send(e);
         }
 
         protected override void OnKeepaliveTick()
@@ -140,25 +145,29 @@ namespace x2.Links.SocketLink
 
         private void Connect(IPAddress ip, int port)
         {
-            try
+            lock (syncRoot)
             {
-                lock (syncRoot)
+                try
                 {
                     if (socket == null)
                     {
                         socket = new Socket(
                             ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                     }
+                    else
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    BeginConnect(new IPEndPoint(ip, port));
+
+                    Log.Info("{0} connecting to {1}:{2}", Name, ip, port);
                 }
-
-                BeginConnect(new IPEndPoint(ip, port));
-
-                Log.Info("{0} connecting to {1}:{2}", Name, ip, port);
-            }
-            catch (Exception)
-            {
-                socket = null;
-                throw;
+                catch (Exception)
+                {
+                    socket = null;
+                    throw;
+                }
             }
         }
 
@@ -172,14 +181,63 @@ namespace x2.Links.SocketLink
 
         protected abstract void ConnectImpl(EndPoint endpoint);
 
-        protected void ConnectInternal()
+        protected void ConnectInternal(SocketLinkSession session)
         {
+            // Adjust socket options.
+            socket.NoDelay = NoDelay;
+
             // Reset the retry counter.
             retryCount = 0;
+
+            session.Polarity = true;
+
+            if (BufferTransform != null)
+            {
+                session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
+
+                byte[] data = session.BufferTransform.InitializeHandshake();
+                session.Send(new HandshakeReq {
+                    _Transform = false,
+                    Data = data
+                });
+            }
+            else
+            {
+/*
+                string sessionToken = null;
+                if (this.session != null)
+                {
+                    sessionToken = this.session.Token;
+                }
+                tempSession = session;
+
+                var req = new SessionTokenReq();
+                if (!String.IsNullOrEmpty(sessionToken))
+                {
+                    req.Value = sessionToken;
+                }
+                session.Send(req);
+*/
+                this.session = session;
+
+                new LinkSessionConnected {
+                    LinkName = Name,
+                    Result = true,
+                    Context = session
+                }.Post();
+            }
+
+            session.BeginReceive(true);
         }
 
         protected void RetryInternal(EndPoint endpoint)
         {
+            new LinkSessionConnected {
+                LinkName = Name,
+                Result = false,
+                Context = endpoint
+            }.Post();
+
             if (MaxRetryCount <= 0 ||
                 (MaxRetryCount > 0 && retryCount < MaxRetryCount))
             {
@@ -192,6 +250,11 @@ namespace x2.Links.SocketLink
                 }
 
                 BeginConnect(endpoint);
+            }
+            else
+            {
+                socket.Close();
+                socket = null;
             }
         }
     }

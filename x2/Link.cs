@@ -17,12 +17,17 @@ namespace x2
     /// </summary>
     public abstract class Link : Case
     {
-        private static HashSet<string> names = new HashSet<string>();
+        private static HashSet<string> names;
 
         public string Name { get; private set; }
         public IBufferTransform BufferTransform { get; set; }
 
         public Action<Event, LinkSession> Preprocessor { get; set; }
+
+        static Link()
+        {
+            names = new HashSet<string>();
+        }
 
         public Link(string name)
         {
@@ -30,13 +35,11 @@ namespace x2
             {
                 if (names.Contains(name))
                 {
-                    throw new ArgumentException("duplicate link name");
+                    throw new ArgumentException("requested link name is already in use");
                 }
-                else
-                {
-                    Name = name;
-                    names.Add(name);
-                }
+
+                Name = name;
+                names.Add(name);
             }
         }
 

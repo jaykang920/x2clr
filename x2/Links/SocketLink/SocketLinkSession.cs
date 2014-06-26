@@ -21,7 +21,7 @@ namespace x2.Links.SocketLink
     {
         protected object syncRoot = new Object();
 
-        protected SocketLink link;  // associated Link
+        protected SocketLink link;  // associated link
         protected Socket socket;    // underlying socket
 
         protected Queue<Event> sendQueue;
@@ -279,6 +279,29 @@ namespace x2.Links.SocketLink
                                         TxTransformReady = true;
                                     }
 
+                                    if (Polarity == true)
+                                    {
+                                        ((TcpClientBase)link).Session = this;
+/*
+                                        string sessionToken = null;
+                                        lock (syncRoot)
+                                        {
+                                            var prevSession = ((TcpClientBase)link).Session;
+                                            if (prevSession != null)
+                                            {
+                                                sessionToken = prevSession.Token;
+                                            }
+                                        }
+
+                                        var req = new SessionTokenReq();
+                                        if (!String.IsNullOrEmpty(sessionToken))
+                                        {
+                                            req.Value = sessionToken;
+                                        }
+                                        Send(req);
+*/
+                                    }
+
                                     link.Flow.Publish(new LinkSessionConnected {
                                         LinkName = link.Name,
                                         Result = e.Result,
@@ -286,6 +309,56 @@ namespace x2.Links.SocketLink
                                     });
                                 }
                                 break;
+/*
+                            case (int)SocketLinkEventType.SessionTokenReq:
+                                {
+                                    var e = (SessionTokenReq)retrieved;
+
+                                    if (Polarity == false)
+                                    {
+                                        // XXX
+
+                                        //string token;
+                                        if (!String.IsNullOrEmpty(e.Value))
+                                        {
+                                            token = e.Value;
+                                        }
+                                        else
+                                        {
+                                            token = Guid.NewGuid().ToString().Replace("-", "");
+                                        }
+
+                                        Send(new SessionTokenResp {
+                                            Value = token
+                                        });
+
+                                        link.Flow.Publish(new LinkSessionConnected {
+                                            LinkName = link.Name,
+                                            Result = true,
+                                            Context = this
+                                        });
+                                    }
+                                }
+                                break;
+                            case (int)SocketLinkEventType.SessionTokenResp:
+                                {
+                                    var e = (SessionTokenResp)retrieved;
+
+                                    if (Polarity == true)
+                                    {
+                                        token = e.Value;
+
+                                        ((TcpClientBase)link).Session = this;
+
+                                        link.Flow.Publish(new LinkSessionConnected {
+                                            LinkName = link.Name,
+                                            Result = true,
+                                            Context = this
+                                        });
+                                    }
+                                }
+                                break;
+*/
                             default:
                                 link.Flow.Publish(retrieved);
                                 break;

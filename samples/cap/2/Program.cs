@@ -13,7 +13,7 @@ namespace x2.Samples.Capitalizer
         {
             var resp = new CapitalizeResp();
             resp.Result = req.Message.ToUpper();
-            Flow.Post(resp);
+            Hub.Post(resp);
         }
 
         protected override void SetUp()

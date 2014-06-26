@@ -24,6 +24,12 @@ namespace x2.Links.SocketLink
         protected bool outgoingKeepaliveEnabled;
 
         /// <summary>
+        /// Gets or sets a value that indicates whether the client sockets are
+        /// not to use the Nagle algorithm.
+        /// </summary>
+        public bool NoDelay { get; set; }
+
+        /// <summary>
         /// Gets the underlying socket object.
         /// </summary>
         public Socket Socket { get { return socket; } }
@@ -61,11 +67,15 @@ namespace x2.Links.SocketLink
             Event.Register<HandshakeReq>();
             Event.Register<HandshakeResp>();
             Event.Register<HandshakeAck>();
+            Event.Register<SessionTokenReq>();
+            Event.Register<SessionTokenResp>();
         }
 
         protected SocketLink(string name)
             : base(name)
         {
+            // Default socket options
+            NoDelay = true;
         }
 
         public virtual void OnDisconnect(SocketLinkSession session)

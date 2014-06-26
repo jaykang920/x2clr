@@ -30,60 +30,26 @@ namespace x2.Links.SocketLink
         // Asynchronous callback for BeginConnect
         private void OnConnect(IAsyncResult asyncResult)
         {
-            var noti = new LinkSessionConnected { LinkName = Name };
-
-            try
+            lock (syncRoot)
             {
-                socket.EndConnect(asyncResult);
-
-                // Adjust socket options.
-                socket.NoDelay = NoDelay;
-
-                Log.Info("{0} {1} connected to {2}", Name, socket.Handle, socket.RemoteEndPoint);
-
-                noti.Result = true;
-
-                ConnectInternal();
-
-                var newSession = new TcpLinkSession(this, socket);
-                newSession.Polarity = true;
-
-                if (BufferTransform != null)
+                try
                 {
-                    newSession.BufferTransform = BufferTransform;
-                }
+                    socket.EndConnect(asyncResult);
 
-                lock (syncRoot)
+                    Log.Info("{0} {1} connected to {2}",
+                        Name, socket.Handle, socket.RemoteEndPoint);
+
+                    ConnectInternal(new TcpLinkSession(this, socket));
+                }
+                catch (Exception e)
                 {
-                    session = newSession;
+                    var endpoint = (EndPoint)asyncResult.AsyncState;
+
+                    Log.Warn("{0} error connecting to {1} : {2}",
+                        Name, endpoint, e.Message);
+
+                    RetryInternal(endpoint);
                 }
-
-                if (BufferTransform != null)
-                {
-                    byte[] data = session.BufferTransform.InitializeHandshake();
-                    session.Send(new HandshakeReq {
-                        _Transform = false,
-                        Data = data
-                    });
-                }
-                else
-                {
-                    noti.Context = session;
-                    Flow.Publish(noti);
-                }
-
-                session.BeginReceive(true);
-            }
-            catch (Exception e)
-            {
-                Log.Warn("{0} connect error: {1}", Name, e.Message);
-
-                var endpoint = (EndPoint)asyncResult.AsyncState;
-                
-                noti.Context = endpoint;
-                Flow.Publish(noti);
-
-                RetryInternal(endpoint);
             }
         }
     }

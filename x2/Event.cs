@@ -278,7 +278,7 @@ namespace x2
 
         public void Post()
         {
-            Flow.Post(this);
+            Hub.Post(this);
         }
 
         #endregion

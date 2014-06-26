@@ -20,7 +20,7 @@ namespace x2.Samples.Echo
                 _Handle = req._Handle,
                 Message = req.Message
             };
-            Flow.Post(resp);
+            Hub.Post(resp);
         }
 
         protected override void SetUp()
