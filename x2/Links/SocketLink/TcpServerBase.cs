@@ -117,6 +117,45 @@ namespace x2.Links.SocketLink
 
         protected abstract void AcceptImpl();
 
+        protected void AcceptInternal(SocketLinkSession session)
+        {
+            ((Diagnostics)Diag).IncrementConnectionCount();
+
+            var clientSocket = session.Socket;
+
+            // Adjust client socket options.
+            clientSocket.NoDelay = NoDelay;
+
+            Log.Info("{0} {1} accepted from {2}",
+                Name, clientSocket.Handle, clientSocket.RemoteEndPoint);
+
+            lock (sessions)
+            {
+                sessions.Add(clientSocket.Handle, session);
+            }
+
+            if (BufferTransform != null)
+            {
+                session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
+
+                byte[] data = session.BufferTransform.InitializeHandshake();
+                session.Send(new HandshakeReq {
+                    _Transform = false,
+                    Data = data
+                });
+            }
+            else
+            {
+                new LinkSessionConnected {
+                    LinkName = Name,
+                    Result = true,
+                    Context = session
+                }.Post();
+            }
+
+            session.BeginReceive(true);
+        }
+
         public override void OnDisconnect(SocketLinkSession session)
         {
             lock (sessions)

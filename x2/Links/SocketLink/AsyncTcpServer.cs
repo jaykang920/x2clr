@@ -24,6 +24,18 @@ namespace x2.Links.SocketLink
         {
         }
 
+        public override void Close()
+        {
+            if (acceptEventArgs != null)
+            {
+                acceptEventArgs.Completed -= OnAcceptCompleted;
+                acceptEventArgs.Dispose();
+                acceptEventArgs = null;
+            }
+
+            base.Close();
+        }
+
         protected override void AcceptImpl()
         {
             acceptEventArgs = new SocketAsyncEventArgs();
@@ -54,46 +66,7 @@ namespace x2.Links.SocketLink
         {
             if (e.SocketError == SocketError.Success)
             {
-                ((Diagnostics)Diag).IncrementConnectionCount();
-
-                var clientSocket = e.AcceptSocket;
-
-                // Adjust client socket options.
-                clientSocket.NoDelay = NoDelay;
-
-                Log.Info("{0} {1} accepted from {2}",
-                    Name, clientSocket.Handle, clientSocket.RemoteEndPoint);
-
-                var session = new AsyncTcpLinkSession(this, clientSocket);
-
-                if (BufferTransform != null)
-                {
-                    session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
-                }
-
-                lock (sessions)
-                {
-                    sessions.Add(clientSocket.Handle, session);
-                }
-
-                if (BufferTransform != null)
-                {
-                    byte[] data = session.BufferTransform.InitializeHandshake();
-                    session.Send(new HandshakeReq {
-                        _Transform = false,
-                        Data = data
-                    });
-                }
-                else
-                {
-                    Flow.Publish(new LinkSessionConnected {
-                        LinkName = Name,
-                        Result = true,
-                        Context = session
-                    });
-                }
-
-                session.BeginReceive(true);
+                AcceptInternal(new AsyncTcpLinkSession(this, e.AcceptSocket));
 
                 AcceptImpl(e);
             }
@@ -105,7 +78,7 @@ namespace x2.Links.SocketLink
                 }
                 else
                 {
-                    Log.Error("{0} accept error {1}", Name, e.SocketError);
+                    Log.Error("{0} accept error : {1}", Name, e.SocketError);
                 }
             }
         }

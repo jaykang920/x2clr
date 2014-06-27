@@ -36,50 +36,13 @@ namespace x2.Links.SocketLink
             {
                 var clientSocket = socket.EndAccept(asyncResult);
 
-                ((Diagnostics)Diag).IncrementConnectionCount();
-
-                // Adjust client socket options.
-                clientSocket.NoDelay = NoDelay;
-
-                Log.Info("{0} {1} accepted from {2}",
-                    Name, clientSocket.Handle, clientSocket.RemoteEndPoint);
-
-                var session = new TcpLinkSession(this, clientSocket);
-
-                if (BufferTransform != null)
-                {
-                    session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
-                }
-
-                lock (sessions)
-                {
-                    sessions.Add(clientSocket.Handle, session);
-                }
-
-                if (BufferTransform != null)
-                {
-                    byte[] data = session.BufferTransform.InitializeHandshake();
-                    session.Send(new HandshakeReq {
-                        _Transform = false,
-                        Data = data
-                    });
-                }
-                else
-                {
-                    Flow.Publish(new LinkSessionConnected {
-                        LinkName = Name,
-                        Result = true,
-                        Context = session
-                    });
-                }
-
-                session.BeginReceive(true);
+                AcceptInternal(new TcpLinkSession(this, clientSocket));
 
                 AcceptImpl();
             }
             catch (Exception e)
             {
-                Log.Warn("{0} accept error: {1}", Name, e.Message);
+                Log.Warn("{0} accept error : {1}", Name, e.Message);
             }
         }
     }
