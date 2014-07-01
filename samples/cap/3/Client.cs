@@ -66,8 +66,10 @@ namespace x2.Samples.Capitalizer
         }
     }
 
-    class OutputFlow : SingleThreadedFlow
+    class OutputFlow : MultiThreadedFlow
     {
+        public OutputFlow() : base(4) { }
+
         static void OnCapitalizeResp(CapitalizeResp e)
         {
             Console.WriteLine(e.Result);

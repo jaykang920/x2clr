@@ -19,6 +19,16 @@ namespace x2.Links.SocketLink
         {
         }
 
+        /// <summary>
+        /// Closes this session.
+        /// </summary>
+        public override void Close()
+        {
+            lock (syncRoot)
+            {
+                base.Close();
+            }
+        }
         protected override void ReceiveImpl()
         {
             if (socket == null || !socket.Connected)
@@ -75,7 +85,7 @@ namespace x2.Links.SocketLink
                 Log.Warn("{0} {1} recv error: {2}", link.Name, Handle, e.Message);
             }
 
-            link.OnDisconnect(this);
+            OnDisconnect();
         }
 
         // Asynchronous callback for BeginSend
@@ -101,7 +111,7 @@ namespace x2.Links.SocketLink
 
                 Log.Warn("{0} {1} send error: {2}", link.Name, Handle, e.Message);
 
-                link.OnDisconnect(this);
+                OnDisconnect();
             }
         }
     }

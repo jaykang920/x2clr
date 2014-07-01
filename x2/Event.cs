@@ -276,6 +276,7 @@ namespace x2
 
         #region Convenience methods
 
+        // Alias of Hub.Post(e)
         public void Post()
         {
             Hub.Post(this);

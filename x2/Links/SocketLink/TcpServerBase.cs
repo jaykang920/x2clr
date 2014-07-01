@@ -15,12 +15,14 @@ using x2.Queues;
 namespace x2.Links.SocketLink
 {
     /// <summary>
-    /// TCP/IP server link based on the Begin/End pattern.
+    /// Common abstract base class for TCP/IP server links.
     /// </summary>
     public abstract class TcpServerBase : SocketLink
     {
         protected int backlog;
         protected Dictionary<IntPtr, SocketLinkSession> sessions;
+
+        //protected Dictionary<string, SocketLinkSession> recoverable;
 
         /// <summary>
         /// Gets or sets the maximum length of the pending connections queue.
@@ -50,6 +52,7 @@ namespace x2.Links.SocketLink
         {
             backlog = Int32.MaxValue;
             sessions = new Dictionary<IntPtr, SocketLinkSession>();
+            //recoverable = new Dictionary<string, SocketLinkSession>();
 
             Diag = new Diagnostics();
         }
@@ -99,6 +102,33 @@ namespace x2.Links.SocketLink
             }
         }
 
+        /*
+        public void OnSessionTokenReq(SocketLinkSession session, SessionTokenReq e)
+        {
+            // XXX: check
+
+            //string token;
+            if (String.IsNullOrEmpty(e.Value))
+            {
+                session.Token = Guid.NewGuid().ToString().Replace("-", "");
+            }
+            else
+            {
+                session.Token = e.Value;
+            }
+
+            session.Send(new SessionTokenResp {
+                Value = session.Token
+            });
+
+            Hub.Post(new LinkSessionConnected {
+                LinkName = Name,
+                Result = true,
+                Context = session
+            });
+        }
+        */
+
         protected override void OnKeepaliveTick()
         {
             if (!Listening)
@@ -136,24 +166,42 @@ namespace x2.Links.SocketLink
 
             if (BufferTransform != null)
             {
-                session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
-
-                byte[] data = session.BufferTransform.InitializeHandshake();
-                session.Send(new HandshakeReq {
-                    _Transform = false,
-                    Data = data
-                });
+                InitiateHandshake(session);
             }
+            //
             else
             {
-                new LinkSessionConnected {
+                Hub.Post(new LinkSessionConnected {
                     LinkName = Name,
                     Result = true,
                     Context = session
-                }.Post();
+                });
             }
 
             session.BeginReceive(true);
+        }
+
+        public void OnInstantDisconnect(SocketLinkSession session)
+        {
+            var e = new TimeoutEvent { _Channel = Name, Key = session };
+            Flow.Subscribe(e, OnConnectionRecoveryTimeout);
+            x2.Flows.Timer.Token? timerToken = TimeFlow.Default.Reserve(e, 10);
+
+            lock (sessions)
+            {
+                sessions.Remove(session.Handle);
+            }
+            /*
+            lock (recoverable)
+            {
+                recoverable.Add(session.Token, session);
+            }
+            */
+        }
+
+        void OnConnectionRecoveryTimeout(TimeoutEvent e)
+        {
+            OnDisconnect((SocketLinkSession)e.Key);
         }
 
         public override void OnDisconnect(SocketLinkSession session)
@@ -162,6 +210,12 @@ namespace x2.Links.SocketLink
             {
                 sessions.Remove(session.Handle);
             }
+            /*
+            lock (recoverable)
+            {
+                recoverable.Remove(session.Token);
+            }
+            */
 
             ((Diagnostics)Diag).DecrementConnectionCount();
 
@@ -171,7 +225,7 @@ namespace x2.Links.SocketLink
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
             var session = (SocketLinkSession)e.Context;
-            session.Close();
+            session.CloseInternal();
         }
 
         #region Diagnostics

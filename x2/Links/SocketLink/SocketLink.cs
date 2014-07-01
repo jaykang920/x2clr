@@ -67,8 +67,8 @@ namespace x2.Links.SocketLink
             Event.Register<HandshakeReq>();
             Event.Register<HandshakeResp>();
             Event.Register<HandshakeAck>();
-            Event.Register<SessionTokenReq>();
-            Event.Register<SessionTokenResp>();
+            //Event.Register<SessionTokenReq>();
+            //Event.Register<SessionTokenResp>();
         }
 
         protected SocketLink(string name)
@@ -80,7 +80,7 @@ namespace x2.Links.SocketLink
 
         public virtual void OnDisconnect(SocketLinkSession session)
         {
-            Flow.Publish(new LinkSessionDisconnected {
+            Hub.Post(new LinkSessionDisconnected {
                 LinkName = Name,
                 Context = session
             });
@@ -106,6 +106,18 @@ namespace x2.Links.SocketLink
             Flow.UnsubscribeFrom(Name);
 
             base.TearDown();
+        }
+
+        protected void InitiateHandshake(SocketLinkSession session)
+        {
+            session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
+
+            byte[] data = session.BufferTransform.InitializeHandshake();
+
+            session.Send(new HandshakeReq {
+                _Transform = false,
+                Data = data
+            });
         }
 
         protected abstract void OnKeepaliveTick();

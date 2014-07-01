@@ -12,6 +12,9 @@ using x2.Flows;
 
 namespace x2.Links.SocketLink
 {
+    /// <summary>
+    /// Common abstract base class for TCP/IP client links.
+    /// </summary>
     public abstract class TcpClientBase : SocketLink
     {
         protected volatile SocketLinkSession session;  // current link session
@@ -109,6 +112,41 @@ namespace x2.Links.SocketLink
             }
         }
 
+        /*
+        public void SendSessionTokenReq(SocketLinkSession session)
+        {
+            string sessionToken = null;
+            lock (syncRoot)
+            {
+                var prevSession = session;
+                if (prevSession != null)
+                {
+                    sessionToken = prevSession.Token;
+                }
+            }
+
+            var req = new SessionTokenReq();
+            if (!String.IsNullOrEmpty(sessionToken))
+            {
+                req.Value = sessionToken;
+            }
+            session.Send(req);
+        }
+
+        public void OnSessionTokenResp(SocketLinkSession session, SessionTokenResp e)
+        {
+            session.Token = e.Value;
+
+            this.session = session;
+
+            Hub.Post(new LinkSessionConnected {
+                LinkName = Name,
+                Result = true,
+                Context = session
+            });
+        }
+        */
+
         protected override void OnKeepaliveTick()
         {
             if (!Connected)
@@ -193,38 +231,17 @@ namespace x2.Links.SocketLink
 
             if (BufferTransform != null)
             {
-                session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
-
-                byte[] data = session.BufferTransform.InitializeHandshake();
-                session.Send(new HandshakeReq {
-                    _Transform = false,
-                    Data = data
-                });
+                InitiateHandshake(session);
             }
             else
             {
-/*
-                string sessionToken = null;
-                if (this.session != null)
-                {
-                    sessionToken = this.session.Token;
-                }
-                tempSession = session;
-
-                var req = new SessionTokenReq();
-                if (!String.IsNullOrEmpty(sessionToken))
-                {
-                    req.Value = sessionToken;
-                }
-                session.Send(req);
-*/
+                //SendSessionTokenReq(session);
                 this.session = session;
-
-                new LinkSessionConnected {
+                Hub.Post(new LinkSessionConnected {
                     LinkName = Name,
                     Result = true,
                     Context = session
-                }.Post();
+                });
             }
 
             session.BeginReceive(true);

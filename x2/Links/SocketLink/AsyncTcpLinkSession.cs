@@ -130,7 +130,7 @@ namespace x2.Links.SocketLink
                 }
             }
 
-            link.OnDisconnect(this);
+            OnDisconnect();
         }
 
         // Completion callback for SendAsync
@@ -152,7 +152,7 @@ namespace x2.Links.SocketLink
                     Log.Warn("{0} {1} send error {2}", link.Name, Handle, e.SocketError);
                 }
 
-                link.OnDisconnect(this);
+                OnDisconnect();
             }
         }
     }

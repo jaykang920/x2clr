@@ -32,6 +32,8 @@ namespace x2.Links.SocketLink
         protected IList<ArraySegment<byte>> recvBufferList;
         protected IList<ArraySegment<byte>> sendBufferList;
 
+        protected bool closing;
+
         // Operation context details
         protected int lengthToReceive;                // rx
         protected int lengthToSend;                   // tx
@@ -59,6 +61,8 @@ namespace x2.Links.SocketLink
         /// (client) session. A passive (server-side) session will return false.
         /// </summary>
         public bool Polarity { get; set; }
+
+        //public string Token { get; set; }
 
         public string RemoteAddress
         {
@@ -117,6 +121,15 @@ namespace x2.Links.SocketLink
         /// </summary>
         public override void Close()
         {
+            closing = true;
+
+            CloseInternal();
+
+            Log.Info("{0} {1} closed", link.Name, Handle);
+        }
+
+        internal void CloseInternal()
+        {
             if (socket == null)
             {
                 return;
@@ -127,8 +140,6 @@ namespace x2.Links.SocketLink
             }
             socket.Close();
             socket = null;
-
-            Log.Info("{0} {1} closed", link.Name, Handle);
         }
 
         public int IncrementFailureCount()
@@ -240,129 +251,7 @@ namespace x2.Links.SocketLink
 
                         Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
 
-                        switch (typeId)
-                        {
-                            case (int)SocketLinkEventType.KeepaliveEvent:
-                                break;
-                            case (int)SocketLinkEventType.HandshakeReq:
-                                {
-                                    var e = (HandshakeReq)retrieved;
-                                    byte[] response = BufferTransform.Handshake(e.Data);
-                                    Send(new HandshakeResp {
-                                        _Transform = false,
-                                        Data = response
-                                    });
-                                }
-                                break;
-                            case (int)SocketLinkEventType.HandshakeResp:
-                                {
-                                    var ack = new HandshakeAck { _Transform = false };
-                                    var e = (HandshakeResp)retrieved;
-                                    if (BufferTransform.FinalizeHandshake(e.Data))
-                                    {
-                                        RxTransformReady = true;
-                                        ack.Result = true;
-                                    }
-                                    else
-                                    {
-                                        //
-                                    }
-                                    Send(ack);
-                                }
-                                break;
-                            case (int)SocketLinkEventType.HandshakeAck:
-                                {
-                                    var e = (HandshakeAck)retrieved;
-
-                                    if (e.Result)
-                                    {
-                                        TxTransformReady = true;
-                                    }
-
-                                    if (Polarity == true)
-                                    {
-                                        ((TcpClientBase)link).Session = this;
-/*
-                                        string sessionToken = null;
-                                        lock (syncRoot)
-                                        {
-                                            var prevSession = ((TcpClientBase)link).Session;
-                                            if (prevSession != null)
-                                            {
-                                                sessionToken = prevSession.Token;
-                                            }
-                                        }
-
-                                        var req = new SessionTokenReq();
-                                        if (!String.IsNullOrEmpty(sessionToken))
-                                        {
-                                            req.Value = sessionToken;
-                                        }
-                                        Send(req);
-*/
-                                    }
-
-                                    link.Flow.Publish(new LinkSessionConnected {
-                                        LinkName = link.Name,
-                                        Result = e.Result,
-                                        Context = this
-                                    });
-                                }
-                                break;
-/*
-                            case (int)SocketLinkEventType.SessionTokenReq:
-                                {
-                                    var e = (SessionTokenReq)retrieved;
-
-                                    if (Polarity == false)
-                                    {
-                                        // XXX
-
-                                        //string token;
-                                        if (!String.IsNullOrEmpty(e.Value))
-                                        {
-                                            token = e.Value;
-                                        }
-                                        else
-                                        {
-                                            token = Guid.NewGuid().ToString().Replace("-", "");
-                                        }
-
-                                        Send(new SessionTokenResp {
-                                            Value = token
-                                        });
-
-                                        link.Flow.Publish(new LinkSessionConnected {
-                                            LinkName = link.Name,
-                                            Result = true,
-                                            Context = this
-                                        });
-                                    }
-                                }
-                                break;
-                            case (int)SocketLinkEventType.SessionTokenResp:
-                                {
-                                    var e = (SessionTokenResp)retrieved;
-
-                                    if (Polarity == true)
-                                    {
-                                        token = e.Value;
-
-                                        ((TcpClientBase)link).Session = this;
-
-                                        link.Flow.Publish(new LinkSessionConnected {
-                                            LinkName = link.Name,
-                                            Result = true,
-                                            Context = this
-                                        });
-                                    }
-                                }
-                                break;
-*/
-                            default:
-                                link.Flow.Publish(retrieved);
-                                break;
-                        }
+                        ProcessEvent(retrieved);
                     }
                     catch (Exception e)
                     {
@@ -420,6 +309,30 @@ namespace x2.Links.SocketLink
             TrySendNext();
         }
 
+        protected void OnDisconnect()
+        {
+            //if (closing)
+            //{
+                link.OnDisconnect(this);
+            //}
+            /*
+            else
+            {
+                CloseInternal();
+
+                if (Polarity == true)
+                {
+                    //var client = (TcpClientBase)link;
+                }
+                else
+                {
+                    var server = (TcpServerBase)link;
+                    server.OnInstantDisconnect(this);
+                }
+            }
+            */
+        }
+
         private void BeginSend(Event e)
         {
             if (e.GetTypeId() != (int)SocketLinkEventType.KeepaliveEvent)
@@ -464,6 +377,87 @@ namespace x2.Links.SocketLink
             }
 
             BeginSend(e);
+        }
+
+        private void ProcessEvent(Event e)
+        {
+            switch (e.GetTypeId())
+            {
+                case (int)SocketLinkEventType.KeepaliveEvent:
+                    break;
+                case (int)SocketLinkEventType.HandshakeReq:
+                    {
+                        var req = (HandshakeReq)e;
+                        byte[] response = BufferTransform.Handshake(req.Data);
+                        Send(new HandshakeResp {
+                            _Transform = false,
+                            Data = response
+                        });
+                    }
+                    break;
+                case (int)SocketLinkEventType.HandshakeResp:
+                    {
+                        var ack = new HandshakeAck { _Transform = false };
+                        var resp = (HandshakeResp)e;
+                        if (BufferTransform.FinalizeHandshake(resp.Data))
+                        {
+                            RxTransformReady = true;
+                            ack.Result = true;
+                        }
+                        else
+                        {
+                            // log
+                        }
+                        Send(ack);
+                    }
+                    break;
+                case (int)SocketLinkEventType.HandshakeAck:
+                    {
+                        var ack = (HandshakeAck)e;
+
+                        if (ack.Result)
+                        {
+                            TxTransformReady = true;
+                        }
+
+                        if (Polarity == true)
+                        {
+                            var client = (TcpClientBase)link;
+                            //client.SendSessionTokenReq(this);
+                            client.Session = this;
+                        }
+                        //
+                        Hub.Post(new LinkSessionConnected {
+                            LinkName = link.Name,
+                            Result = true,
+                            Context = this
+                        });
+                    }
+                    break;
+                /*
+                case (int)SocketLinkEventType.SessionTokenReq:
+                    {
+                        if (Polarity == false)
+                        {
+                            var server = (TcpServerBase)link;
+                            server.OnSessionTokenReq(this, (SessionTokenReq)e);
+                        }
+                    }
+                    break;
+                case (int)SocketLinkEventType.SessionTokenResp:
+                    {
+                        if (Polarity == true)
+                        {
+                            var client = (TcpClientBase)link;
+                            client.OnSessionTokenResp(this, (SessionTokenResp)e);
+                        }
+                    }
+                    break;
+                */
+                default:
+                    Hub.Post(e);
+                    break;
+            }
         }
 
         #region Diagnostics

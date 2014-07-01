@@ -206,7 +206,7 @@ namespace x2.Samples.Capitalizer
 
             Hub.Instance
                 .Attach(new CapitalizerFlow())
-                .Attach(new SingleThreadedFlow().Add(new CapitalizerServer()));
+                .Attach(new MultiThreadedFlow(4).Add(new CapitalizerServer()));
 
             using (var flows = new Hub.Flows())
             {
