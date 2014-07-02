@@ -32,22 +32,14 @@ namespace x2.Links.SocketLink
         protected IList<ArraySegment<byte>> recvBufferList;
         protected IList<ArraySegment<byte>> sendBufferList;
 
-        protected bool closing;
+        public SessionStatus Status;
 
         // Operation context details
         protected int lengthToReceive;                // rx
         protected int lengthToSend;                   // tx
-        protected bool beginning;                     // rx
-        protected bool sending;                       // tx
-        protected bool transformed;                   // rx
         protected byte[] headerBytes = new byte[5];   // tx
 
-        protected volatile bool hasReceived;
-        protected volatile bool hasSent;
         protected int failureCount;
-
-        protected volatile bool rxTransformReady;
-        protected volatile bool txTransformReady;
 
         public SocketLink Link { get { return link; } }
 
@@ -77,28 +69,6 @@ namespace x2.Links.SocketLink
             }
         }
 
-        public bool HasReceived
-        {
-            get { return hasReceived; }
-            set { hasReceived = value; }
-        }
-        public bool HasSent
-        {
-            get { return hasSent; }
-            set { hasSent = value; }
-        }
-
-        public bool RxTransformReady
-        {
-            get { return rxTransformReady; }
-            set { rxTransformReady = value; }
-        }
-        public bool TxTransformReady
-        {
-            get { return txTransformReady; }
-            set { txTransformReady = value; }
-        }
-
         protected SocketLinkSession(SocketLink link, Socket socket)
             : base(socket.Handle)
         {
@@ -121,7 +91,7 @@ namespace x2.Links.SocketLink
         /// </summary>
         public override void Close()
         {
-            closing = true;
+            Status.Closing = true;
 
             CloseInternal();
 
@@ -159,13 +129,13 @@ namespace x2.Links.SocketLink
         {
             lock (sendQueue)
             {
-                if (sending)
+                if (Status.Sending)
                 {
                     sendQueue.Enqueue(e);
                     return;
                 }
 
-                sending = true;
+                Status.Sending = true;
             }
 
             BeginSend(e);
@@ -173,7 +143,7 @@ namespace x2.Links.SocketLink
 
         internal void BeginReceive(bool beginning)
         {
-            this.beginning = beginning;
+            Status.RxBeginning = beginning;
 
             recvBufferList.Clear();
             recvBuffer.ListAvailableSegments(recvBufferList);
@@ -186,7 +156,7 @@ namespace x2.Links.SocketLink
 
         protected void ReceiveInternal(int bytesTransferred)
         {
-            hasReceived = true;
+            Status.HasReceived = true;
 
             Diag.AddBytesReceived(bytesTransferred);
 
@@ -195,14 +165,14 @@ namespace x2.Links.SocketLink
 
             recvBuffer.Stretch(bytesTransferred);
 
-            if (beginning)
+            if (Status.RxBeginning)
             {
                 recvBuffer.Rewind();
                 uint header;
                 int headerLength = recvBuffer.ReadVariable(out header);
                 recvBuffer.Shrink(headerLength);
                 lengthToReceive = (int)(header >> 1);
-                transformed = ((header & 1) != 0);
+                Status.RxTransformed = ((header & 1) != 0);
             }
 
             // Handle split packets.
@@ -216,7 +186,7 @@ namespace x2.Links.SocketLink
             {
                 recvBuffer.MarkToRead(lengthToReceive);
 
-                if (BufferTransform != null && RxTransformReady && transformed)
+                if (BufferTransform != null && Status.RxTransformReady && Status.RxTransformed)
                 {
                     try
                     {
@@ -269,7 +239,7 @@ namespace x2.Links.SocketLink
                 int headerLength = recvBuffer.ReadVariable(out header);
                 recvBuffer.Shrink(headerLength);
                 lengthToReceive = (int)(header >> 1);
-                transformed = ((header & 1) != 0);
+                Status.RxTransformed = ((header & 1) != 0);
 
                 if (recvBuffer.Length < lengthToReceive)
                 {
@@ -337,13 +307,13 @@ namespace x2.Links.SocketLink
         {
             if (e.GetTypeId() != (int)SocketLinkEventType.KeepaliveEvent)
             {
-                hasSent = true;
+                Status.HasSent = true;
             }
 
             e.Serialize(sendBuffer);
 
             uint header = 0;
-            if (BufferTransform != null && TxTransformReady && e._Transform)
+            if (BufferTransform != null && Status.TxTransformReady && e._Transform)
             {
                 BufferTransform.Transform(sendBuffer, sendBuffer.Length);
                 header = 1;
@@ -369,7 +339,7 @@ namespace x2.Links.SocketLink
             {
                 if (sendQueue.Count == 0)
                 {
-                    sending = false;
+                    Status.Sending = false;
                     return;
                 }
 
@@ -401,7 +371,7 @@ namespace x2.Links.SocketLink
                         var resp = (HandshakeResp)e;
                         if (BufferTransform.FinalizeHandshake(resp.Data))
                         {
-                            RxTransformReady = true;
+                            Status.RxTransformReady = true;
                             ack.Result = true;
                         }
                         else
@@ -417,7 +387,7 @@ namespace x2.Links.SocketLink
 
                         if (ack.Result)
                         {
-                            TxTransformReady = true;
+                            Status.TxTransformReady = true;
                         }
 
                         if (Polarity == true)
@@ -499,5 +469,93 @@ namespace x2.Links.SocketLink
         }
 
         #endregion  // Diagnostics
+    }
+
+    // Status flags
+    public struct SessionStatus
+    {
+        private enum BitIndex
+        {
+            Closing,
+            Sending,
+            RxBeginning,
+            RxTransformed,
+            RxTransformReady,
+            TxTransformReady,
+            HasReceived,
+            HasSent
+        }
+
+        private volatile int status;
+
+        public bool Closing
+        {
+            get { return Get(BitIndex.Closing); }
+            set { Set(BitIndex.Closing, value); }
+        }
+
+        public bool Sending
+        {
+            get { return Get(BitIndex.Sending); }
+            set { Set(BitIndex.Sending, value); }
+        }
+
+        public bool RxBeginning
+        {
+            get { return Get(BitIndex.RxBeginning); }
+            set { Set(BitIndex.RxBeginning, value); }
+        }
+
+        public bool RxTransformed
+        {
+            get { return Get(BitIndex.RxTransformed); }
+            set { Set(BitIndex.RxTransformed, value); }
+        }
+
+        public bool RxTransformReady
+        {
+            get { return Get(BitIndex.RxTransformReady); }
+            set { Set(BitIndex.RxTransformReady, value); }
+        }
+
+        public bool TxTransformReady
+        {
+            get { return Get(BitIndex.TxTransformReady); }
+            set { Set(BitIndex.TxTransformReady, value); }
+        }
+
+        public bool HasReceived
+        {
+            get { return Get(BitIndex.HasReceived); }
+            set { Set(BitIndex.HasReceived, value); }
+        }
+
+        public bool HasSent
+        {
+            get { return Get(BitIndex.HasSent); }
+            set { Set(BitIndex.HasSent, value); }
+        }
+
+        public void Reset()
+        {
+            status = 0;
+        }
+
+        private bool Get(BitIndex index)
+        {
+            return ((status & (1 << (int)index)) != 0);
+        }
+
+        private void Set(BitIndex index, bool value)
+        {
+            if (value)
+            {
+                status |= (1 << (int)index);
+            }
+            else
+            {
+                status &= ~(1 << (int)index);
+            }
+        }
     }
 }

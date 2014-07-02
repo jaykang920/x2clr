@@ -157,7 +157,7 @@ namespace x2.Links.SocketLink
             lock (syncRoot)
             {
                 if (session == null || 
-                    (BufferTransform != null && !session.TxTransformReady))
+                    (BufferTransform != null && !session.Status.TxTransformReady))
                 {
                     return;
                 }

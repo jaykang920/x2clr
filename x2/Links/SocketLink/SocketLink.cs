@@ -126,9 +126,9 @@ namespace x2.Links.SocketLink
         {
             if (incomingKeepaliveEnabled)
             {
-                if (session.HasReceived)
+                if (session.Status.HasReceived)
                 {
-                    session.HasReceived = false;
+                    session.Status.HasReceived = false;
                     session.ResetFailureCount();
                 }
                 else
@@ -146,9 +146,9 @@ namespace x2.Links.SocketLink
 
             if (outgoingKeepaliveEnabled)
             {
-                if (session.HasSent)
+                if (session.Status.HasSent)
                 {
-                    session.HasSent = false;
+                    session.Status.HasSent = false;
                 }
                 else
                 {
