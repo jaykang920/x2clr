@@ -125,7 +125,7 @@ namespace x2
 
             doc.BaseName = Path.GetFileNameWithoutExtension(path);
 
-            if (!Directory.Exists(outDir))
+            if (!String.IsNullOrEmpty(outDir) && !Directory.Exists(outDir))
             {
                 Directory.CreateDirectory(outDir);
             }

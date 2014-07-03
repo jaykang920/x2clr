@@ -57,6 +57,8 @@
   <ItemGroup>
     <Compile Include="BufferTransform.cs" />
     <Compile Include="Coroutine.cs" />
+    <Compile Include="Events\FlowEvents.cs" />
+    <Compile Include="Events\LinkEvents.cs" />
     <Compile Include="Events\TimeFlowEvents.cs" />
     <Compile Include="Flows\EventBasedFlow.cs" />
     <Compile Include="Flows\FrameBasedFlow.cs" />
@@ -101,10 +103,6 @@
     <Compile Include="Event.cs" />
     <Compile Include="EventSink.cs" />
     <Compile Include="Events\BuiltinType.cs" />
-    <Compile Include="Events\FlowStart.cs" />
-    <Compile Include="Events\FlowStop.cs" />
-    <Compile Include="Events\LinkSessionConnected.cs" />
-    <Compile Include="Events\LinkSessionDisconnected.cs" />
     <Compile Include="Fingerprint.cs" />
     <Compile Include="Flow.cs" />
     <Compile Include="Flows\MultiThreadedFlow.cs" />
