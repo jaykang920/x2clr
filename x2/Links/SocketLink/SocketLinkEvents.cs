@@ -14,8 +14,9 @@ namespace x2.Links.SocketLink
         public const int HandshakeReq = -20;
         public const int HandshakeResp = -21;
         public const int HandshakeAck = -22;
-        public const int SessionTokenReq = -30;
-        public const int SessionTokenResp = -31;
+        public const int SessionReq = -30;
+        public const int SessionResp = -31;
+        public const int SessionAck = -31;
     }
 
     public class KeepaliveEvent : Event
@@ -651,7 +652,7 @@ namespace x2.Links.SocketLink
         }
     }
 
-    public class SessionTokenReq : Event
+    public class SessionReq : Event
     {
         new protected static readonly Tag tag;
 
@@ -669,24 +670,24 @@ namespace x2.Links.SocketLink
             }
         }
 
-        static SessionTokenReq()
+        static SessionReq()
         {
-            tag = new Tag(Event.tag, typeof(SessionTokenReq), 1,
-                    (int)SocketLinkEventType.SessionTokenReq);
+            tag = new Tag(Event.tag, typeof(SessionReq), 1,
+                    (int)SocketLinkEventType.SessionReq);
         }
 
-        new public static SessionTokenReq New()
+        new public static SessionReq New()
         {
-            return new SessionTokenReq();
+            return new SessionReq();
         }
 
-        public SessionTokenReq()
+        public SessionReq()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected SessionTokenReq(int length)
+        protected SessionReq(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -698,7 +699,7 @@ namespace x2.Links.SocketLink
             {
                 return false;
             }
-            SessionTokenReq o = (SessionTokenReq)other;
+            SessionReq o = (SessionReq)other;
             if (value_ != o.value_)
             {
                 return false;
@@ -737,7 +738,7 @@ namespace x2.Links.SocketLink
             {
                 return false;
             }
-            SessionTokenReq o = (SessionTokenReq)other;
+            SessionReq o = (SessionReq)other;
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
@@ -787,7 +788,7 @@ namespace x2.Links.SocketLink
         }
     }
 
-    public class SessionTokenResp : Event
+    public class SessionResp : Event
     {
         new protected static readonly Tag tag;
 
@@ -805,24 +806,24 @@ namespace x2.Links.SocketLink
             }
         }
 
-        static SessionTokenResp()
+        static SessionResp()
         {
-            tag = new Tag(Event.tag, typeof(SessionTokenResp), 1,
-                    (int)SocketLinkEventType.SessionTokenResp);
+            tag = new Tag(Event.tag, typeof(SessionResp), 1,
+                    (int)SocketLinkEventType.SessionResp);
         }
 
-        new public static SessionTokenResp New()
+        new public static SessionResp New()
         {
-            return new SessionTokenResp();
+            return new SessionResp();
         }
 
-        public SessionTokenResp()
+        public SessionResp()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected SessionTokenResp(int length)
+        protected SessionResp(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -834,7 +835,7 @@ namespace x2.Links.SocketLink
             {
                 return false;
             }
-            SessionTokenResp o = (SessionTokenResp)other;
+            SessionResp o = (SessionResp)other;
             if (value_ != o.value_)
             {
                 return false;
@@ -873,7 +874,7 @@ namespace x2.Links.SocketLink
             {
                 return false;
             }
-            SessionTokenResp o = (SessionTokenResp)other;
+            SessionResp o = (SessionResp)other;
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
@@ -920,6 +921,95 @@ namespace x2.Links.SocketLink
         private void Initialize()
         {
             value_ = "";
+        }
+    }
+
+    public class SessionAck : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        static SessionAck()
+        {
+            tag = new Tag(Event.tag, typeof(SessionAck), 0,
+                    (int)SocketLinkEventType.SessionAck);
+        }
+
+        new public static SessionAck New()
+        {
+            return new SessionAck();
+        }
+
+        public SessionAck()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected SessionAck(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        public override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override bool IsEquivalent(Cell other)
+        {
+            if (!base.IsEquivalent(other))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override void Load(x2.Buffer buffer)
+        {
+            base.Load(buffer);
+        }
+
+        public override void Serialize(x2.Buffer buffer)
+        {
+            buffer.Write(tag.TypeId);
+            this.Dump(buffer);
+        }
+
+        protected override void Dump(x2.Buffer buffer)
+        {
+            base.Dump(buffer);
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+        }
+
+        private void Initialize()
+        {
         }
     }
 }
