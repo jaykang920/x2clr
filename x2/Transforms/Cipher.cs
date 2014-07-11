@@ -126,6 +126,10 @@ namespace x2.Transforms
                 var encryptor = encryptingAlgorithm.CreateEncryptor(encryptingKey, encryptingIV);
                 using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                 {
+                    /* XXX
+                       Multiple Write() calls are not handled properly on the
+                       Mono in Unity 4.3
+                    
                     var buffers = new List<ArraySegment<byte>>();
                     buffer.ListEndingSegments(buffers, length);
 
@@ -141,6 +145,17 @@ namespace x2.Transforms
 
                         cs.Write(segment.Array, segment.Offset, segment.Count);
                     }
+                    */
+
+                    // Workaround for Mono
+                    byte[] plaintext = buffer.ToArray();
+                    if (Log.Level <= LogLevel.Trace)
+                    {
+                        Log.Trace("Cipher.Transform: input {0}",
+                            BitConverter.ToString(plaintext, plaintext.Length - length, length));
+                    }
+                    cs.Write(plaintext, plaintext.Length - length, length);
+
                     cs.FlushFinalBlock();
 
                     result = (int)ms.Length;
@@ -175,7 +190,10 @@ namespace x2.Transforms
                 var decryptor = decryptingAlgorithm.CreateDecryptor(decryptingKey, decryptingIV);
                 using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
                 {
-                    /* XXX TODO : doesn't exactly work on multiple blocks
+                    /* XXX
+                       Multiple Write() calls are not handled properly on the
+                       Mono in Unity 4.3
+                    
                     var buffers = new List<ArraySegment<byte>>();
                     buffer.ListStartingSegments(buffers, length);
 
@@ -204,7 +222,8 @@ namespace x2.Transforms
                         cs.Write(segment.Array, segment.Offset, segment.Count);
                     }
                     */
-
+                    
+                    // Workaround for Mono
                     byte[] ciphertext = buffer.ToArray();
                     if (Log.Level <= LogLevel.Trace)
                     {

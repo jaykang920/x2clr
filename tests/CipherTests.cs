@@ -29,14 +29,12 @@ namespace x2.Tests
             Assert.AreEqual(5300, text.Length);
             buffer.Write(1);
             buffer.Write(text);
+            buffer.Shrink(1);
 
             cipher1.Transform(buffer, buffer.Length);
             cipher2.InverseTransform(buffer, buffer.Length);
 
             buffer.Rewind();
-
-            int i;
-            buffer.Read(out i);
 
             string result;
             buffer.Read(out result);
