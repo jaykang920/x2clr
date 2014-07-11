@@ -186,6 +186,8 @@ namespace x2.Links.SocketLink
             {
                 recvBuffer.MarkToRead(lengthToReceive);
 
+                Log.Trace("{0} {1} marked {2} byte(s) to read", link.Name, Handle, lengthToReceive);
+
                 if (BufferTransform != null && Status.RxTransformReady && Status.RxTransformed)
                 {
                     try
@@ -203,7 +205,10 @@ namespace x2.Links.SocketLink
                 int typeId;
                 recvBuffer.Read(out typeId);
 
+                Log.Trace("{0} {1} retrieved event type id {2}", link.Name, Handle, typeId);
+
                 var retrieved = Event.Create(typeId);
+
                 if (retrieved == null)
                 {
                     Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
@@ -213,7 +218,9 @@ namespace x2.Links.SocketLink
                     try
                     {
                         retrieved.Load(recvBuffer);
+
                         retrieved._Handle = Handle;
+
                         if (link.Preprocessor != null)
                         {
                             link.Preprocessor(retrieved, this);
@@ -358,11 +365,13 @@ namespace x2.Links.SocketLink
                 case (int)SocketLinkEventType.HandshakeReq:
                     {
                         var req = (HandshakeReq)e;
+                        var resp = new HandshakeResp { _Transform = false };
                         byte[] response = BufferTransform.Handshake(req.Data);
-                        Send(new HandshakeResp {
-                            _Transform = false,
-                            Data = response
-                        });
+                        if (response != null)
+                        {
+                            resp.Data = response;
+                        }
+                        Send(resp);
                     }
                     break;
                 case (int)SocketLinkEventType.HandshakeResp:

@@ -78,10 +78,13 @@ namespace x2
             {
                 var transform = transforms[i];
                 var blockLength = transform.HandshakeBlockLength;
-                var block = new byte[blockLength];
-                System.Buffer.BlockCopy(challenge, offset, block, 0, blockLength);
+                if (blockLength > 0)
+                {
+                    var block = new byte[blockLength];
+                    System.Buffer.BlockCopy(challenge, offset, block, 0, blockLength);
 
-                result = Combine(result, transforms[i].Handshake(block));
+                    result = Combine(result, transforms[i].Handshake(block));
+                }
             }
             return result;
         }
@@ -93,12 +96,15 @@ namespace x2
             {
                 var transform = transforms[i];
                 var blockLength = transform.HandshakeBlockLength;
-                var block = new byte[blockLength];
-                System.Buffer.BlockCopy(response, offset, block, 0, blockLength);
-
-                if (!transforms[i].FinalizeHandshake(block))
+                if (blockLength > 0)
                 {
-                    return false;
+                    var block = new byte[blockLength];
+                    System.Buffer.BlockCopy(response, offset, block, 0, blockLength);
+
+                    if (!transforms[i].FinalizeHandshake(block))
+                    {
+                        return false;
+                    }
                 }
                 offset += blockLength;
             }

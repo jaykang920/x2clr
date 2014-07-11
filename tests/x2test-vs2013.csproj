@@ -49,6 +49,7 @@
     <Compile Include="BufferTests.cs" />
     <Compile Include="CapoTests.cs" />
     <Compile Include="CellTests.cs" />
+    <Compile Include="CipherTests.cs" />
     <Compile Include="FingerprintTests.cs" />
     <Compile Include="HandlerTests.cs" />
     <Compile Include="HashTests.cs" />

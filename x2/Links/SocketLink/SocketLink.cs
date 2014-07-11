@@ -112,12 +112,16 @@ namespace x2.Links.SocketLink
         {
             session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
 
+            var req = new HandshakeReq { _Transform = false };
+
             byte[] data = session.BufferTransform.InitializeHandshake();
 
-            session.Send(new HandshakeReq {
-                _Transform = false,
-                Data = data
-            });
+            if (data != null)
+            {
+                req.Data = data;
+            }
+
+            session.Send(req);
         }
 
         protected abstract void OnKeepaliveTick();

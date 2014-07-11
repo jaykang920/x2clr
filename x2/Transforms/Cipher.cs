@@ -45,9 +45,11 @@ namespace x2.Transforms
         {
             encryptingAlgorithm = AesCryptoServiceProvider.Create();
             encryptingAlgorithm.Mode = CipherMode.CBC;
+            encryptingAlgorithm.Padding = PaddingMode.PKCS7;
 
             decryptingAlgorithm = AesCryptoServiceProvider.Create();
             decryptingAlgorithm.Mode = CipherMode.CBC;
+            decryptingAlgorithm.Padding = PaddingMode.PKCS7;
         }
 
         public object Clone()
@@ -149,12 +151,12 @@ namespace x2.Transforms
                         result, BitConverter.ToString(streamBuffer, 0, result));
                 }
 
+                buffer.Rewind();
+                buffer.CopyFrom(streamBuffer, 0, result);
+
                 // Store the last ciphertext block as a next encrypting IV.
                 System.Buffer.BlockCopy(streamBuffer, result - EncryptingBlockSizeInBytes,
                     encryptingIV, 0, EncryptingBlockSizeInBytes);
-
-                buffer.Rewind();
-                buffer.CopyFrom(streamBuffer, 0, result);
             }
 
             return result;
@@ -170,10 +172,12 @@ namespace x2.Transforms
             var decryptor = decryptingAlgorithm.CreateDecryptor(decryptingKey, decryptingIV);
             using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
             {
+                /* XXX TODO : doesn't exactly work on multiple blocks
                 var buffers = new List<ArraySegment<byte>>();
                 buffer.ListStartingSegments(buffers, length);
 
                 // Store the last ciphertext block as a next decrypting IV.
+                byte[] nextIV = new byte[DecryptingBlockSizeInBytes];
                 int bytesCopied = 0;
                 for (var i = buffers.Count - 1; bytesCopied < DecryptingBlockSizeInBytes && i >= 0; --i)
                 {
@@ -196,6 +200,11 @@ namespace x2.Transforms
 
                     cs.Write(segment.Array, segment.Offset, segment.Count);
                 }
+                */
+                byte[] ciphertext = buffer.ToArray();
+                System.Buffer.BlockCopy(ciphertext, length - DecryptingBlockSizeInBytes,
+                    decryptingIV, 0, DecryptingBlockSizeInBytes);
+                cs.Write(ciphertext, 0, length);
                 cs.FlushFinalBlock();
 
                 result = (int)ms.Length;
@@ -210,6 +219,7 @@ namespace x2.Transforms
                 buffer.Rewind();
                 buffer.CopyFrom(streamBuffer, 0, result);
             }
+
             return result;
         }
     }

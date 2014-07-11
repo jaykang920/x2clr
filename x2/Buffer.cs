@@ -194,6 +194,21 @@ namespace x2
             Position = position + length;
         }
 
+        private void CopyTo(byte[] buffer, int offset, int length)
+        {
+            int blockIndex = offset >> blockSizeExponent;
+            int srcOffset = offset & remainderMask;
+            int bytesToCopy, bytesCopied = 0;
+            while (bytesCopied < length)
+            {
+                bytesToCopy = Math.Min(BlockSize - srcOffset, length - bytesCopied);
+                System.Buffer.BlockCopy(blocks[blockIndex++], srcOffset,
+                  buffer, bytesCopied, bytesToCopy);
+                srcOffset = 0;
+                bytesCopied += bytesToCopy;
+            }
+        }
+
         public void ListOccupiedSegments(IList<ArraySegment<byte>> blockList)
         {
             ListSegments(blockList, front, back);
@@ -270,17 +285,7 @@ namespace x2
             ReadVariable(out length);
             CheckLengthToRead(length);
             value = new byte[length];
-            int blockIndex = position >> blockSizeExponent;
-            int srcOffset = position & remainderMask;
-            int bytesToCopy, bytesCopied = 0;
-            while (bytesCopied < length)
-            {
-                bytesToCopy = Math.Min(BlockSize - srcOffset, length - bytesCopied);
-                System.Buffer.BlockCopy(blocks[blockIndex++], srcOffset,
-                  value, bytesCopied, bytesToCopy);
-                srcOffset = 0;
-                bytesCopied += bytesToCopy;
-            }
+            CopyTo(value, position, length);
             Position = position + length;
         }
 
@@ -516,6 +521,13 @@ namespace x2
                 throw new IndexOutOfRangeException();
             }
             back += numBytes;
+        }
+
+        public byte[] ToArray()
+        {
+            byte[] array = new byte[Length];
+            CopyTo(array, front, Length);
+            return array;
         }
 
         /// <summary>
