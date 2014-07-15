@@ -41,12 +41,17 @@ namespace x2.Links.SocketLink
 
         protected int failureCount;
 
+        public object SyncRoot { get { return syncRoot; } }
+
         public SocketLink Link { get { return link; } }
 
         /// <summary>
         /// Gets the underlying socket object.
         /// </summary>
-        public Socket Socket { get { return socket; } }
+        public Socket Socket {
+            get { return socket; }
+            set { socket = value; }
+        }
 
         /// <summary>
         /// Gets a boolean value indicating whether this session is an active
@@ -54,7 +59,10 @@ namespace x2.Links.SocketLink
         /// </summary>
         public bool Polarity { get; set; }
 
-        //public string Token { get; set; }
+#if CONNECTION_RECOVERY
+        public string Token { get; set; }
+        public x2.Flows.Timer.Token TimeoutToken;
+#endif
 
         public string RemoteAddress
         {
@@ -288,18 +296,22 @@ namespace x2.Links.SocketLink
 
         protected void OnDisconnect()
         {
-            //if (closing)
-            //{
+            Log.Trace("SocketLinkSession.OnDisconnect");
+#if CONNECTION_RECOVERY
+            if (Status.Closing)
+            {
+#endif
                 link.OnDisconnect(this);
-            //}
-            /*
+#if CONNECTION_RECOVERY
+            }
             else
             {
                 CloseInternal();
 
                 if (Polarity == true)
                 {
-                    //var client = (TcpClientBase)link;
+                    var client = (TcpClientBase)link;
+                    client.Connect(client.RemoteHost, client.RemotePort);
                 }
                 else
                 {
@@ -307,7 +319,7 @@ namespace x2.Links.SocketLink
                     server.OnInstantDisconnect(this);
                 }
             }
-            */
+#endif
         }
 
         private void BeginSend(Event e)
@@ -402,7 +414,6 @@ namespace x2.Links.SocketLink
                         if (Polarity == true)
                         {
                             var client = (TcpClientBase)link;
-                            //client.SendSessionTokenReq(this);
                             client.Session = this;
                         }
                         //
@@ -413,31 +424,50 @@ namespace x2.Links.SocketLink
                         });
                     }
                     break;
-                /*
-                case (int)SocketLinkEventType.SessionTokenReq:
+#if CONNECTION_RECOVERY
+                case (int)SocketLinkEventType.SessionReq:
                     {
                         if (Polarity == false)
                         {
                             var server = (TcpServerBase)link;
-                            server.OnSessionTokenReq(this, (SessionTokenReq)e);
+                            server.OnSessionReq(this, (SessionReq)e);
                         }
                     }
                     break;
-                case (int)SocketLinkEventType.SessionTokenResp:
+                case (int)SocketLinkEventType.SessionResp:
                     {
                         if (Polarity == true)
                         {
                             var client = (TcpClientBase)link;
-                            client.OnSessionTokenResp(this, (SessionTokenResp)e);
+                            client.OnSessionResp(this, (SessionResp)e);
                         }
                     }
                     break;
-                */
+#endif
                 default:
                     Hub.Post(e);
                     break;
             }
         }
+
+#if CONNECTION_RECOVERY
+        public void HandOver(SocketLinkSession oldSession)
+        {
+            lock (syncRoot)
+            {
+                BufferTransform = oldSession.BufferTransform;
+                if (BufferTransform != null)
+                {
+                    Status.RxTransformReady = true;
+                    Status.TxTransformReady = true;
+                }
+                while (oldSession.sendQueue.Count != 0)
+                {
+                    sendQueue.Enqueue(oldSession.sendQueue.Dequeue());
+                }
+            }
+        }
+#endif
 
         #region Diagnostics
 
@@ -493,6 +523,9 @@ namespace x2.Links.SocketLink
             TxTransformReady,
             HasReceived,
             HasSent
+#if CONNECTION_RECOVERY
+            , Recovered
+#endif
         }
 
         private volatile int status;
@@ -544,6 +577,13 @@ namespace x2.Links.SocketLink
             get { return Get(BitIndex.HasSent); }
             set { Set(BitIndex.HasSent, value); }
         }
+#if CONNECTION_RECOVERY
+        public bool Recovered
+        {
+            get { return Get(BitIndex.Recovered); }
+            set { Set(BitIndex.Recovered, value); }
+        }
+#endif
 
         public void Reset()
         {

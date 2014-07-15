@@ -57,6 +57,9 @@ namespace x2
         {
             Bind(new LinkSessionConnected { LinkName = Name }, OnLinkSessionConnected);
             Bind(new LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
+#if CONNECTION_RECOVERY
+            Bind(new LinkSessionRecovered { LinkName = Name }, OnLinkSessionRecovered);
+#endif
         }
 
         protected override void TearDown()
@@ -68,6 +71,10 @@ namespace x2
 
         protected virtual void OnSessionDisconnected(LinkSessionDisconnected e) { }
 
+#if CONNECTION_RECOVERY
+        protected virtual void OnSessionRecovered(LinkSessionRecovered e) { }
+#endif
+
         private void OnLinkSessionConnected(LinkSessionConnected e)
         {
             OnSessionConnected(e);
@@ -77,6 +84,13 @@ namespace x2
         {
             OnSessionDisconnected(e);
         }
+
+#if CONNECTION_RECOVERY
+        private void OnLinkSessionRecovered(LinkSessionRecovered e)
+        {
+            OnSessionRecovered(e);
+        }
+#endif
 
         #region Diagnostics
 

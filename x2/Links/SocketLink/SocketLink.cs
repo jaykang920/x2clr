@@ -67,8 +67,10 @@ namespace x2.Links.SocketLink
             Event.Register<HandshakeReq>();
             Event.Register<HandshakeResp>();
             Event.Register<HandshakeAck>();
-            //Event.Register<SessionTokenReq>();
-            //Event.Register<SessionTokenResp>();
+#if CONNECTION_RECOVERY
+            Event.Register<SessionReq>();
+            Event.Register<SessionResp>();
+#endif
         }
 
         protected SocketLink(string name)
@@ -124,10 +126,28 @@ namespace x2.Links.SocketLink
             session.Send(req);
         }
 
+        protected void OnSessionSetUp(SocketLinkSession session)
+        {
+            if (BufferTransform != null)
+            {
+                InitiateHandshake(session);
+            }
+            else
+            {
+                Hub.Post(new LinkSessionConnected {
+                    LinkName = Name,
+                    Result = true,
+                    Context = session
+                });
+            }
+        }
+
         protected abstract void OnKeepaliveTick();
 
         protected bool Keepalive(SocketLinkSession session)
         {
+            Log.Trace("{0} {1} keepalive", Name, session.Handle);
+
             if (incomingKeepaliveEnabled)
             {
                 if (session.Status.HasReceived)

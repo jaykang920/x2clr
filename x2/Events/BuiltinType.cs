@@ -18,6 +18,9 @@ namespace x2.Events
         // Link events
         LinkSessionConnected = -4,
         LinkSessionDisconnected = -5,
+#if CONNECTION_RECOVERY
+        LinkSessionRecovered = -6,
+#endif
 
         // -10 to -99 : reserved for links
     }

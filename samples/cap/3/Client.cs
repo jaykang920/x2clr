@@ -90,8 +90,9 @@ namespace x2.Samples.Capitalizer
             };
             x2.Log.Level = x2.LogLevel.All;
 
+            var client = new CapitalizerClient();
             Hub.Instance
-                .Attach(new OutputFlow().Add(new CapitalizerClient()));
+                .Attach(new OutputFlow().Add(client));
 
             using (var flows = new Hub.Flows())
             {
@@ -103,6 +104,11 @@ namespace x2.Samples.Capitalizer
                     if (message == "quit")
                     {
                         break;
+                    }
+                    else if (message == "close")
+                    {
+                        client.CloseInternal();
+                        continue;
                     }
 
                     var e = new CapitalizeReq

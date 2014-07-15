@@ -21,8 +21,10 @@ namespace x2.Links.SocketLink
     {
         protected int backlog;
         protected Dictionary<IntPtr, SocketLinkSession> sessions;
-
-        //protected Dictionary<string, SocketLinkSession> recoverable;
+#if CONNECTION_RECOVERY
+        protected Dictionary<string, SocketLinkSession> recoverable;
+        protected Dictionary<IntPtr, x2.Flows.Timer.Token> timeoutTokens;
+#endif
 
         /// <summary>
         /// Gets or sets the maximum length of the pending connections queue.
@@ -52,7 +54,10 @@ namespace x2.Links.SocketLink
         {
             backlog = Int32.MaxValue;
             sessions = new Dictionary<IntPtr, SocketLinkSession>();
-            //recoverable = new Dictionary<string, SocketLinkSession>();
+#if CONNECTION_RECOVERY
+            recoverable = new Dictionary<string, SocketLinkSession>();
+            timeoutTokens = new Dictionary<IntPtr, x2.Flows.Timer.Token>();
+#endif
 
             Diag = new Diagnostics();
         }
@@ -102,32 +107,62 @@ namespace x2.Links.SocketLink
             }
         }
 
-        /*
-        public void OnSessionTokenReq(SocketLinkSession session, SessionTokenReq e)
+#if CONNECTION_RECOVERY
+        public void OnSessionReq(SocketLinkSession session, SessionReq e)
         {
-            // XXX: check
-
-            //string token;
             if (String.IsNullOrEmpty(e.Value))
             {
                 session.Token = Guid.NewGuid().ToString().Replace("-", "");
+
+#if CONNECTION_RECOVERY
+                lock (recoverable)
+                {
+                    recoverable.Add(session.Token, session);
+                    Log.Trace("{0} {1} added recoverable {2}", Name, session.Handle, session.Token);
+                }
+#endif
             }
             else
             {
                 session.Token = e.Value;
+
+                lock (recoverable)
+                {
+                    SocketLinkSession existing;
+                    if (recoverable.TryGetValue(e.Value, out existing))
+                    {
+                        Log.Trace("{0} {1} found recoverable session", Name, session.Handle);
+                        recoverable.Remove(e.Value);
+                        session.HandOver(existing);
+                        lock (existing.SyncRoot)
+                        {
+                            existing.Status.Recovered = true;
+                        }
+
+                        Hub.Post(new LinkSessionRecovered {
+                            LinkName = Name,
+                            OldHandle = existing.Handle,
+                            Context = session
+                        });
+                    }
+                    else
+                    {
+                        // fail
+                    }
+                }
             }
 
-            session.Send(new SessionTokenResp {
+            session.Send(new SessionResp {
+                _Transform = false,
                 Value = session.Token
             });
 
-            Hub.Post(new LinkSessionConnected {
-                LinkName = Name,
-                Result = true,
-                Context = session
-            });
+            if (String.IsNullOrEmpty(e.Value))
+            {
+                OnSessionSetUp(session);
+            }
         }
-        */
+#endif
 
         protected override void OnKeepaliveTick()
         {
@@ -164,58 +199,56 @@ namespace x2.Links.SocketLink
                 sessions.Add(clientSocket.Handle, session);
             }
 
-            if (BufferTransform != null)
-            {
-                InitiateHandshake(session);
-            }
-            //
-            else
-            {
-                Hub.Post(new LinkSessionConnected {
-                    LinkName = Name,
-                    Result = true,
-                    Context = session
-                });
-            }
+#if !CONNECTION_RECOVERY
+            OnSessionSetUp(session);
+#endif
 
             session.BeginReceive(true);
         }
 
+#if CONNECTION_RECOVERY
         public void OnInstantDisconnect(SocketLinkSession session)
         {
-            var e = new TimeoutEvent { _Channel = Name, Key = session };
-            Flow.Subscribe(e, OnConnectionRecoveryTimeout);
-            x2.Flows.Timer.Token? timerToken = TimeFlow.Default.Reserve(e, 10);
+            bool recovered;
+            lock (session.SyncRoot)
+            {
+                recovered = session.Status.Recovered;
+            }
+            if (!recovered)
+            {
+                var e = new TimeoutEvent { _Channel = Name, Key = session };
+                Flow.Subscribe(e, OnConnectionRecoveryTimeout);
+                x2.Flows.Timer.Token timeoutToken = TimeFlow.Default.Reserve(e, 10);
+                timeoutTokens.Add(session.Handle, timeoutToken);
+
+                Log.Trace("{0} added timeoutToken for {1}", Name, session.Handle);
+            }
 
             lock (sessions)
             {
                 sessions.Remove(session.Handle);
             }
-            /*
-            lock (recoverable)
-            {
-                recoverable.Add(session.Token, session);
-            }
-            */
         }
 
         void OnConnectionRecoveryTimeout(TimeoutEvent e)
         {
+            var oldSession = (SocketLinkSession)e.Key;
+            timeoutTokens.Remove(oldSession.Handle);
             OnDisconnect((SocketLinkSession)e.Key);
         }
-
+#endif
         public override void OnDisconnect(SocketLinkSession session)
         {
             lock (sessions)
             {
                 sessions.Remove(session.Handle);
             }
-            /*
+#if CONNECTION_RECOVERY
             lock (recoverable)
             {
                 recoverable.Remove(session.Token);
             }
-            */
+#endif
 
             ((Diagnostics)Diag).DecrementConnectionCount();
 
@@ -227,6 +260,22 @@ namespace x2.Links.SocketLink
             var session = (SocketLinkSession)e.Context;
             session.CloseInternal();
         }
+
+#if CONNECTION_RECOVERY
+        protected override void OnSessionRecovered(LinkSessionRecovered e)
+        {
+            x2.Flows.Timer.Token timeoutToken;
+            var oldSession = (SocketLinkSession)e.Context;
+            if (!timeoutTokens.TryGetValue(e.OldHandle, out timeoutToken))
+            {
+                Log.Trace("{0} timeoutToken not found for {1}", Name, e.OldHandle);
+                return;
+            }
+            timeoutTokens.Remove(e.OldHandle);
+            Log.Trace("{0} found timeoutToken for {1}", Name, e.OldHandle);
+            TimeFlow.Default.Cancel(timeoutToken);
+        }
+#endif
 
         #region Diagnostics
 

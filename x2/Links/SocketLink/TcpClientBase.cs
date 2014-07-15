@@ -18,7 +18,9 @@ namespace x2.Links.SocketLink
     public abstract class TcpClientBase : SocketLink
     {
         protected volatile SocketLinkSession session;  // current link session
-        //protected SocketLinkSession tempSession;  // temporary link session
+#if CONNECTION_RECOVERY
+        protected SocketLinkSession tempSession;  // temporary link session
+#endif
 
         protected volatile string remoteHost;
         protected volatile int remotePort;
@@ -38,11 +40,7 @@ namespace x2.Links.SocketLink
             get { return session; }
             set
             {
-                lock (syncRoot)
-                {
-                    session = value;
-                    //tempSession = null;
-                }
+                session = value;
             }
         }
 
@@ -79,6 +77,12 @@ namespace x2.Links.SocketLink
             }
         }
 
+        public void CloseInternal()
+        {
+            session.CloseInternal();
+            socket = null;
+        }
+
         public void Connect(string host, int port)
         {
             remoteHost = host;
@@ -112,20 +116,20 @@ namespace x2.Links.SocketLink
             }
         }
 
-        /*
-        public void SendSessionTokenReq(SocketLinkSession session)
+#if CONNECTION_RECOVERY
+        public void SendSessionReq(SocketLinkSession session)
         {
             string sessionToken = null;
             lock (syncRoot)
             {
-                var prevSession = session;
+                var prevSession = this.session;
                 if (prevSession != null)
                 {
                     sessionToken = prevSession.Token;
                 }
             }
 
-            var req = new SessionTokenReq();
+            var req = new SessionReq();
             if (!String.IsNullOrEmpty(sessionToken))
             {
                 req.Value = sessionToken;
@@ -133,34 +137,54 @@ namespace x2.Links.SocketLink
             session.Send(req);
         }
 
-        public void OnSessionTokenResp(SocketLinkSession session, SessionTokenResp e)
+        public void OnSessionResp(SocketLinkSession session, SessionResp e)
         {
-            session.Token = e.Value;
+            string sessionToken = null;
+            var prevSession = this.session;
+            if (prevSession != null)
+            {
+                sessionToken = prevSession.Token;
+            }
 
-            this.session = session;
+            if (sessionToken == null)
+            {
+                session.Token = e.Value;
 
-            Hub.Post(new LinkSessionConnected {
-                LinkName = Name,
-                Result = true,
-                Context = session
-            });
+                if (BufferTransform == null)
+                {
+                    this.session = session;
+                }
+
+                OnSessionSetUp(session);
+            }
+            else
+            {
+                if (sessionToken.Equals(e.Value))
+                {
+                    var oldSession = this.session;
+                    session.HandOver(oldSession);
+                    this.session = session;
+                    tempSession = null;
+
+                    Hub.Post(new LinkSessionRecovered {
+                        LinkName = Name,
+                        OldHandle = oldSession.Handle,
+                        Context = session
+                    });
+                }
+                else
+                {
+                    Close();
+                }
+            }
         }
-        */
+#endif
 
         protected override void OnKeepaliveTick()
         {
             if (!Connected)
             {
                 return;
-            }
-
-            lock (syncRoot)
-            {
-                if (session == null || 
-                    (BufferTransform != null && !session.Status.TxTransformReady))
-                {
-                    return;
-                }
             }
 
             if (!Keepalive(session))
@@ -229,20 +253,17 @@ namespace x2.Links.SocketLink
 
             session.Polarity = true;
 
-            if (BufferTransform != null)
+#if CONNECTION_RECOVERY
+            tempSession = session;
+
+            SendSessionReq(session);
+#else
+            if (BufferTransform == null)
             {
-                InitiateHandshake(session);
-            }
-            else
-            {
-                //SendSessionTokenReq(session);
                 this.session = session;
-                Hub.Post(new LinkSessionConnected {
-                    LinkName = Name,
-                    Result = true,
-                    Context = session
-                });
             }
+            OnSessionSetUp(session);
+#endif
 
             session.BeginReceive(true);
         }

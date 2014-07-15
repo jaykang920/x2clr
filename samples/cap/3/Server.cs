@@ -39,10 +39,21 @@ namespace x2.Samples.Capitalizer
                 var e = new CapitalizeResp();
                 e._Handle = LinkSession.Handle;
                 Flow.Bind(e, Send);
+/*
+                Flow.Bind(new LinkSessionRecovered {
+                    OldHandle = LinkSession.Handle
+                }, OnLinkSessionRecovered);
+*/
             }
 
             public void OnDisconnect()
             {
+                /*
+                Flow.Unbind(new LinkSessionRecovered {
+                    OldHandle = LinkSession.Handle
+                }, OnLinkSessionRecovered);
+                */
+
                 var e = new CapitalizeResp();
                 e._Handle = LinkSession.Handle;
                 Flow.Unbind(e, Send);
@@ -52,6 +63,17 @@ namespace x2.Samples.Capitalizer
             {
                 LinkSession.Send(e);
             }
+
+/*
+            void OnLinkSessionRecovered(LinkSessionRecovered e)
+            {
+                OnDisconnect();
+
+                LinkSession = (LinkSession)e.Context;
+
+                OnConnect();
+            }
+*/
         }
 
         private readonly IDictionary<IntPtr, Session> sessions;

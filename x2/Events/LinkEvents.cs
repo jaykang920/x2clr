@@ -319,4 +319,163 @@ namespace x2.Events
             }
         }
     }
+
+#if CONNECTION_RECOVERY
+    public sealed class LinkSessionRecovered : Event
+    {
+        new private static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        private string linkName;
+        private IntPtr oldHandle;
+        private object context;
+
+        public string LinkName
+        {
+            get { return linkName; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                linkName = value;
+            }
+        }
+
+        public IntPtr OldHandle
+        {
+            get { return oldHandle; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                oldHandle = value;
+            }
+        }
+
+        public object Context
+        {
+            get { return context; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 2);
+                context = value;
+            }
+        }
+
+        static LinkSessionRecovered()
+        {
+            tag = new Tag(Event.tag, typeof(LinkSessionRecovered), 3,
+                          (int)BuiltinType.LinkSessionRecovered);
+        }
+
+        public LinkSessionRecovered()
+            : base(tag.NumProps)
+        {
+        }
+
+        public override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            LinkSessionRecovered o = (LinkSessionRecovered)other;
+            if (linkName != o.linkName)
+            {
+                return false;
+            }
+            if (oldHandle != o.oldHandle)
+            {
+                return false;
+            }
+            if (context != o.context)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(linkName);
+            }
+            if (touched[1])
+            {
+                hash.Update(oldHandle.ToInt64());
+            }
+            if (touched[2])
+            {
+                hash.Update(context);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag()
+        {
+            return tag;
+        }
+
+        public override bool IsEquivalent(Cell other)
+        {
+            if (!base.IsEquivalent(other))
+            {
+                return false;
+            }
+            LinkSessionRecovered o = (LinkSessionRecovered)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (linkName != o.linkName)
+                {
+                    return false;
+                }
+            }
+            if (touched[1])
+            {
+                if (oldHandle != o.oldHandle)
+                {
+                    return false;
+                }
+            }
+            if (touched[2])
+            {
+                if (context != o.context)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                stringBuilder.AppendFormat(" LinkName={0}", linkName);
+            }
+            if (touched[1])
+            {
+                stringBuilder.AppendFormat(" OldHandle={0}", oldHandle);
+            }
+            if (touched[2])
+            {
+                stringBuilder.AppendFormat(" Context={0}", context);
+            }
+        }
+    }
+#endif
 }
