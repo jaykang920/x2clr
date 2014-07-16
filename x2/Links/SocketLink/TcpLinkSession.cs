@@ -19,16 +19,6 @@ namespace x2.Links.SocketLink
         {
         }
 
-        /// <summary>
-        /// Closes this session.
-        /// </summary>
-        public override void Close()
-        {
-            lock (syncRoot)
-            {
-                base.Close();
-            }
-        }
         protected override void ReceiveImpl()
         {
             if (socket == null || !socket.Connected)

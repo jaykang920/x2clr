@@ -258,7 +258,6 @@ namespace x2.Links.SocketLink
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
             var session = (SocketLinkSession)e.Context;
-            session.CloseInternal();
         }
 
 #if CONNECTION_RECOVERY

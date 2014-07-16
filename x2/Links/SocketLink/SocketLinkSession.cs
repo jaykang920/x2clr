@@ -99,14 +99,17 @@ namespace x2.Links.SocketLink
         /// </summary>
         public override void Close()
         {
-            Status.Closing = true;
+            lock (syncRoot)
+            {
+                Status.Closing = true;
 
-            CloseInternal();
+                CloseInternal();
+            }
 
             Log.Info("{0} {1} closed", link.Name, Handle);
         }
 
-        internal void CloseInternal()
+        internal virtual void CloseInternal()
         {
             if (socket == null)
             {
@@ -297,6 +300,12 @@ namespace x2.Links.SocketLink
         protected void OnDisconnect()
         {
             Log.Trace("SocketLinkSession.OnDisconnect");
+
+            lock (syncRoot)
+            {
+                CloseInternal();
+            }
+
 #if CONNECTION_RECOVERY
             if (Status.Closing)
             {
@@ -306,8 +315,6 @@ namespace x2.Links.SocketLink
             }
             else
             {
-                CloseInternal();
-
                 if (Polarity == true)
                 {
                     var client = (TcpClientBase)link;

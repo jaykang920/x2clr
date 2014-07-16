@@ -27,25 +27,25 @@ namespace x2.Links.SocketLink
             sendEventArgs.Completed += OnSendCompleted;
         }
 
-        /// <summary>
-        /// Closes this session.
-        /// </summary>
-        public override void Close()
+        internal override void CloseInternal()
         {
-            lock (syncRoot)
-            {
-                base.Close();
+            base.CloseInternal();
 
-                if (recvEventArgs != null)
-                {
-                    recvEventArgs.Dispose();
-                    recvEventArgs = null;
-                }
-                if (sendEventArgs != null)
-                {
-                    sendEventArgs.Dispose();
-                    sendEventArgs = null;
-                }
+            if (recvEventArgs != null)
+            {
+                recvEventArgs.Completed -= OnReceiveCompleted;
+                recvEventArgs.Dispose();
+                recvEventArgs = null;
+
+                Log.Debug("{0} {1} freed recvEventArgs", link.Name, Handle);
+            }
+            if (sendEventArgs != null)
+            {
+                sendEventArgs.Completed -= OnSendCompleted;
+                sendEventArgs.Dispose();
+                sendEventArgs = null;
+
+                Log.Debug("{0} {1} freed sendEventArgs", link.Name, Handle);
             }
         }
 

@@ -11,6 +11,7 @@
         <const name="SessionReq">-30</const>
         <const name="SessionResp">-31</const>
         <const name="SessionAck">-31</const>
+        <!-- need an active close notification here -->
     </consts>
 
     <event name="KeepaliveEvent" id="SocketLinkEventType.KeepaliveEvent">
