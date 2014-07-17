@@ -62,6 +62,8 @@ namespace x2.Links.SocketLink
                 bool pending = socket.ReceiveAsync(recvEventArgs);
                 if (!pending)
                 {
+                    Log.Debug("{0} {1} ReceiveAsync completed immediately", link.Name, Handle);
+
                     OnReceive(recvEventArgs);
                 }
             }
@@ -84,6 +86,8 @@ namespace x2.Links.SocketLink
                 bool pending = socket.SendAsync(sendEventArgs);
                 if (!pending)
                 {
+                    Log.Debug("{0} {1} SendAsync completed immediately", link.Name, Handle);
+
                     OnSend(sendEventArgs);
                 }
             }
@@ -138,7 +142,10 @@ namespace x2.Links.SocketLink
         {
             if (e.SocketError == SocketError.Success)
             {
-                SendInternal(e.BytesTransferred);
+                lock (syncTx)
+                {
+                    SendInternal(e.BytesTransferred);
+                }
             }
             else
             {

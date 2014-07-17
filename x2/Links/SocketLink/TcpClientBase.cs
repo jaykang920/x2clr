@@ -182,7 +182,7 @@ namespace x2.Links.SocketLink
 
         public override void OnDisconnect(SocketLinkSession session)
         {
-            this.session = null;
+            //this.session = null;
 
             base.OnDisconnect(session);
         }

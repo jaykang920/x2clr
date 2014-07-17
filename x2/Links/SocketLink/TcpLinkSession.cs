@@ -85,7 +85,10 @@ namespace x2.Links.SocketLink
             {
                 int bytesTransferred = socket.EndSend(asyncResult);
 
-                SendInternal(bytesTransferred);
+                lock (syncTx)
+                {
+                    SendInternal(bytesTransferred);
+                }
             }
             catch (Exception e)
             {

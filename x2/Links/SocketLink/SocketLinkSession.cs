@@ -20,6 +20,8 @@ namespace x2.Links.SocketLink
     public abstract class SocketLinkSession : LinkSession
     {
         protected object syncRoot = new Object();
+        //protected object syncRx = new Object();
+        protected object syncTx = new Object();
 
         protected SocketLink link;  // associated link
         protected Socket socket;    // underlying socket
@@ -32,8 +34,6 @@ namespace x2.Links.SocketLink
         protected IList<ArraySegment<byte>> recvBufferList;
         protected IList<ArraySegment<byte>> sendBufferList;
 
-        public SessionStatus Status;
-
         // Operation context details
         protected int lengthToReceive;                // rx
         protected int lengthToSend;                   // tx
@@ -41,7 +41,32 @@ namespace x2.Links.SocketLink
 
         protected int failureCount;
 
+        // Boolean flags
+        protected volatile bool closing;
+        protected volatile bool sending;
+        protected volatile bool rxBeginning;
+        protected volatile bool rxTransformed;
+        protected volatile bool rxTransformReady;
+        protected volatile bool txTransformReady;
+        protected volatile bool hasReceived;
+        protected volatile bool hasSent;
+#if CONNECTION_RECOVERY
+        protected volatile bool recovered;
+#endif
+
         public object SyncRoot { get { return syncRoot; } }
+
+        public bool HasReceived
+        {
+            get { return hasReceived; }
+            set { hasReceived = value; }
+        }
+
+        public bool HasSent
+        {
+            get { return hasSent; }
+            set { hasSent = value; }
+        }
 
         public SocketLink Link { get { return link; } }
 
@@ -50,7 +75,6 @@ namespace x2.Links.SocketLink
         /// </summary>
         public Socket Socket {
             get { return socket; }
-            set { socket = value; }
         }
 
         /// <summary>
@@ -101,7 +125,7 @@ namespace x2.Links.SocketLink
         {
             lock (syncRoot)
             {
-                Status.Closing = true;
+                closing = true;
 
                 CloseInternal();
             }
@@ -140,23 +164,23 @@ namespace x2.Links.SocketLink
         /// </summary>
         public override void Send(Event e)
         {
-            lock (sendQueue)
+            lock (syncTx)
             {
-                if (Status.Sending)
+                if (sending)
                 {
                     sendQueue.Enqueue(e);
                     return;
                 }
 
-                Status.Sending = true;
-            }
+                sending = true;
 
-            BeginSend(e);
+                BeginSend(e);
+            }
         }
 
         internal void BeginReceive(bool beginning)
         {
-            Status.RxBeginning = beginning;
+            rxBeginning = beginning;
 
             recvBufferList.Clear();
             recvBuffer.ListAvailableSegments(recvBufferList);
@@ -169,7 +193,7 @@ namespace x2.Links.SocketLink
 
         protected void ReceiveInternal(int bytesTransferred)
         {
-            Status.HasReceived = true;
+            hasReceived = true;
 
             Diag.AddBytesReceived(bytesTransferred);
 
@@ -178,14 +202,14 @@ namespace x2.Links.SocketLink
 
             recvBuffer.Stretch(bytesTransferred);
 
-            if (Status.RxBeginning)
+            if (rxBeginning)
             {
                 recvBuffer.Rewind();
                 uint header;
                 int headerLength = recvBuffer.ReadVariable(out header);
                 recvBuffer.Shrink(headerLength);
                 lengthToReceive = (int)(header >> 1);
-                Status.RxTransformed = ((header & 1) != 0);
+                rxTransformed = ((header & 1) != 0);
             }
 
             // Handle split packets.
@@ -201,7 +225,7 @@ namespace x2.Links.SocketLink
 
                 Log.Trace("{0} {1} marked {2} byte(s) to read", link.Name, Handle, lengthToReceive);
 
-                if (BufferTransform != null && Status.RxTransformReady && Status.RxTransformed)
+                if (BufferTransform != null && rxTransformReady && rxTransformed)
                 {
                     try
                     {
@@ -259,7 +283,7 @@ namespace x2.Links.SocketLink
                 int headerLength = recvBuffer.ReadVariable(out header);
                 recvBuffer.Shrink(headerLength);
                 lengthToReceive = (int)(header >> 1);
-                Status.RxTransformed = ((header & 1) != 0);
+                rxTransformed = ((header & 1) != 0);
 
                 if (recvBuffer.Length < lengthToReceive)
                 {
@@ -335,13 +359,13 @@ namespace x2.Links.SocketLink
         {
             if (e.GetTypeId() != (int)SocketLinkEventType.KeepaliveEvent)
             {
-                Status.HasSent = true;
+                hasSent = true;
             }
 
             e.Serialize(sendBuffer);
 
             uint header = 0;
-            if (BufferTransform != null && Status.TxTransformReady && e._Transform)
+            if (BufferTransform != null && txTransformReady && e._Transform)
             {
                 BufferTransform.Transform(sendBuffer, sendBuffer.Length);
                 header = 1;
@@ -362,17 +386,13 @@ namespace x2.Links.SocketLink
 
         private void TrySendNext()
         {
-            Event e;
-            lock (sendQueue)
+            if (sendQueue.Count == 0)
             {
-                if (sendQueue.Count == 0)
-                {
-                    Status.Sending = false;
-                    return;
-                }
-
-                e = sendQueue.Dequeue();
+                sending = false;
+                return;
             }
+
+            Event e = sendQueue.Dequeue();
 
             BeginSend(e);
         }
@@ -401,7 +421,7 @@ namespace x2.Links.SocketLink
                         var resp = (HandshakeResp)e;
                         if (BufferTransform.FinalizeHandshake(resp.Data))
                         {
-                            Status.RxTransformReady = true;
+                            rxTransformReady = true;
                             ack.Result = true;
                         }
                         else
@@ -417,7 +437,7 @@ namespace x2.Links.SocketLink
 
                         if (ack.Result)
                         {
-                            Status.TxTransformReady = true;
+                            txTransformReady = true;
                         }
 
                         if (Polarity == true)
@@ -517,103 +537,5 @@ namespace x2.Links.SocketLink
         }
 
         #endregion  // Diagnostics
-    }
-
-    // Status flags
-    public struct SessionStatus
-    {
-        private enum BitIndex
-        {
-            Closing,
-            Sending,
-            RxBeginning,
-            RxTransformed,
-            RxTransformReady,
-            TxTransformReady,
-            HasReceived,
-            HasSent
-#if CONNECTION_RECOVERY
-            , Recovered
-#endif
-        }
-
-        private volatile int status;
-
-        public bool Closing
-        {
-            get { return Get(BitIndex.Closing); }
-            set { Set(BitIndex.Closing, value); }
-        }
-
-        public bool Sending
-        {
-            get { return Get(BitIndex.Sending); }
-            set { Set(BitIndex.Sending, value); }
-        }
-
-        public bool RxBeginning
-        {
-            get { return Get(BitIndex.RxBeginning); }
-            set { Set(BitIndex.RxBeginning, value); }
-        }
-
-        public bool RxTransformed
-        {
-            get { return Get(BitIndex.RxTransformed); }
-            set { Set(BitIndex.RxTransformed, value); }
-        }
-
-        public bool RxTransformReady
-        {
-            get { return Get(BitIndex.RxTransformReady); }
-            set { Set(BitIndex.RxTransformReady, value); }
-        }
-
-        public bool TxTransformReady
-        {
-            get { return Get(BitIndex.TxTransformReady); }
-            set { Set(BitIndex.TxTransformReady, value); }
-        }
-
-        public bool HasReceived
-        {
-            get { return Get(BitIndex.HasReceived); }
-            set { Set(BitIndex.HasReceived, value); }
-        }
-
-        public bool HasSent
-        {
-            get { return Get(BitIndex.HasSent); }
-            set { Set(BitIndex.HasSent, value); }
-        }
-#if CONNECTION_RECOVERY
-        public bool Recovered
-        {
-            get { return Get(BitIndex.Recovered); }
-            set { Set(BitIndex.Recovered, value); }
-        }
-#endif
-
-        public void Reset()
-        {
-            status = 0;
-        }
-
-        private bool Get(BitIndex index)
-        {
-            return ((status & (1 << (int)index)) != 0);
-        }
-
-        private void Set(BitIndex index, bool value)
-        {
-            if (value)
-            {
-                status |= (1 << (int)index);
-            }
-            else
-            {
-                status &= ~(1 << (int)index);
-            }
-        }
     }
 }
