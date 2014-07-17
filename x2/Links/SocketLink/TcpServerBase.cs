@@ -171,12 +171,14 @@ namespace x2.Links.SocketLink
                 return;
             }
 
+            List<SocketLinkSession> snapshot;
             lock (sessions)
             {
-                foreach (var session in sessions.Values)
-                {
-                    Keepalive(session);
-                }
+                snapshot = new List<SocketLinkSession>(sessions.Values);
+            }
+            for (int i = 0, count = snapshot.Count; i < count; ++i)
+            {
+                Keepalive(snapshot[i]);
             }
         }
 

@@ -107,6 +107,8 @@ namespace x2.Links.SocketLink
             }
 
             Log.Info("{0} {1} closed", link.Name, Handle);
+
+            link.OnDisconnect(this);
         }
 
         internal virtual void CloseInternal()

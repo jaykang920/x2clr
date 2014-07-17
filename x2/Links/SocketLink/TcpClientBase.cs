@@ -180,6 +180,13 @@ namespace x2.Links.SocketLink
         }
 #endif
 
+        public override void OnDisconnect(SocketLinkSession session)
+        {
+            this.session = null;
+
+            base.OnDisconnect(session);
+        }
+
         protected override void OnKeepaliveTick()
         {
             if (!Connected)
