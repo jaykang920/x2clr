@@ -223,10 +223,6 @@ namespace x2.Links.SocketLink
                         socket = new Socket(
                             ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                     }
-                    else
-                    {
-                        throw new InvalidOperationException();
-                    }
 
                     BeginConnect(new IPEndPoint(ip, port));
 
