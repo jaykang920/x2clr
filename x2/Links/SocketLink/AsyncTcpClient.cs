@@ -52,6 +52,11 @@ namespace x2.Links.SocketLink
         // Completion callback for ConnectAsync
         private void OnConnect(SocketAsyncEventArgs e)
         {
+            if (socket == null)
+            {
+                return;
+            }
+
             if (e.SocketError == SocketError.Success)
             {
                 connectEventArgs.Completed -= OnConnectCompleted;

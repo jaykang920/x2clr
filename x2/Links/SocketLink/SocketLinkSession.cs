@@ -125,6 +125,11 @@ namespace x2.Links.SocketLink
         {
             lock (syncRoot)
             {
+                if (socket == null)
+                {
+                    return;
+                }
+
                 closing = true;
 
                 CloseInternal();

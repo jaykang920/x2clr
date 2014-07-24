@@ -228,10 +228,12 @@ namespace x2.Links.SocketLink
 
                     Log.Info("{0} connecting to {1}:{2}", Name, ip, port);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Log.Error("{0} error connecting to {1}:{2} : {3}",
+                        Name, ip, port, e.Message);
+
                     socket = null;
-                    throw;
                 }
             }
         }

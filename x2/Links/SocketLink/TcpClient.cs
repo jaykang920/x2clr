@@ -32,6 +32,11 @@ namespace x2.Links.SocketLink
         {
             lock (syncRoot)
             {
+                if (socket == null)
+                {
+                    return;
+                }
+
                 try
                 {
                     socket.EndConnect(asyncResult);
