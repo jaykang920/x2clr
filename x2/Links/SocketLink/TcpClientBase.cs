@@ -34,7 +34,7 @@ namespace x2.Links.SocketLink
         public bool AutoReconnect { get; set; }
         public int ReconnectDelay { get; set; }  // in millisec
 
-        public bool Connected { get { return (session != null); } }
+        public bool Connected { get { return (socket != null && socket.Connected); } }
 
         public SocketLinkSession Session {
             get { return session; }
