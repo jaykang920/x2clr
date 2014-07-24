@@ -211,7 +211,17 @@ namespace x2.Links.SocketLink
             {
                 recvBuffer.Rewind();
                 uint header;
-                int headerLength = recvBuffer.ReadVariable(out header);
+                int headerLength;
+                try
+                {
+                    headerLength = recvBuffer.ReadVariable(out header);
+                }
+                catch (IndexOutOfRangeException e)
+                {
+                    // Need more to start.
+                    BeginReceive(false);
+                    return;
+                }
                 recvBuffer.Shrink(headerLength);
                 lengthToReceive = (int)(header >> 1);
                 rxTransformed = ((header & 1) != 0);
@@ -285,7 +295,16 @@ namespace x2.Links.SocketLink
                 }
 
                 uint header;
-                int headerLength = recvBuffer.ReadVariable(out header);
+                int headerLength;
+                try
+                {
+                    headerLength = recvBuffer.ReadVariable(out header);
+                }
+                catch (IndexOutOfRangeException e)
+                {
+                    BeginReceive(false);
+                    return;
+                }
                 recvBuffer.Shrink(headerLength);
                 lengthToReceive = (int)(header >> 1);
                 rxTransformed = ((header & 1) != 0);
