@@ -118,7 +118,15 @@ namespace x2.Links.SocketLink
                 {
                     lock (syncRoot)
                     {
-                        ReceiveInternal(e.BytesTransferred);
+                        try
+                        {
+                            ReceiveInternal(e.BytesTransferred);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Warn("{0} {1} recv error {2}", link.Name, Handle, e.ToString());
+                            OnDisconnect();
+                        }
                     }
                     return;
                 }
