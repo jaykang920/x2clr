@@ -246,7 +246,6 @@ namespace x2.Links.SocketLink
                     try
                     {
                         BufferTransform.InverseTransform(recvBuffer, lengthToReceive);
-                        recvBuffer.Rewind();
                     }
                     catch (Exception e)
                     {
@@ -254,17 +253,10 @@ namespace x2.Links.SocketLink
                         goto next;
                     }
                 }
+                recvBuffer.Rewind();
 
                 int typeId;
-                try
-                {
-                    recvBuffer.Read(out typeId);
-                }
-                catch (IndexOutOfRangeException e)
-                {
-                    // skip to next
-                    goto next;
-                }
+                recvBuffer.Read(out typeId);
 
                 Log.Trace("{0} {1} retrieved event type id {2}", link.Name, Handle, typeId);
 
