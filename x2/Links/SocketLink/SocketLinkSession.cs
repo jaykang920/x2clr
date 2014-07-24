@@ -140,11 +140,11 @@ namespace x2.Links.SocketLink
             link.OnDisconnect(this);
         }
 
-        internal virtual void CloseInternal()
+        internal virtual bool CloseInternal()
         {
             if (socket == null)
             {
-                return;
+                return false;
             }
             if (socket.Connected)
             {
@@ -152,6 +152,7 @@ namespace x2.Links.SocketLink
             }
             socket.Close();
             socket = null;
+            return true;
         }
 
         public int IncrementFailureCount()
@@ -255,7 +256,15 @@ namespace x2.Links.SocketLink
                 }
 
                 int typeId;
-                recvBuffer.Read(out typeId);
+                try
+                {
+                    recvBuffer.Read(out typeId);
+                }
+                catch (IndexOutOfRangeException e)
+                {
+                    // skip to next
+                    goto next;
+                }
 
                 Log.Trace("{0} {1} retrieved event type id {2}", link.Name, Handle, typeId);
 
@@ -270,22 +279,22 @@ namespace x2.Links.SocketLink
                     try
                     {
                         retrieved.Load(recvBuffer);
-
-                        retrieved._Handle = Handle;
-
-                        if (link.Preprocessor != null)
-                        {
-                            link.Preprocessor(retrieved, this);
-                        }
-
-                        Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
-
-                        ProcessEvent(retrieved);
                     }
                     catch (Exception e)
                     {
                         Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, typeId, e.ToString());
                     }
+
+                    retrieved._Handle = Handle;
+
+                    if (link.Preprocessor != null)
+                    {
+                        link.Preprocessor(retrieved, this);
+                    }
+
+                    Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
+
+                    ProcessEvent(retrieved);
                 }
             next:
                 recvBuffer.Trim();
@@ -353,7 +362,10 @@ namespace x2.Links.SocketLink
 
             lock (syncRoot)
             {
-                CloseInternal();
+                if (!CloseInternal())
+                {
+                    return;
+                }
             }
 
 #if CONNECTION_RECOVERY

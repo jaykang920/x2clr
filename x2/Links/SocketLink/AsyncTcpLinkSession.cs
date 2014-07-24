@@ -27,9 +27,12 @@ namespace x2.Links.SocketLink
             sendEventArgs.Completed += OnSendCompleted;
         }
 
-        internal override void CloseInternal()
+        internal override bool CloseInternal()
         {
-            base.CloseInternal();
+            if (!base.CloseInternal())
+            {
+                return false;
+            }
 
             if (recvEventArgs != null)
             {
@@ -47,6 +50,7 @@ namespace x2.Links.SocketLink
 
                 Log.Debug("{0} {1} freed sendEventArgs", link.Name, Handle);
             }
+            return true;
         }
 
         protected override void ReceiveImpl()

@@ -189,9 +189,12 @@ namespace x2.Links.SocketLink
 
         protected override void OnKeepaliveTick()
         {
-            if (!Connected)
+            lock (syncRoot)
             {
-                return;
+                if (!Connected || session == null)
+                {
+                    return;
+                }
             }
 
             if (!Keepalive(session))
