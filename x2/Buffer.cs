@@ -926,7 +926,7 @@ namespace x2
         private void EnsureCapacityToWrite(int numBytes)
         {
             int required = position + numBytes;
-            while (required > Capacity)
+            while (required >= Capacity)
             {
                 blocks.Add(blockPool.Acquire(blockSizeExponent));
             }
