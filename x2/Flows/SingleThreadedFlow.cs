@@ -20,7 +20,7 @@ namespace x2.Flows
         }
         
         public SingleThreadedFlow(IQueue<Event> queue)
-            : base(queue, new Binder())
+            : base(queue)
         {
             thread = null;
         }

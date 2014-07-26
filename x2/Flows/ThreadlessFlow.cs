@@ -23,7 +23,6 @@ namespace x2.Flows
         }
 
         public ThreadlessFlow(IQueue<Event> queue)
-            : base(new Binder())
         {
             this.queue = queue;
             syncRoot = new Object();

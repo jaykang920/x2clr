@@ -64,9 +64,9 @@ namespace x2
             DefaultSlowHandlerLogThreshold = 100;
         }
 
-        protected Flow(Binder binder)
+        protected Flow()
         {
-            this.binder = binder;
+            binder = new Binder();
             caseStack = new CaseStack();
             name = GetType().Name;
 

@@ -21,7 +21,7 @@ namespace x2.Flows
         }
 
         public MultiThreadedFlow(IQueue<Event> queue, int numThreads)
-            : base(queue, new SynchronizedBinding())
+            : base(queue)
         {
             threads = new List<Thread>();
             this.numThreads = numThreads;

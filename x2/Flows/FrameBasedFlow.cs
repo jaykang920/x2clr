@@ -92,7 +92,6 @@ namespace x2.Flows
         }
         
         protected FrameBasedFlow(IQueue<Event> queue)
-            : base(new Binder())
         {
             this.queue = queue;
             syncRoot = new Object();

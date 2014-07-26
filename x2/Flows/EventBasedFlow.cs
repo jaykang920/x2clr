@@ -19,8 +19,7 @@ namespace x2.Flows
         protected readonly IQueue<Event> queue;
         protected readonly object syncRoot;
 
-        protected EventBasedFlow(IQueue<Event> queue, Binder binder)
-            : base(binder)
+        protected EventBasedFlow(IQueue<Event> queue)
         {
             this.queue = queue;
             syncRoot = new Object();

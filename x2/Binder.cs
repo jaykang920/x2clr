@@ -12,84 +12,121 @@ namespace x2
         private readonly Dictionary<Event, HandlerSet> handlerMap;
         private readonly Filter filter;
 
+        private readonly ReaderWriterLockSlim rwlock;
+
         public Binder()
         {
             handlerMap = new Dictionary<Event, HandlerSet>();
             filter = new Filter();
+
+            rwlock = new ReaderWriterLockSlim();
+
             Diag = new Diagnostics(this);
         }
 
         public virtual Token Bind(Event e, Handler handler)
         {
-            HandlerSet handlers;
-            if (!handlerMap.TryGetValue(e, out handlers))
+            rwlock.EnterWriteLock();
+            try
             {
-                handlers = new HandlerSet();
-                handlerMap.Add(e, handlers);
-            }
-
-            var token = new Token(e, handler);
-            if (handlers.Add(handler))
-            {
-                filter.Add(e.GetTypeId(), e.GetFingerprint());
-
-                if (handler.Action.Target is EventSink)
+                HandlerSet handlers;
+                if (!handlerMap.TryGetValue(e, out handlers))
                 {
-                    var eventSink = (EventSink)handler.Action.Target;
-                    eventSink.AddBinding(token);
+                    handlers = new HandlerSet();
+                    handlerMap.Add(e, handlers);
                 }
+
+                var token = new Token(e, handler);
+                if (handlers.Add(handler))
+                {
+                    filter.Add(e.GetTypeId(), e.GetFingerprint());
+
+                    if (handler.Action.Target is EventSink)
+                    {
+                        var eventSink = (EventSink)handler.Action.Target;
+                        eventSink.AddBinding(token);
+                    }
+                }
+                return token;
             }
-            return token;
+            finally
+            {
+                rwlock.ExitWriteLock();
+            }
         }
 
         public virtual int BuildHandlerChain(Event e, List<Handler> handlerChain)
         {
-            Event.Tag tag = (Event.Tag)e.GetTypeTag();
-            Fingerprint fingerprint = e.GetFingerprint();
-            while (tag != null)
+            rwlock.EnterReadLock();
+            try
             {
-                int typeId = tag.TypeId;
-                IList<Slot> slots = filter.Get(typeId);
-                if (slots != null)
+                Event.Tag tag = (Event.Tag)e.GetTypeTag();
+                Fingerprint fingerprint = e.GetFingerprint();
+                while (tag != null)
                 {
-                    for (int i = 0, count = slots.Count; i < count; ++i)
+                    int typeId = tag.TypeId;
+                    IList<Slot> slots = filter.Get(typeId);
+                    if (slots != null)
                     {
-                        var slot = slots[i];
-                        if (slot.IsEquivalent(fingerprint))
+                        for (int i = 0, count = slots.Count; i < count; ++i)
                         {
-                            EventEquivalent equivalent = new EventEquivalent(e, slot, typeId);
-                            HandlerSet handlers;
-                            if (handlerMap.TryGetValue(equivalent, out handlers))
+                            var slot = slots[i];
+                            if (slot.IsEquivalent(fingerprint))
                             {
-                                handlerChain.AddRange(handlers.GetList());
+                                EventEquivalent equivalent = new EventEquivalent(e, slot, typeId);
+                                HandlerSet handlers;
+                                if (handlerMap.TryGetValue(equivalent, out handlers))
+                                {
+                                    handlerChain.AddRange(handlers.GetList());
+                                }
                             }
                         }
                     }
+                    tag = (Event.Tag)tag.Base;
                 }
-                tag = (Event.Tag)tag.Base;
+                // sort result
+                return handlerChain.Count;
             }
-            // sort result
-            return handlerChain.Count;
+            finally
+            {
+                rwlock.ExitReadLock();
+            }
         }
 
         public virtual void Unbind(Event e, Handler handler)
         {
-            if (!UnbindInternal(e, handler))
+            rwlock.EnterWriteLock();
+            try
             {
-                return;
-            }
+                if (!UnbindInternal(e, handler))
+                {
+                    return;
+                }
 
-            var token = new Token(e, handler);
-            if (handler.Action.Target is EventSink)
+                var token = new Token(e, handler);
+                if (handler.Action.Target is EventSink)
+                {
+                    var eventSink = (EventSink)handler.Action.Target;
+                    eventSink.RemoveBinding(token);
+                }
+            }
+            finally
             {
-                var eventSink = (EventSink)handler.Action.Target;
-                eventSink.RemoveBinding(token);
+                rwlock.ExitWriteLock();
             }
         }
 
         public void Unbind(Token token)
         {
-            UnbindInternal(token.key, token.value);
+            rwlock.EnterWriteLock();
+            try
+            {
+                UnbindInternal(token.key, token.value);
+            }
+            finally
+            {
+                rwlock.ExitWriteLock();
+            }
         }
 
         private bool UnbindInternal(Event e, Handler handler)
@@ -268,55 +305,6 @@ namespace x2
         }
 
         #endregion
-    }
-
-    public class SynchronizedBinding : Binder
-    {
-        private readonly ReaderWriterLockSlim rwlock;
-
-        public SynchronizedBinding()
-        {
-            rwlock = new ReaderWriterLockSlim();
-        }
-
-        public override Token Bind(Event e, Handler handler)
-        {
-            rwlock.EnterWriteLock();
-            try
-            {
-                return base.Bind(e, handler);
-            }
-            finally
-            {
-                rwlock.ExitWriteLock();
-            }
-        }
-
-        public override int BuildHandlerChain(Event e, List<Handler> handlerChain)
-        {
-            rwlock.EnterReadLock();
-            try
-            {
-                return base.BuildHandlerChain(e, handlerChain);
-            }
-            finally
-            {
-                rwlock.ExitReadLock();
-            }
-        }
-
-        public override void Unbind(Event e, Handler handler)
-        {
-            rwlock.EnterWriteLock();
-            try
-            {
-                base.Unbind(e, handler);
-            }
-            finally
-            {
-                rwlock.ExitWriteLock();
-            }
-        }
     }
 
     /// <summary>

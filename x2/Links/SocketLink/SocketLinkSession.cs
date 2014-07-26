@@ -217,7 +217,7 @@ namespace x2.Links.SocketLink
                 {
                     headerLength = recvBuffer.ReadVariable(out header);
                 }
-                catch (IndexOutOfRangeException e)
+                catch (IndexOutOfRangeException)
                 {
                     // Need more to start.
                     BeginReceive(false);
@@ -301,7 +301,7 @@ namespace x2.Links.SocketLink
                 {
                     headerLength = recvBuffer.ReadVariable(out header);
                 }
-                catch (IndexOutOfRangeException e)
+                catch (IndexOutOfRangeException)
                 {
                     BeginReceive(false);
                     return;

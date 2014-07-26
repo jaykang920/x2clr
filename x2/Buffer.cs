@@ -59,9 +59,9 @@ namespace x2
                 }
                 position = value;
                 int blockIndex = position >> blockSizeExponent;
-                if (blockIndex >= blocks.Count)
+                if ((blockIndex != 0) && ((position & remainderMask) == 0))
                 {
-                    blockIndex = blocks.Count - 1;
+                    --blockIndex;
                 }
                 if (blockIndex != currentBlockIndex)
                 {
