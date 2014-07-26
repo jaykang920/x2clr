@@ -256,8 +256,15 @@ namespace x2.Links.SocketLink
                 recvBuffer.Rewind();
 
                 int typeId;
-                // XXX dangerous coz a malformed packet may cause a crash
-                recvBuffer.Read(out typeId);
+                try
+                {
+                    recvBuffer.Read(out typeId);
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    Log.Error("{0} {1} malformed event type id", link.Name, Handle);
+                    goto next;
+                }
 
                 Log.Trace("{0} {1} retrieved event type id {2}", link.Name, Handle, typeId);
 

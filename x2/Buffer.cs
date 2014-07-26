@@ -917,7 +917,7 @@ namespace x2
             int limit = (marker >= 0 ? marker : back);
             if ((position + numBytes) > limit)
             {
-                Log.Error("front={0} pos={1} back={2} marker={3} numBytes={4}", front, position, back, marker, numBytes);
+                Log.Warn("front={0} pos={1} back={2} marker={3} numBytes={4}", front, position, back, marker, numBytes);
 
                 throw new IndexOutOfRangeException();
             }
