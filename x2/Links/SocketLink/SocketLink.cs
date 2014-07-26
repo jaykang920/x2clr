@@ -148,6 +148,14 @@ namespace x2.Links.SocketLink
         {
             Log.Trace("{0} {1} keepalive", Name, session.Handle);
 
+            lock (session.SyncRoot)
+            {
+                if (session.Socket == null || !session.Socket.Connected)
+                {
+                    return true;
+                }
+            }
+
             if (incomingKeepaliveEnabled)
             {
                 if (session.HasReceived)

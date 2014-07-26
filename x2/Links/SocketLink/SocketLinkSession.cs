@@ -265,6 +265,7 @@ namespace x2.Links.SocketLink
                 if (retrieved == null)
                 {
                     Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
+                    goto next;
                 }
                 else
                 {
@@ -275,6 +276,7 @@ namespace x2.Links.SocketLink
                     catch (Exception e)
                     {
                         Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, typeId, e.ToString());
+                        goto next;
                     }
 
                     retrieved._Handle = Handle;
