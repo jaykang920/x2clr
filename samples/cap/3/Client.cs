@@ -17,8 +17,10 @@ namespace x2.Samples.Capitalizer
         public CapitalizerClient()
             : base("CapitalizerClient")
         {
-            AutoReconnect = false;
             RetryInterval = 1000;
+
+            AutoReconnect = true;
+            ReconnectDelay = 1000;
 
             BufferTransform = new BufferTransformStack()
                 .Add(new x2.Transforms.Cipher())
