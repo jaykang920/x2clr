@@ -66,7 +66,10 @@ namespace x2.Links.SocketLink
         {
             if (e.SocketError == SocketError.Success)
             {
-                AcceptInternal(new AsyncTcpLinkSession(this, e.AcceptSocket));
+                if (!AcceptInternal(new AsyncTcpLinkSession(this, e.AcceptSocket)))
+                {
+                    e.AcceptSocket.Close();
+                }
 
                 AcceptImpl(e);
             }

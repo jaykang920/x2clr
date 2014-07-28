@@ -184,7 +184,7 @@ namespace x2.Links.SocketLink
 
         protected abstract void AcceptImpl();
 
-        protected void AcceptInternal(SocketLinkSession session)
+        protected bool AcceptInternal(SocketLinkSession session)
         {
             ((Diagnostics)Diag).IncrementConnectionCount();
 
@@ -198,6 +198,11 @@ namespace x2.Links.SocketLink
 
             lock (sessions)
             {
+                if (sessions.ContainsKey(clientSocket.Handle))
+                {
+                    session.BeginReceive(true);
+                    return false;
+                }
                 sessions.Add(clientSocket.Handle, session);
             }
 
@@ -206,6 +211,7 @@ namespace x2.Links.SocketLink
 #endif
 
             session.BeginReceive(true);
+            return true;
         }
 
 #if CONNECTION_RECOVERY

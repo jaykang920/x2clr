@@ -36,7 +36,10 @@ namespace x2.Links.SocketLink
             {
                 var clientSocket = socket.EndAccept(asyncResult);
 
-                AcceptInternal(new TcpLinkSession(this, clientSocket));
+                if (!AcceptInternal(new TcpLinkSession(this, clientSocket)))
+                {
+                    clientSocket.Close();
+                }
 
                 AcceptImpl();
             }
