@@ -174,6 +174,8 @@ namespace x2
                 }
 
                 bindings.Clear();
+
+                this.flow.Target = null;
             }
         }
     }
