@@ -1,17 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2cap.1-vs2013", "cap\1\x2cap.1-vs2013.csproj", "{446A45C1-F12A-4CCF-A065-76A9027104ED}"
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2cap.1", "cap\1\x2cap.1.csproj", "{446A45C1-F12A-4CCF-A065-76A9027104ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2cap.2-vs2013", "cap\2\x2cap.2-vs2013.csproj", "{446A45C1-F12A-4CCF-A065-76A9027104EE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2cap.2", "cap\2\x2cap.2.csproj", "{446A45C1-F12A-4CCF-A065-76A9027104EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2cap.3c-vs2013", "cap\3\x2cap.3c-vs2013.csproj", "{446A45C1-F12A-4CCF-A065-76A9027104EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2cap.3c", "cap\3\x2cap.3c.csproj", "{446A45C1-F12A-4CCF-A065-76A9027104EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2cap.3s-vs2013", "cap\3\x2cap.3s-vs2013.csproj", "{446A45C1-F12A-4CCF-A065-76A9027104F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2cap.3s", "cap\3\x2cap.3s.csproj", "{446A45C1-F12A-4CCF-A065-76A9027104F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2clr-vs2013", "..\x2\x2clr-vs2013.csproj", "{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2clr", "..\x2\x2clr.csproj", "{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoClient", "echo\EchoClient.csproj", "{456A46C1-F12A-4CCF-A065-76A9027104EF}"
 EndProject

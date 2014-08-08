@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2clr-vs2013", "x2\x2clr-vs2013.csproj", "{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}"
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2clr", "x2\x2clr.csproj", "{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xpiler-vs2013", "xpiler\xpiler-vs2013.csproj", "{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xpiler", "xpiler\xpiler.csproj", "{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2test-vs2013", "tests\x2test-vs2013.csproj", "{4F62C483-01DB-45B7-88A4-28D5B94A17E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2test", "tests\x2test.csproj", "{4F62C483-01DB-45B7-88A4-28D5B94A17E7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52} = {13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}
 	EndProjectSection

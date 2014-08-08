@@ -1,10 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{456A45C1-F12A-4CCF-A175-76A9027104F0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -46,12 +44,6 @@
     <Compile Include="EchoServer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\x2\x2clr-vs2013.csproj">
-      <Project>{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}</Project>
-      <Name>x2clr-vs2008</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -67,4 +59,10 @@
 ..\..\bin\$(ConfigurationName)\xpiler.exe .
 popd</PreBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\x2\x2clr.csproj">
+      <Project>{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}</Project>
+      <Name>x2clr</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
