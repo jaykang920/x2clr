@@ -15,12 +15,21 @@ namespace x2.Yields
     public class WaitForSingleEvent : YieldInstruction
     {
         private readonly Coroutine coroutine;
-        private readonly Binder.Token token;
+        private readonly Binder.Token handlerToken;
+        private readonly Binder.Token timeoutToken;
+        private readonly Timer.Token timerToken;
 
-        public WaitForSingleEvent(Coroutine coroutine, Event e)
+        public WaitForSingleEvent(Coroutine coroutine, Event e) : this(coroutine, e, 30.0)
+        {
+        }
+
+        public WaitForSingleEvent(Coroutine coroutine, Event e, double seconds)
         {
             this.coroutine = coroutine;
-            token = Flow.Bind(e, OnEvent);
+            handlerToken = Flow.Bind(e, OnEvent);
+            TimeoutEvent timeoutEvent = new TimeoutEvent { Key = this };
+            timeoutToken = Flow.Bind(timeoutEvent, OnTimeout);
+            timerToken = TimeFlow.Default.Reserve(timeoutEvent, seconds);
         }
 
         public override object Current { get { return null; } }
@@ -32,11 +41,22 @@ namespace x2.Yields
 
         void OnEvent(Event e)
         {
-            Flow.Unbind(token);
+            TimeFlow.Default.Cancel(timerToken);
+            Flow.Unbind(timeoutToken);
+            Flow.Unbind(handlerToken);
 
             coroutine.Context = e;
             coroutine.Continue();
             coroutine.Context = null;
+        }
+
+        void OnTimeout(TimeoutEvent e)
+        {
+            Flow.Unbind(timeoutToken);
+            Flow.Unbind(handlerToken);
+
+            coroutine.Context = null;  // indicates timeout
+            coroutine.Continue();
         }
     }
 
@@ -47,6 +67,12 @@ namespace x2.Yields
     {
         public WaitForSingleResponse(Coroutine coroutine, Event request, Event response)
             : base(coroutine, response)
+        {
+            request.Post();
+        }
+
+        public WaitForSingleResponse(Coroutine coroutine, Event request, Event response, double seconds)
+            : base(coroutine, response, seconds)
         {
             request.Post();
         }
