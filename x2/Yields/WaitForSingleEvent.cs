@@ -17,7 +17,7 @@ namespace x2.Yields
         private readonly Coroutine coroutine;
         private readonly Binder.Token handlerToken;
         private readonly Binder.Token timeoutToken;
-        private readonly Timer.Token timerToken;
+        private readonly Timer.Token? timerToken;
 
         public WaitForSingleEvent(Coroutine coroutine, Event e) : this(coroutine, e, 30.0)
         {
@@ -27,9 +27,12 @@ namespace x2.Yields
         {
             this.coroutine = coroutine;
             handlerToken = Flow.Bind(e, OnEvent);
-            TimeoutEvent timeoutEvent = new TimeoutEvent { Key = this };
-            timeoutToken = Flow.Bind(timeoutEvent, OnTimeout);
-            timerToken = TimeFlow.Default.Reserve(timeoutEvent, seconds);
+            if (seconds >= 0)
+            {
+                TimeoutEvent timeoutEvent = new TimeoutEvent { Key = this };
+                timeoutToken = Flow.Bind(timeoutEvent, OnTimeout);
+                timerToken = TimeFlow.Default.Reserve(timeoutEvent, seconds);
+            }
         }
 
         public override object Current { get { return null; } }
@@ -41,8 +44,11 @@ namespace x2.Yields
 
         void OnEvent(Event e)
         {
-            TimeFlow.Default.Cancel(timerToken);
-            Flow.Unbind(timeoutToken);
+            if (timerToken.HasValue)
+            {
+                TimeFlow.Default.Cancel(timerToken.Value);
+                Flow.Unbind(timeoutToken);
+            }
             Flow.Unbind(handlerToken);
 
             coroutine.Context = e;
