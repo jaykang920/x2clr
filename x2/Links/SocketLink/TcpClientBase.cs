@@ -67,6 +67,15 @@ namespace x2.Links.SocketLink
             {
                 if (session == null)
                 {
+                    if (socket != null)
+                    {
+                        if (socket.Connected)
+                        {
+                            socket.Shutdown(SocketShutdown.Both);
+                        }
+                        socket.Close();
+                        socket = null;
+                    }
                     return;
                 }
 
