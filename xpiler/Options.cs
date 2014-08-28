@@ -4,28 +4,30 @@
 using System;
 using System.Collections.Generic;
 
-using x2;
-
 namespace x2
 {
     class Options
     {
         private const string DefaultSpec = "cs";
 
-        private string spec = DefaultSpec;
+        private bool forced;
         private string outDir;
         private bool recursive;
-        private bool forced;
+        private string spec = DefaultSpec;
 
-        public string Spec { get { return spec; } }
+        public bool Forced { get { return forced; } }
         public string OutDir { get { return outDir; } }
         public bool Recursive { get { return recursive; } }
-        public bool Forced { get { return forced; } }
+        public string Spec { get { return spec; } }
 
         static void PrintUsage()
         {
             Console.WriteLine("usage: xpiler (options) [path...]");
             Console.WriteLine(" options:");
+            Console.WriteLine("  -f (--force)     : force all to be re-xpiled");
+            Console.WriteLine("  -h (--help)      : print this message and quit");
+            Console.WriteLine("  -o (--out-dir)   : output root directory");
+            Console.WriteLine("  -r (--recursive) : process subdirectories recursively");
             Console.WriteLine("  -s (--spec) spec : specifies the target formatter");
             foreach (var pair in Xpiler.Formatters)
             {
@@ -36,10 +38,6 @@ namespace x2
                     Console.WriteLine();
                 }
             }
-            Console.WriteLine("  -o (--out-dir)   : output root directory");
-            Console.WriteLine("  -r (--recursive) : process subdirectories recursively");
-            Console.WriteLine("  -f (--force)     : force all to be recompiled");
-            Console.WriteLine("  -h (--help)      : print this message and quit");
         }
 
         public int Parse(string[] args)
