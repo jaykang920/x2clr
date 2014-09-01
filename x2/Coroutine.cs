@@ -39,6 +39,30 @@ namespace x2
         {
         }
 
+        public static void Start(Func<Coroutine, IEnumerator> func)
+        {
+            Coroutine coroutine = new Coroutine();
+            coroutine.Start(func(coroutine));
+        }
+
+        public static void Start<T>(Func<Coroutine, T, IEnumerator> func, T arg)
+        {
+            Coroutine coroutine = new Coroutine();
+            coroutine.Start(func(coroutine, arg));
+        }
+
+        public static void Start<T1, T2>(Func<Coroutine, T1, T2, IEnumerator> func, T1 arg1, T2 arg2)
+        {
+            Coroutine coroutine = new Coroutine();
+            coroutine.Start(func(coroutine, arg1, arg2));
+        }
+
+        public static void Start<T1, T2, T3>(Func<Coroutine, T1, T2, T3, IEnumerator> func, T1 arg1, T2 arg2, T3 arg3)
+        {
+            Coroutine coroutine = new Coroutine();
+            coroutine.Start(func(coroutine, arg1, arg2, arg3));
+        }
+
         public IEnumerator Start(IEnumerator routine)
         {
             this.routine = routine;
