@@ -166,6 +166,34 @@ namespace x2
                 }
                 Out.WriteLine();
             }
+            Out.WriteLine();
+            Indent(1); Out.WriteLine("private static ConstsInfo<{0}> info;", def.NativeType);
+            Out.WriteLine();
+            Indent(1); Out.WriteLine("static {0}()", def.Name);
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("info = new ConstsInfo<{0}>();", def.NativeType);
+            foreach (var constant in def.Constants)
+            {
+                Indent(2);
+                Out.WriteLine("info.Add(\"{0}\", {1});", constant.Name, constant.Value);
+            }
+            Indent(1); Out.WriteLine("}");
+            Out.WriteLine();
+            Indent(1); Out.WriteLine("public static string GetName({0} value)", def.NativeType);
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("return info.GetName(value);");
+            Indent(1); Out.WriteLine("}");
+            Out.WriteLine();
+            Indent(1); Out.WriteLine("public static {0} Parse(string name)", def.NativeType);
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("return info.Parse(name);");
+            Indent(1); Out.WriteLine("}");
+            Out.WriteLine();
+            Indent(1); Out.WriteLine("public static bool TryParse(string name, out {0} result)", def.NativeType);
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("return info.TryParse(name, out result);");
+            Indent(1); Out.WriteLine("}");
+            Out.WriteLine();
             Indent(0); Out.WriteLine("}");
         }
 

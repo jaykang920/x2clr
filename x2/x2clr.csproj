@@ -31,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BufferTransform.cs" />
+    <Compile Include="Consts.cs" />
     <Compile Include="Coroutine.cs" />
     <Compile Include="Events\FlowEvents.cs" />
     <Compile Include="Events\LinkEvents.cs" />
