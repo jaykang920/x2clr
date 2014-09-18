@@ -5,15 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace x2
+namespace xpiler
 {
     class Xpiler
     {
         private static readonly Options options;
-        private static readonly Dictionary<string, InputHandler> handlers;
-        private static readonly Dictionary<string, OutputFormatter> formatters;
+        private static readonly Dictionary<string, Handler> handlers;
+        private static readonly Dictionary<string, Formatter> formatters;
 
-        private readonly OutputFormatter formatter;
+        private readonly Formatter formatter;
         private readonly Stack<string> subDirs;
         private bool error;
 
@@ -22,7 +22,7 @@ namespace x2
             get { return options; }
         }
 
-        public static Dictionary<string, OutputFormatter> Formatters
+        public static Dictionary<string, Formatter> Formatters
         {
             get { return formatters; }
         }
@@ -36,10 +36,10 @@ namespace x2
         {
             options = new Options();
 
-            handlers = new Dictionary<string, InputHandler>();
+            handlers = new Dictionary<string, Handler>();
             handlers.Add(".xml", new XmlHandler());
 
-            formatters = new Dictionary<string, OutputFormatter>();
+            formatters = new Dictionary<string, Formatter>();
             formatters.Add("cs", new CSharpFormatter());
         }
 
@@ -104,7 +104,7 @@ namespace x2
                 outDir = Path.Combine(options.OutDir, String.Join(
                     Path.DirectorySeparatorChar.ToString(), subDirs.ToArray()));
             }
-            InputHandler handler;
+            Handler handler;
             if (handlers.TryGetValue(extension.ToLower(), out handler) == false ||
                 (!options.Forced && formatter.IsUpToDate(path, outDir)))
             {

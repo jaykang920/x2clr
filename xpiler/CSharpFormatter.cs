@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace x2
+namespace xpiler
 {
-    class CSharpFormatter : OutputFormatter
+    class CSharpFormatter : Formatter
     {
         private const string Extension = ".cs";
         

@@ -4,40 +4,20 @@
 using System;
 using System.Collections.Generic;
 
-namespace x2
+namespace xpiler
 {
     class Options
     {
         private const string DefaultSpec = "cs";
 
-        private bool forced;
-        private string outDir;
-        private bool recursive;
-        private string spec = DefaultSpec;
+        public bool Forced { get; private set; }
+        public string OutDir { get; private set; }
+        public bool Recursive { get; private set; }
+        public string Spec { get; private set; }
 
-        public bool Forced { get { return forced; } }
-        public string OutDir { get { return outDir; } }
-        public bool Recursive { get { return recursive; } }
-        public string Spec { get { return spec; } }
-
-        static void PrintUsage()
+        public Options()
         {
-            Console.WriteLine("usage: xpiler (options) [path...]");
-            Console.WriteLine(" options:");
-            Console.WriteLine("  -f (--force)     : force all to be re-xpiled");
-            Console.WriteLine("  -h (--help)      : print this message and quit");
-            Console.WriteLine("  -o (--out-dir)   : output root directory");
-            Console.WriteLine("  -r (--recursive) : process subdirectories recursively");
-            Console.WriteLine("  -s (--spec) spec : specifies the target formatter");
-            foreach (var pair in Xpiler.Formatters)
-            {
-                Console.Write("{0,18} : {1}", pair.Key, pair.Value.Description);
-                if (pair.Key == DefaultSpec)
-                {
-                    Console.Write(" (default)");
-                    Console.WriteLine();
-                }
-            }
+            Spec = DefaultSpec;
         }
 
         public int Parse(string[] args)
@@ -57,22 +37,23 @@ namespace x2
                 switch (getopt.Opt)
                 {
                     case 's':
-                        spec = getopt.OptArg.ToLower();
-                        if (!Xpiler.Formatters.ContainsKey(spec))
+                        Spec = getopt.OptArg.ToLower();
+                        if (!Xpiler.Formatters.ContainsKey(Spec))
                         {
                             Console.Error.WriteLine(
-                                "Unknown target formatter specified: {0}", spec);
-                            System.Environment.Exit(1);
+                                "error: unknown target formatter specified: {0}",
+                                Spec);
+                            System.Environment.Exit(2);
                         }
                         break;
                     case 'o':
-                        outDir = getopt.OptArg;
+                        OutDir = getopt.OptArg;
                         break;
                     case 'r':
-                        recursive = true;
+                        Recursive = true;
                         break;
                     case 'f':
-                        forced = true;
+                        Forced = true;
                         break;
                     case 'h':
                         PrintUsage();
@@ -83,6 +64,27 @@ namespace x2
                 }
             }
             return getopt.OptInd;
+        }
+
+        static void PrintUsage()
+        {
+            Console.WriteLine("usage: xpiler (options) [path...]");
+            Console.WriteLine(" options:");
+            Console.WriteLine("  -f (--force)     : force all to be re-xpiled");
+            Console.WriteLine("  -h (--help)      : print this message and quit");
+            Console.WriteLine("  -o (--out-dir)   : output root directory");
+            Console.WriteLine("  -r (--recursive) : process subdirectories recursively");
+            Console.WriteLine("  -s (--spec) spec : specifies the target formatter");
+
+            foreach (var pair in Xpiler.Formatters)
+            {
+                Console.Write("{0,18} : {1}", pair.Key, pair.Value.Description);
+                if (pair.Key == DefaultSpec)
+                {
+                    Console.Write(" (default)");
+                }
+                Console.WriteLine();
+            }
         }
     }
 }

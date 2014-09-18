@@ -4,9 +4,9 @@
 using System;
 using System.Xml;
 
-namespace x2
+namespace xpiler
 {
-    class XmlHandler : InputHandler
+    class XmlHandler : Handler
     {
         public bool Handle(string path, out Document doc)
         {

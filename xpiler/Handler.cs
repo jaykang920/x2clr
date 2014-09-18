@@ -3,9 +3,9 @@
 
 using System;
 
-namespace x2
+namespace xpiler
 {
-    interface InputHandler
+    interface Handler
     {
         bool Handle(string path, out Document doc);
     }

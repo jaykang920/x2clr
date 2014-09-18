@@ -4,9 +4,9 @@
 using System;
 using System.IO;
 
-namespace x2
+namespace xpiler
 {
-    abstract class OutputFormatter
+    abstract class Formatter
     {
         public abstract string Description { get; }
 

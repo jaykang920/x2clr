@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 
-namespace x2
+namespace xpiler
 {
     class Program
     {
@@ -13,8 +13,7 @@ namespace x2
             var index = Xpiler.Options.Parse(args);
             if (index >= args.Length)
             {
-                Console.WriteLine("{0}: missing arguments", Path.GetFileName(
-                    System.Reflection.Assembly.GetEntryAssembly().Location));
+                Console.WriteLine("error: at least one input path is required");
                 return 2;
             }
 

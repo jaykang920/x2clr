@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace x2
+namespace xpiler
 {
     class Reference
     {

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>x2</RootNamespace>
+    <RootNamespace>xpiler</RootNamespace>
     <AssemblyName>xpiler</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
@@ -34,9 +34,9 @@
     <Compile Include="CSharpFormatter.cs" />
     <Compile Include="Definition.cs" />
     <Compile Include="Document.cs" />
+    <Compile Include="Formatter.cs" />
     <Compile Include="Getopt.cs" />
-    <Compile Include="OutputFormatter.cs" />
-    <Compile Include="InputHandler.cs" />
+    <Compile Include="Handler.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
