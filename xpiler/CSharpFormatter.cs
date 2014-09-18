@@ -137,7 +137,7 @@ namespace xpiler
 
         public override void FormatReference(Reference reference)
         {
-            Indent(0); Out.WriteLine("using {0};", reference.Target);
+            Indent(0); Out.WriteLine("using {0};", reference.Target.Replace('/', '.'));
             Out.WriteLine();
         }
 
