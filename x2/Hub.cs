@@ -13,37 +13,34 @@ namespace x2
     public sealed class Hub
     {
         // List of all the flows attached to the hub
-        private static readonly List<Flow> attached;
+        private readonly List<Flow> flows;
+        // Explicit (named) channel subscription map
+        private readonly Dictionary<string, List<Flow>> subscriptions;
 
-        // List of the flows which is subscribed to the default(unnamed) channel
-        private static readonly List<Flow> defaultSubscribers;
-        // Explicit channel subscription map
-        private static readonly Dictionary<string, List<Flow>> subscriptions;
-
-        private static readonly ReaderWriterLockSlim rwlock;
-
-        private static readonly Hub instance;
+        private readonly ReaderWriterLockSlim rwlock;
 
         /// <summary>
         /// Gets the singleton instance of the hub.
         /// </summary>
-        public static Hub Instance { get { return instance; } }
+        public static Hub Instance { get; private set; }
 
         static Hub()
         {
-            attached = new List<Flow>();
+            Instance = new Hub();
+        }
 
-            defaultSubscribers = new List<Flow>();
+        // Private constructor to prevent explicit instantiation
+        private Hub()
+        {
+            flows = new List<Flow>();
             subscriptions = new Dictionary<string, List<Flow>>();
 
             rwlock = new ReaderWriterLockSlim();
-
-            instance = new Hub();
         }
 
-        // Private constructor to prevent explicit instantiation.
-        private Hub()
+        ~Hub()
         {
+            rwlock.Dispose();
         }
 
         /// <summary>
@@ -57,10 +54,9 @@ namespace x2
             }
             using (new WriteLock(rwlock))
             {
-                if (!attached.Contains(flow))
+                if (!flows.Contains(flow))
                 {
-                    attached.Add(flow);
-                    SubscribeInternal(flow, null);
+                    flows.Add(flow);
                 }
             }
             return this;
@@ -77,7 +73,7 @@ namespace x2
             }
             using (new WriteLock(rwlock))
             {
-                if (attached.Remove(flow))
+                if (flows.Remove(flow))
                 {
                     UnsubscribeInternal(flow);
                 }
@@ -88,22 +84,16 @@ namespace x2
         /// <summary>
         /// Detaches all the attached flows.
         /// </summary>
-        public static void DetachAll()
+        public void DetachAll()
         {
             using (new WriteLock(rwlock))
             {
-                for (int i = 0, count = attached.Count; i < count; ++i)
-                {
-                    UnsubscribeInternal(attached[i]);
-                }
-                attached.Clear();
+                subscriptions.Clear();
+                flows.Clear();
             }
         }
 
-        /// <summary>
-        /// Posts up the specified event to the hub.
-        /// </summary>
-        public static void Post(Event e)
+        private void Feed(Event e)
         {
             if (Object.ReferenceEquals(e, null))
             {
@@ -118,7 +108,7 @@ namespace x2
 
                 if (String.IsNullOrEmpty(channel))
                 {
-                    subscribers = defaultSubscribers;
+                    subscribers = flows;
                 }
                 else
                 {
@@ -139,41 +129,59 @@ namespace x2
         }
 
         /// <summary>
-        /// Starts all the flows attached to the hub.
+        /// Posts up the specified event to the hub.
         /// </summary>
-        public static void StartAttachedFlows()
+        public static void Post(Event e)
         {
-            List<Flow> flows;
+            Instance.Feed(e);
+        }
+
+        private void StartAttachedFlows()
+        {
+            List<Flow> snapshot;
             using (new ReadLock(rwlock))
             {
-                flows = new List<Flow>(attached);
+                snapshot = new List<Flow>(flows);
             }
-            for (int i = 0, count = flows.Count; i < count; ++i)
+            for (int i = 0, count = snapshot.Count; i < count; ++i)
             {
-                flows[i].StartUp();
+                snapshot[i].StartUp();
+            }
+        }
+
+        /// <summary>
+        /// Starts all the flows attached to the hub.
+        /// </summary>
+        public static void StartUp()
+        {
+            Instance.StartAttachedFlows();
+        }
+
+        private void StopAttachedFlows()
+        {
+            List<Flow> snapshot;
+            using (new ReadLock(rwlock))
+            {
+                snapshot = new List<Flow>(flows);
+            }
+            for (int i = 0, count = snapshot.Count; i < count; ++i)
+            {
+                snapshot[i].ShutDown();
             }
         }
 
         /// <summary>
         /// Stops all the flows attached to the hub.
         /// </summary>
-        public static void StopAttachedFlows()
+        public static void ShutDown()
         {
-            List<Flow> flows;
-            using (new ReadLock(rwlock))
-            {
-                flows = new List<Flow>(attached);
-            }
-            for (int i = 0, count = flows.Count; i < count; ++i)
-            {
-                flows[i].ShutDown();
-            }
+            Instance.StopAttachedFlows();
         }
 
         /// <summary>
-        /// Makes the given flow subscribe to the specifieid channel.
+        /// Makes the given attached flow subscribe to the specifieid channel.
         /// </summary>
-        internal static void Subscribe(Flow flow, string channel)
+        internal void Subscribe(Flow flow, string channel)
         {
             if (Object.ReferenceEquals(flow, null))
             {
@@ -181,7 +189,7 @@ namespace x2
             }
             using (new WriteLock(rwlock))
             {
-                if (!attached.Contains(flow))
+                if (!flows.Contains(flow))
                 {
                     throw new InvalidOperationException();
                 }
@@ -190,9 +198,9 @@ namespace x2
         }
 
         /// <summary>
-        /// Makes the given flow unsubscribe from the specified channel.
+        /// Makes the given attached flow unsubscribe from the specified channel.
         /// </summary>
-        internal static void Unsubscribe(Flow flow, string channel)
+        internal void Unsubscribe(Flow flow, string channel)
         {
             if (Object.ReferenceEquals(flow, null))
             {
@@ -200,7 +208,7 @@ namespace x2
             }
             using (new WriteLock(rwlock))
             {
-                if (!attached.Contains(flow))
+                if (!flows.Contains(flow))
                 {
                     throw new InvalidOperationException();
                 }
@@ -209,64 +217,32 @@ namespace x2
         }
 
         // Lets the given flow subscribe to the specified channel.
-        private static void SubscribeInternal(Flow flow, string channel)
+        private void SubscribeInternal(Flow flow, string channel)
         {
-            List<Flow> subscribers;
             if (String.IsNullOrEmpty(channel))
             {
-                if (defaultSubscribers.Contains(flow))
+                // invalid channel name
+                return;
+            }
+            List<Flow> subscribers;
+            if (subscriptions.TryGetValue(channel, out subscribers))
+            {
+                if (subscribers.Contains(flow))
                 {
                     return;
                 }
-                subscribers = defaultSubscribers;
             }
             else
             {
-                if (subscriptions.TryGetValue(channel, out subscribers))
-                {
-                    if (subscribers.Contains(flow))
-                    {
-                        return;
-                    }
-                }
-                else
-                {
-                    subscribers = new List<Flow>();
-                    subscriptions.Add(channel, subscribers);
-                }
+                subscribers = new List<Flow>();
+                subscriptions.Add(channel, subscribers);
             }
             subscribers.Add(flow);
         }
 
-        // Lets the given flow unsubscribe from the specified channel.
-        private static void UnsubscribeInternal(Flow flow, string channel)
-        {
-            if (String.IsNullOrEmpty(channel))
-            {
-                defaultSubscribers.Remove(flow);
-            }
-            else
-            {
-                List<Flow> subscribers;
-                if (!subscriptions.TryGetValue(channel, out subscribers))
-                {
-                    return;
-                }
-                if (subscribers.Remove(flow))
-                {
-                    if (subscribers.Count == 0)
-                    {
-                        subscriptions.Remove(channel);
-                    }
-                }
-            }
-        }
-
         // Lets the given flow unsubscribe from all the channels.
-        private static void UnsubscribeInternal(Flow flow)
+        private void UnsubscribeInternal(Flow flow)
         {
-            defaultSubscribers.Remove(flow);
-
             var keysToRemove = new List<string>();
 
             foreach (var pair in subscriptions)
@@ -287,41 +263,55 @@ namespace x2
             }
         }
 
+        // Lets the given flow unsubscribe from the specified channel.
+        private void UnsubscribeInternal(Flow flow, string channel)
+        {
+            if (String.IsNullOrEmpty(channel))
+            {
+                // invalid channel name
+                return;
+            }
+            List<Flow> subscribers;
+            if (!subscriptions.TryGetValue(channel, out subscribers))
+            {
+                return;
+            }
+            if (subscribers.Remove(flow))
+            {
+                if (subscribers.Count == 0)
+                {
+                    subscriptions.Remove(channel);
+                }
+            }
+        }
+
         /// <summary>
-        /// Represents the attached flows for convenience.
+        /// Represents the attached flows for cleanup convenience.
         /// </summary>
         public sealed class Flows : IDisposable
         {
-            /// <summary>
-            /// Detaches all the attached flows.
-            /// </summary>
-            public void Detach()
-            {
-                DetachAll();
-            }
-
             /// <summary>
             /// Implements the IDisposable interface.
             /// </summary>
             public void Dispose()
             {
-                Stop();
+                ShutDown();
             }
 
             /// <summary>
             /// Starts all the attached flows.
             /// </summary>
-            public void Start()
+            public void StartUp()
             {
-                StartAttachedFlows();
+                Hub.StartUp();
             }
 
             /// <summary>
             /// Stops all the attached flows.
             /// </summary>
-            public void Stop()
+            public void ShutDown()
             {
-                StopAttachedFlows();
+                Hub.ShutDown();
             }
         }
     }

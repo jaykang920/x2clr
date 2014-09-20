@@ -238,7 +238,7 @@ namespace x2
         /// </summary>
         public Flow SubscribeTo(string channel)
         {
-            Hub.Subscribe(this, channel);
+            Hub.Instance.Subscribe(this, channel);
             return this;
         }
 
@@ -247,7 +247,7 @@ namespace x2
         /// </summary>
         public Flow UnsubscribeFrom(string channel)
         {
-            Hub.Unsubscribe(this, channel);
+            Hub.Instance.Unsubscribe(this, channel);
             return this;
         }
 
