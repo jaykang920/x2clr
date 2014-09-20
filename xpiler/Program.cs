@@ -2,7 +2,6 @@
 // See the file COPYING for license details.
 
 using System;
-using System.IO;
 
 namespace xpiler
 {
