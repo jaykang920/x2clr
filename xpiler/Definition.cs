@@ -6,16 +6,6 @@ using System.Collections.Generic;
 
 namespace xpiler
 {
-    class Reference
-    {
-        public string Target { get; set; }
-
-        public void Format(FormatterContext context)
-        {
-            context.FormatReference(this);
-        }
-    }
-
     abstract class Definition
     {
         public string Name { get; set; }
@@ -74,5 +64,15 @@ namespace xpiler
         public string Id { get; set; }
 
         public override bool IsEvent { get { return true; } }
+    }
+
+    class Reference
+    {
+        public string Target { get; set; }
+
+        public void Format(FormatterContext context)
+        {
+            context.FormatReference(this);
+        }
     }
 }
