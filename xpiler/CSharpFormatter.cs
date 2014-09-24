@@ -23,7 +23,7 @@ namespace xpiler
                     Doc = doc,
                     Target = Path.Combine(outDir, doc.BaseName + Extension)
                 };
-                using (var writer = new StreamWriter(context.Target))
+                using (var writer = new StreamWriter(context.Target, false, Encoding.UTF8))
                 {
                     context.Out = writer;
                     FormatHead(context);
@@ -154,10 +154,12 @@ namespace xpiler
 
             PreprocessConsts(def);
 
+            FormatComments(0, def.Comments);
             Indent(0); Out.WriteLine("public static class {0}", def.Name);
             Indent(0); Out.WriteLine("{");
             foreach (var constant in def.Constants)
             {
+                FormatComments(1, constant.Comments);
                 Indent(1);
                 Out.Write("public const {0} {1}", def.NativeType, constant.Name);
                 if (!String.IsNullOrEmpty(constant.Value))
@@ -206,6 +208,7 @@ namespace xpiler
             }
             PreprocessProperties(def);
 
+            FormatComments(0, def.Comments);
             Indent(0); Out.WriteLine("public class {0} : {1}", def.Name, def.BaseClass);
             Indent(0); Out.WriteLine("{");
             Indent(1); Out.WriteLine("new protected static readonly Tag tag;");
@@ -251,6 +254,7 @@ namespace xpiler
                 {
                     Out.WriteLine();
                 }
+                FormatComments(1, property.Comments);
                 Indent(1); Out.WriteLine("public {0} {1}", property.NativeType, property.Name);
                 Indent(1); Out.WriteLine("{");
                 Indent(2); Out.WriteLine("get {{ return {0}; }}", property.NativeName);
@@ -546,6 +550,21 @@ namespace xpiler
                 Out.WriteLine("{0} = {1};", property.NativeName, property.DefaultValue);
             }
             Indent(1); Out.WriteLine("}");
+        }
+
+        private void FormatComments(int indent, string text)
+        {
+            if (String.IsNullOrEmpty(text)) { return; }
+            string[] lines = text.Split(new char[] { '\n', '\r' },
+                StringSplitOptions.RemoveEmptyEntries);
+            Indent(indent); Out.WriteLine("/// <summary>");
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                Indent(indent);
+                Out.Write("/// ");
+                Out.WriteLine(lines[i]);
+            }
+            Indent(indent); Out.WriteLine("/// </summary>");
         }
 
         private static void PreprocessConsts(ConstsDef def)

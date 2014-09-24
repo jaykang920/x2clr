@@ -19,11 +19,15 @@ namespace xpiler
         {
             public string Name { get; set; }
             public string Value { get; set; }
+
+            public string Comments { get; set; }
         }
 
         public string Type { get; set; }
         public string NativeType { get; set; }
         public List<Constant> Constants { get { return constants; } }
+
+        public string Comments { get; set; }
 
         private readonly List<Constant> constants = new List<Constant>();
 
@@ -43,6 +47,8 @@ namespace xpiler
             public string DefaultValue { get; set; }
             public string NativeName { get; set; }
             public string NativeType { get; set; }
+
+            public string Comments { get; set; }
         }
 
         public string Base { get; set; }
@@ -50,6 +56,8 @@ namespace xpiler
         public virtual bool IsEvent { get { return false; } }
         public List<Property> Properties { get { return properties; } }
         public bool HasProperties { get { return (properties.Count != 0); } }
+
+        public string Comments { get; set; }
 
         private readonly List<Property> properties = new List<Property>();
 
