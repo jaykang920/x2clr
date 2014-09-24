@@ -40,7 +40,6 @@ namespace xpiler
                     if (node.NodeType == XmlNodeType.Comment)
                     {
                         comments = node.Value.Trim();
-                        Console.WriteLine(comments);
                     }
                     else
                     {
@@ -117,7 +116,6 @@ namespace xpiler
                     if (node.NodeType == XmlNodeType.Comment)
                     {
                         subComments = node.Value.Trim();
-                        Console.WriteLine(subComments);
                     }
                     else
                     {
@@ -193,7 +191,6 @@ namespace xpiler
                     if (node.NodeType == XmlNodeType.Comment)
                     {
                         subComments = node.Value.Trim();
-                        Console.WriteLine(subComments);
                     }
                     else
                     {
