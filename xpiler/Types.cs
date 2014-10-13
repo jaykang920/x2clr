@@ -10,26 +10,18 @@ namespace xpiler
     class TypeSpec
     {
         public string Type { get; set; }
-        public IList<TypeSpec> Details { get; set; }
+        public List<TypeSpec> Details { get; set; }
 
         public override string ToString()
         {
             var sb = new StringBuilder(Type);
-            if ((object)Details != null)
+            if (Details != null && Details.Count != 0)
             {
                 sb.Append('(');
-                var leading = true;
-                foreach (var detail in Details)
+                for (int i = 0, count = Details.Count; i < count; ++i)
                 {
-                    if (leading)
-                    {
-                        leading = false;
-                    }
-                    else
-                    {
-                        sb.Append(", ");
-                    }
-                    sb.Append(detail.ToString());
+                    if (i != 0) { sb.Append(", "); }
+                    sb.Append(Details[i].ToString());
                 }
                 sb.Append(')');
             }
@@ -141,7 +133,7 @@ namespace xpiler
         private static TypeSpec ParseTypeSpec(string s, ref int index)
         {
             string type = null;
-            IList<TypeSpec> details = null;
+            List<TypeSpec> details = null;
 
             var backMargin = 0;
             var start = index;
@@ -175,9 +167,9 @@ namespace xpiler
                 new TypeSpec { Type = type, Details = details });
         }
 
-        private static IList<TypeSpec> ParseDetails(string s, ref int index)
+        private static List<TypeSpec> ParseDetails(string s, ref int index)
         {
-            IList<TypeSpec> details = new List<TypeSpec>();
+            List<TypeSpec> details = new List<TypeSpec>();
 
             var start = index;
             for (; index < s.Length; ++index)

@@ -41,7 +41,7 @@ namespace xpiler
                         if (!Xpiler.Formatters.ContainsKey(Spec))
                         {
                             Console.Error.WriteLine(
-                                "error: unknown target formatter specified: {0}",
+                                "error: unknown target formatter specified - {0}",
                                 Spec);
                             System.Environment.Exit(2);
                         }

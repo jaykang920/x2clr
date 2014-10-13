@@ -9,22 +9,22 @@ namespace xpiler
 {
     class Xpiler
     {
-        private static readonly Options options;
         private static readonly Dictionary<string, Handler> handlers;
         private static readonly Dictionary<string, Formatter> formatters;
+        private static readonly Options options;
 
+        private bool error;
         private readonly Formatter formatter;
         private readonly Stack<string> subDirs;
-        private bool error;
-
-        public static Options Options
-        {
-            get { return options; }
-        }
 
         public static Dictionary<string, Formatter> Formatters
         {
             get { return formatters; }
+        }
+
+        public static Options Options
+        {
+            get { return options; }
         }
 
         public bool Error

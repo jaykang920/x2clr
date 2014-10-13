@@ -12,7 +12,7 @@ namespace xpiler
             var index = Xpiler.Options.Parse(args);
             if (index >= args.Length)
             {
-                Console.WriteLine("error: at least one input path is required");
+                Console.WriteLine("error: at least one input path required");
                 return 2;
             }
 
