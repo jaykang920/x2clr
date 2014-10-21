@@ -25,6 +25,8 @@ namespace x2.Samples.Echo
 
         protected override void OnSessionConnected(LinkSessionConnected e)
         {
+            base.OnSessionConnected(e);
+
             if (e.Result)
             {
                 Console.WriteLine("Connected");
@@ -33,9 +35,7 @@ namespace x2.Samples.Echo
 
                 Bind(new EchoResp { _Handle = linkSession.Handle }, OnEchoResp);
 
-                Send(new EchoReq {
-                    Message = message
-                });
+                Bind(new EchoReq(), Send);
             }
             else
             {
@@ -61,9 +61,7 @@ namespace x2.Samples.Echo
 
         void OnEchoResp(EchoResp e)
         {
-            Send(new EchoReq {
-                Message = message
-            });
+            Console.WriteLine("{0}", e.Message);
         }
     }
 
@@ -77,15 +75,9 @@ namespace x2.Samples.Echo
             x2.Log.Level = x2.LogLevel.Warning;
 
             Hub.Instance
-                .Attach(new SingleThreadedFlow().Add(new EchoClientCase()))
+                .Attach(new SingleThreadedFlow()
+                    .Add(new EchoClientCase()))
                 .Attach(TimeFlow.Default);
-
-            /*
-            for (int i = 0; i < 2; ++i)
-            {
-                Hub.Instance.Attach(new EchoClient());
-            }
-            */
 
             using (var flows = new Hub.Flows())
             {
@@ -98,6 +90,12 @@ namespace x2.Samples.Echo
                     {
                         break;
                     }
+
+                    var e = new EchoReq
+                    {
+                        Message = message
+                    };
+                    Hub.Post(e);
                 }
             }
         }
