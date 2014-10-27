@@ -255,7 +255,6 @@ namespace x2
 
         protected void Dispatch(Event e)
         {
-            handlerChain.Clear();
             int chainLength = binder.BuildHandlerChain(e, handlerChain);
             if (chainLength == 0)
             {
@@ -291,6 +290,8 @@ namespace x2
                         ex);
                 }
             }
+
+            handlerChain.Clear();
         }
 
         protected virtual void SetUp()
