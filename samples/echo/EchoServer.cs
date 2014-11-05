@@ -122,7 +122,7 @@ namespace x2.Samples.Echo
 
             using (var flows = new Hub.Flows())
             {
-                flows.Start();
+                flows.StartUp();
 
                 while (true)
                 {
@@ -132,6 +132,8 @@ namespace x2.Samples.Echo
                         break;
                     }
                 }
+
+                flows.ShutDown();
             }
         }
     }
