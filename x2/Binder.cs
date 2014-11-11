@@ -7,6 +7,9 @@ using System.Threading;
 
 namespace x2
 {
+    /// <summary>
+    /// Manages evnet-handler bindings.
+    /// </summary>
     public class Binder
     {
         private readonly Dictionary<Event, HandlerSet> handlerMap;
