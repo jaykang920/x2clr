@@ -15,9 +15,15 @@ namespace x2.Links.SocketLink
     /// </summary>
     public abstract class SocketLink : Link
     {
-        protected object syncRoot = new Object();
+        /// <summary>
+        /// Underlying socket object.
+        /// </summary>
+        protected Socket socket;
 
-        protected Socket socket;  // underlying socket
+        /// <summary>
+        /// Synchronization object.
+        /// </summary>
+        protected object syncRoot = new Object();
 
         protected bool incomingKeepaliveEnabled;
         protected int maxSuccessiveFailureCount;
@@ -73,6 +79,9 @@ namespace x2.Links.SocketLink
 #endif
         }
 
+        /// <summary>
+        /// Initializes a new instance of the SocketLink class.
+        /// </summary>
         protected SocketLink(string name)
             : base(name)
         {
@@ -88,6 +97,9 @@ namespace x2.Links.SocketLink
             });
         }
 
+        /// <summary>
+        /// Initializes this link on startup.
+        /// </summary>
         protected override void SetUp()
         {
             base.SetUp();
@@ -99,6 +111,9 @@ namespace x2.Links.SocketLink
             TimeFlow.Default.ReserveRepetition(e, new TimeSpan(0, 0, 5));
         }
 
+        /// <summary>
+        /// Cleans up this link on shutdown.
+        /// </summary>
         protected override void TearDown()
         {
             var e = new KeepaliveTick { _Channel = Name, LinkName = Name };

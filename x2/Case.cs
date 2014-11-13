@@ -29,7 +29,13 @@ namespace x2
             CleanUp();
         }
 
+        /// <summary>
+        /// Initializes this case on startup.
+        /// </summary>
         protected virtual void SetUp() { }
+        /// <summary>
+        /// Cleans up this case on shutdown.
+        /// </summary>
         protected virtual void TearDown() { }
     }
 

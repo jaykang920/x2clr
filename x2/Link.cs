@@ -53,6 +53,9 @@ namespace x2
 
         public abstract void Close();
 
+        /// <summary>
+        /// Initializes this link on startup.
+        /// </summary>
         protected override void SetUp()
         {
             Bind(new LinkSessionConnected { LinkName = Name }, OnLinkSessionConnected);
@@ -62,6 +65,9 @@ namespace x2
 #endif
         }
 
+        /// <summary>
+        /// Cleans up this link on shutdown.
+        /// </summary>
         protected override void TearDown()
         {
             Close();
@@ -107,16 +113,37 @@ namespace x2
     /// </summary>
     public abstract class LinkSession
     {
+        private static long seq;
+
+        /// <summary>
+        /// Gets the session identifier.
+        /// </summary>
+        public long Id { get; private set; }
+
+        /// <summary>
+        /// Gets the platform-specific handle of the underlying mechanism.
+        /// </summary>
         public IntPtr Handle { get; private set; }
+
         public IBufferTransform BufferTransform { get; set; }
 
-        public LinkSession(IntPtr handle)
+        /// <summary>
+        /// Initializes a new instance of the LinkSession class.
+        /// </summary>
+        protected LinkSession(IntPtr handle)
         {
+            Id = Interlocked.Increment(ref seq);
             Handle = handle;
         }
 
+        /// <summary>
+        /// Closes this link session.
+        /// </summary>
         public abstract void Close();
 
+        /// <summary>
+        /// Sends out the specified event through this link session.
+        /// </summary>
         public abstract void Send(Event e);
 
         #region Diagnostics
