@@ -1,24 +1,18 @@
 <x2 namespace="x2.Links.SocketLink">
 
     <consts name="SocketLinkEventType">
-        <const name="KeepaliveEvent">-10</const>
-        <const name="KeepaliveTick">-11</const>
+        <const name="HandshakeReq">-10</const>
+        <const name="HandshakeResp">-11</const>
+        <const name="HandshakeAck">-12</const>
 
-        <const name="HandshakeReq">-20</const>
-        <const name="HandshakeResp">-21</const>
-        <const name="HandshakeAck">-22</const>
+        <const name="KeepaliveEvent">-20</const>
+        <const name="KeepaliveTick">-21</const>
 
         <const name="SessionReq">-30</const>
         <const name="SessionResp">-31</const>
-        <const name="SessionAck">-31</const>
-        <!-- need an active close notification here -->
+        <const name="SessionAck">-32</const>
+        <!-- we need an active close notification here -->
     </consts>
-
-    <event name="KeepaliveEvent" id="SocketLinkEventType.KeepaliveEvent">
-    </event>
-    <event name="KeepaliveTick" id="SocketLinkEventType.KeepaliveTick">
-        <property name="LinkName" type="string"/>
-    </event>
 
     <event name="HandshakeReq" id="SocketLinkEventType.HandshakeReq">
         <property name="Data" type="bytes"/>
@@ -28,6 +22,12 @@
     </event>
     <event name="HandshakeAck" id="SocketLinkEventType.HandshakeAck">
         <property name="Result" type="bool"/>
+    </event>
+
+    <event name="KeepaliveEvent" id="SocketLinkEventType.KeepaliveEvent">
+    </event>
+    <event name="KeepaliveTick" id="SocketLinkEventType.KeepaliveTick">
+        <property name="LinkName" type="string"/>
     </event>
 
     <event name="SessionReq" id="SocketLinkEventType.SessionReq">

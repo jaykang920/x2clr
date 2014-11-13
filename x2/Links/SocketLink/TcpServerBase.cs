@@ -21,7 +21,7 @@ namespace x2.Links.SocketLink
     {
         protected int backlog;
         protected Dictionary<long, SocketLinkSession> sessions;
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
         protected Dictionary<string, SocketLinkSession> recoverable;
         protected Dictionary<IntPtr, x2.Flows.Timer.Token> timeoutTokens;
 #endif
@@ -54,7 +54,7 @@ namespace x2.Links.SocketLink
         {
             backlog = Int32.MaxValue;
             sessions = new Dictionary<long, SocketLinkSession>();
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
             recoverable = new Dictionary<string, SocketLinkSession>();
             timeoutTokens = new Dictionary<IntPtr, x2.Flows.Timer.Token>();
 #endif
@@ -107,14 +107,14 @@ namespace x2.Links.SocketLink
             }
         }
 
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
         public void OnSessionReq(SocketLinkSession session, SessionReq e)
         {
             if (String.IsNullOrEmpty(e.Value))
             {
                 session.Token = Guid.NewGuid().ToString().Replace("-", "");
 
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
                 lock (recoverable)
                 {
                     recoverable.Add(session.Token, session);
@@ -163,7 +163,7 @@ namespace x2.Links.SocketLink
             }
         }
 #endif
-
+#if SESSION_KEEPALIVE
         protected override void OnKeepaliveTick()
         {
             if (!Listening)
@@ -181,6 +181,7 @@ namespace x2.Links.SocketLink
                 Keepalive(snapshot[i]);
             }
         }
+#endif
 
         protected abstract void AcceptImpl();
 
@@ -206,7 +207,7 @@ namespace x2.Links.SocketLink
                 sessions.Add(session.Id, session);
             }
 
-#if !CONNECTION_RECOVERY
+#if !SESSION_HANDOVER
             OnSessionSetUp(session);
 #endif
 
@@ -214,7 +215,7 @@ namespace x2.Links.SocketLink
             return true;
         }
 
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
         public void OnInstantDisconnect(SocketLinkSession session)
         {
             bool recovered;
@@ -251,7 +252,7 @@ namespace x2.Links.SocketLink
             {
                 sessions.Remove(session.Id);
             }
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
             lock (recoverable)
             {
                 recoverable.Remove(session.Token);
@@ -268,7 +269,7 @@ namespace x2.Links.SocketLink
             var session = (SocketLinkSession)e.Context;
         }
 
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
         protected override void OnSessionRecovered(LinkSessionRecovered e)
         {
             x2.Flows.Timer.Token timeoutToken;

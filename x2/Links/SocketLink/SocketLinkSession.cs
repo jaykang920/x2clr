@@ -42,20 +42,23 @@ namespace x2.Links.SocketLink
         protected int failureCount;
 
         // Boolean flags
-        protected volatile bool closing;
         protected volatile bool sending;
         protected volatile bool rxBeginning;
         protected volatile bool rxTransformed;
         protected volatile bool rxTransformReady;
         protected volatile bool txTransformReady;
+#if SESSION_KEEPALIVE
         protected volatile bool hasReceived;
         protected volatile bool hasSent;
-#if CONNECTION_RECOVERY
+#endif
+#if SESSION_HANDOVER
+        protected volatile bool closing;
         protected volatile bool recovered;
 #endif
 
         public object SyncRoot { get { return syncRoot; } }
 
+#if SESSION_KEEPALIVE
         public bool HasReceived
         {
             get { return hasReceived; }
@@ -67,6 +70,7 @@ namespace x2.Links.SocketLink
             get { return hasSent; }
             set { hasSent = value; }
         }
+#endif
 
         public SocketLink Link { get { return link; } }
 
@@ -83,7 +87,7 @@ namespace x2.Links.SocketLink
         /// </summary>
         public bool Polarity { get; set; }
 
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
         public string Token { get; set; }
         public x2.Flows.Timer.Token TimeoutToken;
 #endif
@@ -129,9 +133,9 @@ namespace x2.Links.SocketLink
                 {
                     return;
                 }
-
+#if SESSION_HANDOVER
                 closing = true;
-
+#endif
                 CloseInternal();
             }
 
@@ -199,8 +203,9 @@ namespace x2.Links.SocketLink
 
         protected void ReceiveInternal(int bytesTransferred)
         {
+#if SESSION_KEEPALIVE
             hasReceived = true;
-
+#endif
             Diag.AddBytesReceived(bytesTransferred);
 
             Log.Trace("{0} {1} received {2} byte(s)",
@@ -370,12 +375,12 @@ namespace x2.Links.SocketLink
                 }
             }
 
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
             if (Status.Closing)
             {
 #endif
                 link.OnDisconnect(this);
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
             }
             else
             {
@@ -395,11 +400,12 @@ namespace x2.Links.SocketLink
 
         private void BeginSend(Event e)
         {
+#if SESSION_KEEPALIVE
             if (e.GetTypeId() != (int)SocketLinkEventType.KeepaliveEvent)
             {
                 hasSent = true;
             }
-
+#endif
             e.Serialize(sendBuffer);
 
             uint header = 0;
@@ -439,8 +445,6 @@ namespace x2.Links.SocketLink
         {
             switch (e.GetTypeId())
             {
-                case (int)SocketLinkEventType.KeepaliveEvent:
-                    break;
                 case (int)SocketLinkEventType.HandshakeReq:
                     {
                         var req = (HandshakeReq)e;
@@ -491,7 +495,11 @@ namespace x2.Links.SocketLink
                         });
                     }
                     break;
-#if CONNECTION_RECOVERY
+#if SESSION_KEEPALIVE
+                case (int)SocketLinkEventType.KeepaliveEvent:
+                    break;
+#endif
+#if SESSION_HANDOVER
                 case (int)SocketLinkEventType.SessionReq:
                     {
                         if (Polarity == false)
@@ -517,7 +525,7 @@ namespace x2.Links.SocketLink
             }
         }
 
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
         public void HandOver(SocketLinkSession oldSession)
         {
             lock (syncRoot)

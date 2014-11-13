@@ -29,7 +29,10 @@ namespace x2
             names = new HashSet<string>();
         }
 
-        public Link(string name)
+        /// <summary>
+        /// Initializes a new instance of the Link class.
+        /// </summary>
+        protected Link(string name)
         {
             lock (names)
             {
@@ -60,7 +63,7 @@ namespace x2
         {
             Bind(new LinkSessionConnected { LinkName = Name }, OnLinkSessionConnected);
             Bind(new LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
             Bind(new LinkSessionRecovered { LinkName = Name }, OnLinkSessionRecovered);
 #endif
         }
@@ -77,7 +80,7 @@ namespace x2
 
         protected virtual void OnSessionDisconnected(LinkSessionDisconnected e) { }
 
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
         protected virtual void OnSessionRecovered(LinkSessionRecovered e) { }
 #endif
 
@@ -91,7 +94,7 @@ namespace x2
             OnSessionDisconnected(e);
         }
 
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
         private void OnLinkSessionRecovered(LinkSessionRecovered e)
         {
             OnSessionRecovered(e);

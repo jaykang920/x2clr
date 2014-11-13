@@ -320,7 +320,7 @@ namespace x2.Events
         }
     }
 
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
     public sealed class LinkSessionRecovered : Event
     {
         new private static readonly Tag tag;

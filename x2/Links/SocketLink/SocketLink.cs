@@ -25,10 +25,6 @@ namespace x2.Links.SocketLink
         /// </summary>
         protected object syncRoot = new Object();
 
-        protected bool incomingKeepaliveEnabled;
-        protected int maxSuccessiveFailureCount;
-        protected bool outgoingKeepaliveEnabled;
-
         /// <summary>
         /// Gets or sets a value that indicates whether the client sockets are
         /// not to use the Nagle algorithm.
@@ -40,40 +36,31 @@ namespace x2.Links.SocketLink
         /// </summary>
         public Socket Socket { get { return socket; } }
 
+#if SESSION_KEEPALIVE
         /// <summary>
         /// Gets or sets whether to check incomming keepalive events.
         /// </summary>
-        public bool IncomingKeepaliveEnabled
-        {
-            get { return incomingKeepaliveEnabled; }
-            set { incomingKeepaliveEnabled = value; }
-        }
+        public bool IncomingKeepaliveEnabled { get; set; }
         /// <summary>
         /// Gets or sets the maximum number of successive keepalive failure to
         /// tolerate before forced close.
         /// </summary>
-        public int MaxSuccessiveFailureCount
-        {
-            get { return maxSuccessiveFailureCount; }
-            set { maxSuccessiveFailureCount = value; }
-        }
+        public int MaxSuccessiveFailureCount { get; set; }
         /// <summary>
         /// Gets or sets whether to emit outgoing keepalive events.
         /// </summary>
-        public bool OutgoingKeepaliveEnabled
-        {
-            get { return outgoingKeepaliveEnabled; }
-            set { outgoingKeepaliveEnabled = value; }
-        }
+        public bool OutgoingKeepaliveEnabled { get; set; }
+#endif
 
         static SocketLink()
         {
-            Event.Register<KeepaliveEvent>();
-
             Event.Register<HandshakeReq>();
             Event.Register<HandshakeResp>();
             Event.Register<HandshakeAck>();
-#if CONNECTION_RECOVERY
+#if SESSION_KEEPALIVE
+            Event.Register<KeepaliveEvent>();
+#endif
+#if SESSION_HANDOVER
             Event.Register<SessionReq>();
             Event.Register<SessionResp>();
 #endif
@@ -103,12 +90,13 @@ namespace x2.Links.SocketLink
         protected override void SetUp()
         {
             base.SetUp();
-
+#if SESSION_KEEPALIVE
             Flow.SubscribeTo(Name);
 
             var e = new KeepaliveTick { _Channel = Name, LinkName = Name };
             Bind(e, OnKeepaliveTickEvent);
             TimeFlow.Default.ReserveRepetition(e, new TimeSpan(0, 0, 5));
+#endif
         }
 
         /// <summary>
@@ -116,12 +104,13 @@ namespace x2.Links.SocketLink
         /// </summary>
         protected override void TearDown()
         {
+#if SESSION_KEEPALIVE
             var e = new KeepaliveTick { _Channel = Name, LinkName = Name };
             TimeFlow.Default.CancelRepetition(e);
             Unbind(e, OnKeepaliveTickEvent);
 
             Flow.UnsubscribeFrom(Name);
-
+#endif
             base.TearDown();
         }
 
@@ -157,6 +146,7 @@ namespace x2.Links.SocketLink
             }
         }
 
+#if SESSION_KEEPALIVE
         protected abstract void OnKeepaliveTick();
 
         protected bool Keepalive(SocketLinkSession session)
@@ -171,7 +161,7 @@ namespace x2.Links.SocketLink
                 }
             }
 
-            if (incomingKeepaliveEnabled)
+            if (IncomingKeepaliveEnabled)
             {
                 if (session.HasReceived)
                 {
@@ -180,7 +170,7 @@ namespace x2.Links.SocketLink
                 }
                 else
                 {
-                    if (session.IncrementFailureCount() > maxSuccessiveFailureCount)
+                    if (session.IncrementFailureCount() > MaxSuccessiveFailureCount)
                     {
                         Log.Error("{0} {1} closed due to the keepalive failure",
                             Name, session.Handle);
@@ -191,7 +181,7 @@ namespace x2.Links.SocketLink
                 }
             }
 
-            if (outgoingKeepaliveEnabled)
+            if (OutgoingKeepaliveEnabled)
             {
                 if (session.HasSent)
                 {
@@ -212,5 +202,6 @@ namespace x2.Links.SocketLink
         {
             OnKeepaliveTick();
         }
+#endif
     }
 }

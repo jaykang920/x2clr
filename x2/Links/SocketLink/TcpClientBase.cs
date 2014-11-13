@@ -18,7 +18,7 @@ namespace x2.Links.SocketLink
     public abstract class TcpClientBase : SocketLink
     {
         protected volatile SocketLinkSession session;  // current link session
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
         protected SocketLinkSession tempSession;  // temporary link session
 #endif
 
@@ -125,7 +125,7 @@ namespace x2.Links.SocketLink
             }
         }
 
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
         public void SendSessionReq(SocketLinkSession session)
         {
             string sessionToken = null;
@@ -196,6 +196,7 @@ namespace x2.Links.SocketLink
             base.OnDisconnect(session);
         }
 
+#if SESSION_KEEPALIVE
         protected override void OnKeepaliveTick()
         {
             lock (syncRoot)
@@ -211,6 +212,7 @@ namespace x2.Links.SocketLink
                 Close();
             }
         }
+#endif
 
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
@@ -270,7 +272,7 @@ namespace x2.Links.SocketLink
 
             session.Polarity = true;
 
-#if CONNECTION_RECOVERY
+#if SESSION_HANDOVER
             tempSession = session;
 
             SendSessionReq(session);
