@@ -61,6 +61,8 @@ namespace x2.Yields
             Flow.Unbind(timeoutToken);
             Flow.Unbind(handlerToken);
 
+            Log.Error("WaitForSingleEvent timeout for {0}", handlerToken.key);
+
             coroutine.Context = null;  // indicates timeout
             coroutine.Continue();
         }
