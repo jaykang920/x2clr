@@ -14,8 +14,6 @@ namespace x2
     /// The buffer length is limited to a multiple of a power of 2.
     public class Buffer
     {
-        private static readonly BlockPool blockPool = new BlockPool();
-
         private readonly List<byte[]> blocks;
         private readonly int blockSizeExponent;
         private readonly int remainderMask;
@@ -81,7 +79,7 @@ namespace x2
             this.blockSizeExponent = blockSizeExponent;
             remainderMask = ~(~0 << blockSizeExponent);
 
-            blocks.Add(blockPool.Acquire(blockSizeExponent));
+            blocks.Add(BufferPool.Acquire(blockSizeExponent));
 
             currentBlockIndex = 0;
             currentBlock = blocks[currentBlockIndex];
@@ -252,7 +250,7 @@ namespace x2
         {
             if ((Capacity - back) < BlockSize)
             {
-                blocks.Add(blockPool.Acquire(blockSizeExponent));
+                blocks.Add(BufferPool.Acquire(blockSizeExponent));
             }
             int backIndex = back >> blockSizeExponent;
             int backOffset = back & remainderMask;
@@ -581,7 +579,7 @@ namespace x2
                 blocks.RemoveRange(index, count);
                 for (int i = 0; i < blocksToRemove.Count; ++i)
                 {
-                    blockPool.Release(blockSizeExponent, blocksToRemove[i]);
+                    BufferPool.Release(blockSizeExponent, blocksToRemove[i]);
                 }
             }
             Position = front;
@@ -928,7 +926,7 @@ namespace x2
             int required = position + numBytes;
             while (required >= Capacity)
             {
-                blocks.Add(blockPool.Acquire(blockSizeExponent));
+                blocks.Add(BufferPool.Acquire(blockSizeExponent));
             }
             if (required > back)
             {
@@ -965,40 +963,10 @@ namespace x2
             }
             for (int i = 0, count = blocks.Count; i < count; ++i)
             {
-                blockPool.Release(blockSizeExponent, blocks[i]);
+                BufferPool.Release(blockSizeExponent, blocks[i]);
             }
             blocks.Clear();
             currentBlock = null;
-        }
-
-        class BlockPool
-        {
-            private const int poolCapacity = 10000;
-
-            private readonly Pool<byte[]>[] pools = new Pool<byte[]>[32];
-
-            internal BlockPool()
-            {
-                for (int i = 0; i < 32; ++i)
-                {
-                    pools[i] = new Pool<byte[]>(poolCapacity);
-                }
-            }
-
-            public byte[] Acquire(int blockSizeExponent)
-            {
-                byte[] block = pools[blockSizeExponent].Pop();
-                if (block == null)
-                {
-                    block = new byte[1 << blockSizeExponent];
-                }
-                return block;
-            }
-
-            public void Release(int blockSizeExponent, byte[] block)
-            {
-                pools[blockSizeExponent].Push(block);
-            }
         }
     }
 }
