@@ -20,6 +20,8 @@ namespace x2
             Code = seed;
         }
 
+        #region Overloaded static Update for primitive types
+
         public static int Update(int seed, bool value)
         {
             return ((seed << 5) + seed) ^ (value ? 2 : 1);
@@ -95,10 +97,18 @@ namespace x2
             return Update(seed, value.Ticks);
         }
 
+        #endregion
+
+        #region Overloaded static Update for composite types
+
         public static int Update<T>(int seed, T value) where T : class
         {
             return ((seed << 5) + seed) ^ (value != null ? value.GetHashCode() : 0);
         }
+
+        #endregion
+
+        #region Overloaded Update for primitive types
 
         public void Update(bool value)
         {
@@ -170,9 +180,15 @@ namespace x2
             Code = Update(Code, value);
         }
 
+        #endregion
+
+        #region Overloaded Update for composite types
+
         public void Update<T>(T value) where T : class
         {
             Code = Update(Code, value);
         }
+
+        #endregion
     }
 }

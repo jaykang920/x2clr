@@ -41,21 +41,28 @@ namespace x2
             get { return (front == back); }
         }
 
-        public int Length
+        public long Length
         {
-            get { return (back - front); }
+            get { return (long)(back - front); }
         }
 
-        public int Position
+        public long Position
         {
-            get { return position; }
+            get
+            {
+                return (long)(position - front);
+                //return position;
+            }
             set
             {
-                if (value < front || back < value)
+                int v = (int)value;
+                v += front;
+
+                if (v < front || back < v)
                 {
                     throw new IndexOutOfRangeException();
                 }
-                position = value;
+                position = v;
                 int blockIndex = position >> blockSizeExponent;
                 if ((blockIndex != 0) && ((position & remainderMask) == 0))
                 {
@@ -264,7 +271,7 @@ namespace x2
 
         public void Read(out bool value)
         {
-            value = (ReadByte() != 0);
+            value = (ReadByte() > 0);
         }
 
         public void Read(out sbyte value)
@@ -274,7 +281,7 @@ namespace x2
 
         public void Read(out byte value)
         {
-            value = ReadByte();
+            value = (byte)ReadByte();
         }
 
         public void Read(out byte[] value)
@@ -285,6 +292,13 @@ namespace x2
             value = new byte[length];
             CopyTo(value, position, length);
             Position = position + length;
+        }
+
+        public void Read(byte[] buffer, int offset, int count)
+        {
+            CheckLengthToRead(count);
+            CopyTo(buffer, position, count);
+            Position = position + count;
         }
 
         public void Read(out short value)
@@ -431,11 +445,13 @@ namespace x2
             value = unixEpoch.AddTicks(usecs * 10);
         }
 
+        /*
         public byte ReadByte()
         {
             CheckLengthToRead(1);
             return GetByte();
         }
+        */
 
         /// <summary>
         /// Decodes variable-length 32-bit non-negative integer from this buffer.
@@ -524,7 +540,7 @@ namespace x2
         public byte[] ToArray()
         {
             byte[] array = new byte[Length];
-            CopyTo(array, front, Length);
+            CopyTo(array, front, (int)Length);
             return array;
         }
 
@@ -967,6 +983,26 @@ namespace x2
             }
             blocks.Clear();
             currentBlock = null;
+        }
+
+        // As a Stream mock
+        public int ReadByte()
+        {
+            try
+            {
+                CheckLengthToRead(1);
+            }
+            catch
+            {
+                return -1;
+            }
+            return (int)GetByte();
+        }
+
+        public void WriteByte(byte value)
+        {
+            EnsureCapacityToWrite(1);
+            PutByte(value);
         }
     }
 }

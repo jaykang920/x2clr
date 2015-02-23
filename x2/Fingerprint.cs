@@ -275,6 +275,75 @@ namespace x2
             }
         }
 
+        // [SERIALIZER] test
+        public void Deserialize(Serializer serializer)
+        {
+            int length;
+            serializer.ReadVariableNonnegative(out length);
+            int lengthInBytes = ((length - 1) >> 3) + 1;
+            int lengthInBlocks = ((lengthInBytes - 1) >> 2) + 1;
+            int effectiveBytes = LengthInBytes;
+
+            int count = 0;
+            block = 0;
+            for (int i = 0; (i < 4) && (count < lengthInBytes); ++i, ++count)
+            {
+                byte b;
+                serializer.Read(out b);
+                if (count < effectiveBytes)
+                {
+                    block |= ((int)b << (i << 3));
+                }
+            }
+            for (int i = 0; i < lengthInBlocks; ++i)
+            {
+                int word = 0;
+                for (int j = 0; (j < 4) && (count < lengthInBytes); ++j, ++count)
+                {
+                    byte b;
+                    serializer.Read(out b);
+                    if (count < effectiveBytes)
+                    {
+                        word |= ((int)b << (j << 3));
+                    }
+                }
+                if (blocks != null && i < blocks.Length)
+                {
+                    blocks[i] = word;
+                }
+            }
+        }
+
+        public int GetEncodedLength()
+        {
+            return Serializer.GetEncodedLengthVariableNonnegative(length)
+                + LengthInBytes;
+        }
+
+        public void Serialize(Serializer serializer)
+        {
+            serializer.WriteVariableNonnegative(length);
+            int lengthInBytes = LengthInBytes;
+
+            int count = 0;
+            for (int i = 0; (i < 4) && (count < lengthInBytes); ++i, ++count)
+            {
+                serializer.Write((byte)(block >> (i << 3)));
+            }
+            if (blocks == null)
+            {
+                return;
+            }
+            for (int i = 0; i < blocks.Length; ++i)
+            {
+                for (int j = 0; (j < 4) && (count < lengthInBytes); ++j, ++count)
+                {
+                    serializer.Write((byte)(blocks[i] >> (j << 3)));
+                }
+            }
+        }
+        // [SERIALIZER] test
+
         #region Accessors/indexer
 
         /// <summary>

@@ -31,8 +31,8 @@ namespace x2.Tests
             buffer.Write(text);
             buffer.Shrink(1);
 
-            cipher1.Transform(buffer, buffer.Length);
-            cipher2.InverseTransform(buffer, buffer.Length);
+            cipher1.Transform(buffer, (int)buffer.Length);
+            cipher2.InverseTransform(buffer, (int)buffer.Length);
 
             buffer.Rewind();
 

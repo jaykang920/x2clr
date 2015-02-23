@@ -96,7 +96,7 @@ namespace x2
     public static class BufferPool
     {
         private const int maxSizeExponent = 28;  // 256M
-        private const int minSizeExponent = 4;   // 16
+        private const int minSizeExponent = 1;   // 2
 
         private static readonly Pool<byte[]>[] pools;
         private static readonly int maxPoolSizeExponent = 0;

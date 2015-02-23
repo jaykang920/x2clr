@@ -31,7 +31,7 @@ namespace x2.Transforms
 
         public int Transform(Buffer buffer, int length)
         {
-            for (int i = buffer.Length - length; i < buffer.Length; ++i)
+            for (int i = (int)buffer.Length - length; i < buffer.Length; ++i)
             {
                 buffer[i] = (byte)~buffer[i];
             }

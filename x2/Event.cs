@@ -109,12 +109,12 @@ namespace x2
 
         public static void Register(Assembly assembly)
         {
-            Type eventType = typeof(Event);
+            var eventType = typeof(Event);
             var types = assembly.GetTypes();
             for (int i = 0, count = types.Length; i < count; ++i)
             {
                 var type = types[i];
-                if (eventType.IsAssignableFrom(type))
+                if (type.IsSubclassOf(eventType))
                 {
                     Register(type);
                 }
@@ -273,6 +273,49 @@ namespace x2
         {
             base.Dump(buffer);
         }
+
+        // [SERIALIZER] test
+        public override void Deserialize(Serializer serializer)
+        {
+            base.Deserialize(serializer);
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = Serializer.GetEncodedLength(tag.TypeId);
+            length += base.GetEncodedLength();
+            return length;
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+        }
+        public static Event Create(Serializer serializer)
+        {
+            int typeId;
+            serializer.Read(out typeId);
+            return Create(typeId);
+        }
+        /// <summary>
+        /// Dumps this Event object through the specified serializer.
+        /// </summary>
+        public override void Dump(Serializer serializer)
+        {
+            serializer.Write(tag.TypeId);
+            Serialize(serializer);
+        }
+        public static Event Load(Serializer serializer)
+        {
+            Event result = Event.Create(serializer);
+            if (!Object.ReferenceEquals(result, null))
+            {
+                result.Deserialize(serializer);
+            }
+            return result;
+        }
+        // [SERIALIZER] test
+
 
         #region Convenience methods
 

@@ -58,6 +58,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Serializer.Write.cs" />
+    <Compile Include="Serializer.GetEncodedLength.cs" />
+    <Compile Include="Serializer.Read.cs" />
+    <Compile Include="Serializer.cs" />
     <Compile Include="BufferTransform.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Coroutine.cs" />
@@ -130,7 +134,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Serializers\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

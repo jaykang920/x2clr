@@ -411,13 +411,13 @@ namespace x2.Links.SocketLink
             uint header = 0;
             if (BufferTransform != null && txTransformReady && e._Transform)
             {
-                BufferTransform.Transform(sendBuffer, sendBuffer.Length);
+                BufferTransform.Transform(sendBuffer, (int)sendBuffer.Length);
                 header = 1;
             }
             header |= ((uint)sendBuffer.Length << 1);
 
             int headerLength = Buffer.WriteVariable(headerBytes, header);
-            lengthToSend = sendBuffer.Length + headerLength;
+            lengthToSend = (int)sendBuffer.Length + headerLength;
 
             sendBufferList.Clear();
             sendBufferList.Add(new ArraySegment<byte>(headerBytes, 0, headerLength));

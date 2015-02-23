@@ -203,6 +203,48 @@ namespace x2
             fingerprint.Dump(buffer);
         }
 
+        // [SERIALIZER] test
+        public virtual void Deserialize(Serializer serializer)
+        {
+            fingerprint.Deserialize(serializer);
+        }
+
+        public virtual int GetEncodedLength()
+        {
+            return fingerprint.GetEncodedLength();
+        }
+
+        public virtual void Serialize(Serializer serializer)
+        {
+            fingerprint.Serialize(serializer);
+        }
+
+        /// <summary>
+        /// Dumps this Cell object through the specified serializer.
+        /// </summary>
+        public virtual void Dump(Serializer serializer)
+        {
+            Serialize(serializer);
+        }
+        public static void Load<T>(Serializer serializer, out T value) where T : Cell, new()
+        {
+            var type = typeof(T);
+            var eventType = typeof(Event);
+            if (type.IsSubclassOf(eventType) || type == eventType)
+            {
+                value = Event.Create(serializer) as T;
+            }
+            else
+            {
+                value = new T();
+            }
+            if (!Object.ReferenceEquals(value, null))
+            {
+                value.Deserialize(serializer);
+            }
+        }
+        // [SERIALIZER] test
+
         #region Operators
 
         public static bool operator ==(Cell x, Cell y)
