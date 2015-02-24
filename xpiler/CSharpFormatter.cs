@@ -481,6 +481,23 @@ namespace xpiler
                 }
             }
             Indent(1); Out.WriteLine("}");
+
+            // [SERIALIZER] test
+            Indent(1); Out.WriteLine("public override void Deserialize(Serializer serializer)");
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("base.Deserialize(serializer);");
+            if (def.HasProperties)
+            {
+                Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
+                foreach (var property in def.Properties)
+                {
+                    Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
+                    Indent(2); Out.WriteLine("{");
+                    Indent(3); Out.WriteLine("serializer.Read(out {0});", property.NativeName);
+                    Indent(2); Out.WriteLine("}");
+                }
+            }
+            Indent(1); Out.WriteLine("}");
         }
 
         private void FormatSerialize(CellDef def)
@@ -515,6 +532,42 @@ namespace xpiler
                     Indent(2); Out.WriteLine("}");
                 }
             }
+            Indent(1); Out.WriteLine("}");
+
+            // [SERIALIZER] test
+            Out.WriteLine();
+            Indent(1); Out.WriteLine("public override void Serialize(Serializer serializer)");
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("base.Serialize(serializer);");
+            if (def.HasProperties)
+            {
+                Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
+                foreach (var property in def.Properties)
+                {
+                    Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
+                    Indent(2); Out.WriteLine("{");
+                    Indent(3); Out.WriteLine("serializer.Write({0});", property.NativeName);
+                    Indent(2); Out.WriteLine("}");
+                }
+            }
+            Indent(1); Out.WriteLine("}");
+
+            Out.WriteLine();
+            Indent(1); Out.WriteLine("public override int GetEncodedLength()");
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("int length = base.GetEncodedLength();");
+            if (def.HasProperties)
+            {
+                Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
+                foreach (var property in def.Properties)
+                {
+                    Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
+                    Indent(2); Out.WriteLine("{");
+                    Indent(3); Out.WriteLine("length += Serializer.GetEncodedLength({0});", property.NativeName);
+                    Indent(2); Out.WriteLine("}");
+                }
+            }
+            Indent(2); Out.WriteLine("return length;");
             Indent(1); Out.WriteLine("}");
         }
 

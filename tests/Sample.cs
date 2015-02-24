@@ -162,6 +162,19 @@ namespace x2.Tests
                 buffer.Read(out bar_);
             }
         }
+        public override void Deserialize(Serializer serializer)
+        {
+            base.Deserialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Read(out foo_);
+            }
+            if (touched[1])
+            {
+                serializer.Read(out bar_);
+            }
+        }
 
         protected override void Dump(x2.Buffer buffer)
         {
@@ -175,6 +188,35 @@ namespace x2.Tests
             {
                 buffer.Write(bar_);
             }
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(foo_);
+            }
+            if (touched[1])
+            {
+                serializer.Write(bar_);
+            }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(foo_);
+            }
+            if (touched[1])
+            {
+                length += Serializer.GetEncodedLength(bar_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -285,6 +327,15 @@ namespace x2.Tests
                 buffer.Read(out baz_);
             }
         }
+        public override void Deserialize(Serializer serializer)
+        {
+            base.Deserialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Read(out baz_);
+            }
+        }
 
         protected override void Dump(x2.Buffer buffer)
         {
@@ -294,6 +345,27 @@ namespace x2.Tests
             {
                 buffer.Write(baz_);
             }
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(baz_);
+            }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(baz_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -402,6 +474,15 @@ namespace x2.Tests
                 buffer.Read(out qux_);
             }
         }
+        public override void Deserialize(Serializer serializer)
+        {
+            base.Deserialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Read(out qux_);
+            }
+        }
 
         protected override void Dump(x2.Buffer buffer)
         {
@@ -411,6 +492,27 @@ namespace x2.Tests
             {
                 buffer.Write(qux_);
             }
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(qux_);
+            }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(qux_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -519,6 +621,15 @@ namespace x2.Tests
                 buffer.Read(out quux_);
             }
         }
+        public override void Deserialize(Serializer serializer)
+        {
+            base.Deserialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Read(out quux_);
+            }
+        }
 
         protected override void Dump(x2.Buffer buffer)
         {
@@ -528,6 +639,27 @@ namespace x2.Tests
             {
                 buffer.Write(quux_);
             }
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(quux_);
+            }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(quux_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -679,6 +811,19 @@ namespace x2.Tests
                 buffer.Read(out bar_);
             }
         }
+        public override void Deserialize(Serializer serializer)
+        {
+            base.Deserialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Read(out foo_);
+            }
+            if (touched[1])
+            {
+                serializer.Read(out bar_);
+            }
+        }
 
         public override void Serialize(x2.Buffer buffer)
         {
@@ -698,6 +843,35 @@ namespace x2.Tests
             {
                 buffer.Write(bar_);
             }
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(foo_);
+            }
+            if (touched[1])
+            {
+                serializer.Write(bar_);
+            }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(foo_);
+            }
+            if (touched[1])
+            {
+                length += Serializer.GetEncodedLength(bar_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -821,6 +995,15 @@ namespace x2.Tests
                 buffer.Read(out baz_);
             }
         }
+        public override void Deserialize(Serializer serializer)
+        {
+            base.Deserialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Read(out baz_);
+            }
+        }
 
         public override void Serialize(x2.Buffer buffer)
         {
@@ -836,6 +1019,27 @@ namespace x2.Tests
             {
                 buffer.Write(baz_);
             }
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(baz_);
+            }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(baz_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -957,6 +1161,15 @@ namespace x2.Tests
                 buffer.Read(out qux_);
             }
         }
+        public override void Deserialize(Serializer serializer)
+        {
+            base.Deserialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Read(out qux_);
+            }
+        }
 
         public override void Serialize(x2.Buffer buffer)
         {
@@ -972,6 +1185,27 @@ namespace x2.Tests
             {
                 buffer.Write(qux_);
             }
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(qux_);
+            }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(qux_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -1093,6 +1327,15 @@ namespace x2.Tests
                 buffer.Read(out quux_);
             }
         }
+        public override void Deserialize(Serializer serializer)
+        {
+            base.Deserialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Read(out quux_);
+            }
+        }
 
         public override void Serialize(x2.Buffer buffer)
         {
@@ -1108,6 +1351,27 @@ namespace x2.Tests
             {
                 buffer.Write(quux_);
             }
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(quux_);
+            }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(quux_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)

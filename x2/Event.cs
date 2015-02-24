@@ -282,13 +282,14 @@ namespace x2
 
         public override int GetEncodedLength()
         {
-            int length = Serializer.GetEncodedLength(tag.TypeId);
+            int length = Serializer.GetEncodedLength(GetTypeId());
             length += base.GetEncodedLength();
             return length;
         }
 
         public override void Serialize(Serializer serializer)
         {
+            serializer.Write(GetTypeId());
             base.Serialize(serializer);
         }
         public static Event Create(Serializer serializer)
@@ -296,14 +297,6 @@ namespace x2
             int typeId;
             serializer.Read(out typeId);
             return Create(typeId);
-        }
-        /// <summary>
-        /// Dumps this Event object through the specified serializer.
-        /// </summary>
-        public override void Dump(Serializer serializer)
-        {
-            serializer.Write(tag.TypeId);
-            Serialize(serializer);
         }
         public static Event Load(Serializer serializer)
         {

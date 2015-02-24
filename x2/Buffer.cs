@@ -57,7 +57,6 @@ namespace x2
             {
                 int v = (int)value;
                 v += front;
-
                 if (v < front || back < v)
                 {
                     throw new IndexOutOfRangeException();
@@ -196,7 +195,7 @@ namespace x2
                 dstOffset = 0;
                 bytesCopied += bytesToCopy;
             }
-            Position = position + length;
+            Position = Position + length;
         }
 
         private void CopyTo(byte[] buffer, int offset, int length)
@@ -291,14 +290,14 @@ namespace x2
             CheckLengthToRead(length);
             value = new byte[length];
             CopyTo(value, position, length);
-            Position = position + length;
+            Position = Position + length;
         }
 
         public void Read(byte[] buffer, int offset, int count)
         {
             CheckLengthToRead(count);
             CopyTo(buffer, position, count);
-            Position = position + count;
+            Position = Position + count;
         }
 
         public void Read(out short value)
@@ -512,7 +511,7 @@ namespace x2
 
         public void Rewind()
         {
-            Position = front;
+            Position = 0;
         }
 
         public void Shrink(int numBytes)
@@ -524,7 +523,7 @@ namespace x2
             front += numBytes;
             if (position < front)
             {
-                Position = front;
+                Position = 0;
             }
         }
 
@@ -568,7 +567,7 @@ namespace x2
             {
                 if (position < marker)
                 {
-                    Position = marker;
+                    Position = (marker - front);
                 }
                 marker = -1;
             }
@@ -598,7 +597,7 @@ namespace x2
                     BufferPool.Release(blockSizeExponent, blocksToRemove[i]);
                 }
             }
-            Position = front;
+            Position = 0;
         }
 
         public void MarkToRead(int lengthToRead)

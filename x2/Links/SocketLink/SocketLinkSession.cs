@@ -260,6 +260,9 @@ namespace x2.Links.SocketLink
                 }
                 recvBuffer.Rewind();
 
+                Event retrieved = Event.Load(new Serializer(recvBuffer));
+
+                /*
                 int typeId;
                 try
                 {
@@ -274,14 +277,16 @@ namespace x2.Links.SocketLink
                 Log.Trace("{0} {1} retrieved event type id {2}", link.Name, Handle, typeId);
 
                 var retrieved = Event.Create(typeId);
+                */
 
                 if (retrieved == null)
                 {
-                    Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
+                    //Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
                     goto next;
                 }
                 else
                 {
+                    /*
                     try
                     {
                         retrieved.Load(recvBuffer);
@@ -291,6 +296,7 @@ namespace x2.Links.SocketLink
                         Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, typeId, e.ToString());
                         goto next;
                     }
+                    */
 
                     retrieved._Handle = Handle;
 
@@ -406,7 +412,7 @@ namespace x2.Links.SocketLink
                 hasSent = true;
             }
 #endif
-            e.Serialize(sendBuffer);
+            e.Serialize(new Serializer(sendBuffer));
 
             uint header = 0;
             if (BufferTransform != null && txTransformReady && e._Transform)

@@ -4,21 +4,20 @@ using System.IO;
 using NUnit.Framework;
 
 using x2;
-//using x2.Serializers;
 
 namespace x2.Tests
 {
-    /*
     [TestFixture]
     public class SerializerTests
     {
         [Test]
         public void TestFloat32()
         {
-            using (var stream = new MemoryStream())
+            //using (var stream = new MemoryStream())
             {
                 float f;
-                Serializer serializer = new BinarySerializer(stream);
+                Buffer stream = new Buffer(12);
+                Serializer serializer = new Serializer(stream);
 
                 // Boundary value tests
 
@@ -30,7 +29,8 @@ namespace x2.Tests
                 serializer.Write(Single.PositiveInfinity);
                 serializer.Write(Single.NaN);
 
-                stream.Seek(0, SeekOrigin.Begin);
+                stream.Rewind();
+                //stream.Seek(0, SeekOrigin.Begin);
 
                 serializer.Read(out f);
                 Assert.AreEqual(0.0F, f);
@@ -47,14 +47,16 @@ namespace x2.Tests
                 serializer.Read(out f);
                 Assert.AreEqual(Single.NaN, f);
 
-                stream.SetLength(0);
+                stream.Trim();
+                //stream.SetLength(0);
 
                 // Intermediate value tests
 
                 serializer.Write(0.001234F);
                 serializer.Write(8765.4321F);
 
-                stream.Seek(0, SeekOrigin.Begin);
+                stream.Rewind();
+                //stream.Seek(0, SeekOrigin.Begin);
 
                 serializer.Read(out f);
                 Assert.AreEqual(0.001234F, f);
@@ -66,10 +68,11 @@ namespace x2.Tests
         [Test]
         public void TestFloat64()
         {
-            using (var stream = new MemoryStream())
+            //using (var stream = new MemoryStream())
             {
                 double d;
-                Serializer serializer = new BinarySerializer(stream);
+                Buffer stream = new Buffer(12);
+                Serializer serializer = new Serializer(stream);
 
                 // Boundary value tests
 
@@ -81,7 +84,8 @@ namespace x2.Tests
                 serializer.Write(Double.PositiveInfinity);
                 serializer.Write(Double.NaN);
 
-                stream.Seek(0, SeekOrigin.Begin);
+                stream.Rewind();
+                //stream.Seek(0, SeekOrigin.Begin);
 
                 serializer.Read(out d);
                 Assert.AreEqual(0.0, d);
@@ -98,14 +102,16 @@ namespace x2.Tests
                 serializer.Read(out d);
                 Assert.AreEqual(Double.NaN, d);
 
-                stream.SetLength(0);
+                stream.Trim();
+                //stream.SetLength(0);
 
                 // Intermediate value tests
 
                 serializer.Write(0.001234);
                 serializer.Write(8765.4321);
 
-                stream.Seek(0, SeekOrigin.Begin);
+                stream.Rewind();
+                //stream.Seek(0, SeekOrigin.Begin);
 
                 serializer.Read(out d);
                 Assert.AreEqual(0.001234, d);
@@ -117,10 +123,11 @@ namespace x2.Tests
         [Test]
         public void TestVariableLengthInt32()
         {
-            using (var stream = new MemoryStream())
+            //using (var stream = new MemoryStream())
             {
                 int i, bytes;
-                Serializer serializer = new BinarySerializer(stream);
+                Buffer stream = new Buffer(12);
+                Serializer serializer = new Serializer(stream);
 
                 // Boundary value tests
 
@@ -129,7 +136,8 @@ namespace x2.Tests
                 serializer.Write(Int32.MaxValue);
                 serializer.Write(Int32.MinValue);
 
-                stream.Seek(0, SeekOrigin.Begin);
+                stream.Rewind();
+                //stream.Seek(0, SeekOrigin.Begin);
 
                 bytes = serializer.Read(out i);
                 Assert.AreEqual(1, bytes);
@@ -147,7 +155,8 @@ namespace x2.Tests
                 Assert.AreEqual(5, bytes);
                 Assert.AreEqual(Int32.MinValue, i);
 
-                stream.SetLength(0);
+                stream.Trim();
+                //stream.SetLength(0);
 
                 // Intermediate value tests
 
@@ -155,7 +164,8 @@ namespace x2.Tests
                 serializer.Write(0x001fc000 >> 1);  // 3
                 serializer.Write(0x0fe00000 >> 1);  // 4
 
-                stream.Seek(0, SeekOrigin.Begin);
+                stream.Rewind();
+                //stream.Seek(0, SeekOrigin.Begin);
 
                 bytes = serializer.Read(out i);
                 Assert.AreEqual(2, bytes);
@@ -174,10 +184,11 @@ namespace x2.Tests
         [Test]
         public void TestVariableLengthInt64()
         {
-            using (var stream = new MemoryStream())
+            //using (var stream = new MemoryStream())
             {
                 long l, bytes;
-                Serializer serializer = new BinarySerializer(stream);
+                Buffer stream = new Buffer(12);
+                Serializer serializer = new Serializer(stream);
 
                 // Boundary value tests
 
@@ -186,7 +197,8 @@ namespace x2.Tests
                 serializer.Write(Int64.MaxValue);
                 serializer.Write(Int64.MinValue);
 
-                stream.Seek(0, SeekOrigin.Begin);
+                stream.Rewind();
+                //stream.Seek(0, SeekOrigin.Begin);
 
                 bytes = serializer.Read(out l);
                 Assert.AreEqual(1, bytes);
@@ -204,7 +216,8 @@ namespace x2.Tests
                 Assert.AreEqual(10, bytes);
                 Assert.AreEqual(Int64.MinValue, l);
 
-                stream.SetLength(0);
+                stream.Trim();
+                //stream.SetLength(0);
 
                 // Intermediate value tests
 
@@ -217,7 +230,8 @@ namespace x2.Tests
                 serializer.Write(0x00fe000000000000L >> 1);  // 8
                 serializer.Write(0x7f00000000000000L >> 1);  // 9
 
-                stream.Seek(0, SeekOrigin.Begin);
+                stream.Rewind();
+                //stream.Seek(0, SeekOrigin.Begin);
 
                 bytes = serializer.Read(out l);
                 Assert.AreEqual(2, bytes);
@@ -253,5 +267,4 @@ namespace x2.Tests
             }
         }
     }
-    */
 }

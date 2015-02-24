@@ -229,8 +229,8 @@ namespace x2
             if (stream.Position != marker)
             {
                 stream.Position = marker;
-                marker = markerSaved;
             }
+            marker = markerSaved;
         }
 
         // Read helper methods
