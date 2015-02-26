@@ -301,13 +301,18 @@ namespace x2
         /// </summary>
         public int ReadVariable(out uint value)
         {
+            return ReadVariableInternal(stream, out value);
+        }
+
+        internal static int ReadVariableInternal(Buffer buffer, out uint value)
+        {
             // Unsigned LEB128 decoding
             value = 0U;
             int i, shift = 0;
             for (i = 0; i < 5; ++i)
             {
-                CheckLengthToRead(1);
-                byte b = (byte)stream.ReadByte();
+                buffer.CheckLengthToRead(1);
+                byte b = (byte)buffer.ReadByte();
                 value |= (((uint)b & 0x7fU) << shift);
                 if ((b & 0x80) == 0)
                 {
@@ -351,6 +356,14 @@ namespace x2
             if (unsigned > Int32.MaxValue) { throw new OverflowException(); }
             value = (int)unsigned;
             return result;
+        }
+    }
+
+    public static class SerializerReadExtensions
+    {
+        public static int ReadVariable(this Buffer self, out uint value)
+        {
+            return Serializer.ReadVariableInternal(self, out value);
         }
     }
 }

@@ -155,20 +155,6 @@ namespace x2
         }
 
         /// <summary>
-        /// Loads the instance members of this object from the specified Buffer.
-        /// </summary>
-        /// <param name="buffer">The buffer to read from.</param>
-        public virtual void Load(Buffer buffer)
-        {
-            fingerprint.Load(buffer);
-        }
-
-        public virtual void Serialize(Buffer buffer)
-        {
-            this.Dump(buffer);
-        }
-
-        /// <summary>
         /// Returns a string that describes the current object.
         /// </summary>
         public override string ToString()
@@ -191,16 +177,6 @@ namespace x2
         protected virtual void Describe(StringBuilder stringBuilder)
         {
             return;
-        }
-
-        /// <summary>
-        /// Serializes the instance members of this object into the specified 
-        /// Buffer.
-        /// </summary>
-        /// <param name="buffer">The buffer to write to.</param>
-        protected virtual void Dump(Buffer buffer)
-        {
-            fingerprint.Dump(buffer);
         }
 
         // [SERIALIZER] test

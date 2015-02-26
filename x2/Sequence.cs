@@ -98,30 +98,6 @@ namespace x2
             return GetEnumerator();
         }
 
-        public override void Load(Buffer buffer)
-        {
-            int count;
-            buffer.ReadVariable(out count);
-
-            for (int i = 0; i < count; ++i)
-            {
-                T item = new T();
-                ((Cell)item).Load(buffer);
-                store.Add(item);
-            }
-        }
-
-        protected override void Dump(Buffer buffer)
-        {
-            int numItems = (int)store.Count;
-            buffer.WriteVariable(numItems);
-
-            for (int i = 0, count = store.Count; i < count; ++i)
-            {
-                ((Cell)store[i]).Serialize(buffer);
-            }
-        }
-
         protected override void Describe(StringBuilder stringBuilder)
         {
             Type itemType = typeof(T);

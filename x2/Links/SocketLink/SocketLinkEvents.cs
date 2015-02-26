@@ -148,30 +148,37 @@ namespace x2.Links.SocketLink
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
+        public override void Deserialize(Serializer serializer)
         {
-            base.Load(buffer);
+            base.Deserialize(serializer);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out data_);
+                serializer.Read(out data_);
             }
         }
 
-        public override void Serialize(x2.Buffer buffer)
-        {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
-        }
 
-        protected override void Dump(x2.Buffer buffer)
+
+        public override void Serialize(Serializer serializer)
         {
-            base.Dump(buffer);
+            base.Serialize(serializer);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(data_);
+                serializer.Write(data_);
             }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(data_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -284,30 +291,37 @@ namespace x2.Links.SocketLink
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
+        public override void Deserialize(Serializer serializer)
         {
-            base.Load(buffer);
+            base.Deserialize(serializer);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out data_);
+                serializer.Read(out data_);
             }
         }
 
-        public override void Serialize(x2.Buffer buffer)
-        {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
-        }
 
-        protected override void Dump(x2.Buffer buffer)
+
+        public override void Serialize(Serializer serializer)
         {
-            base.Dump(buffer);
+            base.Serialize(serializer);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(data_);
+                serializer.Write(data_);
             }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(data_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -420,30 +434,37 @@ namespace x2.Links.SocketLink
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
+        public override void Deserialize(Serializer serializer)
         {
-            base.Load(buffer);
+            base.Deserialize(serializer);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out result_);
+                serializer.Read(out result_);
             }
         }
 
-        public override void Serialize(x2.Buffer buffer)
-        {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
-        }
 
-        protected override void Dump(x2.Buffer buffer)
+
+        public override void Serialize(Serializer serializer)
         {
-            base.Dump(buffer);
+            base.Serialize(serializer);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(result_);
+                serializer.Write(result_);
             }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(result_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -521,20 +542,22 @@ namespace x2.Links.SocketLink
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
+        public override void Deserialize(Serializer serializer)
         {
-            base.Load(buffer);
+            base.Deserialize(serializer);
         }
 
-        public override void Serialize(x2.Buffer buffer)
+
+
+        public override void Serialize(Serializer serializer)
         {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
+            base.Serialize(serializer);
         }
 
-        protected override void Dump(x2.Buffer buffer)
+        public override int GetEncodedLength()
         {
-            base.Dump(buffer);
+            int length = base.GetEncodedLength();
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -645,30 +668,37 @@ namespace x2.Links.SocketLink
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
+        public override void Deserialize(Serializer serializer)
         {
-            base.Load(buffer);
+            base.Deserialize(serializer);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out linkName_);
+                serializer.Read(out linkName_);
             }
         }
 
-        public override void Serialize(x2.Buffer buffer)
-        {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
-        }
 
-        protected override void Dump(x2.Buffer buffer)
+
+        public override void Serialize(Serializer serializer)
         {
-            base.Dump(buffer);
+            base.Serialize(serializer);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(linkName_);
+                serializer.Write(linkName_);
             }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(linkName_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -781,30 +811,37 @@ namespace x2.Links.SocketLink
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
+        public override void Deserialize(Serializer serializer)
         {
-            base.Load(buffer);
+            base.Deserialize(serializer);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out value_);
+                serializer.Read(out value_);
             }
         }
 
-        public override void Serialize(x2.Buffer buffer)
-        {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
-        }
 
-        protected override void Dump(x2.Buffer buffer)
+
+        public override void Serialize(Serializer serializer)
         {
-            base.Dump(buffer);
+            base.Serialize(serializer);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(value_);
+                serializer.Write(value_);
             }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(value_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -917,30 +954,37 @@ namespace x2.Links.SocketLink
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
+        public override void Deserialize(Serializer serializer)
         {
-            base.Load(buffer);
+            base.Deserialize(serializer);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Read(out value_);
+                serializer.Read(out value_);
             }
         }
 
-        public override void Serialize(x2.Buffer buffer)
-        {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
-        }
 
-        protected override void Dump(x2.Buffer buffer)
+
+        public override void Serialize(Serializer serializer)
         {
-            base.Dump(buffer);
+            base.Serialize(serializer);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                buffer.Write(value_);
+                serializer.Write(value_);
             }
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(value_);
+            }
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -1018,20 +1062,22 @@ namespace x2.Links.SocketLink
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
+        public override void Deserialize(Serializer serializer)
         {
-            base.Load(buffer);
+            base.Deserialize(serializer);
         }
 
-        public override void Serialize(x2.Buffer buffer)
+
+
+        public override void Serialize(Serializer serializer)
         {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
+            base.Serialize(serializer);
         }
 
-        protected override void Dump(x2.Buffer buffer)
+        public override int GetEncodedLength()
         {
-            base.Dump(buffer);
+            int length = base.GetEncodedLength();
+            return length;
         }
 
         protected override void Describe(StringBuilder stringBuilder)

@@ -117,7 +117,7 @@ namespace xpiler
             nativeTypes.Add("string", "string");
             nativeTypes.Add("datetime", "DateTime");
             nativeTypes.Add("list", "Sequence");
-            //nativeTypes.Add("map", "Mapping");
+            //nativeTypes.Add("map", "Dictionary");
 
             defaultValues = new Dictionary<string, string>();
             defaultValues.Add("bool", "false");
@@ -458,6 +458,7 @@ namespace xpiler
 
         private void FormatLoad(CellDef def)
         {
+            /*
             Indent(1); Out.WriteLine("public override void Load(x2.Buffer buffer)");
             Indent(1); Out.WriteLine("{");
             Indent(2); Out.WriteLine("base.Load(buffer);");
@@ -481,7 +482,7 @@ namespace xpiler
                 }
             }
             Indent(1); Out.WriteLine("}");
-
+            */
             // [SERIALIZER] test
             Indent(1); Out.WriteLine("public override void Deserialize(Serializer serializer)");
             Indent(1); Out.WriteLine("{");
@@ -502,15 +503,18 @@ namespace xpiler
 
         private void FormatSerialize(CellDef def)
         {
+            /*
             Indent(1); Out.WriteLine("public override void Serialize(x2.Buffer buffer)");
             Indent(1); Out.WriteLine("{");
             Indent(2); Out.WriteLine("buffer.Write(tag.TypeId);");
             Indent(2); Out.WriteLine("this.Dump(buffer);");
             Indent(1); Out.WriteLine("}");
+            */
         }
 
         private void FormatDump(CellDef def)
         {
+            /*
             Indent(1); Out.WriteLine("protected override void Dump(x2.Buffer buffer)");
             Indent(1); Out.WriteLine("{");
             Indent(2); Out.WriteLine("base.Dump(buffer);");
@@ -533,7 +537,7 @@ namespace xpiler
                 }
             }
             Indent(1); Out.WriteLine("}");
-
+            */
             // [SERIALIZER] test
             Out.WriteLine();
             Indent(1); Out.WriteLine("public override void Serialize(Serializer serializer)");

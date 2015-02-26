@@ -149,19 +149,6 @@ namespace x2.Tests
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
-        {
-            base.Load(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Read(out foo_);
-            }
-            if (touched[1])
-            {
-                buffer.Read(out bar_);
-            }
-        }
         public override void Deserialize(Serializer serializer)
         {
             base.Deserialize(serializer);
@@ -176,19 +163,6 @@ namespace x2.Tests
             }
         }
 
-        protected override void Dump(x2.Buffer buffer)
-        {
-            base.Dump(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Write(foo_);
-            }
-            if (touched[1])
-            {
-                buffer.Write(bar_);
-            }
-        }
 
         public override void Serialize(Serializer serializer)
         {
@@ -318,15 +292,6 @@ namespace x2.Tests
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
-        {
-            base.Load(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Read(out baz_);
-            }
-        }
         public override void Deserialize(Serializer serializer)
         {
             base.Deserialize(serializer);
@@ -337,15 +302,6 @@ namespace x2.Tests
             }
         }
 
-        protected override void Dump(x2.Buffer buffer)
-        {
-            base.Dump(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Write(baz_);
-            }
-        }
 
         public override void Serialize(Serializer serializer)
         {
@@ -465,15 +421,6 @@ namespace x2.Tests
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
-        {
-            base.Load(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Read(out qux_);
-            }
-        }
         public override void Deserialize(Serializer serializer)
         {
             base.Deserialize(serializer);
@@ -484,15 +431,6 @@ namespace x2.Tests
             }
         }
 
-        protected override void Dump(x2.Buffer buffer)
-        {
-            base.Dump(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Write(qux_);
-            }
-        }
 
         public override void Serialize(Serializer serializer)
         {
@@ -612,15 +550,6 @@ namespace x2.Tests
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
-        {
-            base.Load(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Read(out quux_);
-            }
-        }
         public override void Deserialize(Serializer serializer)
         {
             base.Deserialize(serializer);
@@ -631,15 +560,6 @@ namespace x2.Tests
             }
         }
 
-        protected override void Dump(x2.Buffer buffer)
-        {
-            base.Dump(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Write(quux_);
-            }
-        }
 
         public override void Serialize(Serializer serializer)
         {
@@ -798,19 +718,6 @@ namespace x2.Tests
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
-        {
-            base.Load(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Read(out foo_);
-            }
-            if (touched[1])
-            {
-                buffer.Read(out bar_);
-            }
-        }
         public override void Deserialize(Serializer serializer)
         {
             base.Deserialize(serializer);
@@ -825,25 +732,7 @@ namespace x2.Tests
             }
         }
 
-        public override void Serialize(x2.Buffer buffer)
-        {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
-        }
 
-        protected override void Dump(x2.Buffer buffer)
-        {
-            base.Dump(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Write(foo_);
-            }
-            if (touched[1])
-            {
-                buffer.Write(bar_);
-            }
-        }
 
         public override void Serialize(Serializer serializer)
         {
@@ -986,15 +875,6 @@ namespace x2.Tests
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
-        {
-            base.Load(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Read(out baz_);
-            }
-        }
         public override void Deserialize(Serializer serializer)
         {
             base.Deserialize(serializer);
@@ -1005,21 +885,7 @@ namespace x2.Tests
             }
         }
 
-        public override void Serialize(x2.Buffer buffer)
-        {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
-        }
 
-        protected override void Dump(x2.Buffer buffer)
-        {
-            base.Dump(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Write(baz_);
-            }
-        }
 
         public override void Serialize(Serializer serializer)
         {
@@ -1152,15 +1018,6 @@ namespace x2.Tests
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
-        {
-            base.Load(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Read(out qux_);
-            }
-        }
         public override void Deserialize(Serializer serializer)
         {
             base.Deserialize(serializer);
@@ -1171,21 +1028,7 @@ namespace x2.Tests
             }
         }
 
-        public override void Serialize(x2.Buffer buffer)
-        {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
-        }
 
-        protected override void Dump(x2.Buffer buffer)
-        {
-            base.Dump(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Write(qux_);
-            }
-        }
 
         public override void Serialize(Serializer serializer)
         {
@@ -1318,15 +1161,6 @@ namespace x2.Tests
             return true;
         }
 
-        public override void Load(x2.Buffer buffer)
-        {
-            base.Load(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Read(out quux_);
-            }
-        }
         public override void Deserialize(Serializer serializer)
         {
             base.Deserialize(serializer);
@@ -1337,21 +1171,7 @@ namespace x2.Tests
             }
         }
 
-        public override void Serialize(x2.Buffer buffer)
-        {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
-        }
 
-        protected override void Dump(x2.Buffer buffer)
-        {
-            base.Dump(buffer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                buffer.Write(quux_);
-            }
-        }
 
         public override void Serialize(Serializer serializer)
         {

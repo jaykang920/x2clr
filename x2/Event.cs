@@ -249,31 +249,6 @@ namespace x2
             return false;
         }
 
-        /// <summary>
-        /// Loads the instance members of this object from the specified Buffer.
-        /// </summary>
-        /// <param name="buffer">The buffer to read from.</param>
-        public override void Load(Buffer buffer)
-        {
-            base.Load(buffer);
-        }
-
-        public override void Serialize(Buffer buffer)
-        {
-            buffer.Write(tag.TypeId);
-            this.Dump(buffer);
-        }
-
-        /// <summary>
-        /// Serializes the instance members of this object into the specified 
-        /// Buffer.
-        /// </summary>
-        /// <param name="buffer">The buffer to write to.</param>
-        protected override void Dump(Buffer buffer)
-        {
-            base.Dump(buffer);
-        }
-
         // [SERIALIZER] test
         public override void Deserialize(Serializer serializer)
         {

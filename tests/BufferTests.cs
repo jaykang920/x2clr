@@ -9,6 +9,7 @@ namespace x2.Tests
     [TestFixture]
     public class BufferTests
     {
+        /*
         [Test]
         public void TestByteArray()
         {
@@ -276,5 +277,6 @@ namespace x2.Tests
             Assert.AreEqual(9, bytes);
             Assert.AreEqual(0x7f00000000000000L >> 1, l);
         }
+        */
     }
 }

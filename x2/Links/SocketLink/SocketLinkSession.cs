@@ -215,7 +215,7 @@ namespace x2.Links.SocketLink
 
             if (rxBeginning)
             {
-                recvBuffer.Rewind();
+                recvBuffer.Position = 0;
                 uint header;
                 int headerLength;
                 try
@@ -258,7 +258,7 @@ namespace x2.Links.SocketLink
                         goto next;
                     }
                 }
-                recvBuffer.Rewind();
+                recvBuffer.Position = 0;
 
                 Event retrieved = Event.Load(new Serializer(recvBuffer));
 
@@ -422,7 +422,7 @@ namespace x2.Links.SocketLink
             }
             header |= ((uint)sendBuffer.Length << 1);
 
-            int headerLength = Buffer.WriteVariable(headerBytes, header);
+            int headerLength = Serializer.WriteVariable(headerBytes, header);
             lengthToSend = (int)sendBuffer.Length + headerLength;
 
             sendBufferList.Clear();

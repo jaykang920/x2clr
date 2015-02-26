@@ -217,64 +217,6 @@ namespace x2
             return true;
         }
 
-        public void Dump(Buffer buffer)
-        {
-            buffer.WriteVariable(length);
-            int lengthInBytes = LengthInBytes;
-
-            int count = 0;
-            for (int i = 0; (i < 4) && (count < lengthInBytes); ++i, ++count)
-            {
-                buffer.Write((byte)(block >> (i << 3)));
-            }
-            if (blocks == null)
-            {
-                return;
-            }
-            for (int i = 0; i < blocks.Length; ++i)
-            {
-                for (int j = 0; (j < 4) && (count < lengthInBytes); ++j, ++count)
-                {
-                    buffer.Write((byte)(blocks[i] >> (j << 3)));
-                }
-            }
-        }
-
-        public void Load(Buffer buffer)
-        {
-            int length;
-            buffer.ReadVariable(out length);
-            int lengthInBytes = ((length - 1) >> 3) + 1;
-            int effectiveBytes = LengthInBytes;
-
-            int count = 0;
-            block = 0;
-            for (int i = 0; (i < 4) && (count < lengthInBytes); ++i, ++count)
-            {
-                int mask = (int)buffer.ReadByte();
-                if (count < effectiveBytes)
-                {
-                    block |= (mask << (i << 3));
-                }
-            }
-            if (blocks == null)
-            {
-                return;
-            }
-            for (int i = 0; i < blocks.Length; ++i)
-            {
-                blocks[i] = 0;
-                for (int j = 0; (j < 4) && (count < lengthInBytes); ++j, ++count)
-                {
-                    int mask = (int)buffer.ReadByte();
-                    if (count < effectiveBytes)
-                    {
-                        blocks[i] |= (mask << (j << 3));
-                    }
-                }
-            }
-        }
-
         // [SERIALIZER] test
         public void Deserialize(Serializer serializer)
         {

@@ -236,6 +236,22 @@ namespace x2
             } while (value != 0);
         }
 
+        public static int WriteVariable(byte[] buffer, uint value)
+        {
+            int i = 0;
+            do
+            {
+                byte b = (byte)(value & 0x7f);
+                value >>= 7;
+                if (value != 0)
+                {
+                    b |= 0x80;
+                }
+                buffer[i++] = b;
+            } while (value != 0);
+            return i;
+        }
+
         /// <summary>
         /// Encodes a 64-bit unsigned integer into the underlying stream,
         /// with unsigned LEB128 encoding.

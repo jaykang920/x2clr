@@ -104,6 +104,7 @@ namespace x2
             CleanUp();
         }
 
+        /*
         /// <summary>
         /// Encodes a variable-length 32-bit non-negative integer into the given
         /// buffer, and returns the number of resultant bytes.
@@ -180,6 +181,7 @@ namespace x2
             buffer[4] = (byte)((value >> 28) & 0x0f);
             return 5;
         }
+        */
 
         public void CopyFrom(byte[] buffer, int offset, int length)
         {
@@ -268,6 +270,7 @@ namespace x2
             }
         }
 
+        /*
         public void Read(out bool value)
         {
             value = (ReadByte() > 0);
@@ -292,6 +295,7 @@ namespace x2
             CopyTo(value, position, length);
             Position = Position + length;
         }
+        */
 
         public void Read(byte[] buffer, int offset, int count)
         {
@@ -300,6 +304,7 @@ namespace x2
             Position = Position + count;
         }
 
+        /*
         public void Read(out short value)
         {
             CheckLengthToRead(2);
@@ -444,13 +449,11 @@ namespace x2
             value = unixEpoch.AddTicks(usecs * 10);
         }
 
-        /*
         public byte ReadByte()
         {
             CheckLengthToRead(1);
             return GetByte();
         }
-        */
 
         /// <summary>
         /// Decodes variable-length 32-bit non-negative integer from this buffer.
@@ -508,6 +511,7 @@ namespace x2
             }
             return (i < 10 ? (i + 1) : 10);
         }
+        */
 
         public void Rewind()
         {
@@ -609,6 +613,7 @@ namespace x2
             marker = front + lengthToRead;
         }
 
+        /*
         public void Write(bool value)
         {
             EnsureCapacityToWrite(1);
@@ -632,13 +637,15 @@ namespace x2
         {
             Write(value, value.GetLowerBound(0), value.Length);
         }
+        */
 
         public void Write(byte[] value, int offset, int count)
         {
-            WriteVariable(count);
+            //WriteVariable(count);
             CopyFrom(value, offset, count);
         }
 
+        /*
         public void Write(short value)
         {
             EnsureCapacityToWrite(2);
@@ -924,8 +931,9 @@ namespace x2
             PutByte((byte)((value >> 56) | 0x80));
             PutByte((byte)((value >> 63) & 0x01));
         }
+        */
 
-        private void CheckLengthToRead(int numBytes)
+        public void CheckLengthToRead(int numBytes)
         {
             int limit = (marker >= 0 ? marker : back);
             if ((position + numBytes) > limit)
@@ -936,7 +944,7 @@ namespace x2
             }
         }
 
-        private void EnsureCapacityToWrite(int numBytes)
+        public void EnsureCapacityToWrite(int numBytes)
         {
             int required = position + numBytes;
             while (required >= Capacity)

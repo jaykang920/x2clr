@@ -58,6 +58,8 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChunkedMemoryStream.cs" />
+    <Compile Include="Sequence.cs" />
     <Compile Include="Serializer.Write.cs" />
     <Compile Include="Serializer.GetEncodedLength.cs" />
     <Compile Include="Serializer.Read.cs" />
@@ -89,8 +91,6 @@
     <Compile Include="Links\SocketLink\TcpServerBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping.cs" />
-    <Compile Include="Sequence.cs" />
     <Compile Include="Transforms\Cipher.cs" />
     <Compile Include="Transforms\Inverse.cs" />
     <Compile Include="Util\Capo.cs" />
