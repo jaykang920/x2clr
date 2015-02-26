@@ -217,7 +217,6 @@ namespace x2
             return true;
         }
 
-        // [SERIALIZER] test
         public void Deserialize(Serializer serializer)
         {
             int length;
@@ -284,7 +283,6 @@ namespace x2
                 }
             }
         }
-        // [SERIALIZER] test
 
         #region Accessors/indexer
 

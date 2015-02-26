@@ -179,7 +179,6 @@ namespace x2
             return;
         }
 
-        // [SERIALIZER] test
         public virtual void Deserialize(Serializer serializer)
         {
             fingerprint.Deserialize(serializer);
@@ -195,13 +194,6 @@ namespace x2
             fingerprint.Serialize(serializer);
         }
 
-        /// <summary>
-        /// Dumps this Cell object through the specified serializer.
-        /// </summary>
-        public virtual void Dump(Serializer serializer)
-        {
-            Serialize(serializer);
-        }
         public static void Load<T>(Serializer serializer, out T value) where T : Cell, new()
         {
             var type = typeof(T);
@@ -219,7 +211,6 @@ namespace x2
                 value.Deserialize(serializer);
             }
         }
-        // [SERIALIZER] test
 
         #region Operators
 

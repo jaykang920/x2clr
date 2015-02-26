@@ -156,7 +156,7 @@ namespace x2
             WriteVariableNonnegative(length);
             if (!isNull)
             {
-                value.Dump(this);
+                value.Serialize(this);
             }
         }
 

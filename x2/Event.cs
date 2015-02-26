@@ -249,7 +249,6 @@ namespace x2
             return false;
         }
 
-        // [SERIALIZER] test
         public override void Deserialize(Serializer serializer)
         {
             base.Deserialize(serializer);
@@ -282,8 +281,6 @@ namespace x2
             }
             return result;
         }
-        // [SERIALIZER] test
-
 
         #region Convenience methods
 

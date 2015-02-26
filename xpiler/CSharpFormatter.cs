@@ -281,14 +281,9 @@ namespace xpiler
             Out.WriteLine();
             FormatIsEquivalent(def);
             Out.WriteLine();
-            FormatLoad(def);
-            if (def.IsEvent)
-            {
-                Out.WriteLine();
-                FormatSerialize(def);
-            }
+            FormatDeserialize(def);
             Out.WriteLine();
-            FormatDump(def);
+            FormatSerialize(def);
             Out.WriteLine();
             FormatDescribe(def);
             Out.WriteLine();
@@ -456,34 +451,8 @@ namespace xpiler
             Indent(1); Out.WriteLine("}");
         }
 
-        private void FormatLoad(CellDef def)
+        private void FormatDeserialize(CellDef def)
         {
-            /*
-            Indent(1); Out.WriteLine("public override void Load(x2.Buffer buffer)");
-            Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("base.Load(buffer);");
-            if (def.HasProperties)
-            {
-                Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
-                foreach (var property in def.Properties)
-                {
-                    Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
-                    Indent(2); Out.WriteLine("{");
-                    if (Types.IsPrimitive(property.TypeSpec.Type))
-                    {
-                        Indent(3); Out.WriteLine("buffer.Read(out {0});", property.NativeName);
-                    }
-                    else
-                    {
-                        Indent(3); Out.WriteLine("if ({0} == null) {{ {0} = new {1}(); }}", property.Name, property.NativeType);
-                        Indent(3); Out.WriteLine("{0}.Load(buffer);", property.NativeName);
-                    }
-                    Indent(2); Out.WriteLine("}");
-                }
-            }
-            Indent(1); Out.WriteLine("}");
-            */
-            // [SERIALIZER] test
             Indent(1); Out.WriteLine("public override void Deserialize(Serializer serializer)");
             Indent(1); Out.WriteLine("{");
             Indent(2); Out.WriteLine("base.Deserialize(serializer);");
@@ -503,43 +472,6 @@ namespace xpiler
 
         private void FormatSerialize(CellDef def)
         {
-            /*
-            Indent(1); Out.WriteLine("public override void Serialize(x2.Buffer buffer)");
-            Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("buffer.Write(tag.TypeId);");
-            Indent(2); Out.WriteLine("this.Dump(buffer);");
-            Indent(1); Out.WriteLine("}");
-            */
-        }
-
-        private void FormatDump(CellDef def)
-        {
-            /*
-            Indent(1); Out.WriteLine("protected override void Dump(x2.Buffer buffer)");
-            Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("base.Dump(buffer);");
-            if (def.HasProperties)
-            {
-                Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
-                foreach (var property in def.Properties)
-                {
-                    Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
-                    Indent(2); Out.WriteLine("{");
-                    if (Types.IsPrimitive(property.TypeSpec.Type))
-                    {
-                        Indent(3); Out.WriteLine("buffer.Write({0});", property.NativeName);
-                    }
-                    else
-                    {
-                        Indent(3); Out.WriteLine("{0}.Serialize(buffer);", property.NativeName);
-                    }
-                    Indent(2); Out.WriteLine("}");
-                }
-            }
-            Indent(1); Out.WriteLine("}");
-            */
-            // [SERIALIZER] test
-            Out.WriteLine();
             Indent(1); Out.WriteLine("public override void Serialize(Serializer serializer)");
             Indent(1); Out.WriteLine("{");
             Indent(2); Out.WriteLine("base.Serialize(serializer);");
