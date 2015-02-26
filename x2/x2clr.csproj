@@ -58,6 +58,9 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Sequence.cs" />
     <Compile Include="Serializer.Write.cs" />
     <Compile Include="Serializer.GetEncodedLength.cs" />
