@@ -58,7 +58,6 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChunkedMemoryStream.cs" />
     <Compile Include="Sequence.cs" />
     <Compile Include="Serializer.Write.cs" />
     <Compile Include="Serializer.GetEncodedLength.cs" />
