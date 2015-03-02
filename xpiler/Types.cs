@@ -31,6 +31,7 @@ namespace xpiler
 
     class TypeProperty
     {
+        public bool IsCollection { get; set; }
         public bool IsPrimitive { get; set; }
         public bool DetailRequired { get; set; }
     }
@@ -102,11 +103,13 @@ namespace xpiler
             // Collection types
             types.Add("list", new TypeProperty
             {
+                IsCollection = true,
                 IsPrimitive = false,
                 DetailRequired = true
             });
             types.Add("map", new TypeProperty
             {
+                IsCollection = true,
                 IsPrimitive = false,
                 DetailRequired = true
             });
@@ -115,6 +118,13 @@ namespace xpiler
         public static bool IsBuiltin(string type)
         {
             return types.ContainsKey(type);
+        }
+
+        public static bool IsCollection(string type)
+        {
+            TypeProperty typeProperty;
+            return (types.TryGetValue(type, out typeProperty) ?
+                typeProperty.IsCollection : false);
         }
 
         public static bool IsPrimitive(string type)

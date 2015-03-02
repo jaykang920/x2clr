@@ -196,7 +196,7 @@ namespace x2
         /// Decodes an ordered list of Cell-derived objects out of the
         /// underlying stream.
         /// </summary>
-        public void Read<T>(out IList<T> value) where T : Cell, new()
+        public void Read<T>(out List<T> value) where T : Cell, new()
         {
             int count;
             ReadVariableNonnegative(out count);

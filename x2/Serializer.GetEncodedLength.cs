@@ -120,7 +120,7 @@ namespace x2
         /// Gets the number of bytes required to encode the specified ordered
         /// list of Cell-derived objects.
         /// </summary>
-        public static int GetEncodedLength<T>(IList<T> value) where T : Cell
+        public static int GetEncodedLength<T>(List<T> value) where T : Cell
         {
             int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
             int length = GetEncodedLengthVariableNonnegative(count);

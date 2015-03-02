@@ -136,7 +136,7 @@ namespace x2
         /// Encodes an ordered list of Cell-derived objects into the underlying
         /// stream.
         /// </summary>
-        public void Write<T>(IList<T> value) where T : Cell
+        public void Write<T>(List<T> value) where T : Cell
         {
             int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
             WriteVariableNonnegative(count);
