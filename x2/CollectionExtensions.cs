@@ -11,22 +11,22 @@ namespace x2
     {
         public static bool EqualsExtended<T>(this IList<T> self, IList<T> other)
         {
-            if (Object.ReferenceEquals(self, null) && Object.ReferenceEquals(other, null))
+            if (Object.ReferenceEquals(self, other))
             {
                 return true;
             }
-            if (Object.ReferenceEquals(self, null) || Object.ReferenceEquals(other, null))
+            if ((object)self == null || (object)other == null)
             {
                 return false;
             }
-
-            if (self.Count != other.Count)
+            int count = self.Count;
+            if (count != other.Count)
             {
                 return false;
             }
-            for (int i = 0, count = self.Count; i < count; ++i)
+            for (int i = 0; i < count; ++i)
             {
-                if (!self[i].Equals(other[i]))
+                if (!EqualityComparer<T>.Default.Equals(self[i], other[i]))
                 {
                     return false;
                 }

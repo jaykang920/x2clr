@@ -97,6 +97,8 @@
     <Compile Include="Transforms\Inverse.cs" />
     <Compile Include="Util\Capo.cs" />
     <Compile Include="Util\Getopt.cs" />
+    <Compile Include="Util\Hash.Update.cs" />
+    <Compile Include="Util\Hash.StaticUpdate.cs" />
     <Compile Include="Util\Hash.cs" />
     <Compile Include="Util\Log.cs" />
     <Compile Include="Util\Pool.cs" />
