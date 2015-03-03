@@ -232,7 +232,7 @@ namespace x2.Samples.Capitalizer
 
             using (var flows = new Hub.Flows())
             {
-                flows.Start();
+                flows.StartUp();
 
                 while (true)
                 {
@@ -242,6 +242,8 @@ namespace x2.Samples.Capitalizer
                         break;
                     }
                 }
+
+                flows.ShutDown();
             }
         }
     }
