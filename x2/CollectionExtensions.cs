@@ -53,6 +53,14 @@ namespace x2
             return self.EqualsExtended(other);
         }
 
+        public static void Resize<T>(this IList<T> self, int size)
+        {
+            while (self.Count < size)
+            {
+                self.Add(default(T));
+            }
+        }
+
         public static string ToStringExtended<T>(this IList<T> self)
         {
             if (Object.ReferenceEquals(self, null))
