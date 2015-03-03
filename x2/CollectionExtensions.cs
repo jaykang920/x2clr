@@ -26,7 +26,21 @@ namespace x2
             }
             for (int i = 0; i < count; ++i)
             {
-                if (!EqualityComparer<T>.Default.Equals(self[i], other[i]))
+                if (typeof(T).IsSubclassOf(typeof(Cell)))
+                {
+                    if (!Object.ReferenceEquals(self[i], other[i]))
+                    {
+                        if ((object)self[i] == null || (object)other[i] == null)
+                        {
+                            return false;
+                        }
+                        if (!self[i].Equals(other[i]))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else if (!EqualityComparer<T>.Default.Equals(self[i], other[i]))
                 {
                     return false;
                 }

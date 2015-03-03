@@ -73,10 +73,12 @@ namespace x2
             {
                 return false;
             }
+            /*
             if (!fingerprint.Equals(other.fingerprint))
             {
                 return false;
             }
+            */
             return true;
         }
 

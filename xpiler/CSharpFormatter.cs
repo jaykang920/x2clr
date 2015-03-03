@@ -360,14 +360,14 @@ namespace xpiler
                 Indent(2); Out.WriteLine("{0} o = ({0})other;", def.Name);
                 foreach (var property in def.Properties)
                 {
-                    //if (Types.IsPrimitive(property.TypeSpec.Type))
-                    //{
+                    if (Types.IsCollection(property.TypeSpec.Type))
+                    {
+                        Indent(2); Out.WriteLine("if (!CollectionExtensions.EqualsExtended({0}, o.{0}))", property.NativeName);
+                    }
+                    else
+                    {
                         Indent(2); Out.WriteLine("if ({0} != o.{0})", property.NativeName);
-                    //}
-                    //else
-                    //{
-                    //    Indent(2); Out.WriteLine("if (!{0}.Equals(o.{0}))", property.NativeName);
-                    //}
+                    }
                     Indent(2); Out.WriteLine("{");
                     Indent(3); Out.WriteLine("return false;");
                     Indent(2); Out.WriteLine("}");
