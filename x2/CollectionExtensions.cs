@@ -78,7 +78,9 @@ namespace x2
                     stringBuilder.Append(',');
                 }
                 stringBuilder.Append(' ');
-                stringBuilder.Append(self[i].ToString());
+                T element = self[i];
+                stringBuilder.Append((object)element == null ?
+                    "null" : self[i].ToString());
             }
             stringBuilder.Append(" ]");
 

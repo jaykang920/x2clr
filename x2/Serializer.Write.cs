@@ -18,7 +18,8 @@ namespace x2
         /// </summary>
         public void Write(bool value)
         {
-            stream.WriteByte((byte)(value ? 1 : 0));
+            buffer.EnsureCapacityToWrite(1);
+            buffer.PutByte((byte)(value ? 1 : 0));
         }
 
         /// <summary>
@@ -26,7 +27,8 @@ namespace x2
         /// </summary>
         public void Write(byte value)
         {
-            stream.WriteByte(value);
+            buffer.EnsureCapacityToWrite(1);
+            buffer.PutByte(value);
         }
 
         /// <summary>
@@ -34,7 +36,8 @@ namespace x2
         /// </summary>
         public void Write(sbyte value)
         {
-            stream.WriteByte((byte)value);
+            buffer.EnsureCapacityToWrite(1);
+            buffer.PutByte((byte)value);
         }
 
         /// <summary>
@@ -42,8 +45,9 @@ namespace x2
         /// </summary>
         public void Write(short value)
         {
-            stream.WriteByte((byte)(value >> 8));
-            stream.WriteByte((byte)value);
+            buffer.EnsureCapacityToWrite(2);
+            buffer.PutByte((byte)(value >> 8));
+            buffer.PutByte((byte)value);
         }
 
         /// <summary>
@@ -88,25 +92,27 @@ namespace x2
         public void Write(string value)
         {
             // UTF-8 encoding
-            WriteVariableNonnegative(GetEncodedLengthUTF8(value));
+            int length = GetEncodedLengthUTF8(value);
+            WriteVariableNonnegative(length);
+            buffer.EnsureCapacityToWrite(length);
             for (int i = 0, count = value.Length; i < count; ++i)
             {
                 var c = value[i];
 
                 if ((c & 0xff80) == 0)
                 {
-                    stream.WriteByte((byte)c);
+                    buffer.PutByte((byte)c);
                 }
                 else if ((c & 0xf800) != 0)
                 {
-                    stream.WriteByte((byte)(0xe0 | ((c >> 12) & 0x0f)));
-                    stream.WriteByte((byte)(0x80 | ((c >> 6) & 0x3f)));
-                    stream.WriteByte((byte)(0x80 | ((c >> 0) & 0x3f)));
+                    buffer.PutByte((byte)(0xe0 | ((c >> 12) & 0x0f)));
+                    buffer.PutByte((byte)(0x80 | ((c >> 6) & 0x3f)));
+                    buffer.PutByte((byte)(0x80 | ((c >> 0) & 0x3f)));
                 }
                 else
                 {
-                    stream.WriteByte((byte)(0xc0 | ((c >> 6) & 0x1f)));
-                    stream.WriteByte((byte)(0x80 | ((c >> 0) & 0x3f)));
+                    buffer.PutByte((byte)(0xc0 | ((c >> 6) & 0x1f)));
+                    buffer.PutByte((byte)(0x80 | ((c >> 0) & 0x3f)));
                 }
             }
         }
@@ -129,7 +135,7 @@ namespace x2
         {
             int length = Object.ReferenceEquals(value, null) ? 0 : value.Length;
             WriteVariableNonnegative(length);
-            stream.Write(value, 0, length);
+            buffer.Write(value, 0, length);
         }
 
         /// <summary>
@@ -182,10 +188,11 @@ namespace x2
         /// </summary>
         private void WriteFixedBigEndian(int value)
         {
-            stream.WriteByte((byte)(value >> 24));
-            stream.WriteByte((byte)(value >> 16));
-            stream.WriteByte((byte)(value >> 8));
-            stream.WriteByte((byte)value);
+            buffer.EnsureCapacityToWrite(4);
+            buffer.PutByte((byte)(value >> 24));
+            buffer.PutByte((byte)(value >> 16));
+            buffer.PutByte((byte)(value >> 8));
+            buffer.PutByte((byte)value);
         }
 
         /// <summary>
@@ -194,14 +201,15 @@ namespace x2
         /// </summary>
         private void WriteFixedBigEndian(long value)
         {
-            stream.WriteByte((byte)(value >> 56));
-            stream.WriteByte((byte)(value >> 48));
-            stream.WriteByte((byte)(value >> 40));
-            stream.WriteByte((byte)(value >> 32));
-            stream.WriteByte((byte)(value >> 24));
-            stream.WriteByte((byte)(value >> 16));
-            stream.WriteByte((byte)(value >> 8));
-            stream.WriteByte((byte)value);
+            buffer.EnsureCapacityToWrite(8);
+            buffer.PutByte((byte)(value >> 56));
+            buffer.PutByte((byte)(value >> 48));
+            buffer.PutByte((byte)(value >> 40));
+            buffer.PutByte((byte)(value >> 32));
+            buffer.PutByte((byte)(value >> 24));
+            buffer.PutByte((byte)(value >> 16));
+            buffer.PutByte((byte)(value >> 8));
+            buffer.PutByte((byte)value);
         }
 
         /// <summary>
@@ -210,10 +218,11 @@ namespace x2
         /// </summary>
         private void WriteFixedLittleEndian(int value)
         {
-            stream.WriteByte((byte)value);
-            stream.WriteByte((byte)(value >> 8));
-            stream.WriteByte((byte)(value >> 16));
-            stream.WriteByte((byte)(value >> 24));
+            buffer.EnsureCapacityToWrite(4);
+            buffer.PutByte((byte)value);
+            buffer.PutByte((byte)(value >> 8));
+            buffer.PutByte((byte)(value >> 16));
+            buffer.PutByte((byte)(value >> 24));
         }
 
         /// <summary>
@@ -222,14 +231,15 @@ namespace x2
         /// </summary>
         private void WriteFixedLittleEndian(long value)
         {
-            stream.WriteByte((byte)value);
-            stream.WriteByte((byte)(value >> 8));
-            stream.WriteByte((byte)(value >> 16));
-            stream.WriteByte((byte)(value >> 24));
-            stream.WriteByte((byte)(value >> 32));
-            stream.WriteByte((byte)(value >> 40));
-            stream.WriteByte((byte)(value >> 48));
-            stream.WriteByte((byte)(value >> 56));
+            buffer.EnsureCapacityToWrite(8);
+            buffer.PutByte((byte)value);
+            buffer.PutByte((byte)(value >> 8));
+            buffer.PutByte((byte)(value >> 16));
+            buffer.PutByte((byte)(value >> 24));
+            buffer.PutByte((byte)(value >> 32));
+            buffer.PutByte((byte)(value >> 40));
+            buffer.PutByte((byte)(value >> 48));
+            buffer.PutByte((byte)(value >> 56));
         }
 
         /// <summary>
@@ -240,13 +250,14 @@ namespace x2
         {
             do
             {
+                buffer.EnsureCapacityToWrite(1);
                 byte b = (byte)(value & 0x7f);
                 value >>= 7;
                 if (value != 0)
                 {
                     b |= 0x80;
                 }
-                stream.WriteByte(b);
+                buffer.PutByte(b);
             } while (value != 0);
         }
 
@@ -274,13 +285,14 @@ namespace x2
         {
             do
             {
+                buffer.EnsureCapacityToWrite(1);
                 byte b = (byte)(value & 0x7f);
                 value >>= 7;
                 if (value != 0)
                 {
                     b |= 0x80;
                 }
-                stream.WriteByte(b);
+                buffer.PutByte(b);
             } while (value != 0);
         }
 

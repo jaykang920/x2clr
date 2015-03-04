@@ -327,13 +327,13 @@ namespace x2
             }
         }
 
-        private byte GetByte()
+        public byte GetByte()
         {
             BlockFeed();
             return currentBlock[position++ & remainderMask];
         }
 
-        private void PutByte(byte value)
+        public void PutByte(byte value)
         {
             BlockFeed();
             currentBlock[position++ & remainderMask] = value;
@@ -360,26 +360,6 @@ namespace x2
             }
             blocks.Clear();
             currentBlock = null;
-        }
-
-        // As a Stream mock
-        public int ReadByte()
-        {
-            try
-            {
-                CheckLengthToRead(1);
-            }
-            catch
-            {
-                return -1;
-            }
-            return (int)GetByte();
-        }
-
-        public void WriteByte(byte value)
-        {
-            EnsureCapacityToWrite(1);
-            PutByte(value);
         }
     }
 }

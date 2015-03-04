@@ -13,37 +13,17 @@ namespace x2
     /// </summary>
     public sealed partial class Serializer
     {
-        private Buffer stream;
-        //private Stream stream;
+        private Buffer buffer;
         private long marker;
-
-        /// <summary>
-        /// Gets or sets the read boundary marker for deserialization.
-        /// </summary>
-        public long Marker
-        {
-            get { return marker; }
-            set { marker = value; }
-        }
 
         /// <summary>
         /// Initializes a new Serializer object that works on the specified
         /// stream.
         /// </summary>
-        public Serializer(Buffer stream)
-        //public Serializer(Stream stream)
+        public Serializer(Buffer buffer)
         {
-            this.stream = stream;
+            this.buffer = buffer;
             marker = -1L;
-        }
-
-        private void CheckLengthToRead(int length)
-        {
-            long limit = marker < 0 ? stream.Length : marker;
-            if ((stream.Position + length) > limit)
-            {
-                throw new EndOfStreamException();
-            }
         }
     }
 }

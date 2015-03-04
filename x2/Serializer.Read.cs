@@ -18,8 +18,8 @@ namespace x2
         /// </summary>
         public void Read(out bool value)
         {
-            CheckLengthToRead(1);
-            value = (stream.ReadByte() != 0);
+            buffer.CheckLengthToRead(1);
+            value = (buffer.GetByte() != 0);
         }
 
         /// <summary>
@@ -27,8 +27,8 @@ namespace x2
         /// </summary>
         public void Read(out byte value)
         {
-            CheckLengthToRead(1);
-            value = (byte)stream.ReadByte();
+            buffer.CheckLengthToRead(1);
+            value = buffer.GetByte();
         }
 
         /// <summary>
@@ -36,8 +36,8 @@ namespace x2
         /// </summary>
         public void Read(out sbyte value)
         {
-            CheckLengthToRead(1);
-            value = (sbyte)stream.ReadByte();
+            buffer.CheckLengthToRead(1);
+            value = (sbyte)buffer.GetByte();
         }
 
         /// <summary>
@@ -45,9 +45,9 @@ namespace x2
         /// </summary>
         public void Read(out short value)
         {
-            CheckLengthToRead(2);
-            value = (short)stream.ReadByte();
-            value = (short)((value << 8) | stream.ReadByte());
+            buffer.CheckLengthToRead(2);
+            value = (short)buffer.GetByte();
+            value = (short)((value << 8) | buffer.GetByte());
         }
 
         /// <summary>
@@ -107,13 +107,13 @@ namespace x2
                 value = String.Empty;
                 return;
             }
-            CheckLengthToRead(length);
+            buffer.CheckLengthToRead(length);
             char c, c2, c3;
             int bytesRead = 0;
             var stringBuilder = new StringBuilder(length);
             while (bytesRead < length)
             {
-                c = (char)stream.ReadByte();
+                c = (char)buffer.GetByte();
                 switch (c >> 4)
                 {
                     case 0:
@@ -136,7 +136,7 @@ namespace x2
                         {
                             throw new Exception("Invalid UTF-8 stream");
                         }
-                        c2 = (char)stream.ReadByte();
+                        c2 = (char)buffer.GetByte();
                         if ((c2 & 0xc0) != 0x80)
                         {
                             throw new Exception("Invalid UTF-8 stream");
@@ -150,8 +150,8 @@ namespace x2
                         {
                             throw new Exception("Invalid UTF-8 stream");
                         }
-                        c2 = (char)stream.ReadByte();
-                        c3 = (char)stream.ReadByte();
+                        c2 = (char)buffer.GetByte();
+                        c3 = (char)buffer.GetByte();
                         if (((c2 & 0xc0) != 0x80) || ((c3 & 0xc0) != 0x80))
                         {
                             throw new Exception("Invalid UTF-8 stream");
@@ -187,9 +187,9 @@ namespace x2
         {
             int length;
             ReadVariableNonnegative(out length);
-            CheckLengthToRead(length);
+            buffer.CheckLengthToRead(length);
             value = new byte[length];
-            stream.Read(value, 0, length);
+            buffer.Read(value, 0, length);
         }
 
         /// <summary>
@@ -236,15 +236,15 @@ namespace x2
             if (length == 0) { return; }
 
             long markerSaved = marker;
-            marker = stream.Position + length;
+            marker = buffer.Position + length;
 
             // try
             Cell.Load(this, out value);
             // catch
 
-            if (stream.Position != marker)
+            if (buffer.Position != marker)
             {
-                stream.Position = marker;
+                buffer.Position = marker;
             }
             marker = markerSaved;
         }
@@ -257,11 +257,11 @@ namespace x2
         /// </summary>
         private void ReadFixedBigEndian(out int value)
         {
-            CheckLengthToRead(4);
-            value = stream.ReadByte();
-            value = (value << 8) | stream.ReadByte();
-            value = (value << 8) | stream.ReadByte();
-            value = (value << 8) | stream.ReadByte();
+            buffer.CheckLengthToRead(4);
+            value = buffer.GetByte();
+            value = (value << 8) | buffer.GetByte();
+            value = (value << 8) | buffer.GetByte();
+            value = (value << 8) | buffer.GetByte();
         }
 
         /// <summary>
@@ -270,15 +270,15 @@ namespace x2
         /// </summary>
         private void ReadFixedBigEndian(out long value)
         {
-            CheckLengthToRead(8);
-            value = stream.ReadByte();
-            value = (value << 8) | (byte)stream.ReadByte();
-            value = (value << 8) | (byte)stream.ReadByte();
-            value = (value << 8) | (byte)stream.ReadByte();
-            value = (value << 8) | (byte)stream.ReadByte();
-            value = (value << 8) | (byte)stream.ReadByte();
-            value = (value << 8) | (byte)stream.ReadByte();
-            value = (value << 8) | (byte)stream.ReadByte();
+            buffer.CheckLengthToRead(8);
+            value = buffer.GetByte();
+            value = (value << 8) | buffer.GetByte();
+            value = (value << 8) | buffer.GetByte();
+            value = (value << 8) | buffer.GetByte();
+            value = (value << 8) | buffer.GetByte();
+            value = (value << 8) | buffer.GetByte();
+            value = (value << 8) | buffer.GetByte();
+            value = (value << 8) | buffer.GetByte();
         }
 
         /// <summary>
@@ -287,11 +287,11 @@ namespace x2
         /// </summary>
         private void ReadFixedLittleEndian(out int value)
         {
-            CheckLengthToRead(4);
-            value = stream.ReadByte();
-            value |= stream.ReadByte() << 8;
-            value |= stream.ReadByte() << 16;
-            value |= stream.ReadByte() << 24;
+            buffer.CheckLengthToRead(4);
+            value = (int)buffer.GetByte();
+            value |= (int)buffer.GetByte() << 8;
+            value |= (int)buffer.GetByte() << 16;
+            value |= (int)buffer.GetByte() << 24;
         }
 
         /// <summary>
@@ -300,15 +300,15 @@ namespace x2
         /// </summary>
         private void ReadFixedLittleEndian(out long value)
         {
-            CheckLengthToRead(8);
-            value = stream.ReadByte();
-            value |= (long)stream.ReadByte() << 8;
-            value |= (long)stream.ReadByte() << 16;
-            value |= (long)stream.ReadByte() << 24;
-            value |= (long)stream.ReadByte() << 32;
-            value |= (long)stream.ReadByte() << 40;
-            value |= (long)stream.ReadByte() << 48;
-            value |= (long)stream.ReadByte() << 56;
+            buffer.CheckLengthToRead(8);
+            value = buffer.GetByte();
+            value |= (long)buffer.GetByte() << 8;
+            value |= (long)buffer.GetByte() << 16;
+            value |= (long)buffer.GetByte() << 24;
+            value |= (long)buffer.GetByte() << 32;
+            value |= (long)buffer.GetByte() << 40;
+            value |= (long)buffer.GetByte() << 48;
+            value |= (long)buffer.GetByte() << 56;
         }
 
         /// <summary>
@@ -317,7 +317,7 @@ namespace x2
         /// </summary>
         public int ReadVariable(out uint value)
         {
-            return ReadVariableInternal(stream, out value);
+            return ReadVariableInternal(buffer, out value);
         }
 
         internal static int ReadVariableInternal(Buffer buffer, out uint value)
@@ -328,7 +328,7 @@ namespace x2
             for (i = 0; i < 5; ++i)
             {
                 buffer.CheckLengthToRead(1);
-                byte b = (byte)buffer.ReadByte();
+                byte b = buffer.GetByte();
                 value |= (((uint)b & 0x7fU) << shift);
                 if ((b & 0x80) == 0)
                 {
@@ -350,8 +350,8 @@ namespace x2
             int i, shift = 0;
             for (i = 0; i < 10; ++i)
             {
-                CheckLengthToRead(1);
-                byte b = (byte)stream.ReadByte();
+                buffer.CheckLengthToRead(1);
+                byte b = buffer.GetByte();
                 value |= (((ulong)b & 0x7fU) << shift);
                 if ((b & 0x80) == 0)
                 {
