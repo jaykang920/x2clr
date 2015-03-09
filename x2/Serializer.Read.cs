@@ -199,7 +199,7 @@ namespace x2
         {
             int count;
             ReadVariableNonnegative(out count);
-            value = new List<int>();
+            value = (count != 0 ? new List<int>() : null);
             for (int i = 0; i < count; ++i)
             {
                 int element;
@@ -216,7 +216,7 @@ namespace x2
         {
             int count;
             ReadVariableNonnegative(out count);
-            value = new List<T>();
+            value = (count != 0 ? new List<T>() : null);
             for (int i = 0; i < count; ++i)
             {
                 T element;
