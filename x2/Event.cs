@@ -343,7 +343,7 @@ namespace x2
 
             public void Register(int typeId, Func<Event> factoryMethod)
             {
-                register[typeId] = factoryMethod;
+                register.Add(typeId, factoryMethod);
             }
         }
     }
