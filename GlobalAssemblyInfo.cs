@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿// Copyright (c) 2013-2015 Jae-jun Kang
+// See the file COPYING for license details.
+
+using System.Reflection;
 
 [assembly: AssemblyProduct("x2clr")]
 [assembly: AssemblyCopyright("Copyright © 2013-2015 Jae-jun Kang")]
