@@ -93,6 +93,7 @@
     <Compile Include="Links\SocketLink\TcpServerBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Serializers\StringSerializer.cs" />
     <Compile Include="Transforms\Cipher.cs" />
     <Compile Include="Transforms\Inverse.cs" />
     <Compile Include="Util\Capo.cs" />
@@ -103,6 +104,8 @@
     <Compile Include="Util\Log.cs" />
     <Compile Include="Util\Pool.cs" />
     <Compile Include="Util\ReadWriteLock.cs" />
+    <Compile Include="VerboseDeserializer.cs" />
+    <Compile Include="VerboseSerializer.cs" />
     <Compile Include="Yields\WaitForMultipleEvents.cs" />
     <Compile Include="Yields\WaitForSeconds.cs" />
     <Compile Include="Flows\TimeFlow.cs" />
@@ -138,9 +141,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Serializers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
