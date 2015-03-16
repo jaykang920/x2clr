@@ -1,0 +1,5 @@
+<x2 namespace="x2/Events">
+    <event name="TimeoutEvent" id="BuiltInType.TimeoutEvent" local="true">
+        <property name="Key" type="object"/>
+    </event>
+</x2>

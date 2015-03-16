@@ -180,6 +180,7 @@ namespace xpiler
                 ((EventDef)def).Id = id;
             }
             def.Base = elem.GetAttribute("extends");
+            def.IsLocal = elem.HasAttribute("local");
             def.Comments = comments;
 
             string subComments = null;

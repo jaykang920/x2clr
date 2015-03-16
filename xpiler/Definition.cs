@@ -54,6 +54,7 @@ namespace xpiler
         public string Base { get; set; }
         public string BaseClass { get; set; }
         public virtual bool IsEvent { get { return false; } }
+        public bool IsLocal { get; set; }
         public List<Property> Properties { get { return properties; } }
         public bool HasProperties { get { return (properties.Count != 0); } }
 

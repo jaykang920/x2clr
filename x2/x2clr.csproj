@@ -62,6 +62,10 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CollectionExtensions.cs" />
+    <Compile Include="Events\BuiltIntype.cs" />
+    <Compile Include="Events\FlowEvents.cs" />
+    <Compile Include="Events\LinkEvents.cs" />
+    <Compile Include="Events\TimeFlowEvents.cs" />
     <Compile Include="Serializer.Write.cs" />
     <Compile Include="Serializer.GetEncodedLength.cs" />
     <Compile Include="Serializer.Read.cs" />
@@ -69,9 +73,6 @@
     <Compile Include="BufferTransform.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Coroutine.cs" />
-    <Compile Include="Events\FlowEvents.cs" />
-    <Compile Include="Events\LinkEvents.cs" />
-    <Compile Include="Events\TimeFlowEvents.cs" />
     <Compile Include="Flows\EventBasedFlow.cs" />
     <Compile Include="Flows\FrameBasedFlow.cs" />
     <Compile Include="Links\SocketLink\AsyncTcpClient.cs" />
@@ -117,7 +118,6 @@
     <Compile Include="Cell.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventSink.cs" />
-    <Compile Include="Events\BuiltinType.cs" />
     <Compile Include="Fingerprint.cs" />
     <Compile Include="Flow.cs" />
     <Compile Include="Flows\MultiThreadedFlow.cs" />
@@ -141,8 +141,18 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Events\BuiltIntype.xml" />
+    <Content Include="Events\FlowEvents.xml" />
+    <Content Include="Events\LinkEvents.xml" />
+    <Content Include="Events\TimeFlowEvents.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>pushd $(ProjectDir)
+..\bin\$(ConfigurationName)\xpiler.exe -f . Events
+popd</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

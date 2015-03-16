@@ -281,10 +281,13 @@ namespace xpiler
             FormatGetType(def);
             Out.WriteLine();
             FormatIsEquivalent(def);
-            Out.WriteLine();
-            FormatDeserialize(def);
-            Out.WriteLine();
-            FormatSerialize(def);
+            if (!def.IsLocal)
+            {
+                Out.WriteLine();
+                FormatDeserialize(def);
+                Out.WriteLine();
+                FormatSerialize(def);
+            }
             Out.WriteLine();
             FormatDescribe(def);
             Out.WriteLine();
@@ -434,14 +437,16 @@ namespace xpiler
                 {
                     Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
                     Indent(2); Out.WriteLine("{");
-                    if (Types.IsPrimitive(property.TypeSpec.Type))
-                    {
+                    //if (Types.IsPrimitive(property.TypeSpec.Type))
+                    //{
                         Indent(3); Out.WriteLine("if ({0} != o.{0})", property.NativeName);
-                    }
+                    //}
+                    /*
                     else
                     {
                         Indent(3); Out.WriteLine("if ((object){0} == null || !{0}.IsEquivalent(o.{0}))", property.NativeName);
                     }
+                    */
                     Indent(3); Out.WriteLine("{");
                     Indent(4); Out.WriteLine("return false;");
                     Indent(3); Out.WriteLine("}");

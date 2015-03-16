@@ -1,0 +1,17 @@
+<x2 namespace="x2/Events">
+    <event name="LinkSessionConnected" id="BuiltInType.LinkSessionConnected" local="true">
+        <property name="LinkName" type="string"/>
+        <property name="Result" type="bool"/>
+        <property name="Context" type="object"/>
+    </event>
+    <event name="LinkSessionDisconnected" id="BuiltInType.LinkSessionDisconnected" local="true">
+        <property name="LinkName" type="string"/>
+        <property name="Result" type="bool"/>
+        <property name="Context" type="object"/>
+    </event>
+    <event name="LinkSessionRecovered" id="BuiltInType.LinkSessionRecovered" local="true">
+        <property name="LinkName" type="string"/>
+        <property name="OldHandle" type="int32"/>
+        <property name="Context" type="object"/>
+    </event>
+</x2>

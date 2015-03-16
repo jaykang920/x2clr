@@ -1,0 +1,4 @@
+<x2 namespace="x2/Events">
+    <event name="FlowStart" id="BuiltInType.FlowStart"/>
+    <event name="FlowStop" id="BuiltInType.FlowStop"/>
+</x2>

@@ -1,0 +1,14 @@
+<x2 namespace="x2/Events">
+    <consts name="BuiltInType">
+        <const name="FlowStart">-1</const>
+        <const name="FlowStop">-2</const>
+
+        <const name="TimeoutEvent">-3</const>
+
+        <const name="LinkSessionConnected">-4</const>
+        <const name="LinkSessionDisconnected">-5</const>
+        <const name="LinkSessionRecovered">-6</const>
+
+        <!-- -10 to -99 : reserved for links -->
+    </consts>
+</x2>

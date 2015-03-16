@@ -179,7 +179,7 @@ namespace x2.Flows
                         {
                             Dispatch(e);
 
-                            if (e.GetTypeId() == (int)BuiltinType.FlowStop)
+                            if (e.GetTypeId() == (int)BuiltInType.FlowStop)
                             {
                                 shouldStop = true;
                                 break;
