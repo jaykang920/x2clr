@@ -469,6 +469,19 @@ namespace xpiler
                 }
             }
             Indent(1); Out.WriteLine("}");
+
+            Out.WriteLine();
+            Indent(1); Out.WriteLine("public override void Deserialize(VerboseDeserializer verboseDeserializer)");
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("base.Deserialize(verboseDeserializer);");
+            if (def.HasProperties)
+            {
+                foreach (var property in def.Properties)
+                {
+                    Indent(2); Out.WriteLine("verboseDeserializer.Read(\"{0}\", out {1});", property.Name, property.NativeName);
+                }
+            }
+            Indent(1); Out.WriteLine("}");
         }
 
         private void FormatSerialize(CellDef def)
@@ -485,6 +498,19 @@ namespace xpiler
                     Indent(2); Out.WriteLine("{");
                     Indent(3); Out.WriteLine("serializer.Write({0});", property.NativeName);
                     Indent(2); Out.WriteLine("}");
+                }
+            }
+            Indent(1); Out.WriteLine("}");
+
+            Out.WriteLine();
+            Indent(1); Out.WriteLine("public override void Serialize(VerboseSerializer verboseSerializer)");
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("base.Serialize(verboseSerializer);");
+            if (def.HasProperties)
+            {
+                foreach (var property in def.Properties)
+                {
+                    Indent(2); Out.WriteLine("verboseSerializer.Write(\"{0}\", {1});", property.Name, property.NativeName);
                 }
             }
             Indent(1); Out.WriteLine("}");

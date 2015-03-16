@@ -266,6 +266,9 @@ namespace x2
             serializer.Write(GetTypeId());
             base.Serialize(serializer);
         }
+        public override void Serialize(VerboseSerializer verboseSerialzer)
+        {
+        }
         public static Event Create(Serializer serializer)
         {
             int typeId;

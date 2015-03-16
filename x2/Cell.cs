@@ -161,10 +161,15 @@ namespace x2
         /// </summary>
         public override string ToString()
         {
+            /*
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(GetTypeTag().RuntimeType.Name);
             Describe(stringBuilder);
             return stringBuilder.ToString();
+            */
+            VerboseSerializer serializer = new StringSerializer();
+            serializer.Write(this);
+            return serializer.ToString();
         }
 
         /// <summary>
@@ -185,6 +190,9 @@ namespace x2
         {
             fingerprint.Deserialize(serializer);
         }
+        public virtual void Deserialize(VerboseDeserializer verboseDeserializer)
+        {
+        }
 
         public virtual int GetEncodedLength()
         {
@@ -194,6 +202,10 @@ namespace x2
         public virtual void Serialize(Serializer serializer)
         {
             fingerprint.Serialize(serializer);
+        }
+
+        public virtual void Serialize(VerboseSerializer verboseSerialzer)
+        {
         }
 
         public static void Load<T>(Serializer serializer, out T value) where T : Cell, new()
