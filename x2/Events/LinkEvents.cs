@@ -62,13 +62,11 @@ namespace x2.Events
         public LinkSessionConnected()
             : base(tag.NumProps)
         {
-            Initialize();
         }
 
         protected LinkSessionConnected(int length)
             : base(length + tag.NumProps)
         {
-            Initialize();
         }
 
         public override bool EqualsTo(Cell other)
@@ -164,13 +162,6 @@ namespace x2.Events
             stringBuilder.AppendFormat(" LinkName=\"{0}\"", linkName_.Replace("\"", "\\\""));
             stringBuilder.AppendFormat(" Result={0}", result_);
             stringBuilder.AppendFormat(" Context={0}", context_);
-        }
-
-        private void Initialize()
-        {
-            linkName_ = "";
-            result_ = false;
-            context_ = null;
         }
     }
 
@@ -228,13 +219,11 @@ namespace x2.Events
         public LinkSessionDisconnected()
             : base(tag.NumProps)
         {
-            Initialize();
         }
 
         protected LinkSessionDisconnected(int length)
             : base(length + tag.NumProps)
         {
-            Initialize();
         }
 
         public override bool EqualsTo(Cell other)
@@ -331,13 +320,6 @@ namespace x2.Events
             stringBuilder.AppendFormat(" Result={0}", result_);
             stringBuilder.AppendFormat(" Context={0}", context_);
         }
-
-        private void Initialize()
-        {
-            linkName_ = "";
-            result_ = false;
-            context_ = null;
-        }
     }
 
     public class LinkSessionRecovered : Event
@@ -347,7 +329,7 @@ namespace x2.Events
         new public static int TypeId { get { return tag.TypeId; } }
 
         private string linkName_;
-        private int oldHandle_;
+        private IntPtr oldHandle_;
         private object context_;
 
         public string LinkName
@@ -360,7 +342,7 @@ namespace x2.Events
             }
         }
 
-        public int OldHandle
+        public IntPtr OldHandle
         {
             get { return oldHandle_; }
             set
@@ -394,13 +376,11 @@ namespace x2.Events
         public LinkSessionRecovered()
             : base(tag.NumProps)
         {
-            Initialize();
         }
 
         protected LinkSessionRecovered(int length)
             : base(length + tag.NumProps)
         {
-            Initialize();
         }
 
         public override bool EqualsTo(Cell other)
@@ -496,13 +476,6 @@ namespace x2.Events
             stringBuilder.AppendFormat(" LinkName=\"{0}\"", linkName_.Replace("\"", "\\\""));
             stringBuilder.AppendFormat(" OldHandle={0}", oldHandle_);
             stringBuilder.AppendFormat(" Context={0}", context_);
-        }
-
-        private void Initialize()
-        {
-            linkName_ = "";
-            oldHandle_ = 0;
-            context_ = null;
         }
     }
 }

@@ -11,7 +11,7 @@
     </event>
     <event name="LinkSessionRecovered" id="BuiltInType.LinkSessionRecovered" local="true">
         <property name="LinkName" type="string"/>
-        <property name="OldHandle" type="int32"/>
+        <property name="OldHandle" type="IntPtr"/>
         <property name="Context" type="object"/>
     </event>
 </x2>

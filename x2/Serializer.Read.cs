@@ -374,12 +374,4 @@ namespace x2
             return result;
         }
     }
-
-    public static class SerializerReadExtensions
-    {
-        public static int ReadVariable(this Buffer self, out uint value)
-        {
-            return Serializer.ReadVariableInternal(self, out value);
-        }
-    }
 }

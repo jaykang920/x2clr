@@ -161,15 +161,15 @@ namespace x2
         /// </summary>
         public override string ToString()
         {
-            /*
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(GetTypeTag().RuntimeType.Name);
             Describe(stringBuilder);
             return stringBuilder.ToString();
-            */
+            /*
             VerboseSerializer serializer = new StringSerializer();
             serializer.Write(this);
             return serializer.ToString();
+            */
         }
 
         /// <summary>

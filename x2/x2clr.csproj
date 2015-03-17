@@ -61,7 +61,8 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CollectionExtensions.cs" />
+    <Compile Include="Extensions.Buffer.cs" />
+    <Compile Include="Extensions.Collections.cs" />
     <Compile Include="Events\BuiltIntype.cs" />
     <Compile Include="Events\FlowEvents.cs" />
     <Compile Include="Events\LinkEvents.cs" />
@@ -146,6 +147,7 @@
     <Content Include="Events\FlowEvents.xml" />
     <Content Include="Events\LinkEvents.xml" />
     <Content Include="Events\TimeFlowEvents.xml" />
+    <Content Include="Links\SocketLink\SocketLinkEvents.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

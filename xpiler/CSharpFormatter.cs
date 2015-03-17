@@ -290,8 +290,11 @@ namespace xpiler
             }
             Out.WriteLine();
             FormatDescribe(def);
-            Out.WriteLine();
-            FormatInitializer(def);
+            if (!def.IsLocal)
+            {
+                Out.WriteLine();
+                FormatInitializer(def);
+            }
         }
 
         private void FormatStaticConstructor(CellDef def)
@@ -340,13 +343,19 @@ namespace xpiler
             Indent(1); Out.WriteLine("public {0}()", def.Name);
             Indent(2); Out.WriteLine(": base(tag.NumProps)");
             Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("Initialize();");
+            if (!def.IsLocal)
+            {
+                Indent(2); Out.WriteLine("Initialize();");
+            }
             Indent(1); Out.WriteLine("}");
             Out.WriteLine();
             Indent(1); Out.WriteLine("protected {0}(int length)", def.Name);
             Indent(2); Out.WriteLine(": base(length + tag.NumProps)");
             Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("Initialize();");
+            if (!def.IsLocal)
+            {
+                Indent(2); Out.WriteLine("Initialize();");
+            }
             Indent(1); Out.WriteLine("}");
         }
 
@@ -365,7 +374,7 @@ namespace xpiler
                 {
                     if (Types.IsCollection(property.TypeSpec.Type))
                     {
-                        Indent(2); Out.WriteLine("if (!CollectionExtensions.EqualsExtended({0}, o.{0}))", property.NativeName);
+                        Indent(2); Out.WriteLine("if (!Extensions.EqualsExtended({0}, o.{0}))", property.NativeName);
                     }
                     else
                     {

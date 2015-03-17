@@ -40,13 +40,11 @@ namespace x2.Events
         public TimeoutEvent()
             : base(tag.NumProps)
         {
-            Initialize();
         }
 
         protected TimeoutEvent(int length)
             : base(length + tag.NumProps)
         {
-            Initialize();
         }
 
         public override bool EqualsTo(Cell other)
@@ -110,11 +108,6 @@ namespace x2.Events
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Key={0}", key_);
-        }
-
-        private void Initialize()
-        {
-            key_ = null;
         }
     }
 }

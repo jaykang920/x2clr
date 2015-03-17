@@ -7,7 +7,8 @@ using System.Text;
 
 namespace x2
 {
-    public static class CollectionExtensions
+    // Extensions.Collections
+    public static partial class Extensions
     {
         public static bool EqualsExtended<T>(this IList<T> self, IList<T> other)
         {
@@ -67,7 +68,7 @@ namespace x2
         {
             if (Object.ReferenceEquals(self, null))
             {
-                return "[]";
+                return "null";
             }
 
             var stringBuilder = new StringBuilder();
