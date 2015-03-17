@@ -249,9 +249,9 @@ namespace x2
             return false;
         }
 
-        public override void Deserialize(Serializer serializer)
+        public override void Deserialize(Deserializer deserializer)
         {
-            base.Deserialize(serializer);
+            base.Deserialize(deserializer);
         }
 
         public override int GetEncodedLength()
@@ -266,21 +266,21 @@ namespace x2
             serializer.Write(GetTypeId());
             base.Serialize(serializer);
         }
-        public override void Serialize(VerboseSerializer verboseSerialzer)
+        public override void Serialize(VerboseSerializer serializer)
         {
         }
-        public static Event Create(Serializer serializer)
+        public static Event Create(Deserializer deserializer)
         {
             int typeId;
-            serializer.Read(out typeId);
+            deserializer.Read(out typeId);
             return Create(typeId);
         }
-        public static Event Load(Serializer serializer)
+        public static Event Load(Deserializer deserializer)
         {
-            Event result = Event.Create(serializer);
+            Event result = Event.Create(deserializer);
             if (!Object.ReferenceEquals(result, null))
             {
-                result.Deserialize(serializer);
+                result.Deserialize(deserializer);
             }
             return result;
         }

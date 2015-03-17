@@ -468,9 +468,9 @@ namespace xpiler
 
         private void FormatDeserialize(CellDef def)
         {
-            Indent(1); Out.WriteLine("public override void Deserialize(Serializer serializer)");
+            Indent(1); Out.WriteLine("public override void Deserialize(Deserializer deserializer)");
             Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("base.Deserialize(serializer);");
+            Indent(2); Out.WriteLine("base.Deserialize(deserializer);");
             if (def.HasProperties)
             {
                 Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
@@ -478,21 +478,21 @@ namespace xpiler
                 {
                     Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
                     Indent(2); Out.WriteLine("{");
-                    Indent(3); Out.WriteLine("serializer.Read(out {0});", property.NativeName);
+                    Indent(3); Out.WriteLine("deserializer.Read(out {0});", property.NativeName);
                     Indent(2); Out.WriteLine("}");
                 }
             }
             Indent(1); Out.WriteLine("}");
 
             Out.WriteLine();
-            Indent(1); Out.WriteLine("public override void Deserialize(VerboseDeserializer verboseDeserializer)");
+            Indent(1); Out.WriteLine("public override void Deserialize(VerboseDeserializer deserializer)");
             Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("base.Deserialize(verboseDeserializer);");
+            Indent(2); Out.WriteLine("base.Deserialize(deserializer);");
             if (def.HasProperties)
             {
                 foreach (var property in def.Properties)
                 {
-                    Indent(2); Out.WriteLine("verboseDeserializer.Read(\"{0}\", out {1});", property.Name, property.NativeName);
+                    Indent(2); Out.WriteLine("deserializer.Read(\"{0}\", out {1});", property.Name, property.NativeName);
                 }
             }
             Indent(1); Out.WriteLine("}");
@@ -517,14 +517,14 @@ namespace xpiler
             Indent(1); Out.WriteLine("}");
 
             Out.WriteLine();
-            Indent(1); Out.WriteLine("public override void Serialize(VerboseSerializer verboseSerializer)");
+            Indent(1); Out.WriteLine("public override void Serialize(VerboseSerializer serializer)");
             Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("base.Serialize(verboseSerializer);");
+            Indent(2); Out.WriteLine("base.Serialize(serializer);");
             if (def.HasProperties)
             {
                 foreach (var property in def.Properties)
                 {
-                    Indent(2); Out.WriteLine("verboseSerializer.Write(\"{0}\", {1});", property.Name, property.NativeName);
+                    Indent(2); Out.WriteLine("serializer.Write(\"{0}\", {1});", property.Name, property.NativeName);
                 }
             }
             Indent(1); Out.WriteLine("}");

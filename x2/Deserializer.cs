@@ -8,9 +8,24 @@ using System.Text;
 
 namespace x2
 {
-    // Serializer.Read
-    public sealed partial class Serializer
+    /// <summary>
+    /// Binary wire foramt deserializer.
+    /// </summary>
+    public sealed class Deserializer
     {
+        private Buffer buffer;
+        private long marker;
+
+        /// <summary>
+        /// Initializes a new Deserializer object that works on the specified
+        /// buffer.
+        /// </summary>
+        public Deserializer(Buffer buffer)
+        {
+            this.buffer = buffer;
+            marker = -1L;
+        }
+
         // Overloaded Read for primitive types
 
         /// <summary>

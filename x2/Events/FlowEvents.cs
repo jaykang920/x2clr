@@ -71,14 +71,14 @@ namespace x2.Events
             return true;
         }
 
-        public override void Deserialize(Serializer serializer)
+        public override void Deserialize(Deserializer deserializer)
         {
-            base.Deserialize(serializer);
+            base.Deserialize(deserializer);
         }
 
-        public override void Deserialize(VerboseDeserializer verboseDeserializer)
+        public override void Deserialize(VerboseDeserializer deserializer)
         {
-            base.Deserialize(verboseDeserializer);
+            base.Deserialize(deserializer);
         }
 
         public override void Serialize(Serializer serializer)
@@ -86,9 +86,9 @@ namespace x2.Events
             base.Serialize(serializer);
         }
 
-        public override void Serialize(VerboseSerializer verboseSerializer)
+        public override void Serialize(VerboseSerializer serializer)
         {
-            base.Serialize(verboseSerializer);
+            base.Serialize(serializer);
         }
 
         public override int GetEncodedLength()
@@ -170,14 +170,14 @@ namespace x2.Events
             return true;
         }
 
-        public override void Deserialize(Serializer serializer)
+        public override void Deserialize(Deserializer deserializer)
         {
-            base.Deserialize(serializer);
+            base.Deserialize(deserializer);
         }
 
-        public override void Deserialize(VerboseDeserializer verboseDeserializer)
+        public override void Deserialize(VerboseDeserializer deserializer)
         {
-            base.Deserialize(verboseDeserializer);
+            base.Deserialize(deserializer);
         }
 
         public override void Serialize(Serializer serializer)
@@ -185,9 +185,9 @@ namespace x2.Events
             base.Serialize(serializer);
         }
 
-        public override void Serialize(VerboseSerializer verboseSerializer)
+        public override void Serialize(VerboseSerializer serializer)
         {
-            base.Serialize(verboseSerializer);
+            base.Serialize(serializer);
         }
 
         public override int GetEncodedLength()

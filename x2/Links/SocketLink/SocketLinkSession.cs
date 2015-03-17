@@ -260,7 +260,7 @@ namespace x2.Links.SocketLink
                 }
                 recvBuffer.Position = 0;
 
-                Event retrieved = Event.Load(new Serializer(recvBuffer));
+                Event retrieved = Event.Load(new Deserializer(recvBuffer));
 
                 /*
                 int typeId;

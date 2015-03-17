@@ -12,7 +12,7 @@ namespace x2
     {
         public static int ReadVariable(this Buffer self, out uint value)
         {
-            return Serializer.ReadVariableInternal(self, out value);
+            return Deserializer.ReadVariableInternal(self, out value);
         }
     }
 }

@@ -9,12 +9,11 @@ using System.Text;
 namespace x2
 {
     /// <summary>
-    /// Binary wire foramt serializer/deserializer.
+    /// Binary wire foramt serializer.
     /// </summary>
     public sealed partial class Serializer
     {
         private Buffer buffer;
-        private long marker;
 
         /// <summary>
         /// Initializes a new Serializer object that works on the specified
@@ -23,7 +22,6 @@ namespace x2
         public Serializer(Buffer buffer)
         {
             this.buffer = buffer;
-            marker = -1L;
         }
     }
 }

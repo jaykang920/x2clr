@@ -217,10 +217,10 @@ namespace x2
             return true;
         }
 
-        public void Deserialize(Serializer serializer)
+        public void Deserialize(Deserializer deserializer)
         {
             int length;
-            serializer.ReadVariableNonnegative(out length);
+            deserializer.ReadVariableNonnegative(out length);
             int lengthInBytes = ((length - 1) >> 3) + 1;
             int lengthInBlocks = ((lengthInBytes - 1) >> 2) + 1;
             int effectiveBytes = LengthInBytes;
@@ -230,7 +230,7 @@ namespace x2
             for (int i = 0; (i < 4) && (count < lengthInBytes); ++i, ++count)
             {
                 byte b;
-                serializer.Read(out b);
+                deserializer.Read(out b);
                 if (count < effectiveBytes)
                 {
                     block |= ((int)b << (i << 3));
@@ -242,7 +242,7 @@ namespace x2
                 for (int j = 0; (j < 4) && (count < lengthInBytes); ++j, ++count)
                 {
                     byte b;
-                    serializer.Read(out b);
+                    deserializer.Read(out b);
                     if (count < effectiveBytes)
                     {
                         word |= ((int)b << (j << 3));

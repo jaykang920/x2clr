@@ -77,7 +77,7 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>pushd $(ProjectDir)
-..\bin\$(ConfigurationName)\xpiler.exe .
+..\bin\$(ConfigurationName)\xpiler.exe -f .
 popd</PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>

@@ -186,11 +186,11 @@ namespace x2
             return;
         }
 
-        public virtual void Deserialize(Serializer serializer)
+        public virtual void Deserialize(Deserializer deserializer)
         {
-            fingerprint.Deserialize(serializer);
+            fingerprint.Deserialize(deserializer);
         }
-        public virtual void Deserialize(VerboseDeserializer verboseDeserializer)
+        public virtual void Deserialize(VerboseDeserializer deserializer)
         {
         }
 
@@ -204,17 +204,17 @@ namespace x2
             fingerprint.Serialize(serializer);
         }
 
-        public virtual void Serialize(VerboseSerializer verboseSerialzer)
+        public virtual void Serialize(VerboseSerializer serializer)
         {
         }
 
-        public static void Load<T>(Serializer serializer, out T value) where T : Cell, new()
+        public static void Load<T>(Deserializer deserializer, out T value) where T : Cell, new()
         {
             var type = typeof(T);
             var eventType = typeof(Event);
             if (type.IsSubclassOf(eventType) || type == eventType)
             {
-                value = Event.Create(serializer) as T;
+                value = Event.Create(deserializer) as T;
             }
             else
             {
@@ -222,7 +222,7 @@ namespace x2
             }
             if (!Object.ReferenceEquals(value, null))
             {
-                value.Deserialize(serializer);
+                value.Deserialize(deserializer);
             }
         }
 

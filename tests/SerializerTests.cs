@@ -18,6 +18,7 @@ namespace x2.Tests
                 float f;
                 Buffer stream = new Buffer(12);
                 Serializer serializer = new Serializer(stream);
+                Deserializer deserializer = new Deserializer(stream);
 
                 // Boundary value tests
 
@@ -32,19 +33,19 @@ namespace x2.Tests
                 stream.Rewind();
                 //stream.Seek(0, SeekOrigin.Begin);
 
-                serializer.Read(out f);
+                deserializer.Read(out f);
                 Assert.AreEqual(0.0F, f);
-                serializer.Read(out f);
+                deserializer.Read(out f);
                 Assert.AreEqual(Single.Epsilon, f);
-                serializer.Read(out f);
+                deserializer.Read(out f);
                 Assert.AreEqual(Single.MinValue, f);
-                serializer.Read(out f);
+                deserializer.Read(out f);
                 Assert.AreEqual(Single.MaxValue, f);
-                serializer.Read(out f);
+                deserializer.Read(out f);
                 Assert.AreEqual(Single.NegativeInfinity, f);
-                serializer.Read(out f);
+                deserializer.Read(out f);
                 Assert.AreEqual(Single.PositiveInfinity, f);
-                serializer.Read(out f);
+                deserializer.Read(out f);
                 Assert.AreEqual(Single.NaN, f);
 
                 stream.Trim();
@@ -58,9 +59,9 @@ namespace x2.Tests
                 stream.Rewind();
                 //stream.Seek(0, SeekOrigin.Begin);
 
-                serializer.Read(out f);
+                deserializer.Read(out f);
                 Assert.AreEqual(0.001234F, f);
-                serializer.Read(out f);
+                deserializer.Read(out f);
                 Assert.AreEqual(8765.4321F, f);
             }
         }
@@ -73,6 +74,7 @@ namespace x2.Tests
                 double d;
                 Buffer stream = new Buffer(12);
                 Serializer serializer = new Serializer(stream);
+                Deserializer deserializer = new Deserializer(stream);
 
                 // Boundary value tests
 
@@ -87,19 +89,19 @@ namespace x2.Tests
                 stream.Rewind();
                 //stream.Seek(0, SeekOrigin.Begin);
 
-                serializer.Read(out d);
+                deserializer.Read(out d);
                 Assert.AreEqual(0.0, d);
-                serializer.Read(out d);
+                deserializer.Read(out d);
                 Assert.AreEqual(Double.Epsilon, d);
-                serializer.Read(out d);
+                deserializer.Read(out d);
                 Assert.AreEqual(Double.MinValue, d);
-                serializer.Read(out d);
+                deserializer.Read(out d);
                 Assert.AreEqual(Double.MaxValue, d);
-                serializer.Read(out d);
+                deserializer.Read(out d);
                 Assert.AreEqual(Double.NegativeInfinity, d);
-                serializer.Read(out d);
+                deserializer.Read(out d);
                 Assert.AreEqual(Double.PositiveInfinity, d);
-                serializer.Read(out d);
+                deserializer.Read(out d);
                 Assert.AreEqual(Double.NaN, d);
 
                 stream.Trim();
@@ -113,9 +115,9 @@ namespace x2.Tests
                 stream.Rewind();
                 //stream.Seek(0, SeekOrigin.Begin);
 
-                serializer.Read(out d);
+                deserializer.Read(out d);
                 Assert.AreEqual(0.001234, d);
-                serializer.Read(out d);
+                deserializer.Read(out d);
                 Assert.AreEqual(8765.4321, d);
             }
         }
@@ -128,6 +130,7 @@ namespace x2.Tests
                 int i, bytes;
                 Buffer stream = new Buffer(12);
                 Serializer serializer = new Serializer(stream);
+                Deserializer deserializer = new Deserializer(stream);
 
                 // Boundary value tests
 
@@ -139,19 +142,19 @@ namespace x2.Tests
                 stream.Rewind();
                 //stream.Seek(0, SeekOrigin.Begin);
 
-                bytes = serializer.Read(out i);
+                bytes = deserializer.Read(out i);
                 Assert.AreEqual(1, bytes);
                 Assert.AreEqual(0, i);
 
-                bytes = serializer.Read(out i);
+                bytes = deserializer.Read(out i);
                 Assert.AreEqual(1, bytes);
                 Assert.AreEqual(-1, i);
 
-                bytes = serializer.Read(out i);
+                bytes = deserializer.Read(out i);
                 Assert.AreEqual(5, bytes);
                 Assert.AreEqual(Int32.MaxValue, i);
 
-                bytes = serializer.Read(out i);
+                bytes = deserializer.Read(out i);
                 Assert.AreEqual(5, bytes);
                 Assert.AreEqual(Int32.MinValue, i);
 
@@ -167,15 +170,15 @@ namespace x2.Tests
                 stream.Rewind();
                 //stream.Seek(0, SeekOrigin.Begin);
 
-                bytes = serializer.Read(out i);
+                bytes = deserializer.Read(out i);
                 Assert.AreEqual(2, bytes);
                 Assert.AreEqual(0x00003f80 >> 1, i);
 
-                bytes = serializer.Read(out i);
+                bytes = deserializer.Read(out i);
                 Assert.AreEqual(3, bytes);
                 Assert.AreEqual(0x001fc000 >> 1, i);
 
-                bytes = serializer.Read(out i);
+                bytes = deserializer.Read(out i);
                 Assert.AreEqual(4, bytes);
                 Assert.AreEqual(0x0fe00000 >> 1, i);
             }
@@ -189,6 +192,7 @@ namespace x2.Tests
                 long l, bytes;
                 Buffer stream = new Buffer(12);
                 Serializer serializer = new Serializer(stream);
+                Deserializer deserializer = new Deserializer(stream);
 
                 // Boundary value tests
 
@@ -200,19 +204,19 @@ namespace x2.Tests
                 stream.Rewind();
                 //stream.Seek(0, SeekOrigin.Begin);
 
-                bytes = serializer.Read(out l);
+                bytes = deserializer.Read(out l);
                 Assert.AreEqual(1, bytes);
                 Assert.AreEqual(0L, l);
 
-                bytes = serializer.Read(out l);
+                bytes = deserializer.Read(out l);
                 Assert.AreEqual(1, bytes);
                 Assert.AreEqual(-1L, l);
 
-                bytes = serializer.Read(out l);
+                bytes = deserializer.Read(out l);
                 Assert.AreEqual(10, bytes);
                 Assert.AreEqual(Int64.MaxValue, l);
 
-                bytes = serializer.Read(out l);
+                bytes = deserializer.Read(out l);
                 Assert.AreEqual(10, bytes);
                 Assert.AreEqual(Int64.MinValue, l);
 
@@ -233,35 +237,35 @@ namespace x2.Tests
                 stream.Rewind();
                 //stream.Seek(0, SeekOrigin.Begin);
 
-                bytes = serializer.Read(out l);
+                bytes = deserializer.Read(out l);
                 Assert.AreEqual(2, bytes);
                 Assert.AreEqual(0x00003f80L >> 1, l);
 
-                bytes = serializer.Read(out l);
+                bytes = deserializer.Read(out l);
                 Assert.AreEqual(3, bytes);
                 Assert.AreEqual(0x001fc000L >> 1, l);
 
-                bytes = serializer.Read(out l);
+                bytes = deserializer.Read(out l);
                 Assert.AreEqual(4, bytes);
                 Assert.AreEqual(0x0fe00000L >> 1, l);
 
-                bytes = serializer.Read(out l);
+                bytes = deserializer.Read(out l);
                 Assert.AreEqual(5, bytes);
                 Assert.AreEqual(0x00000007f0000000L >> 1, l);
 
-                bytes = serializer.Read(out l);
+                bytes = deserializer.Read(out l);
                 Assert.AreEqual(6, bytes);
                 Assert.AreEqual(0x000003f800000000L >> 1, l);
 
-                bytes = serializer.Read(out l);
+                bytes = deserializer.Read(out l);
                 Assert.AreEqual(7, bytes);
                 Assert.AreEqual(0x0001fc0000000000L >> 1, l);
 
-                bytes = serializer.Read(out l);
+                bytes = deserializer.Read(out l);
                 Assert.AreEqual(8, bytes);
                 Assert.AreEqual(0x00fe000000000000L >> 1, l);
 
-                bytes = serializer.Read(out l);
+                bytes = deserializer.Read(out l);
                 Assert.AreEqual(9, bytes);
                 Assert.AreEqual(0x7f00000000000000L >> 1, l);
             }

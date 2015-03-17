@@ -67,9 +67,9 @@
     <Compile Include="Events\FlowEvents.cs" />
     <Compile Include="Events\LinkEvents.cs" />
     <Compile Include="Events\TimeFlowEvents.cs" />
+    <Compile Include="Deserializer.cs" />
     <Compile Include="Serializer.Write.cs" />
     <Compile Include="Serializer.GetEncodedLength.cs" />
-    <Compile Include="Serializer.Read.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="BufferTransform.cs" />
     <Compile Include="Consts.cs" />
