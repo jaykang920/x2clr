@@ -7,8 +7,7 @@ using System.Collections.Generic;
 namespace x2
 {
     /// <summary>
-    /// A variable-length byte buffer class that provides methods to read/write
-    /// primitive data types from/to byte sequences in a platform-independent way.
+    /// A variable-length byte buffer class.
     /// </summary>
     /// The buffer length is limited to a multiple of a power of 2.
     public class Buffer
