@@ -273,7 +273,12 @@ namespace x2
         {
             int typeId;
             deserializer.Read(out typeId);
-            return Create(typeId);
+            Event result = Create(typeId);
+            if (Object.ReferenceEquals(result, null))
+            {
+                Log.Error("Event.Create: unknown event type id {0}", typeId);
+            }
+            return result;
         }
         public static Event Load(Deserializer deserializer)
         {

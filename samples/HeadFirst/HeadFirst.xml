@@ -1,4 +1,5 @@
-<x2 namespace="x2.Samples.Capitalizer">
+<?xml version="1.0" encoding="utf-8"?>
+<x2 namespace="x2/Samples/HeadFirst">
     <event name="CapitalizeReq" id="1">
         <property name="Message" type="string"/>
     </event>

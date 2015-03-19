@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{456A46C1-F12A-4CCF-A065-76A9027104EF}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{679B3542-024B-4CDF-A285-76A9027124F1}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>x2.Samples.Echo</RootNamespace>
-    <AssemblyName>EchoClient</AssemblyName>
+    <RootNamespace>x2.Samples.HeadFirst</RootNamespace>
+    <AssemblyName>HeadFirst</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -31,25 +31,32 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events.cs" />
-    <Compile Include="EchoClient.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
+    <Compile Include="HeadFirst.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\x2\x2clr.csproj">
+      <Project>{79a3e41b-fa7f-4ed8-86ab-fcf61a6f65b9}</Project>
+      <Name>x2clr</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="HeadFirst.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -61,13 +68,7 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>pushd $(ProjectDir)
-..\..\bin\$(ConfigurationName)\xpiler.exe .
+..\..\bin\$(ConfigurationName)\xpiler.exe -f .
 popd</PreBuildEvent>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\x2\x2clr.csproj">
-      <Project>{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}</Project>
-      <Name>x2clr</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

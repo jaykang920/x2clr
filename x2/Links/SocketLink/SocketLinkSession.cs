@@ -281,7 +281,6 @@ namespace x2.Links.SocketLink
 
                 if (retrieved == null)
                 {
-                    //Log.Error("{0} {1} unknown event type id {2}", link.Name, Handle, typeId);
                     goto next;
                 }
                 else

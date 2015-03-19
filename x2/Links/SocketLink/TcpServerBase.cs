@@ -285,6 +285,17 @@ namespace x2.Links.SocketLink
         }
 #endif
 
+        public void Broadcast(Event e)
+        {
+            lock (sessions)
+            {
+                foreach (var linkSession in sessions.Values)
+                {
+                    linkSession.Send(e);
+                }
+            }
+        }
+
         #region Diagnostics
 
         /// <summary>
