@@ -116,12 +116,12 @@ namespace x2
     /// </summary>
     public abstract class LinkSession
     {
-        private static long seq;
+        private static int seq;
 
         /// <summary>
         /// Gets the session identifier.
         /// </summary>
-        public long Id { get; private set; }
+        public uint Id { get; private set; }
 
         /// <summary>
         /// Gets the platform-specific handle of the underlying mechanism.
@@ -135,7 +135,10 @@ namespace x2
         /// </summary>
         protected LinkSession(IntPtr handle)
         {
-            Id = Interlocked.Increment(ref seq);
+            while (Id == 0)
+            {
+                Id = (uint)Interlocked.Increment(ref seq);
+            }
             Handle = handle;
         }
 

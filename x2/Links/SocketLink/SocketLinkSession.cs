@@ -297,7 +297,7 @@ namespace x2.Links.SocketLink
                     }
                     */
 
-                    retrieved._Handle = Handle;
+                    retrieved._Handle = Id;
 
                     if (link.Preprocessor != null)
                     {

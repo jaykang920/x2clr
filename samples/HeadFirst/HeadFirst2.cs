@@ -12,7 +12,9 @@ namespace x2.Samples.HeadFirst
             protected override void SetUp()
             {
                 Bind(new CapitalizeReq(), (req) => {
-                    new CapitalizeResp { Result = req.Message.ToUpper() }.Post();
+                    new CapitalizeResp {
+                        Result = req.Message.ToUpper()
+                    }.Post();
                 });
             }
         }

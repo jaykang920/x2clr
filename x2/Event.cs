@@ -23,7 +23,7 @@ namespace x2
         public static int TypeId { get { return tag.TypeId; } }
 
         private string _channel;
-        private IntPtr _handle;
+        private uint _handle;
         private bool _transform = true;
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace x2
         /// <summary>
         /// Gets or sets the link session handle associated with this event.
         /// </summary>
-        public IntPtr _Handle
+        public uint _Handle
         {
             get { return _handle; }
             set
@@ -196,7 +196,7 @@ namespace x2
 
             if (fingerprint[0])
             {
-                hash.Update(_handle.GetHashCode());
+                hash.Update(_handle);
             }
 
             return hash.Code;

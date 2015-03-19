@@ -33,6 +33,9 @@ namespace x2.Samples.HeadFirst
 
         public static void Main()
         {
+            Log.Level = LogLevel.All;
+            Log.Handler = (level, message) => { Console.WriteLine(message); };
+
             Hub.Instance
                 .Attach(new SingleThreadedFlow()
                     .Add(new OutputCase())

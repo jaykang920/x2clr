@@ -14,8 +14,10 @@ namespace x2.Samples.HeadFirst
             protected override void SetUp()
             {
                 Bind(new CapitalizeReq(), (req) => {
-                    Console.WriteLine(req);
-                    new CapitalizeResp { Result = req.Message.ToUpper() }.Post();
+                    new CapitalizeResp {
+                        _Handle = req._Handle,
+                        Result = req.Message.ToUpper()
+                    }.Post();
                 });
             }
         }
@@ -28,7 +30,7 @@ namespace x2.Samples.HeadFirst
             {
                 base.SetUp();
 
-                Bind(new CapitalizeResp(), Broadcast);
+                Bind(new CapitalizeResp(), Send);
 
                 Listen(6789);
             }
@@ -36,6 +38,9 @@ namespace x2.Samples.HeadFirst
 
         public static void Main()
         {
+            Log.Level = LogLevel.All;
+            Log.Handler = (level, message) => { Console.WriteLine(message); };
+
             Hub.Instance
                 .Attach(new SingleThreadedFlow()
                     .Add(new CapitalizerCase())
