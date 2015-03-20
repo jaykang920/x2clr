@@ -24,24 +24,18 @@ namespace x2.Samples.HeadFirst
             protected override void SetUp()
             {
                 base.SetUp();
-
+                Event.Register<CapitalizeResp>();
                 Bind(new CapitalizeReq(), Send);
-
                 Connect("127.0.0.1", 6789);
             }
         }
 
         public static void Main()
         {
-            Log.Level = LogLevel.All;
-            Log.Handler = (level, message) => { Console.WriteLine(message); };
-
             Hub.Instance
                 .Attach(new SingleThreadedFlow()
                     .Add(new OutputCase())
                     .Add(new CapitalizerClient()));
-
-            Event.Register(Assembly.Load("HeadFirst"));
 
             using (var flows = new Hub.Flows())
             {
