@@ -351,6 +351,17 @@ namespace x2
 
             public void Register(int typeId, Func<Event> factoryMethod)
             {
+                Func<Event> existing;
+                if (register.TryGetValue(typeId, out existing))
+                {
+                    if (!existing.Equals(factoryMethod))
+                    {
+                        throw new Exception(
+                            String.Format("Event typeid {0} conflicted", typeId));
+                    }
+                    // duplicate registration allowed
+                    return;
+                }
                 register.Add(typeId, factoryMethod);
             }
         }
