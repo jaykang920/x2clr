@@ -15,9 +15,8 @@ namespace x2.Samples.HeadFirst
             {
                 Bind(new CapitalizeReq(), (req) => {
                     new CapitalizeResp {
-                        _Handle = req._Handle,
                         Result = req.Message.ToUpper()
-                    }.Post();
+                    }.AsResponse(req).Post();
                 });
             }
         }
