@@ -19,14 +19,15 @@ namespace x2
     ///
     /// EventSink is here to handle the case. First, let your event-consuming
     /// class be derived from EventSink. When the object is no longer needed,
-    /// call its CleanUp() method to ensure that all the event bindings to the
-    /// object are removed so that the object is properly garbage-collected.
+    /// explicitly call its Dispose() method to ensure that all the event
+    /// bindings to the object are removed so that the object is properly
+    /// garbage-collected.
     ///
     /// An EventSink object should be initialized with a single specific flow.
     /// And an object instance of any EventSink-derived class should never be
     /// shared by two or more different flows. These are constraints by design.
     /// </remarks>
-    public class EventSink
+    public class EventSink : IDisposable
     {
         private readonly IList<Binder.Token> bindings;
         private WeakReference flow;
@@ -53,6 +54,35 @@ namespace x2
         {
             bindings = new List<Binder.Token>();
             this.flow = new WeakReference(flow);
+        }
+
+        /// <summary>
+        /// Implements IDisposable interface.
+        /// </summary>
+        public virtual void Dispose()
+        {
+            var flow = Flow;
+            if (flow == null)
+            {
+                return;
+            }
+
+            lock (bindings)
+            {
+                if (bindings.Count == 0)
+                {
+                    return;
+                }
+
+                for (int i = 0, count = bindings.Count; i < count; ++i)
+                {
+                    flow.Unsubscribe(bindings[i]);
+                }
+
+                bindings.Clear();
+
+                this.flow.Target = null;
+            }
         }
 
         public void Bind<T>(T e, Action<T> handler)
@@ -150,32 +180,6 @@ namespace x2
             lock (bindings)
             {
                 bindings.Remove(binderToken);
-            }
-        }
-
-        public void CleanUp()
-        {
-            var flow = Flow;
-            if (flow == null)
-            {
-                return;
-            }
-
-            lock (bindings)
-            {
-                if (bindings.Count == 0)
-                {
-                    return;
-                }
-
-                for (int i = 0, count = bindings.Count; i < count; ++i)
-                {
-                    flow.Unsubscribe(bindings[i]);
-                }
-
-                bindings.Clear();
-
-                this.flow.Target = null;
             }
         }
     }

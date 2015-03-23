@@ -26,7 +26,7 @@ namespace x2
         {
             TearDown();
 
-            CleanUp();
+            Dispose();
         }
 
         /// <summary>
