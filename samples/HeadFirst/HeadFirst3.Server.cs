@@ -28,7 +28,7 @@ namespace x2.Samples.HeadFirst
             protected override void SetUp()
             {
                 base.SetUp();
-                Event.Register<CapitalizeReq>();
+                EventFactory.Register<CapitalizeReq>();
                 Bind(new CapitalizeResp(), Send);
                 Listen(6789);
             }

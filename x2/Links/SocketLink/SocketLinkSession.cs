@@ -260,42 +260,23 @@ namespace x2.Links.SocketLink
                 }
                 recvBuffer.Position = 0;
 
-                Event retrieved = Event.Load(new Deserializer(recvBuffer));
-
-                /*
-                int typeId;
-                try
-                {
-                    recvBuffer.Read(out typeId);
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    Log.Error("{0} {1} malformed event type id", link.Name, Handle);
-                    goto next;
-                }
-
-                Log.Trace("{0} {1} retrieved event type id {2}", link.Name, Handle, typeId);
-
-                var retrieved = Event.Create(typeId);
-                */
-
+                var deserializer = new Deserializer(recvBuffer);
+                Event retrieved = EventFactory.Create(deserializer);
                 if (retrieved == null)
                 {
                     goto next;
                 }
                 else
                 {
-                    /*
                     try
                     {
-                        retrieved.Load(recvBuffer);
+                        retrieved.Deserialize(deserializer);
                     }
                     catch (Exception e)
                     {
-                        Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, typeId, e.ToString());
+                        Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, retrieved.GetTypeId(), e.ToString());
                         goto next;
                     }
-                    */
 
                     retrieved._Handle = Id;
 

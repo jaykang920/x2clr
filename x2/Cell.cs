@@ -214,7 +214,7 @@ namespace x2
             var eventType = typeof(Event);
             if (type.IsSubclassOf(eventType) || type == eventType)
             {
-                value = Event.Create(deserializer) as T;
+                value = EventFactory.Create(deserializer) as T;
             }
             else
             {

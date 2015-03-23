@@ -54,11 +54,11 @@ namespace x2.Links.SocketLink
 
         static SocketLink()
         {
-            Event.Register<HandshakeReq>();
-            Event.Register<HandshakeResp>();
-            Event.Register<HandshakeAck>();
+            EventFactory.Register<HandshakeReq>();
+            EventFactory.Register<HandshakeResp>();
+            EventFactory.Register<HandshakeAck>();
 #if SESSION_KEEPALIVE
-            Event.Register<KeepaliveEvent>();
+            EventFactory.Register<KeepaliveEvent>();
 #endif
 #if SESSION_HANDOVER
             Event.Register<SessionReq>();

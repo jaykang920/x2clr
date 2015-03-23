@@ -24,7 +24,7 @@ namespace x2.Samples.HeadFirst
             protected override void SetUp()
             {
                 base.SetUp();
-                Event.Register<CapitalizeResp>();
+                EventFactory.Register<CapitalizeResp>();
                 Bind(new CapitalizeReq(), Send);
                 Connect("127.0.0.1", 6789);
             }
