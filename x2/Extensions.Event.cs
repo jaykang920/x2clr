@@ -10,7 +10,7 @@ namespace x2
     // Extensions.Event
     public static partial class Extensions
     {
-        public static Event AsResponse(this Event self, Event request)
+        public static T InResponseOf<T>(this T self, Event request) where T : Event
         {
             if (request._Handle != 0)
             {
