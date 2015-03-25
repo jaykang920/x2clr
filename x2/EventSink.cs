@@ -57,7 +57,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Implements IDisposable interface.
+        /// Releases all the handler bindings associated with this EventSink.
         /// </summary>
         public virtual void Dispose()
         {

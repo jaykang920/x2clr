@@ -10,6 +10,9 @@ namespace x2
     // Extensions.Event
     public static partial class Extensions
     {
+        /// <summary>
+        /// Indicates that the event is the response of the specified one.
+        /// </summary>
         public static T InResponseOf<T>(this T self, Event request) where T : Event
         {
             if (request._Handle != 0)
@@ -19,6 +22,10 @@ namespace x2
             return self;
         }
 
+        /// <summary>
+        /// Indicates that the event is associated with the specified hub
+        /// channel.
+        /// </summary>
         public static Event InChannel(this Event self, string channel)
         {
             self._Channel = channel;
