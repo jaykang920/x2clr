@@ -21,7 +21,7 @@ namespace x2
         public static int TypeId { get { return tag.TypeId; } }
 
         private string _channel;
-        private uint _handle;
+        private int _handle;
         private bool _transform = true;
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace x2
         /// <summary>
         /// Gets or sets the link session handle associated with this event.
         /// </summary>
-        public uint _Handle
+        public int _Handle
         {
             get { return _handle; }
             set

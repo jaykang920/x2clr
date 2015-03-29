@@ -106,7 +106,6 @@ namespace x2.Links.SocketLink
         }
 
         protected SocketLinkSession(SocketLink link, Socket socket)
-            : base(socket.Handle)
         {
             this.link = link;
             this.socket = socket;
@@ -278,7 +277,7 @@ namespace x2.Links.SocketLink
                         goto next;
                     }
 
-                    retrieved._Handle = Id;
+                    retrieved._Handle = Handle;
 
                     if (link.Preprocessor != null)
                     {

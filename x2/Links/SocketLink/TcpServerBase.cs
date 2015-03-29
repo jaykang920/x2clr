@@ -20,7 +20,7 @@ namespace x2.Links.SocketLink
     public abstract class TcpServerBase : SocketLink
     {
         protected int backlog;
-        protected Dictionary<uint, SocketLinkSession> sessions;
+        protected Dictionary<int, SocketLinkSession> sessions;
 #if SESSION_HANDOVER
         protected Dictionary<string, SocketLinkSession> recoverable;
         protected Dictionary<IntPtr, x2.Flows.Timer.Token> timeoutTokens;
@@ -53,7 +53,7 @@ namespace x2.Links.SocketLink
         public TcpServerBase(string name) : base(name)
         {
             backlog = Int32.MaxValue;
-            sessions = new Dictionary<uint, SocketLinkSession>();
+            sessions = new Dictionary<int, SocketLinkSession>();
 #if SESSION_HANDOVER
             recoverable = new Dictionary<string, SocketLinkSession>();
             timeoutTokens = new Dictionary<IntPtr, x2.Flows.Timer.Token>();
@@ -199,12 +199,12 @@ namespace x2.Links.SocketLink
 
             lock (sessions)
             {
-                if (sessions.ContainsKey(session.Id))
+                if (sessions.ContainsKey(session.Handle))
                 {
                     session.BeginReceive(true);
                     return false;
                 }
-                sessions.Add(session.Id, session);
+                sessions.Add(session.Handle, session);
             }
 
 #if !SESSION_HANDOVER
@@ -250,7 +250,7 @@ namespace x2.Links.SocketLink
         {
             lock (sessions)
             {
-                sessions.Remove(session.Id);
+                sessions.Remove(session.Handle);
             }
 #if SESSION_HANDOVER
             lock (recoverable)

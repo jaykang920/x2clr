@@ -114,38 +114,59 @@ namespace x2
     /// <summary>
     /// Abstract base class for concrete link sessions.
     /// </summary>
-    public abstract class LinkSession
+    public abstract class LinkSession : IDisposable
     {
-        private static int seq;
+        private static RangedInt32Pool handlePool;
+
+        protected volatile bool disposed;
 
         /// <summary>
-        /// Gets the session identifier.
+        /// Gets the session handle that is unique in the current process.
         /// </summary>
-        public uint Id { get; private set; }
-
-        /// <summary>
-        /// Gets the platform-specific handle of the underlying mechanism.
-        /// </summary>
-        public IntPtr Handle { get; private set; }
+        public int Handle { get; private set; }
 
         public IBufferTransform BufferTransform { get; set; }
+
+        static LinkSession()
+        {
+            handlePool = new RangedInt32Pool(1, 65536, true);
+        }
 
         /// <summary>
         /// Initializes a new instance of the LinkSession class.
         /// </summary>
-        protected LinkSession(IntPtr handle)
+        protected LinkSession()
         {
-            while (Id == 0)
-            {
-                Id = (uint)Interlocked.Increment(ref seq);
-            }
-            Handle = handle;
+            Handle = handlePool.Acquire();
+        }
+
+        ~LinkSession()
+        {
+            Dispose(false);
         }
 
         /// <summary>
         /// Closes this link session.
         /// </summary>
         public abstract void Close();
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                return;
+            }
+
+            handlePool.Release(Handle);
+
+            disposed = true;
+        }
 
         /// <summary>
         /// Sends out the specified event through this link session.
@@ -208,12 +229,12 @@ namespace x2
 
         public void ResetBytesReceived()
         {
-            Interlocked.Exchange(ref this.bytesReceived, 0L);
+            Interlocked.Exchange(ref bytesReceived, 0L);
         }
 
         public void ResetBytesSent()
         {
-            Interlocked.Exchange(ref this.bytesSent, 0L);
+            Interlocked.Exchange(ref bytesSent, 0L);
         }
     }
 
