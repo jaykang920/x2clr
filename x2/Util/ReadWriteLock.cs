@@ -33,6 +33,33 @@ namespace x2
     }
 
     /// <summary>
+    /// Provides a upgradable read lock.
+    /// </summary>
+    public class UpgradeableReadLock : IDisposable
+    {
+        private readonly ReaderWriterLockSlim rwlock;
+
+        /// <summary>
+        /// Initializes a new instance of the UpgradeableReadLock class to
+        /// acquire an upgradeable read lock based on the specified
+        /// ReaderWriterLockSlim object.
+        /// </summary>
+        public UpgradeableReadLock(ReaderWriterLockSlim rwlock)
+        {
+            this.rwlock = rwlock;
+            rwlock.EnterUpgradeableReadLock();
+        }
+
+        /// <summary>
+        /// Releases the upgradeable read lock held by this object.
+        /// </summary>
+        public void Dispose()
+        {
+            rwlock.ExitUpgradeableReadLock();
+        }
+    }
+
+    /// <summary>
     /// Provides a disposable write lock.
     /// </summary>
     public class WriteLock : IDisposable

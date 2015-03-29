@@ -20,11 +20,12 @@ namespace x2.Links.SocketLink
     public abstract class TcpServerBase : SocketLink
     {
         protected int backlog;
-        protected Dictionary<int, SocketLinkSession> sessions;
+        protected SortedList<int, SocketLinkSession> sessions;
 #if SESSION_HANDOVER
         protected Dictionary<string, SocketLinkSession> recoverable;
         protected Dictionary<IntPtr, x2.Flows.Timer.Token> timeoutTokens;
 #endif
+        protected ReaderWriterLockSlim rwlock;
 
         /// <summary>
         /// Gets or sets the maximum length of the pending connections queue.
@@ -53,11 +54,12 @@ namespace x2.Links.SocketLink
         public TcpServerBase(string name) : base(name)
         {
             backlog = Int32.MaxValue;
-            sessions = new Dictionary<int, SocketLinkSession>();
+            sessions = new SortedList<int, SocketLinkSession>();
 #if SESSION_HANDOVER
             recoverable = new Dictionary<string, SocketLinkSession>();
             timeoutTokens = new Dictionary<IntPtr, x2.Flows.Timer.Token>();
 #endif
+            rwlock = new ReaderWriterLockSlim();
 
             Diag = new Diagnostics();
         }
@@ -68,6 +70,7 @@ namespace x2.Links.SocketLink
 
             if (socket == null) { return; }
             socket.Close();
+            rwlock.Dispose();
             socket = null;
         }
 
@@ -172,9 +175,9 @@ namespace x2.Links.SocketLink
             }
 
             List<SocketLinkSession> snapshot;
-            lock (sessions)
+            using (new ReadLock(rwlock))
             {
-                snapshot = new List<SocketLinkSession>(sessions.Values);
+                snapshot = sessions.Values;
             }
             for (int i = 0, count = snapshot.Count; i < count; ++i)
             {
@@ -197,14 +200,17 @@ namespace x2.Links.SocketLink
             Log.Info("{0} {1} accepted from {2}",
                 Name, clientSocket.Handle, clientSocket.RemoteEndPoint);
 
-            lock (sessions)
+            using (new UpgradeableReadLock(rwlock))
             {
                 if (sessions.ContainsKey(session.Handle))
                 {
                     session.BeginReceive(true);
                     return false;
                 }
-                sessions.Add(session.Handle, session);
+                using (new WriteLock(rwlock))
+                {
+                    sessions.Add(session.Handle, session);
+                }
             }
 
 #if !SESSION_HANDOVER
@@ -233,7 +239,7 @@ namespace x2.Links.SocketLink
                 Log.Trace("{0} added timeoutToken for {1}", Name, session.Handle);
             }
 
-            lock (sessions)
+            using (new WriteLock(rwlock))
             {
                 sessions.Remove(session.Id);
             }
@@ -248,7 +254,7 @@ namespace x2.Links.SocketLink
 #endif
         public override void OnDisconnect(SocketLinkSession session)
         {
-            lock (sessions)
+            using (new WriteLock(rwlock))
             {
                 sessions.Remove(session.Handle);
             }
@@ -287,7 +293,7 @@ namespace x2.Links.SocketLink
 
         public void Send(Event e)
         {
-            lock (sessions)
+            using (new ReadLock(rwlock))
             {
                 SocketLinkSession session;
                 if (sessions.TryGetValue(e._Handle, out session))
@@ -299,11 +305,12 @@ namespace x2.Links.SocketLink
 
         public void Broadcast(Event e)
         {
-            lock (sessions)
+            using (new ReadLock(rwlock))
             {
-                foreach (var linkSession in sessions.Values)
+                var list = sessions.Values;
+                for (int i = 0, count = list.Count; i < count; ++i)
                 {
-                    linkSession.Send(e);
+                    list[i].Send(e);
                 }
             }
         }
