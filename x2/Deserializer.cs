@@ -149,12 +149,12 @@ namespace x2
                         bytesRead += 2;
                         if (bytesRead > length)
                         {
-                            throw new Exception("Invalid UTF-8 stream");
+                            throw new InvalidEncodingException();
                         }
                         c2 = (char)buffer.GetByte();
                         if ((c2 & 0xc0) != 0x80)
                         {
-                            throw new Exception("Invalid UTF-8 stream");
+                            throw new InvalidEncodingException();
                         }
                         stringBuilder.Append((char)(((c & 0x1f) << 6) | (c2 & 0x3f)));
                         break;
@@ -163,20 +163,20 @@ namespace x2
                         bytesRead += 3;
                         if (bytesRead > length)
                         {
-                            throw new Exception("Invalid UTF-8 stream");
+                            throw new InvalidEncodingException();
                         }
                         c2 = (char)buffer.GetByte();
                         c3 = (char)buffer.GetByte();
                         if (((c2 & 0xc0) != 0x80) || ((c3 & 0xc0) != 0x80))
                         {
-                            throw new Exception("Invalid UTF-8 stream");
+                            throw new InvalidEncodingException();
                         }
                         stringBuilder.Append((char)(((c & 0x0f) << 12) |
                           ((c2 & 0x3f) << 6) | ((c3 & 0x3f) << 0)));
                         break;
                     default:
                         // 10xx xxxx  1111 xxxx
-                        throw new Exception("Invalid UTF-8 stream");
+                        throw new InvalidEncodingException();
                 }
             }
             value = stringBuilder.ToString();

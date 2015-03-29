@@ -62,6 +62,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="EventFactory.cs" />
+    <Compile Include="Exceptions.cs" />
     <Compile Include="Extensions.Event.cs" />
     <Compile Include="Extensions.Buffer.cs" />
     <Compile Include="Extensions.Collections.cs" />
