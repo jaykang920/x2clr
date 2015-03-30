@@ -73,6 +73,11 @@ namespace x2
         /// </summary>
         protected override void TearDown()
         {
+            Unbind(new LinkSessionConnected { LinkName = Name }, OnLinkSessionConnected);
+            Unbind(new LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
+#if SESSION_RECOVERY
+            Unbind(new LinkSessionRecovered { LinkName = Name }, OnLinkSessionRecovered);
+#endif
             Close();
         }
 

@@ -182,7 +182,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Makes the given attached flow subscribe to the specifieid channel.
+        /// Makes the given attached flow subscribe to the specified channel.
         /// </summary>
         internal void Subscribe(Flow flow, string channel)
         {

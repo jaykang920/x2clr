@@ -200,7 +200,10 @@ namespace x2.Links.SocketLink
 
         private void OnKeepaliveTickEvent(KeepaliveTick e)
         {
-            OnKeepaliveTick();
+            if (IncomingKeepaliveEnabled || OutgoingKeepaliveEnabled)
+            {
+                OnKeepaliveTick();
+            }
         }
 #endif
     }
