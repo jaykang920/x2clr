@@ -21,7 +21,7 @@ namespace x2.Links.SocketLink
     {
         protected int backlog;
         protected SortedList<int, SocketLinkSession> sessions;
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
         protected Dictionary<string, SocketLinkSession> recoverable;
         protected Dictionary<IntPtr, x2.Flows.Timer.Token> timeoutTokens;
 #endif
@@ -55,7 +55,7 @@ namespace x2.Links.SocketLink
         {
             backlog = Int32.MaxValue;
             sessions = new SortedList<int, SocketLinkSession>();
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
             recoverable = new Dictionary<string, SocketLinkSession>();
             timeoutTokens = new Dictionary<IntPtr, x2.Flows.Timer.Token>();
 #endif
@@ -110,20 +110,18 @@ namespace x2.Links.SocketLink
             }
         }
 
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
         public void OnSessionReq(SocketLinkSession session, SessionReq e)
         {
             if (String.IsNullOrEmpty(e.Value))
             {
                 session.Token = Guid.NewGuid().ToString().Replace("-", "");
 
-#if SESSION_HANDOVER
                 lock (recoverable)
                 {
                     recoverable.Add(session.Token, session);
                     Log.Trace("{0} {1} added recoverable {2}", Name, session.Handle, session.Token);
                 }
-#endif
             }
             else
             {
@@ -173,15 +171,13 @@ namespace x2.Links.SocketLink
             {
                 return;
             }
-
-            List<SocketLinkSession> snapshot;
             using (new ReadLock(rwlock))
             {
-                snapshot = sessions.Values;
-            }
-            for (int i = 0, count = snapshot.Count; i < count; ++i)
-            {
-                Keepalive(snapshot[i]);
+                var list = sessions.Values;
+                for (int i = 0, count = list.Count; i < count; ++i)
+                {
+                    Keepalive(list[i]);
+                }
             }
         }
 #endif
@@ -213,7 +209,7 @@ namespace x2.Links.SocketLink
                 }
             }
 
-#if !SESSION_HANDOVER
+#if !SESSION_RECOVERY
             OnSessionSetUp(session);
 #endif
 
@@ -221,7 +217,7 @@ namespace x2.Links.SocketLink
             return true;
         }
 
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
         public void OnInstantDisconnect(SocketLinkSession session)
         {
             bool recovered;
@@ -258,7 +254,7 @@ namespace x2.Links.SocketLink
             {
                 sessions.Remove(session.Handle);
             }
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
             lock (recoverable)
             {
                 recoverable.Remove(session.Token);
@@ -275,7 +271,7 @@ namespace x2.Links.SocketLink
             var session = (SocketLinkSession)e.Context;
         }
 
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
         protected override void OnSessionRecovered(LinkSessionRecovered e)
         {
             x2.Flows.Timer.Token timeoutToken;
@@ -293,14 +289,15 @@ namespace x2.Links.SocketLink
 
         public void Send(Event e)
         {
+            SocketLinkSession session;
             using (new ReadLock(rwlock))
             {
-                SocketLinkSession session;
-                if (sessions.TryGetValue(e._Handle, out session))
+                if (!sessions.TryGetValue(e._Handle, out session))
                 {
-                    session.Send(e);
+                    return;
                 }
             }
+            session.Send(e);
         }
 
         public void Broadcast(Event e)

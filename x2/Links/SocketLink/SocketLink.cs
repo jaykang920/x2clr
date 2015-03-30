@@ -60,7 +60,7 @@ namespace x2.Links.SocketLink
 #if SESSION_KEEPALIVE
             EventFactory.Register<KeepaliveEvent>();
 #endif
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
             Event.Register<SessionReq>();
             Event.Register<SessionResp>();
 #endif

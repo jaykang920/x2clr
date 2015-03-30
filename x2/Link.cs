@@ -63,7 +63,7 @@ namespace x2
         {
             Bind(new LinkSessionConnected { LinkName = Name }, OnLinkSessionConnected);
             Bind(new LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
             Bind(new LinkSessionRecovered { LinkName = Name }, OnLinkSessionRecovered);
 #endif
         }
@@ -80,7 +80,7 @@ namespace x2
 
         protected virtual void OnSessionDisconnected(LinkSessionDisconnected e) { }
 
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
         protected virtual void OnSessionRecovered(LinkSessionRecovered e) { }
 #endif
 
@@ -94,7 +94,7 @@ namespace x2
             OnSessionDisconnected(e);
         }
 
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
         private void OnLinkSessionRecovered(LinkSessionRecovered e)
         {
             OnSessionRecovered(e);

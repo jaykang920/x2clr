@@ -51,7 +51,7 @@ namespace x2.Links.SocketLink
         protected volatile bool hasReceived;
         protected volatile bool hasSent;
 #endif
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
         protected volatile bool closing;
         protected volatile bool recovered;
 #endif
@@ -87,7 +87,7 @@ namespace x2.Links.SocketLink
         /// </summary>
         public bool Polarity { get; set; }
 
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
         public string Token { get; set; }
         public x2.Flows.Timer.Token TimeoutToken;
 #endif
@@ -132,7 +132,7 @@ namespace x2.Links.SocketLink
                 {
                     return;
                 }
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
                 closing = true;
 #endif
                 CloseInternal();
@@ -360,12 +360,12 @@ namespace x2.Links.SocketLink
                 }
             }
 
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
             if (Status.Closing)
             {
 #endif
                 link.OnDisconnect(this);
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
             }
             else
             {
@@ -484,7 +484,7 @@ namespace x2.Links.SocketLink
                 case (int)SocketLinkEventType.KeepaliveEvent:
                     break;
 #endif
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
                 case (int)SocketLinkEventType.SessionReq:
                     {
                         if (Polarity == false)
@@ -510,7 +510,7 @@ namespace x2.Links.SocketLink
             }
         }
 
-#if SESSION_HANDOVER
+#if SESSION_RECOVERY
         public void HandOver(SocketLinkSession oldSession)
         {
             lock (syncRoot)
