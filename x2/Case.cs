@@ -19,12 +19,22 @@ namespace x2
         {
             Flow = holder;
 
+            Flow backup = Flow.CurrentFlow;
+            Flow.CurrentFlow = holder;
+
             SetUp();
+
+            Flow.CurrentFlow = backup;
         }
 
         public void TearDown(Flow holder)
         {
+            Flow backup = Flow.CurrentFlow;
+            Flow.CurrentFlow = holder;
+
             TearDown();
+
+            Flow.CurrentFlow = backup;
 
             Dispose();
         }

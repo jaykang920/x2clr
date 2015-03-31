@@ -13,7 +13,7 @@ namespace x2.Samples.HeadFirst
         {
             protected override void SetUp()
             {
-                Bind(new CapitalizeReq(), (req) => {
+                new CapitalizeReq().Bind((req) => {
                     new CapitalizeResp {
                         Result = req.Message.ToUpper()
                     }.InResponseOf(req).Post();
@@ -29,17 +29,22 @@ namespace x2.Samples.HeadFirst
             {
                 base.SetUp();
                 EventFactory.Register<CapitalizeReq>();
-                Bind(new CapitalizeResp(), Send);
+                new CapitalizeResp().Bind(Send);
                 Listen(6789);
             }
         }
 
         public static void Main()
         {
+            Log.Level = LogLevel.Trace;
+            Log.Handler = (level, message) => { Console.WriteLine(message); };
+
             Hub.Instance
                 .Attach(new SingleThreadedFlow()
                     .Add(new CapitalizerCase())
-                    .Add(new CapitalizerServer()));
+                    .Add(new CapitalizerServer {
+                        //OutgoingKeepaliveEnabled = true
+                    }));
 
             using (var flows = new Hub.Flows())
             {

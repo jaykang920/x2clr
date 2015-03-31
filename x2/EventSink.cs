@@ -33,7 +33,7 @@ namespace x2
         private WeakReference flow;
 
         public Flow Flow
-        { 
+        {
             get
             {
                 return flow.Target as Flow;

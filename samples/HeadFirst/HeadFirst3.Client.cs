@@ -13,7 +13,7 @@ namespace x2.Samples.HeadFirst
         {
             protected override void SetUp()
             {
-                Bind(new CapitalizeResp(), (e) => { Console.WriteLine(e.Result); });
+                new CapitalizeResp().Bind((e) => { Console.WriteLine(e.Result); });
             }
         }
 
@@ -25,17 +25,22 @@ namespace x2.Samples.HeadFirst
             {
                 base.SetUp();
                 EventFactory.Register<CapitalizeResp>();
-                Bind(new CapitalizeReq(), Send);
+                new CapitalizeReq().Bind(Send);
                 Connect("127.0.0.1", 6789);
             }
         }
 
         public static void Main()
         {
+            Log.Level = LogLevel.Trace;
+            Log.Handler = (level, message) => { Console.WriteLine(message); };
+
             Hub.Instance
                 .Attach(new SingleThreadedFlow()
                     .Add(new OutputCase())
-                    .Add(new CapitalizerClient()));
+                    .Add(new CapitalizerClient {
+                        //IncomingKeepaliveEnabled = true
+                    }));
 
             using (var flows = new Hub.Flows())
             {

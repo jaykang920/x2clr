@@ -221,16 +221,6 @@ namespace x2
         {
         }
 
-        #region Convenience methods
-
-        // Alias of Hub.Post(e)
-        public void Post()
-        {
-            Hub.Post(this);
-        }
-
-        #endregion
-
         /// <summary>
         /// Supports light-weight custom type hierarchy for Event and its derived 
         /// classes.
