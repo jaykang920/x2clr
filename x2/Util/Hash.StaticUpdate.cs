@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace x2
 {
     // Hash.StaticUpdate
-    public partial class Hash
+    public partial struct Hash
     {
         public static int Update(int seed, bool value)
         {
