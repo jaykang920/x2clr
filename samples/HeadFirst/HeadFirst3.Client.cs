@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 
 using x2;
 using x2.Flows;
@@ -36,7 +35,7 @@ namespace x2.Samples.HeadFirst
 
         public static void Main()
         {
-            Log.Level = LogLevel.Trace;
+            Log.Level = LogLevel.Debug;
             Log.Handler = (level, message) => Console.WriteLine(message);
 
             Hub.Instance
