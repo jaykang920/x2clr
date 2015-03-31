@@ -126,10 +126,18 @@ namespace x2.Transforms
                 var encryptor = encryptingAlgorithm.CreateEncryptor(encryptingKey, encryptingIV);
                 using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                 {
-                    /* XXX
-                       Multiple Write() calls are not handled properly on the
-                       Mono in Unity 4.3
-                    
+#if UNITY_WORKAROUND
+                    // Workaround for ancient mono 2.0 of Unity3D
+                    // Multiple Write() calls are not properly handled there.
+
+                    byte[] plaintext = buffer.ToArray();
+                    if (Log.Level <= LogLevel.Trace)
+                    {
+                        Log.Trace("Cipher.Transform: input {0}",
+                            BitConverter.ToString(plaintext, plaintext.Length - length, length));
+                    }
+                    cs.Write(plaintext, plaintext.Length - length, length);
+#else
                     var buffers = new List<ArraySegment<byte>>();
                     buffer.ListEndingSegments(buffers, length);
 
@@ -145,16 +153,7 @@ namespace x2.Transforms
 
                         cs.Write(segment.Array, segment.Offset, segment.Count);
                     }
-                    */
-
-                    // Workaround for Mono
-                    byte[] plaintext = buffer.ToArray();
-                    if (Log.Level <= LogLevel.Trace)
-                    {
-                        Log.Trace("Cipher.Transform: input {0}",
-                            BitConverter.ToString(plaintext, plaintext.Length - length, length));
-                    }
-                    cs.Write(plaintext, plaintext.Length - length, length);
+#endif
 
                     cs.FlushFinalBlock();
 
@@ -190,10 +189,21 @@ namespace x2.Transforms
                 var decryptor = decryptingAlgorithm.CreateDecryptor(decryptingKey, decryptingIV);
                 using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
                 {
-                    /* XXX
-                       Multiple Write() calls are not handled properly on the
-                       Mono in Unity 4.3
-                    
+#if UNITY_WORKAROUND
+                    // Workaround for ancient mono 2.0 of Unity3D
+                    // Multiple Write() calls are not properly handled there.
+
+                    byte[] ciphertext = buffer.ToArray();
+                    if (Log.Level <= LogLevel.Trace)
+                    {
+                        Log.Trace("Cipher.InverseTransform: input {0}",
+                            BitConverter.ToString(ciphertext, 0, length));
+                    }
+                    System.Buffer.BlockCopy(ciphertext, length - DecryptingBlockSizeInBytes,
+                        decryptingIV, 0, DecryptingBlockSizeInBytes);
+                    cs.Write(ciphertext, 0, length);
+
+#else
                     var buffers = new List<ArraySegment<byte>>();
                     buffer.ListStartingSegments(buffers, length);
 
@@ -221,18 +231,7 @@ namespace x2.Transforms
 
                         cs.Write(segment.Array, segment.Offset, segment.Count);
                     }
-                    */
-                    
-                    // Workaround for Mono
-                    byte[] ciphertext = buffer.ToArray();
-                    if (Log.Level <= LogLevel.Trace)
-                    {
-                        Log.Trace("Cipher.InverseTransform: input {0}",
-                            BitConverter.ToString(ciphertext, 0, length));
-                    }
-                    System.Buffer.BlockCopy(ciphertext, length - DecryptingBlockSizeInBytes,
-                        decryptingIV, 0, DecryptingBlockSizeInBytes);
-                    cs.Write(ciphertext, 0, length);
+#endif
 
                     cs.FlushFinalBlock();
 
