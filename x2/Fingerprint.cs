@@ -162,7 +162,7 @@ namespace x2
         /// </summary>
         public override int GetHashCode()
         {
-            var hash = new Hash(Hash.Seed);
+            var hash = new Hash();
             hash.Update(length);
             hash.Update(block);
             if (blocks != null)

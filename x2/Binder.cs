@@ -173,7 +173,7 @@ namespace x2
 
             public override int GetHashCode()
             {
-                Hash hash = new Hash(Hash.Seed);
+                Hash hash = new Hash();
                 hash.Update(key.GetHashCode());
                 hash.Update(value.GetHashCode());
                 return hash.Code;
