@@ -44,9 +44,8 @@ namespace x2
                 {
                     filter.Add(e.GetTypeId(), e.GetFingerprint());
 
-                    if (handler.Action.Target is EventSink)
+                    var eventSink = handler.Action.Target as EventSink;
                     {
-                        var eventSink = (EventSink)handler.Action.Target;
                         eventSink.AddBinding(token);
                     }
                 }
