@@ -18,9 +18,9 @@ namespace x2.Tests
             Assert.AreEqual(hash1.Code, Hash.Seed);
 
             // Without new
-            Hash hash2;
-            hash2.Code = Hash.Seed;
+            Hash hash2 = new Hash();
             Assert.NotNull(hash2);
+            Assert.AreEqual(hash2.Code, Hash.Seed);
         }
 
         [Test]

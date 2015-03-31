@@ -6,14 +6,18 @@ using System;
 namespace x2
 {
     /// <summary>
-    /// Utility struct for hash code generation.
+    /// Utility class for hash code generation.
     /// </summary>
-    /// Be aware that this struct is mutable.
-    public partial struct Hash
+    public partial class Hash
     {
         public const int Seed = 17;
 
-        public int Code;
+        public int Code { get; private set; }
+
+        public Hash()
+            : this(Seed)
+        {
+        }
 
         public Hash(int seed)
         {
