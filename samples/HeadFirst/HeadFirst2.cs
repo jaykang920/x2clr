@@ -48,9 +48,7 @@ namespace x2.Samples.HeadFirst
                     }
                     else
                     {
-                        var req = new CapitalizeReq();
-                        req.Message = message;
-                        req.Post();
+                        new CapitalizeReq { Message = message }.Post();
                     }
                 }
             }

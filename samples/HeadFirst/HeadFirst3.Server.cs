@@ -23,7 +23,11 @@ namespace x2.Samples.HeadFirst
 
         class CapitalizerServer : AsyncTcpServer
         {
-            public CapitalizerServer() : base("CapitalizerServer") { }
+            public CapitalizerServer()
+                : base("CapitalizerServer")
+            {
+                //OutgoingKeepaliveEnabled = true
+            }
 
             protected override void SetUp()
             {
@@ -42,9 +46,7 @@ namespace x2.Samples.HeadFirst
             Hub.Instance
                 .Attach(new SingleThreadedFlow()
                     .Add(new CapitalizerCase())
-                    .Add(new CapitalizerServer {
-                        //OutgoingKeepaliveEnabled = true
-                    }));
+                    .Add(new CapitalizerServer()));
 
             using (var flows = new Hub.Flows())
             {

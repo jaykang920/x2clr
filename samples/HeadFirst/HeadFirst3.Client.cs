@@ -19,7 +19,11 @@ namespace x2.Samples.HeadFirst
 
         class CapitalizerClient : AsyncTcpClient
         {
-            public CapitalizerClient() : base("CapitalizerClient") { }
+            public CapitalizerClient()
+                : base("CapitalizerClient")
+            {
+                //IncomingKeepaliveEnabled = true
+            }
 
             protected override void SetUp()
             {
@@ -38,9 +42,7 @@ namespace x2.Samples.HeadFirst
             Hub.Instance
                 .Attach(new SingleThreadedFlow()
                     .Add(new OutputCase())
-                    .Add(new CapitalizerClient {
-                        //IncomingKeepaliveEnabled = true
-                    }));
+                    .Add(new CapitalizerClient()));
 
             using (var flows = new Hub.Flows())
             {
@@ -55,9 +57,7 @@ namespace x2.Samples.HeadFirst
                     }
                     else
                     {
-                        var req = new CapitalizeReq();
-                        req.Message = message;
-                        req.Post();
+                        new CapitalizeReq { Message = message }.Post();
                     }
                 }
             }
