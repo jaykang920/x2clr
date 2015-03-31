@@ -13,7 +13,7 @@ namespace x2.Samples.HeadFirst
         {
             protected override void SetUp()
             {
-                new CapitalizeResp().Bind((e) => { Console.WriteLine(e.Result); });
+                new CapitalizeResp().Bind(e => Console.WriteLine(e.Result));
             }
         }
 
@@ -37,7 +37,7 @@ namespace x2.Samples.HeadFirst
         public static void Main()
         {
             Log.Level = LogLevel.Trace;
-            Log.Handler = (level, message) => { Console.WriteLine(message); };
+            Log.Handler = (level, message) => Console.WriteLine(message);
 
             Hub.Instance
                 .Attach(new SingleThreadedFlow()

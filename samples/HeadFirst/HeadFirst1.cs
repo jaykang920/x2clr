@@ -33,7 +33,7 @@ namespace x2.Samples.HeadFirst
         {
             protected override void SetUp()
             {
-                new CapitalizeReq().Bind((req) => {
+                new CapitalizeReq().Bind(req => {
                     new CapitalizeResp {
                         Result = req.Message.ToUpper()
                     }.InResponseOf(req).Post();
@@ -45,7 +45,7 @@ namespace x2.Samples.HeadFirst
         {
             protected override void SetUp()
             {
-                new CapitalizeResp().Bind((e) => { Console.WriteLine(e.Result); });
+                new CapitalizeResp().Bind(e => Console.WriteLine(e.Result));
             }
         }
 
