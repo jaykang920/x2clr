@@ -5,6 +5,28 @@ using x2.Flows;
 
 namespace x2.Samples.HeadFirst
 {
+    /*
+    class HeadFirst0
+    {
+        public static void Main()
+        {
+            while (true)
+            {
+                string message = Console.ReadLine();
+                if (message == "quit")
+                {
+                    break;
+                }
+                else
+                {
+                    var result = message.ToUpper();
+                    Console.WriteLine(result);
+                }
+            }
+        }
+    }
+    */
+
     class HeadFirst1
     {
         class CapitalizerCase : Case
