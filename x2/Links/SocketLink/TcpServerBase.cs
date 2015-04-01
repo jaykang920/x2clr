@@ -196,7 +196,7 @@ namespace x2.Links.SocketLink
             clientSocket.NoDelay = NoDelay;
 
             Log.Info("{0} {1} accepted from {2}",
-                Name, clientSocket.Handle, clientSocket.RemoteEndPoint);
+                Name, session.Handle, clientSocket.RemoteEndPoint);
 
             using (new UpgradeableReadLock(rwlock))
             {

@@ -260,6 +260,9 @@ namespace x2.Links.SocketLink
 
         protected void ConnectInternal(SocketLinkSession session)
         {
+            Log.Info("{0} {1} connected to {2}",
+                Name, session.Handle, socket.RemoteEndPoint);
+
             // Adjust socket options.
             socket.NoDelay = NoDelay;
 

@@ -41,9 +41,6 @@ namespace x2.Links.SocketLink
                 {
                     socket.EndConnect(asyncResult);
 
-                    Log.Info("{0} {1} connected to {2}",
-                        Name, socket.Handle, socket.RemoteEndPoint);
-
                     ConnectInternal(new TcpLinkSession(this, socket));
                 }
                 catch (Exception e)

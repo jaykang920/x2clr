@@ -63,9 +63,6 @@ namespace x2.Links.SocketLink
                 connectEventArgs.Dispose();
                 connectEventArgs = null;
 
-                Log.Info("{0} {1} connected to {2}",
-                    Name, socket.Handle, socket.RemoteEndPoint);
-
                 ConnectInternal(new AsyncTcpLinkSession(this, socket));
             }
             else

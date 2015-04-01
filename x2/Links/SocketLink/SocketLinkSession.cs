@@ -77,13 +77,11 @@ namespace x2.Links.SocketLink
         /// <summary>
         /// Gets the underlying socket object.
         /// </summary>
-        public Socket Socket {
-            get { return socket; }
-        }
+        public Socket Socket { get { return socket; } }
 
         /// <summary>
         /// Gets a boolean value indicating whether this session is an active
-        /// (client) session. A passive (server-side) session will return false.
+        /// (client) session. A passive (server) session will return false.
         /// </summary>
         public bool Polarity { get; set; }
 
@@ -121,21 +119,6 @@ namespace x2.Links.SocketLink
             Diag = new Diagnostics(this);
         }
 
-        internal virtual bool CloseInternal()
-        {
-            if (socket == null)
-            {
-                return false;
-            }
-            if (socket.Connected)
-            {
-                socket.Shutdown(SocketShutdown.Both);
-            }
-            socket.Close();
-            socket = null;
-            return true;
-        }
-
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -149,12 +132,27 @@ namespace x2.Links.SocketLink
 #if SESSION_RECOVERY
                 closing = disposing;
 #endif
-                CloseInternal();
+                DisposeInternal();
             }
 
             Log.Info("{0} {1} closed", link.Name, Handle);
 
             link.OnDisconnect(this);
+        }
+
+        protected virtual bool DisposeInternal()
+        {
+            if (socket == null)
+            {
+                return false;
+            }
+            if (socket.Connected)
+            {
+                socket.Shutdown(SocketShutdown.Both);
+            }
+            socket.Close();
+            socket = null;
+            return true;
         }
 
         public int IncrementFailureCount()
@@ -353,7 +351,7 @@ namespace x2.Links.SocketLink
 
             lock (syncRoot)
             {
-                if (!CloseInternal())
+                if (!DisposeInternal())
                 {
                     return;
                 }

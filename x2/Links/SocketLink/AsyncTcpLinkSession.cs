@@ -27,9 +27,9 @@ namespace x2.Links.SocketLink
             sendEventArgs.Completed += OnSendCompleted;
         }
 
-        internal override bool CloseInternal()
+        protected override bool DisposeInternal()
         {
-            if (!base.CloseInternal())
+            if (!base.DisposeInternal())
             {
                 return false;
             }
