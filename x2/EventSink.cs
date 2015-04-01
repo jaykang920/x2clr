@@ -29,27 +29,36 @@ namespace x2
     /// </remarks>
     public class EventSink : IDisposable
     {
-        private readonly IList<Binder.Token> bindings;
         private WeakReference flow;
+        private readonly List<Binder.Token> bindings;
+        private bool disposed;
 
+        /// <summary>
+        /// Gets or sets the flow which this EventSink belongs to.
+        /// </summary>
         public Flow Flow
         {
-            get
-            {
-                return flow.Target as Flow;
-            }
+            get { return flow.Target as Flow; }
             set
             {
                 if (bindings.Count != 0)
                 {
                     throw new InvalidOperationException();
                 }
-                this.flow = new WeakReference(value);
+                flow = new WeakReference(value);
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the EventSink class with the flow that
+        /// runs the current thread.
+        /// </summary>
         public EventSink() : this(Flow.CurrentFlow) { }
 
+        /// <summary>
+        /// Initializes a new instance of the EventSink class with the specified
+        /// flow.
+        /// </summary>
         public EventSink(Flow flow)
         {
             bindings = new List<Binder.Token>();
@@ -57,32 +66,24 @@ namespace x2
         }
 
         /// <summary>
-        /// Releases all the handler bindings associated with this EventSink.
+        /// Implments IDisposable interface.
         /// </summary>
-        public virtual void Dispose()
+        public void Dispose()
         {
-            var flow = Flow;
-            if (flow == null)
-            {
-                return;
-            }
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-            lock (bindings)
-            {
-                if (bindings.Count == 0)
-                {
-                    return;
-                }
+        /// <summary>
+        /// Frees managed or unmanaged resources.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed) { return; }
 
-                for (int i = 0, count = bindings.Count; i < count; ++i)
-                {
-                    flow.Unsubscribe(bindings[i]);
-                }
+            CleanUp();
 
-                bindings.Clear();
-
-                this.flow.Target = null;
-            }
+            disposed = true;
         }
 
         public void Bind<T>(T e, Action<T> handler)
@@ -180,6 +181,27 @@ namespace x2
             lock (bindings)
             {
                 bindings.Remove(binderToken);
+            }
+        }
+
+        // Releases all the handler bindings associated with this EventSink.
+        private void CleanUp()
+        {
+            var flow = Flow;
+            if (flow == null) { return; }
+
+            lock (bindings)
+            {
+                if (bindings.Count == 0) { return; }
+                
+                for (int i = 0, count = bindings.Count; i < count; ++i)
+                {
+                    flow.Unsubscribe(bindings[i]);
+                }
+
+                bindings.Clear();
+
+                this.flow.Target = null;
             }
         }
     }

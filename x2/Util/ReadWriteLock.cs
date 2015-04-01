@@ -33,7 +33,7 @@ namespace x2
     }
 
     /// <summary>
-    /// Provides a upgradable read lock.
+    /// Provides a disposable read lock that is upgradable.
     /// </summary>
     public class UpgradeableReadLock : IDisposable
     {

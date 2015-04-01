@@ -123,7 +123,7 @@ namespace x2
     {
         private static RangedInt32Pool handlePool;
 
-        protected volatile bool disposed;
+        private volatile bool disposed;
 
         /// <summary>
         /// Gets the session handle that is unique in the current process.
@@ -155,13 +155,19 @@ namespace x2
         /// </summary>
         public abstract void Close();
 
+        /// <summary>
+        /// Implements IDisposable interface.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        protected void Dispose(bool disposing)
+        /// <summary>
+        /// Frees managed or unmanaged resources.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
         {
             if (disposed)
             {

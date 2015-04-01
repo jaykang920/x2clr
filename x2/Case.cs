@@ -7,14 +7,30 @@ using System.Threading;
 
 namespace x2
 {
+    /// <summary>
+    /// Defines methods to initialize/finalize a case. 
+    /// </summary>
     public interface ICase
     {
+        /// <summary>
+        /// Initializes this case with the specified holding flow.
+        /// </summary>
         void SetUp(Flow holder);
+
+        /// <summary>
+        /// Cleans up this case with the specified holding flow.
+        /// </summary>
         void TearDown(Flow holder);
     }
 
+    /// <summary>
+    /// Represents a finite set of application logic
+    /// </summary>
     public abstract class Case : EventSink, ICase
     {
+        /// <summary>
+        /// Initializes this case with the specified holding flow.
+        /// </summary>
         public void SetUp(Flow holder)
         {
             Flow = holder;
@@ -27,6 +43,9 @@ namespace x2
             Flow.CurrentFlow = backup;
         }
 
+        /// <summary>
+        /// Cleans up this case with the specified holding flow.
+        /// </summary>
         public void TearDown(Flow holder)
         {
             Flow backup = Flow.CurrentFlow;
@@ -43,6 +62,7 @@ namespace x2
         /// Initializes this case on startup.
         /// </summary>
         protected virtual void SetUp() { }
+
         /// <summary>
         /// Cleans up this case on shutdown.
         /// </summary>
@@ -51,7 +71,7 @@ namespace x2
 
     public class CaseStack : ICase
     {
-        private readonly IList<ICase> cases;
+        private readonly List<ICase> cases;
         private bool activated;
 
         public CaseStack()
@@ -63,29 +83,19 @@ namespace x2
         {
             lock (cases)
             {
-                if (cases.Contains(c))
+                if (!cases.Contains(c))
                 {
-                    return;
-                }
-                cases.Add(c);
-                if (!activated)
-                {
-                    return;
+                    cases.Add(c);
                 }
             }
-            //c.SetUp();
         }
 
         public void Remove(ICase c)
         {
             lock (cases)
             {
-                if (!cases.Remove(c) || !activated)
-                {
-                    return;
-                }
+                cases.Remove(c);
             }
-            //c.TearDown();
         }
 
         public void SetUp(Flow holder)
@@ -93,10 +103,7 @@ namespace x2
             List<ICase> snapshot;
             lock (cases)
             {
-                if (activated)
-                {
-                    return;
-                }
+                if (activated) { return; }
                 activated = true;
                 snapshot = new List<ICase>(cases);
             }
@@ -111,10 +118,7 @@ namespace x2
             List<ICase> snapshot;
             lock (cases)
             {
-                if (!activated)
-                {
-                    return;
-                }
+                if (!activated) { return; }
                 activated = false;
                 snapshot = new List<ICase>(cases);
             }

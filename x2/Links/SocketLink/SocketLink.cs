@@ -61,8 +61,8 @@ namespace x2.Links.SocketLink
             EventFactory.Register<KeepaliveEvent>();
 #endif
 #if SESSION_RECOVERY
-            Event.Register<SessionReq>();
-            Event.Register<SessionResp>();
+            EventFactory.Register<SessionReq>();
+            EventFactory.Register<SessionResp>();
 #endif
         }
 
