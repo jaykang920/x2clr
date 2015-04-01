@@ -16,7 +16,7 @@ namespace x2.Flows
     /// </summary>
     public abstract class EventBasedFlow : Flow
     {
-        protected readonly IQueue<Event> queue;
+        protected IQueue<Event> queue;
         protected readonly object syncRoot;
 
         protected EventBasedFlow(IQueue<Event> queue)

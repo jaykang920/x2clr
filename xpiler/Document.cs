@@ -14,7 +14,7 @@ namespace xpiler
         public IList<Reference> References { get { return references; } }
         public IList<Definition> Definitions { get { return definitions; } }
 
-        private readonly IList<Reference> references = new List<Reference>();
-        private readonly IList<Definition> definitions = new List<Definition>();
+        private IList<Reference> references = new List<Reference>();
+        private IList<Definition> definitions = new List<Definition>();
     }
 }

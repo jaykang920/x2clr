@@ -12,7 +12,7 @@ namespace x2
     /// The buffer length is limited to a multiple of a power of 2.
     public class Buffer
     {
-        private readonly List<byte[]> blocks;
+        private List<byte[]> blocks;
         private readonly int blockSizeExponent;
         private readonly int remainderMask;
 

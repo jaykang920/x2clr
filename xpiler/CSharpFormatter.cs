@@ -100,8 +100,8 @@ namespace xpiler
         private const string Tab = "    ";
         private int baseIndentation = 0;
 
-        private static readonly Dictionary<string, string> nativeTypes;
-        private static readonly Dictionary<string, string> defaultValues;
+        private static Dictionary<string, string> nativeTypes;
+        private static Dictionary<string, string> defaultValues;
 
         static CSharpFormatterContext()
         {

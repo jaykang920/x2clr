@@ -13,7 +13,7 @@ namespace x2.Flows
 {
     public class ThreadlessFlow : Flow
     {
-        protected readonly IQueue<Event> queue;
+        protected IQueue<Event> queue;
         protected readonly object syncRoot;
         protected bool running;
 

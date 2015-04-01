@@ -30,7 +30,7 @@ namespace x2
     public class EventSink : IDisposable
     {
         private WeakReference flow;
-        private readonly List<Binder.Token> bindings;
+        private List<Binder.Token> bindings;
         private bool disposed;
 
         /// <summary>

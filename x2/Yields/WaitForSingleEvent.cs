@@ -14,7 +14,7 @@ namespace x2.Yields
     /// </summary>
     public class WaitForSingleEvent : YieldInstruction
     {
-        private readonly Coroutine coroutine;
+        private Coroutine coroutine;
         private readonly Binder.Token handlerToken;
         private readonly Binder.Token timeoutToken;
         private readonly Timer.Token? timerToken;

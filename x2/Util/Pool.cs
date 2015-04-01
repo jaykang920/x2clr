@@ -16,7 +16,7 @@ namespace x2
     /// </typeparam>
     public class Pool<T> where T : class
     {
-        private readonly Stack<T> store;
+        private Stack<T> store;
         private readonly int capacity;
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace x2
         private const int maxSizeExponent = 28;  // 256M
         private const int minSizeExponent = 1;   // 2
 
-        private static readonly Pool<byte[]>[] pools;
+        private static Pool<byte[]>[] pools;
         private static readonly int maxPoolSizeExponent = 0;
 
         static BufferPool()

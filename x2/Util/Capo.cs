@@ -27,7 +27,7 @@ namespace x2
     /// </summary>
     public struct Capo<T> : IIndexable<T>
     {
-        private readonly IIndexable<T> indexable;
+        private IIndexable<T> indexable;
         private readonly int offset;
 
         /// <summary>

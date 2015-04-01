@@ -13,11 +13,11 @@ namespace x2
     public sealed class Hub
     {
         // List of all the flows attached to the hub
-        private readonly List<Flow> flows;
+        private List<Flow> flows;
         // Explicit (named) channel subscription map
-        private readonly Dictionary<string, List<Flow>> subscriptions;
+        private Dictionary<string, List<Flow>> subscriptions;
 
-        private readonly ReaderWriterLockSlim rwlock;
+        private ReaderWriterLockSlim rwlock;
 
         /// <summary>
         /// Gets the singleton instance of the hub.

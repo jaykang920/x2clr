@@ -29,7 +29,7 @@ namespace xpiler
 
         public string Comments { get; set; }
 
-        private readonly List<Constant> constants = new List<Constant>();
+        private List<Constant> constants = new List<Constant>();
 
         public override void Format(FormatterContext context)
         {
@@ -60,7 +60,7 @@ namespace xpiler
 
         public string Comments { get; set; }
 
-        private readonly List<Property> properties = new List<Property>();
+        private List<Property> properties = new List<Property>();
 
         public override void Format(FormatterContext context)
         {

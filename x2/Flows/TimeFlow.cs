@@ -12,7 +12,7 @@ namespace x2.Flows
 {
     public class PriorityQueue<TPriority, TItem>
     {
-        private readonly SortedDictionary<TPriority, List<TItem>> store;
+        private SortedDictionary<TPriority, List<TItem>> store;
 
         public int Count { get { return store.Count; } }
 
@@ -91,8 +91,8 @@ namespace x2.Flows
     // TODO: time scaling
     public class Timer
     {
-        private readonly PriorityQueue<DateTime, object> reserved;
-        private readonly Repeater repeater;
+        private PriorityQueue<DateTime, object> reserved;
+        private Repeater repeater;
 
         private readonly TimerCallback callback;
 
@@ -209,9 +209,9 @@ namespace x2.Flows
 
         private class Repeater
         {
-            private readonly ReaderWriterLockSlim rwlock;
-            private readonly IDictionary<object, Tag> map;
-            private readonly Timer owner;
+            private ReaderWriterLockSlim rwlock;
+            private IDictionary<object, Tag> map;
+            private Timer owner;
 
             private Tag defaultCase;
 
@@ -300,7 +300,7 @@ namespace x2.Flows
     {
         private const string defaultName = "default";
 
-        private static readonly Map map;
+        private static Map map;
 
         private Timer timer;
 
@@ -408,8 +408,8 @@ namespace x2.Flows
 
         private class Map
         {
-            private readonly IDictionary<string, TimeFlow> timeFlows;
-            private readonly ReaderWriterLockSlim rwlock;
+            private IDictionary<string, TimeFlow> timeFlows;
+            private ReaderWriterLockSlim rwlock;
 
             public Map()
             {

@@ -12,7 +12,7 @@ namespace x2.Flows
 {
     public class MultiThreadedFlow : EventBasedFlow
     {
-        protected readonly List<Thread> threads;
+        protected List<Thread> threads;
         protected int numThreads;
 
         public MultiThreadedFlow(int numThreads)

@@ -12,10 +12,10 @@ namespace x2
     /// </summary>
     public class Binder
     {
-        private readonly Dictionary<Event, HandlerSet> handlerMap;
-        private readonly Filter filter;
+        private Dictionary<Event, HandlerSet> handlerMap;
+        private Filter filter;
 
-        private readonly ReaderWriterLockSlim rwlock;
+        private ReaderWriterLockSlim rwlock;
 
         public Binder()
         {
@@ -198,7 +198,7 @@ namespace x2
 
         private class Filter
         {
-            private readonly Dictionary<int, List<Slot>> map;
+            private Dictionary<int, List<Slot>> map;
 
             internal Filter()
             {
@@ -257,7 +257,7 @@ namespace x2
 
         private class HandlerSet
         {
-            private readonly IList<Handler> handlers;
+            private IList<Handler> handlers;
 
             public int Count { get { return handlers.Count; } }
 
@@ -299,7 +299,7 @@ namespace x2
         /// </summary>
         public class Diagnostics
         {
-            private readonly Binder owner;
+            private Binder owner;
 
             internal Diagnostics(Binder owner)
             {

@@ -15,8 +15,8 @@ namespace x2.Yields
     /// </summary>
     public class WaitForMultipleEvents : YieldInstruction
     {
-        private readonly Coroutine coroutine;
-        private readonly Event[] expected, actual;
+        private Coroutine coroutine;
+        private Event[] expected, actual;
         private int count;
 
         public WaitForMultipleEvents(Coroutine coroutine, params Event[] e)

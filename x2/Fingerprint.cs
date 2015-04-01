@@ -13,7 +13,7 @@ namespace x2
     public class Fingerprint : IComparable<Fingerprint>, IIndexable<bool>
     {
         private int block;              // primary(default) bit block
-        private readonly int[] blocks;  // additional bit blocks
+        private int[] blocks;  // additional bit blocks
         private readonly int length;
 
         /// <summary>

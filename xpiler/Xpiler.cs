@@ -9,13 +9,13 @@ namespace xpiler
 {
     class Xpiler
     {
-        private static readonly Dictionary<string, Handler> handlers;
-        private static readonly Dictionary<string, Formatter> formatters;
-        private static readonly Options options;
+        private static Dictionary<string, Handler> handlers;
+        private static Dictionary<string, Formatter> formatters;
+        private static Options options;
 
         private bool error;
-        private readonly Formatter formatter;
-        private readonly Stack<string> subDirs;
+        private Formatter formatter;
+        private Stack<string> subDirs;
 
         public static Dictionary<string, Formatter> Formatters
         {

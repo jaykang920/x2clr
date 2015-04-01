@@ -25,8 +25,8 @@ namespace x2
         [ThreadStatic]
         protected static Stopwatch stopwatch;
 
-        protected readonly Binder binder;
-        protected readonly CaseStack caseStack;
+        protected Binder binder;
+        protected CaseStack caseStack;
         protected string name;
 
         public/*internal*/ static Flow CurrentFlow

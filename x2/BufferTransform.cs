@@ -26,7 +26,7 @@ namespace x2
 
     public class BufferTransformStack : IBufferTransform
     {
-        private readonly IList<IBufferTransform> transforms;
+        private IList<IBufferTransform> transforms;
 
         public int HandshakeBlockLength
         {

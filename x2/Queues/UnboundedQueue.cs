@@ -9,7 +9,7 @@ namespace x2.Queues
 {
     public class UnboundedQueue<T> : IQueue<T>
     {
-        private readonly Queue<T> queue;
+        private Queue<T> queue;
         private bool closing;
 
         public int Length

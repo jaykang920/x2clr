@@ -21,7 +21,7 @@ namespace x2
         /// <summary>
         /// Fingerprint to keep track of property assignments.
         /// </summary>
-        protected readonly Fingerprint fingerprint;
+        protected Fingerprint fingerprint;
 
         static Cell()
         {

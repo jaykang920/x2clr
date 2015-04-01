@@ -71,7 +71,7 @@ namespace x2
 
     public class CaseStack : ICase
     {
-        private readonly List<ICase> cases;
+        private List<ICase> cases;
         private bool activated;
 
         public CaseStack()

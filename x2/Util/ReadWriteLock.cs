@@ -11,7 +11,7 @@ namespace x2
     /// </summary>
     public class ReadLock : IDisposable
     {
-        private readonly ReaderWriterLockSlim rwlock;
+        private ReaderWriterLockSlim rwlock;
 
         /// <summary>
         /// Initializes a new instance of the ReadLock class to acquire a read
@@ -37,7 +37,7 @@ namespace x2
     /// </summary>
     public class UpgradeableReadLock : IDisposable
     {
-        private readonly ReaderWriterLockSlim rwlock;
+        private ReaderWriterLockSlim rwlock;
 
         /// <summary>
         /// Initializes a new instance of the UpgradeableReadLock class to
@@ -64,7 +64,7 @@ namespace x2
     /// </summary>
     public class WriteLock : IDisposable
     {
-        private readonly ReaderWriterLockSlim rwlock;
+        private ReaderWriterLockSlim rwlock;
 
         /// <summary>
         /// Initializes a new instance of the WriteLock class to acquire a write
