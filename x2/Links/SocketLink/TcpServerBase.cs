@@ -64,8 +64,10 @@ namespace x2.Links.SocketLink
             Diag = new Diagnostics();
         }
 
-        public override void Close()
+        protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
+
             // TODO client sockets?
 
             if (socket == null) { return; }

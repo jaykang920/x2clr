@@ -24,16 +24,16 @@ namespace x2.Links.SocketLink
         {
         }
 
-        public override void Close()
+        protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
+
             if (acceptEventArgs != null)
             {
                 acceptEventArgs.Completed -= OnAcceptCompleted;
                 acceptEventArgs.Dispose();
                 acceptEventArgs = null;
             }
-
-            base.Close();
         }
 
         protected override void AcceptImpl()

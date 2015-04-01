@@ -61,8 +61,10 @@ namespace x2.Links.SocketLink
             stopwatch = new Stopwatch();
         }
 
-        public override void Close()
+        protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
+
             lock (syncRoot)
             {
                 if (session == null)
@@ -84,12 +86,6 @@ namespace x2.Links.SocketLink
                 session = null;
                 socket = null;
             }
-        }
-
-        public void CloseInternal()
-        {
-            session.CloseInternal();
-            socket = null;
         }
 
         public void Connect(string host, int port)

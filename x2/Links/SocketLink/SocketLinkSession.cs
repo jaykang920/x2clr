@@ -121,28 +121,6 @@ namespace x2.Links.SocketLink
             Diag = new Diagnostics(this);
         }
 
-        /// <summary>
-        /// Closes the session.
-        /// </summary>
-        public override void Close()
-        {
-            lock (syncRoot)
-            {
-                if (socket == null)
-                {
-                    return;
-                }
-#if SESSION_RECOVERY
-                closing = true;
-#endif
-                CloseInternal();
-            }
-
-            Log.Info("{0} {1} closed", link.Name, Handle);
-
-            link.OnDisconnect(this);
-        }
-
         internal virtual bool CloseInternal()
         {
             if (socket == null)
@@ -156,6 +134,27 @@ namespace x2.Links.SocketLink
             socket.Close();
             socket = null;
             return true;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            lock (syncRoot)
+            {
+                if (socket == null)
+                {
+                    return;
+                }
+#if SESSION_RECOVERY
+                closing = disposing;
+#endif
+                CloseInternal();
+            }
+
+            Log.Info("{0} {1} closed", link.Name, Handle);
+
+            link.OnDisconnect(this);
         }
 
         public int IncrementFailureCount()

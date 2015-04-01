@@ -13,11 +13,13 @@ using x2.Queues;
 namespace x2
 {
     /// <summary>
-    /// Abstract base class for concrete link cases.
+    /// Common base class for link cases.
     /// </summary>
-    public abstract class Link : Case
+    public class Link : Case
     {
         private static HashSet<string> names;
+
+        private volatile bool disposed;
 
         public string Name { get; private set; }
         public IBufferTransform BufferTransform { get; set; }
@@ -48,13 +50,30 @@ namespace x2
 
         ~Link()
         {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Closes this link and releases all the associated resources.
+        /// </summary>
+        public void Close()
+        {
+            Dispose();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposed) { disposed = true; }
+
             lock (names)
             {
                 names.Remove(Name);
             }
-        }
 
-        public abstract void Close();
+            disposed = true;
+        }
 
         /// <summary>
         /// Initializes this link on startup.
@@ -122,19 +141,21 @@ namespace x2
     public abstract class LinkSession : IDisposable
     {
         private static RangedInt32Pool handlePool;
-
         private volatile bool disposed;
 
         /// <summary>
-        /// Gets the session handle that is unique in the current process.
+        /// Gets the link session handle that is unique in the current process.
         /// </summary>
         public int Handle { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the BufferTransform for this link session.
+        /// </summary>
         public IBufferTransform BufferTransform { get; set; }
 
         static LinkSession()
         {
-            handlePool = new RangedInt32Pool(1, 65536, true);
+            handlePool = new RangedInt32Pool(1, 65536, true);  // [1, 65536]
         }
 
         /// <summary>
@@ -142,7 +163,7 @@ namespace x2
         /// </summary>
         protected LinkSession()
         {
-            Handle = handlePool.Acquire();
+            Handle = handlePool.Acquire();  // acquire a session handle
         }
 
         ~LinkSession()
@@ -151,9 +172,12 @@ namespace x2
         }
 
         /// <summary>
-        /// Closes this link session.
+        /// Closes this link session and releases all the associated resources.
         /// </summary>
-        public abstract void Close();
+        public void Close()
+        {
+            Dispose();
+        }
 
         /// <summary>
         /// Implements IDisposable interface.
@@ -169,12 +193,9 @@ namespace x2
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposed)
-            {
-                return;
-            }
+            if (disposed) { return; }
 
-            handlePool.Release(Handle);
+            handlePool.Release(Handle);  // release the session handle
 
             disposed = true;
         }
