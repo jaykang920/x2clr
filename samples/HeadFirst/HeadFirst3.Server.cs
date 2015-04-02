@@ -8,18 +8,6 @@ namespace x2.Samples.HeadFirst
 {
     class HeadFirst3Server
     {
-        class CapitalizerCase : Case
-        {
-            protected override void SetUp()
-            {
-                new CapitalizeReq().Bind(req => {
-                    new CapitalizeResp {
-                        Result = req.Message.ToUpper()
-                    }.InResponseOf(req).Post();
-                });
-            }
-        }
-
         class CapitalizerServer : AsyncTcpServer
         {
             public CapitalizerServer()

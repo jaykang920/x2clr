@@ -7,26 +7,6 @@ namespace x2.Samples.HeadFirst
 {
     class HeadFirst2
     {
-        class CapitalizerCase : Case
-        {
-            protected override void SetUp()
-            {
-                new CapitalizeReq().Bind(req => {
-                    new CapitalizeResp {
-                        Result = req.Message.ToUpper()
-                    }.InResponseOf(req).Post();
-                });
-            }
-        }
-
-        class OutputCase : Case
-        {
-            protected override void SetUp()
-            {
-                new CapitalizeResp().Bind(e => Console.WriteLine(e.Result));
-            }
-        }
-
         public static void Main()
         {
             Hub.Instance

@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HeadFirst.cs" />
+    <Compile Include="HeadFirstCases.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\x2\x2clr.csproj">

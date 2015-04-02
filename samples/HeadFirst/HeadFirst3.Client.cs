@@ -8,14 +8,6 @@ namespace x2.Samples.HeadFirst
 {
     class HeadFirst3Client
     {
-        class OutputCase : Case
-        {
-            protected override void SetUp()
-            {
-                new CapitalizeResp().Bind(e => Console.WriteLine(e.Result));
-            }
-        }
-
         class CapitalizerClient : AsyncTcpClient
         {
             public CapitalizerClient()
