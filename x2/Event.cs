@@ -227,15 +227,10 @@ namespace x2
         /// </summary>
         new public class Tag : Cell.Tag
         {
-            private readonly int typeId;
-
             /// <summary>
             /// Gets the integer type identifier.
             /// </summary>
-            public int TypeId
-            {
-                get { return typeId; }
-            }
+            public int TypeId { get; private set; }
 
             /// <summary>
             /// Initializes a new instance of the Event.Tag class.
@@ -247,7 +242,7 @@ namespace x2
             public Tag(Tag baseTag, Type runtimeType, int numProps, int typeId)
                 : base(baseTag, runtimeType, numProps)
             {
-                this.typeId = typeId;
+                TypeId = typeId;
             }
         }
     }
