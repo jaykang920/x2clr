@@ -161,9 +161,12 @@ namespace x2
         /// </summary>
         public override string ToString()
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(GetTypeTag().RuntimeType.Name);
+            var stringBuilder = new StringBuilder();
+            stringBuilder
+                .Append(GetTypeTag().RuntimeType.Name)
+                .Append(" {");
             Describe(stringBuilder);
+            stringBuilder.Append(" }");
             return stringBuilder.ToString();
             /*
             VerboseSerializer serializer = new StringSerializer();
@@ -183,7 +186,6 @@ namespace x2
         /// </returns>
         protected virtual void Describe(StringBuilder stringBuilder)
         {
-            return;
         }
 
         public virtual void Deserialize(Deserializer deserializer)

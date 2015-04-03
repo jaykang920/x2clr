@@ -99,7 +99,9 @@ namespace x2
         /// </returns>
         protected override void Describe(StringBuilder stringBuilder)
         {
-            stringBuilder.AppendFormat(" {0}", GetTypeId());
+            stringBuilder
+                .Append(' ')
+                .Append(GetTypeId());
         }
 
         /// <summary>
