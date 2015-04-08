@@ -117,7 +117,7 @@ namespace x2.Transforms
 
         public int Transform(Buffer buffer, int length)
         {
-            Log.Trace("Cipher.Transform: input length {0}", length);
+            Log.Trace("BlockCipher.Transform: input length {0}", length);
 
             int result;
 
@@ -133,7 +133,7 @@ namespace x2.Transforms
                     byte[] plaintext = buffer.ToArray();
                     if (Log.Level <= LogLevel.Trace)
                     {
-                        Log.Trace("Cipher.Transform: input {0}",
+                        Log.Trace("BlockCipher.Transform: input {0}",
                             BitConverter.ToString(plaintext, plaintext.Length - length, length));
                     }
                     cs.Write(plaintext, plaintext.Length - length, length);
@@ -147,7 +147,7 @@ namespace x2.Transforms
 
                         if (Log.Level <= LogLevel.Trace)
                         {
-                            Log.Trace("Cipher.Transform: input block {0}",
+                            Log.Trace("BlockCipher.Transform: input block {0}",
                                 BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
                         }
 
@@ -162,7 +162,7 @@ namespace x2.Transforms
 
                     if (Log.Level <= LogLevel.Trace)
                     {
-                        Log.Trace("Cipher.Transform: output {0} {1}",
+                        Log.Trace("BlockCipher.Transform: output {0} {1}",
                             result, BitConverter.ToString(streamBuffer, 0, result));
                     }
 
@@ -180,7 +180,7 @@ namespace x2.Transforms
 
         public int InverseTransform(Buffer buffer, int length)
         {
-            Log.Trace("Cipher.InverseTransform: input length {0}", length);
+            Log.Trace("BlockCipher.InverseTransform: input length {0}", length);
 
             int result;
 
@@ -196,7 +196,7 @@ namespace x2.Transforms
                     byte[] ciphertext = buffer.ToArray();
                     if (Log.Level <= LogLevel.Trace)
                     {
-                        Log.Trace("Cipher.InverseTransform: input {0}",
+                        Log.Trace("BlockCipher.InverseTransform: input {0}",
                             BitConverter.ToString(ciphertext, 0, length));
                     }
                     System.Buffer.BlockCopy(ciphertext, length - DecryptingBlockSizeInBytes,
@@ -225,7 +225,7 @@ namespace x2.Transforms
 
                         if (Log.Level <= LogLevel.Trace)
                         {
-                            Log.Trace("Cipher.InverseTransform: input block {0}",
+                            Log.Trace("BlockCipher.InverseTransform: input block {0}",
                                 BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
                         }
 
@@ -240,7 +240,7 @@ namespace x2.Transforms
 
                     if (Log.Level <= LogLevel.Trace)
                     {
-                        Log.Trace("Cipher.InverseTransform: output {0} {1}",
+                        Log.Trace("BlockCipher.InverseTransform: output {0} {1}",
                             result, BitConverter.ToString(streamBuffer, 0, result));
                     }
 
