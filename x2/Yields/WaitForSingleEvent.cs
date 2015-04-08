@@ -19,7 +19,8 @@ namespace x2.Yields
         private readonly Binder.Token timeoutToken;
         private readonly Timer.Token? timerToken;
 
-        public WaitForSingleEvent(Coroutine coroutine, Event e) : this(coroutine, e, 30.0)
+        public WaitForSingleEvent(Coroutine coroutine, Event e)
+            : this(coroutine, e, 30.0)
         {
         }
 

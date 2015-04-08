@@ -11,7 +11,7 @@ namespace x2.Transforms
 {
     // Important!
     // Illustration purpose only. Do NOT use this as is in production.
-    public class Cipher : IBufferTransform
+    public class BlockCipher : IBufferTransform
     {
         private static byte[] sharedSecret = {
              1, 11, 12,  5,
@@ -41,7 +41,7 @@ namespace x2.Transforms
 
         public int HandshakeBlockLength { get { return 32; } }
 
-        public Cipher()
+        public BlockCipher()
         {
             encryptingAlgorithm = AesCryptoServiceProvider.Create();
             encryptingAlgorithm.Mode = CipherMode.CBC;
@@ -54,7 +54,7 @@ namespace x2.Transforms
 
         public object Clone()
         {
-            return new Cipher();
+            return new BlockCipher();
         }
 
         public byte[] InitializeHandshake()

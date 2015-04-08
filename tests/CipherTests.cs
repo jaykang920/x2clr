@@ -13,8 +13,8 @@ namespace x2.Tests
         [Test]
         public void TestTransform()
         {
-            Cipher cipher1 = new Cipher();
-            Cipher cipher2 = new Cipher();
+            BlockCipher cipher1 = new BlockCipher();
+            BlockCipher cipher2 = new BlockCipher();
 
             byte[] bytes1 = cipher1.InitializeHandshake();
             byte[] bytes2 = cipher2.InitializeHandshake();

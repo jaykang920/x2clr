@@ -104,7 +104,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Serializers\StringSerializer.cs" />
-    <Compile Include="Transforms\Cipher.cs" />
+    <Compile Include="Transforms\BlockCipher.cs" />
     <Compile Include="Transforms\Inverse.cs" />
     <Compile Include="Util\Capo.cs" />
     <Compile Include="Util\Getopt.cs" />
