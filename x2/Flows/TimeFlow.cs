@@ -141,10 +141,9 @@ namespace x2.Flows
             repeater.Add(state, new Tag(interval));
         }
 
-        // nextTime in UTC
-        public void ReserveRepetition(object state, DateTime nextTime, TimeSpan interval)
+        public void ReserveRepetition(object state, DateTime nextUtcTime, TimeSpan interval)
         {
-            repeater.Add(state, new Tag(nextTime, interval));
+            repeater.Add(state, new Tag(nextUtcTime, interval));
         }
 
         public void CancelRepetition(object state)
@@ -192,7 +191,7 @@ namespace x2.Flows
 
         private class Tag
         {
-            public DateTime NextTime { get; set; }
+            public DateTime NextUtcTime { get; set; }
             public TimeSpan Interval { get; private set; }
 
             public Tag(TimeSpan interval)
@@ -200,9 +199,9 @@ namespace x2.Flows
             {
             }
 
-            public Tag(DateTime nextTime, TimeSpan interval)
+            public Tag(DateTime nextUtcTime, TimeSpan interval)
             {
-                NextTime = nextTime;
+                NextUtcTime = nextUtcTime;
                 Interval = interval;
             }
         }
@@ -262,20 +261,20 @@ namespace x2.Flows
                 }
             }
 
-            public void Tick(DateTime now)
+            public void Tick(DateTime utcNow)
             {
                 rwlock.EnterReadLock();
                 try
                 {
                     if (defaultCase != null)
                     {
-                        TryFire(now, null, defaultCase);
+                        TryFire(utcNow, null, defaultCase);
                     }
                     if (map.Count != 0)
                     {
                         foreach (var pair in map)
                         {
-                            TryFire(now, pair.Key, pair.Value);
+                            TryFire(utcNow, pair.Key, pair.Value);
                         }
                     }
                 }
@@ -285,12 +284,12 @@ namespace x2.Flows
                 }
             }
 
-            private void TryFire(DateTime now, object state, Tag tag)
+            private void TryFire(DateTime utcNow, object state, Tag tag)
             {
-                if (now >= tag.NextTime)
+                if (utcNow >= tag.NextUtcTime)
                 {
                     owner.callback(state);
-                    tag.NextTime = now + tag.Interval;
+                    tag.NextUtcTime = utcNow + tag.Interval;
                 }
             }
         }
@@ -388,9 +387,9 @@ namespace x2.Flows
             timer.ReserveRepetition(e, interval);
         }
 
-        public void ReserveRepetition(Event e, DateTime nextTime, TimeSpan interval)
+        public void ReserveRepetition(Event e, DateTime nextUtcTime, TimeSpan interval)
         {
-            timer.ReserveRepetition(e, nextTime, interval);
+            timer.ReserveRepetition(e, nextUtcTime, interval);
         }
 
         public void CancelRepetition(Event e)
