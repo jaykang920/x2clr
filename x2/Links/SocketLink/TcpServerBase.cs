@@ -72,7 +72,8 @@ namespace x2.Links.SocketLink
 
             if (socket == null) { return; }
             socket.Close();
-            rwlock.Dispose();
+            // TODO rwlock should be disposed
+            //rwlock.Dispose();
             socket = null;
         }
 
