@@ -17,6 +17,10 @@ namespace x2.Transforms
             return new Inverse();
         }
 
+        public void Dispose()
+        {
+        }
+
         public byte[] InitializeHandshake()
         {
             return null;

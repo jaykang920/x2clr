@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace x2
 {
-    public interface IBufferTransform : ICloneable
+    public interface IBufferTransform : ICloneable, IDisposable
     {
         int HandshakeBlockLength { get; }
 
@@ -58,6 +58,15 @@ namespace x2
         public object Clone()
         {
             return new BufferTransformStack(transforms);
+        }
+
+        public void Dispose()
+        {
+            for (int i = 0, count = transforms.Count; i < count; ++i)
+            {
+                transforms[i].Dispose();
+            }
+            transforms.Clear();
         }
 
         public byte[] InitializeHandshake()

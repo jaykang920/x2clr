@@ -67,6 +67,11 @@ namespace x2
 
             if (disposed) { return; }
 
+            if (BufferTransform != null)
+            {
+                BufferTransform.Dispose();
+            }
+
             lock (names)
             {
                 names.Remove(Name);
@@ -194,6 +199,11 @@ namespace x2
         protected virtual void Dispose(bool disposing)
         {
             if (disposed) { return; }
+
+            if (BufferTransform != null)
+            {
+                BufferTransform.Dispose();
+            }
 
             handlePool.Release(Handle);  // release the session handle
 
