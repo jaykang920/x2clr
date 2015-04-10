@@ -10,7 +10,7 @@ namespace x2.Transforms
 {
     /// <summary>
     /// A simple example of BufferTransform that performs block encryption and
-    /// decryption based on the keys exchanged by asymmetric algorithm.
+    /// decryption based on the keys exchanged by an asymmetric algorithm.
     /// </summary>
     /// <remarks>
     /// Illustration purpose only. Do NOT use this as is in production.
@@ -20,16 +20,6 @@ namespace x2.Transforms
         private const int blockSize = 128;
         private const int keySize = 128;
         private const int rsaKeySize = 512;
-
-        private const string rsaKey = @"
-<RSAKeyValue><Modulus>tCNTvJ3bN6uLsqiUMeDGaaUSXyS9bs0m8q2+tmh7QfMwAP9G8CEjFaxyjb
-391QeCDsX+lRNf4wsuTJvnbk8rGw==</Modulus><Exponent>AQAB</Exponent><P>8GQnZQd9C4vc
-PnezAYD7eTRf01Y52f3/mdhlEi3+1hU=</P><Q>v9Wg0aXwf1TBjnsubTmY9b8ZTnAw2CApHPpUe068+
-G8=</Q><DP>Ijj/6sAgKy6kEjiUQViNdHniUoHqBoDEjLBj4yytJOk=</DP><DQ>Q5lOAFKPOu9s/X5e
-z9J6Gi7rBf7211IN6s4zsvf+EzU=</DQ><InverseQ>UfiNSsb4iYaAhgbNp3pTFnvwn1uf1sKQoBN7m
-Mv0LpA=</InverseQ><D>MzlIen449B+n3enqGjTctvXlv4BnDbbwuFmHvb8ALcRKnY+e5BjF03CSzvK
-hDthiOoUk1O9KWo47g0FGaleJIQ==</D></RSAKeyValue>
-";
 
         private SymmetricAlgorithm encryptionAlgorithm;
         private SymmetricAlgorithm decryptionAlgorithm;
@@ -76,24 +66,21 @@ hDthiOoUk1O9KWo47g0FGaleJIQ==</D></RSAKeyValue>
 
             using (var rsa = new RSACryptoServiceProvider(rsaKeySize))
             {
-                rsa.FromXmlString(rsaKey);
+                rsa.FromXmlString(rsaPeerPublicKey);
                 return rsa.Encrypt(challenge, false);
             }
         }
 
         public byte[] Handshake(byte[] challenge)
         {
-            Log.Debug("{0}", challenge.Length);
-
             using (var rsa = new RSACryptoServiceProvider(rsaKeySize))
             {
-                rsa.FromXmlString(rsaKey);
                 byte[] decrypted = rsa.Decrypt(challenge, false);
 
                 decryptionKey = decrypted.SubArray(0, KeySizeInBytes);
                 decryptionIV = decrypted.SubArray(KeySizeInBytes, BlockSizeInBytes);
 
-                return rsa.Encrypt(decrypted, false);
+                return rsa.SignData(decrypted, new SHA1CryptoServiceProvider());
             }
         }
 
@@ -101,11 +88,9 @@ hDthiOoUk1O9KWo47g0FGaleJIQ==</D></RSAKeyValue>
         {
             using (var rsa = new RSACryptoServiceProvider(rsaKeySize))
             {
-                rsa.FromXmlString(rsaKey);
-                byte[] actual = rsa.Decrypt(response, false);
-
+                rsa.FromXmlString(rsaPeerPublicKey);
                 byte[] expected = encryptionKey.Concat(encryptionIV);
-                return actual.EqualsExtended(expected);
+                return rsa.VerifyData(expected, new SHA1CryptoServiceProvider(), response);
             }
         }
 
@@ -245,5 +230,20 @@ hDthiOoUk1O9KWo47g0FGaleJIQ==</D></RSAKeyValue>
 
             return result;
         }
+
+        // In real-world client/server production, both the peer should use
+        // different RSA key pairs.
+<RSAKeyValue><Modulus>tCNTvJ3bN6uLsqiUMeDGaaUSXyS9bs0m8q2+tmh7QfMwAP9G8CEjFaxyjb
+391QeCDsX+lRNf4wsuTJvnbk8rGw==</Modulus><Exponent>AQAB</Exponent><P>8GQnZQd9C4vc
+PnezAYD7eTRf01Y52f3/mdhlEi3+1hU=</P><Q>v9Wg0aXwf1TBjnsubTmY9b8ZTnAw2CApHPpUe068+
+G8=</Q><DP>Ijj/6sAgKy6kEjiUQViNdHniUoHqBoDEjLBj4yytJOk=</DP><DQ>Q5lOAFKPOu9s/X5e
+z9J6Gi7rBf7211IN6s4zsvf+EzU=</DQ><InverseQ>UfiNSsb4iYaAhgbNp3pTFnvwn1uf1sKQoBN7m
+Mv0LpA=</InverseQ><D>MzlIen449B+n3enqGjTctvXlv4BnDbbwuFmHvb8ALcRKnY+e5BjF03CSzvK
+hDthiOoUk1O9KWo47g0FGaleJIQ==</D></RSAKeyValue>
+";
+        private const string rsaPeerPublicKey = @"
+<RSAKeyValue><Modulus>tCNTvJ3bN6uLsqiUMeDGaaUSXyS9bs0m8q2+tmh7QfMwAP9G8CEjFaxyjb
+391QeCDsX+lRNf4wsuTJvnbk8rGw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>
+";
     }
 }

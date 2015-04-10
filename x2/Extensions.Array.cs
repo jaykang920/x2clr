@@ -24,7 +24,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Tests for the sequence equality of the specified two byte arrays. 
+        /// Tests for the sequence equality of the specified byte arrays.
         /// </summary>
         public static bool EqualsExtended(this byte[] self, byte[] other)
         {
@@ -39,7 +39,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Specialized SubArray for byte arrays.
+        /// Specialized SubArray extension method for byte arrays.
         /// </summary>
         public static byte[] SubArray(this byte[] self, int offset, int count)
         {
@@ -66,6 +66,5 @@ namespace x2
             if (self == null) { return "null"; }
             return BitConverter.ToString(self);
         }
-
     }
 }
