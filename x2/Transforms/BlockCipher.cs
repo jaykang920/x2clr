@@ -4,52 +4,60 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 
 namespace x2.Transforms
 {
-    // Important!
-    // Illustration purpose only. Do NOT use this as is in production.
+    /// <summary>
+    /// A simple example of BufferTransform that performs block encryption and
+    /// decryption based on the keys exchanged by asymmetric algorithm.
+    /// </summary>
+    /// <remarks>
+    /// Illustration purpose only. Do NOT use this as is in production.
+    /// </remarks>
     public class BlockCipher : IBufferTransform
     {
-        private static byte[] sharedSecret = {
-             1, 11, 12,  5,
-            10,  2,  6, 13,
-             9,  7,  3, 14,
-             8, 16, 15,  4,
+        private const int blockSize = 128;
+        private const int keySize = 128;
+        private const int rsaKeySize = 512;
 
-            10,  9,  8,  7,
-            11,  2,  1,  6,
-            12,  3,  4,  5,
-            13, 14, 15, 16
-        };
+        private const string rsaKey = @"
+<RSAKeyValue><Modulus>tCNTvJ3bN6uLsqiUMeDGaaUSXyS9bs0m8q2+tmh7QfMwAP9G8CEjFaxyjb
+391QeCDsX+lRNf4wsuTJvnbk8rGw==</Modulus><Exponent>AQAB</Exponent><P>8GQnZQd9C4vc
+PnezAYD7eTRf01Y52f3/mdhlEi3+1hU=</P><Q>v9Wg0aXwf1TBjnsubTmY9b8ZTnAw2CApHPpUe068+
+G8=</Q><DP>Ijj/6sAgKy6kEjiUQViNdHniUoHqBoDEjLBj4yytJOk=</DP><DQ>Q5lOAFKPOu9s/X5e
+z9J6Gi7rBf7211IN6s4zsvf+EzU=</DQ><InverseQ>UfiNSsb4iYaAhgbNp3pTFnvwn1uf1sKQoBN7m
+Mv0LpA=</InverseQ><D>MzlIen449B+n3enqGjTctvXlv4BnDbbwuFmHvb8ALcRKnY+e5BjF03CSzvK
+hDthiOoUk1O9KWo47g0FGaleJIQ==</D></RSAKeyValue>
+";
 
-        SymmetricAlgorithm encryptingAlgorithm;
-        SymmetricAlgorithm decryptingAlgorithm;
+        private SymmetricAlgorithm encryptionAlgorithm;
+        private SymmetricAlgorithm decryptionAlgorithm;
 
-        private byte[] encryptingKey;
-        private byte[] decryptingKey;
+        private byte[] encryptionKey;
+        private byte[] decryptionKey;
 
-        private byte[] encryptingIV;
-        private byte[] decryptingIV;
+        private byte[] encryptionIV;
+        private byte[] decryptionIV;
 
-        private int EncryptingKeySizeInBytes { get { return (encryptingAlgorithm.KeySize / 8); } }
-        private int EncryptingBlockSizeInBytes { get { return (encryptingAlgorithm.BlockSize / 8); } }
-        private int DecryptingKeySizeInBytes { get { return (decryptingAlgorithm.KeySize / 8); } }
-        private int DecryptingBlockSizeInBytes { get { return (decryptingAlgorithm.BlockSize / 8); } }
+        private int BlockSizeInBytes { get { return (blockSize >> 3); } }
+        private int KeySizeInBytes { get { return (keySize >> 3); } }
 
-        public int HandshakeBlockLength { get { return 32; } }
+        public int HandshakeBlockLength { get { return (rsaKeySize >> 3); } }
 
         public BlockCipher()
         {
-            encryptingAlgorithm = AesCryptoServiceProvider.Create();
-            encryptingAlgorithm.Mode = CipherMode.CBC;
-            encryptingAlgorithm.Padding = PaddingMode.PKCS7;
+            encryptionAlgorithm = new AesCryptoServiceProvider();
+            encryptionAlgorithm.BlockSize = blockSize;
+            encryptionAlgorithm.KeySize = keySize;
+            encryptionAlgorithm.Mode = CipherMode.CBC;
+            encryptionAlgorithm.Padding = PaddingMode.PKCS7;
 
-            decryptingAlgorithm = AesCryptoServiceProvider.Create();
-            decryptingAlgorithm.Mode = CipherMode.CBC;
-            decryptingAlgorithm.Padding = PaddingMode.PKCS7;
+            decryptionAlgorithm = new AesCryptoServiceProvider();
+            decryptionAlgorithm.BlockSize = blockSize;
+            decryptionAlgorithm.KeySize = keySize;
+            decryptionAlgorithm.Mode = CipherMode.CBC;
+            decryptionAlgorithm.Padding = PaddingMode.PKCS7;
         }
 
         public object Clone()
@@ -59,60 +67,46 @@ namespace x2.Transforms
 
         public byte[] InitializeHandshake()
         {
-            var challenge = new byte[HandshakeBlockLength];
+            var challenge = new byte[KeySizeInBytes + BlockSizeInBytes];
             var rng = new RNGCryptoServiceProvider();
             rng.GetBytes(challenge);
 
-            decryptingKey = challenge;
+            encryptionKey = challenge.SubArray(0, KeySizeInBytes);
+            encryptionIV = challenge.SubArray(KeySizeInBytes, BlockSizeInBytes);
 
-            return challenge;
+            using (var rsa = new RSACryptoServiceProvider(rsaKeySize))
+            {
+                rsa.FromXmlString(rsaKey);
+                return rsa.Encrypt(challenge, false);
+            }
         }
 
         public byte[] Handshake(byte[] challenge)
         {
-            var data = new byte[HandshakeBlockLength];
-            var response = new byte[HandshakeBlockLength];
-            for (int i = 0; i < HandshakeBlockLength; ++i)
+            Log.Debug("{0}", challenge.Length);
+
+            using (var rsa = new RSACryptoServiceProvider(rsaKeySize))
             {
-                data[i] = (byte)(challenge[i] ^ ~sharedSecret[i]);
-                response[i] = (byte)(challenge[i] ^ sharedSecret[i]);
+                rsa.FromXmlString(rsaKey);
+                byte[] decrypted = rsa.Decrypt(challenge, false);
+
+                decryptionKey = decrypted.SubArray(0, KeySizeInBytes);
+                decryptionIV = decrypted.SubArray(KeySizeInBytes, BlockSizeInBytes);
+
+                return rsa.Encrypt(decrypted, false);
             }
-
-            encryptingKey = new byte[EncryptingKeySizeInBytes];
-            encryptingIV = new byte[EncryptingBlockSizeInBytes];
-
-            System.Buffer.BlockCopy(data, 0, encryptingKey, 0, EncryptingKeySizeInBytes);
-            System.Buffer.BlockCopy(data, HandshakeBlockLength - EncryptingBlockSizeInBytes,
-                encryptingIV, 0, EncryptingBlockSizeInBytes);
-
-            return response;
         }
 
         public bool FinalizeHandshake(byte[] response)
         {
-            var actual = new byte[HandshakeBlockLength];
-            for (int i = 0; i < HandshakeBlockLength; ++i)
+            using (var rsa = new RSACryptoServiceProvider(rsaKeySize))
             {
-                actual[i] = (byte)(response[i] ^ sharedSecret[i]);
+                rsa.FromXmlString(rsaKey);
+                byte[] actual = rsa.Decrypt(response, false);
+
+                byte[] expected = encryptionKey.Concat(encryptionIV);
+                return actual.EqualsExtended(expected);
             }
-
-            bool result = actual.SequenceEqual(decryptingKey);
-
-            if (result)
-            {
-                decryptingKey = new byte[DecryptingKeySizeInBytes];
-                decryptingIV = new byte[DecryptingBlockSizeInBytes];
-
-                for (int i = 0; i < HandshakeBlockLength; ++i)
-                {
-                    actual[i] = (byte)(actual[i] ^ ~sharedSecret[i]);
-                }
-                System.Buffer.BlockCopy(actual, 0, decryptingKey, 0, DecryptingKeySizeInBytes);
-                System.Buffer.BlockCopy(actual, HandshakeBlockLength - DecryptingBlockSizeInBytes,
-                    decryptingIV, 0, DecryptingBlockSizeInBytes);
-            }
-
-            return result;
         }
 
         public int Transform(Buffer buffer, int length)
@@ -121,9 +115,9 @@ namespace x2.Transforms
 
             int result;
 
-            using (var ms = new MemoryStream(length + EncryptingBlockSizeInBytes))
+            using (var ms = new MemoryStream(length + BlockSizeInBytes))
             {
-                var encryptor = encryptingAlgorithm.CreateEncryptor(encryptingKey, encryptingIV);
+                var encryptor = encryptionAlgorithm.CreateEncryptor(encryptionKey, encryptionIV);
                 using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                 {
 #if UNITY_WORKAROUND
@@ -169,9 +163,9 @@ namespace x2.Transforms
                     buffer.Rewind();
                     buffer.CopyFrom(streamBuffer, 0, result);
 
-                    // Store the last ciphertext block as a next encrypting IV.
-                    System.Buffer.BlockCopy(streamBuffer, result - EncryptingBlockSizeInBytes,
-                        encryptingIV, 0, EncryptingBlockSizeInBytes);
+                    // Store the last ciphertext block as a next encryption IV.
+                    System.Buffer.BlockCopy(streamBuffer, result - BlockSizeInBytes,
+                        encryptionIV, 0, BlockSizeInBytes);
                 }
             }
 
@@ -186,7 +180,7 @@ namespace x2.Transforms
 
             using (var ms = new MemoryStream(length))
             {
-                var decryptor = decryptingAlgorithm.CreateDecryptor(decryptingKey, decryptingIV);
+                var decryptor = decryptionAlgorithm.CreateDecryptor(decryptionKey, decryptionIV);
                 using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
                 {
 #if UNITY_WORKAROUND
@@ -199,23 +193,23 @@ namespace x2.Transforms
                         Log.Trace("BlockCipher.InverseTransform: input {0}",
                             BitConverter.ToString(ciphertext, 0, length));
                     }
-                    System.Buffer.BlockCopy(ciphertext, length - DecryptingBlockSizeInBytes,
-                        decryptingIV, 0, DecryptingBlockSizeInBytes);
+                    System.Buffer.BlockCopy(ciphertext, length - DecryptionBlockSizeInBytes,
+                        decryptionIV, 0, DecryptionBlockSizeInBytes);
                     cs.Write(ciphertext, 0, length);
 
 #else
                     var buffers = new List<ArraySegment<byte>>();
                     buffer.ListStartingSegments(buffers, length);
 
-                    // Store the last ciphertext block as a next decrypting IV.
-                    byte[] nextIV = new byte[DecryptingBlockSizeInBytes];
+                    // Store the last ciphertext block as a next decryption IV.
+                    byte[] nextIV = new byte[BlockSizeInBytes];
                     int bytesCopied = 0;
-                    for (var i = buffers.Count - 1; bytesCopied < DecryptingBlockSizeInBytes && i >= 0; --i)
+                    for (var i = buffers.Count - 1; bytesCopied < BlockSizeInBytes && i >= 0; --i)
                     {
                         var segment = buffers[i];
-                        int bytesToCopy = Math.Min(segment.Count, DecryptingBlockSizeInBytes);
+                        int bytesToCopy = Math.Min(segment.Count, BlockSizeInBytes);
                         System.Buffer.BlockCopy(segment.Array, segment.Offset + segment.Count - bytesToCopy,
-                            decryptingIV, DecryptingBlockSizeInBytes - bytesCopied - bytesToCopy, bytesToCopy);
+                            decryptionIV, BlockSizeInBytes - bytesCopied - bytesToCopy, bytesToCopy);
                         bytesCopied += bytesToCopy;
                     }
 

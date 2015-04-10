@@ -55,10 +55,6 @@ namespace xpiler
                 IsPrimitive = true,
                 DetailRequired = false
             });
-            types.Add("bytes", new TypeProperty {
-                IsPrimitive = true,
-                DetailRequired = false
-            });
             types.Add("int8", new TypeProperty
             {
                 IsPrimitive = true,
@@ -101,6 +97,11 @@ namespace xpiler
             });
 
             // Collection types
+            types.Add("bytes", new TypeProperty {
+                IsCollection = true,
+                IsPrimitive = false,
+                DetailRequired = false
+            });
             types.Add("list", new TypeProperty
             {
                 IsCollection = true,

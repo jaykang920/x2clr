@@ -99,7 +99,7 @@ namespace x2.Links.SocketLink
                 return false;
             }
             HandshakeReq o = (HandshakeReq)other;
-            if (data_ != o.data_)
+            if (!Extensions.EqualsExtended(data_, o.data_))
             {
                 return false;
             }
@@ -195,7 +195,7 @@ namespace x2.Links.SocketLink
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Data={0}", data_);
+            stringBuilder.AppendFormat(" Data={0}", data_.ToStringExtended());
         }
 
         private void Initialize()
@@ -252,7 +252,7 @@ namespace x2.Links.SocketLink
                 return false;
             }
             HandshakeResp o = (HandshakeResp)other;
-            if (data_ != o.data_)
+            if (!Extensions.EqualsExtended(data_, o.data_))
             {
                 return false;
             }
@@ -348,7 +348,7 @@ namespace x2.Links.SocketLink
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Data={0}", data_);
+            stringBuilder.AppendFormat(" Data={0}", data_.ToStringExtended());
         }
 
         private void Initialize()

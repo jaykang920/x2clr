@@ -1,0 +1,71 @@
+﻿// Copyright (c) 2013-2015 Jae-jun Kang
+// See the file COPYING for license details.
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace x2
+{
+    // Extensions.Array
+    public static partial class Extensions
+    {
+        /// <summary>
+        /// Linq Concat replacement for byte arrays.
+        /// </summary>
+        public static byte[] Concat(this byte[] self, byte[] other)
+        {
+            if (self == null) { return other; }
+            if (other == null) { return self; }
+            byte[] result = new byte[self.Length + other.Length];
+            System.Buffer.BlockCopy(self, 0, result, 0, self.Length);
+            System.Buffer.BlockCopy(other, 0, result, self.Length, other.Length);
+            return result;
+        }
+
+        /// <summary>
+        /// Tests for the sequence equality of the specified two byte arrays. 
+        /// </summary>
+        public static bool EqualsExtended(this byte[] self, byte[] other)
+        {
+            if (self == null && other == null) { return true; }
+            if (self == null || other == null) { return false; }
+            if (self.Length != other.Length) { return false; }
+            for (int i = 0, length = self.Length; i < length; ++i)
+            {
+                if (self[i] != other[i]) { return false; }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Specialized SubArray for byte arrays.
+        /// </summary>
+        public static byte[] SubArray(this byte[] self, int offset, int count)
+        {
+            if (self == null) { return null; }
+            byte[] result = new byte[count];
+            System.Buffer.BlockCopy(self, offset, result, 0, count);
+            return result;
+        }
+
+        /// <summary>
+        /// Returns a new subarray that delimits the specified range of the
+        /// elements in the specified source array.
+        /// </summary>
+        public static T[] SubArray<T>(this T[] self, int offset, int count)
+        {
+            if (self == null) { return null; }
+            T[] result = new T[count];
+            Array.Copy(self, offset, result, 0, count);
+            return result;
+        }
+
+        public static string ToStringExtended(this byte[] self)
+        {
+            if (self == null) { return "null"; }
+            return BitConverter.ToString(self);
+        }
+
+    }
+}

@@ -65,7 +65,7 @@ namespace x2
         {
             base.Dispose(disposing);
 
-            if (disposed) { disposed = true; }
+            if (disposed) { return; }
 
             lock (names)
             {

@@ -26,7 +26,7 @@ namespace x2
 
     public class BufferTransformStack : IBufferTransform
     {
-        private IList<IBufferTransform> transforms;
+        private List<IBufferTransform> transforms;
 
         public int HandshakeBlockLength
         {
@@ -65,7 +65,7 @@ namespace x2
             byte[] result = null;
             for (int i = 0, count = transforms.Count; i < count; ++i)
             {
-                result = Combine(result, transforms[i].InitializeHandshake());
+                result = result.Concat(transforms[i].InitializeHandshake());
             }
             return result;
         }
@@ -80,10 +80,9 @@ namespace x2
                 var blockLength = transform.HandshakeBlockLength;
                 if (blockLength > 0)
                 {
-                    var block = new byte[blockLength];
-                    System.Buffer.BlockCopy(challenge, offset, block, 0, blockLength);
-
-                    result = Combine(result, transforms[i].Handshake(block));
+                    var block = challenge.SubArray(offset, blockLength);
+                    result = result.Concat(transforms[i].Handshake(block));
+                    offset += blockLength;
                 }
             }
             return result;
@@ -98,15 +97,13 @@ namespace x2
                 var blockLength = transform.HandshakeBlockLength;
                 if (blockLength > 0)
                 {
-                    var block = new byte[blockLength];
-                    System.Buffer.BlockCopy(response, offset, block, 0, blockLength);
-
+                    var block = response.SubArray(offset, blockLength);
                     if (!transforms[i].FinalizeHandshake(block))
                     {
                         return false;
                     }
+                    offset += blockLength;
                 }
-                offset += blockLength;
             }
             return true;
         }
@@ -144,22 +141,6 @@ namespace x2
                 length = transforms[i].InverseTransform(buffer, length);
             }
             return length;
-        }
-
-        private static byte[] Combine(byte[] first, byte[] second)
-        {
-            if (second == null)
-            {
-                return first;
-            }
-            if (first == null)
-            {
-                return second;
-            }
-            byte[] result = new byte[first.Length + second.Length];
-            System.Buffer.BlockCopy(first, 0, result, 0, first.Length);
-            System.Buffer.BlockCopy(second, 0, result, first.Length, second.Length);
-            return result;
         }
     }
 }

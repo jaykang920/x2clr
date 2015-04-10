@@ -13,7 +13,12 @@ namespace x2.Samples.HeadFirst
             public CapitalizerClient()
                 : base("CapitalizerClient")
             {
-                //IncomingKeepaliveEnabled = true
+                //IncomingKeepaliveEnabled = true,
+                /*
+                BufferTransform = new BufferTransformStack()
+                    .Add(new x2.Transforms.BlockCipher())
+                    .Add(new x2.Transforms.Inverse());
+                */
             }
 
             protected override void SetUp()

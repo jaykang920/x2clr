@@ -5,6 +5,9 @@ using System;
 
 namespace x2.Transforms
 {
+    /// <summary>
+    /// A trivial example of BufferTransform that just invert every bit.
+    /// </summary>
     public class Inverse : IBufferTransform
     {
         public int HandshakeBlockLength { get { return 0; } }
