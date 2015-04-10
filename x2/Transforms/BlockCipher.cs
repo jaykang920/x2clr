@@ -106,61 +106,57 @@ namespace x2.Transforms
             Log.Trace("BlockCipher.Transform: input length {0}", length);
 
             using (var encryptor = encryptionAlgorithm.CreateEncryptor(encryptionKey, encryptionIV))
+            using (var ms = new MemoryStream(length + BlockSizeInBytes))
+            using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
             {
-                using (var ms = new MemoryStream(length + BlockSizeInBytes))
-                {
-                    using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
-                    {
 #if UNITY_WORKAROUND
-                        // Workaround for ancient mono 2.0 of Unity3D
-                        // Multiple Write() calls are not properly handled there.
+                // Workaround for ancient mono 2.0 of Unity3D
+                // Multiple Write() calls are not properly handled there.
 
-                        byte[] plaintext = buffer.ToArray();
-                        if (Log.Level <= LogLevel.Trace)
-                        {
-                            Log.Trace("BlockCipher.Transform: input {0}",
-                                BitConverter.ToString(plaintext, plaintext.Length - length, length));
-                        }
-                        cs.Write(plaintext, plaintext.Length - length, length);
+                byte[] plaintext = buffer.ToArray();
+                if (Log.Level <= LogLevel.Trace)
+                {
+                    Log.Trace("BlockCipher.Transform: input {0}",
+                        BitConverter.ToString(plaintext, plaintext.Length - length, length));
+                }
+                cs.Write(plaintext, plaintext.Length - length, length);
 #else
-                        var buffers = new List<ArraySegment<byte>>();
-                        buffer.ListEndingSegments(buffers, length);
+                var buffers = new List<ArraySegment<byte>>();
+                buffer.ListEndingSegments(buffers, length);
 
-                        for (var i = 0; i < buffers.Count; ++i)
-                        {
-                            var segment = buffers[i];
+                for (var i = 0; i < buffers.Count; ++i)
+                {
+                    var segment = buffers[i];
 
-                            if (Log.Level <= LogLevel.Trace)
-                            {
-                                Log.Trace("BlockCipher.Transform: input block {0}",
-                                    BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
-                            }
+                    if (Log.Level <= LogLevel.Trace)
+                    {
+                        Log.Trace("BlockCipher.Transform: input block {0}",
+                            BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
+                    }
 
-                            cs.Write(segment.Array, segment.Offset, segment.Count);
-                        }
+                    cs.Write(segment.Array, segment.Offset, segment.Count);
+                }
 #endif
 
-                        cs.FlushFinalBlock();
+                cs.FlushFinalBlock();
 
-                        int result = (int)ms.Length;
-                        var streamBuffer = ms.GetBuffer();
+                int result = (int)ms.Length;
+                var streamBuffer = ms.GetBuffer();
 
-                        if (Log.Level <= LogLevel.Trace)
-                        {
-                            Log.Trace("BlockCipher.Transform: output {0} {1}",
-                                result, BitConverter.ToString(streamBuffer, 0, result));
-                        }
-
-                        buffer.Rewind();
-                        buffer.CopyFrom(streamBuffer, 0, result);
-
-                        // Store the last ciphertext block as a next encryption IV.
-                        System.Buffer.BlockCopy(streamBuffer, result - BlockSizeInBytes,
-                            encryptionIV, 0, BlockSizeInBytes);
-                        
-                        return result;
-                    }
+                if (Log.Level <= LogLevel.Trace)
+                {
+                    Log.Trace("BlockCipher.Transform: output {0} {1}",
+                        result, BitConverter.ToString(streamBuffer, 0, result));
                 }
+
+                buffer.Rewind();
+                buffer.CopyFrom(streamBuffer, 0, result);
+
+                // Store the last ciphertext block as a next encryption IV.
+                System.Buffer.BlockCopy(streamBuffer, result - BlockSizeInBytes,
+                    encryptionIV, 0, BlockSizeInBytes);
+                        
+                return result;
             }
         }
 
@@ -169,77 +165,73 @@ namespace x2.Transforms
             Log.Trace("BlockCipher.InverseTransform: input length {0}", length);
 
             using (var decryptor = decryptionAlgorithm.CreateDecryptor(decryptionKey, decryptionIV))
+            using (var ms = new MemoryStream(length))
+            using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
             {
-                using (var ms = new MemoryStream(length))
-                {
-                    using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
-                    {
 #if UNITY_WORKAROUND
-                        // Workaround for ancient mono 2.0 of Unity3D
-                        // Multiple Write() calls are not properly handled there.
+                // Workaround for ancient mono 2.0 of Unity3D
+                // Multiple Write() calls are not properly handled there.
 
-                        byte[] ciphertext = buffer.ToArray();
-                        if (Log.Level <= LogLevel.Trace)
-                        {
-                            Log.Trace("BlockCipher.InverseTransform: input {0}",
-                                BitConverter.ToString(ciphertext, 0, length));
-                        }
-                        System.Buffer.BlockCopy(ciphertext, length - DecryptionBlockSizeInBytes,
-                            decryptionIV, 0, DecryptionBlockSizeInBytes);
-                        cs.Write(ciphertext, 0, length);
+                byte[] ciphertext = buffer.ToArray();
+                if (Log.Level <= LogLevel.Trace)
+                {
+                    Log.Trace("BlockCipher.InverseTransform: input {0}",
+                        BitConverter.ToString(ciphertext, 0, length));
+                }
+                System.Buffer.BlockCopy(ciphertext, length - DecryptionBlockSizeInBytes,
+                    decryptionIV, 0, DecryptionBlockSizeInBytes);
+                cs.Write(ciphertext, 0, length);
 
 #else
-                        var buffers = new List<ArraySegment<byte>>();
-                        buffer.ListStartingSegments(buffers, length);
+                var buffers = new List<ArraySegment<byte>>();
+                buffer.ListStartingSegments(buffers, length);
 
-                        // Store the last ciphertext block as a next decryption IV.
-                        byte[] nextIV = new byte[BlockSizeInBytes];
-                        int bytesCopied = 0;
-                        for (var i = buffers.Count - 1; bytesCopied < BlockSizeInBytes && i >= 0; --i)
-                        {
-                            var segment = buffers[i];
-                            int bytesToCopy = Math.Min(segment.Count, BlockSizeInBytes);
-                            System.Buffer.BlockCopy(segment.Array, segment.Offset + segment.Count - bytesToCopy,
-                                decryptionIV, BlockSizeInBytes - bytesCopied - bytesToCopy, bytesToCopy);
-                            bytesCopied += bytesToCopy;
-                        }
+                // Store the last ciphertext block as a next decryption IV.
+                byte[] nextIV = new byte[BlockSizeInBytes];
+                int bytesCopied = 0;
+                for (var i = buffers.Count - 1; bytesCopied < BlockSizeInBytes && i >= 0; --i)
+                {
+                    var segment = buffers[i];
+                    int bytesToCopy = Math.Min(segment.Count, BlockSizeInBytes);
+                    System.Buffer.BlockCopy(segment.Array, segment.Offset + segment.Count - bytesToCopy,
+                        decryptionIV, BlockSizeInBytes - bytesCopied - bytesToCopy, bytesToCopy);
+                    bytesCopied += bytesToCopy;
+                }
 
-                        for (var i = 0; i < buffers.Count; ++i)
-                        {
-                            var segment = buffers[i];
+                for (var i = 0; i < buffers.Count; ++i)
+                {
+                    var segment = buffers[i];
 
-                            if (Log.Level <= LogLevel.Trace)
-                            {
-                                Log.Trace("BlockCipher.InverseTransform: input block {0}",
-                                    BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
-                            }
+                    if (Log.Level <= LogLevel.Trace)
+                    {
+                        Log.Trace("BlockCipher.InverseTransform: input block {0}",
+                            BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
+                    }
 
-                            cs.Write(segment.Array, segment.Offset, segment.Count);
-                        }
+                    cs.Write(segment.Array, segment.Offset, segment.Count);
+                }
 #endif
 
-                        cs.FlushFinalBlock();
+                cs.FlushFinalBlock();
 
-                        int result = (int)ms.Length;
-                        var streamBuffer = ms.GetBuffer();
+                int result = (int)ms.Length;
+                var streamBuffer = ms.GetBuffer();
 
-                        if (Log.Level <= LogLevel.Trace)
-                        {
-                            Log.Trace("BlockCipher.InverseTransform: output {0} {1}",
-                                result, BitConverter.ToString(streamBuffer, 0, result));
-                        }
-
-                        buffer.Rewind();
-                        buffer.CopyFrom(streamBuffer, 0, result);
-
-                        return result;
-                    }
+                if (Log.Level <= LogLevel.Trace)
+                {
+                    Log.Trace("BlockCipher.InverseTransform: output {0} {1}",
+                        result, BitConverter.ToString(streamBuffer, 0, result));
                 }
+
+                buffer.Rewind();
+                buffer.CopyFrom(streamBuffer, 0, result);
+
+                return result;
             }
         }
 
-        // In real-world client/server applications, both the peer should use
-        // different RSA key pairs.
+        // In a real-world client/server production, each peer should use a
+        // different RSA key pair.
         private const string rsaMyPrivateKey = @"
 <RSAKeyValue><Modulus>tCNTvJ3bN6uLsqiUMeDGaaUSXyS9bs0m8q2+tmh7QfMwAP9G8CEjFaxyjb
 391QeCDsX+lRNf4wsuTJvnbk8rGw==</Modulus><Exponent>AQAB</Exponent><P>8GQnZQd9C4vc
