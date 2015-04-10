@@ -75,6 +75,7 @@ namespace x2.Transforms
         {
             using (var rsa = new RSACryptoServiceProvider(rsaKeySize))
             {
+                rsa.FromXmlString(rsaMyPrivateKey);
                 byte[] decrypted = rsa.Decrypt(challenge, false);
 
                 decryptionKey = decrypted.SubArray(0, KeySizeInBytes);
@@ -233,6 +234,7 @@ namespace x2.Transforms
 
         // In real-world client/server production, both the peer should use
         // different RSA key pairs.
+        private const string rsaMyPrivateKey = @"
 <RSAKeyValue><Modulus>tCNTvJ3bN6uLsqiUMeDGaaUSXyS9bs0m8q2+tmh7QfMwAP9G8CEjFaxyjb
 391QeCDsX+lRNf4wsuTJvnbk8rGw==</Modulus><Exponent>AQAB</Exponent><P>8GQnZQd9C4vc
 PnezAYD7eTRf01Y52f3/mdhlEi3+1hU=</P><Q>v9Wg0aXwf1TBjnsubTmY9b8ZTnAw2CApHPpUe068+
