@@ -27,6 +27,8 @@ namespace x2.Links.SocketLink
 #endif
         protected ReaderWriterLockSlim rwlock;
 
+        private volatile bool disposed;
+
         /// <summary>
         /// Gets or sets the maximum length of the pending connections queue.
         /// </summary>
@@ -68,13 +70,10 @@ namespace x2.Links.SocketLink
         {
             base.Dispose(disposing);
 
-            // TODO client sockets?
+            if (disposed) { return; }
 
-            if (socket == null) { return; }
             socket.Close();
-            // TODO rwlock should be disposed
-            //rwlock.Dispose();
-            socket = null;
+            rwlock.Dispose();
         }
 
         public void Listen(int port)
@@ -223,6 +222,8 @@ namespace x2.Links.SocketLink
 #if SESSION_RECOVERY
         public void OnInstantDisconnect(SocketLinkSession session)
         {
+            if (disposed) { return; }
+
             bool recovered;
             lock (session.SyncRoot)
             {
@@ -253,6 +254,8 @@ namespace x2.Links.SocketLink
 #endif
         public override void OnDisconnect(SocketLinkSession session)
         {
+            if (disposed) { return; }
+
             using (new WriteLock(rwlock))
             {
                 sessions.Remove(session.Handle);
@@ -271,7 +274,6 @@ namespace x2.Links.SocketLink
 
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
-            var session = (SocketLinkSession)e.Context;
         }
 
 #if SESSION_RECOVERY
