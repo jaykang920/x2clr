@@ -38,26 +38,25 @@ namespace x2.Flows
             this.name = name;
         }
 
-        public override void StartUp()
+        public override Flow StartUp()
         {
             lock (syncRoot)
             {
-                if (threads.Count != 0)
+                if (threads.Count == 0)
                 {
-                    return;
+                    SetUp();
+                    caseStack.SetUp(this);
+                    for (int i = 0; i < numThreads; ++i)
+                    {
+                        Thread thread = new Thread(this.Run);
+                        thread.Name = String.Format("{0} {1}", name, i + 1);
+                        threads.Add(thread);
+                        thread.Start();
+                    }
+                    queue.Enqueue(new FlowStart());
                 }
-
-                SetUp();
-                caseStack.SetUp(this);
-                for (int i = 0; i < numThreads; ++i)
-                {
-                    Thread thread = new Thread(this.Run);
-                    thread.Name = String.Format("{0} {1}", name, i + 1);
-                    threads.Add(thread);
-                    thread.Start();
-                }
-                queue.Enqueue(new FlowStart());
             }
+            return this;
         }
 
         public override void ShutDown()

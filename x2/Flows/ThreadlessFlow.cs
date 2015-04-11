@@ -34,26 +34,25 @@ namespace x2.Flows
             queue.Enqueue(e);
         }
 
-        public override void StartUp()
+        public override Flow StartUp()
         {
             lock (syncRoot)
             {
-                if (running)
+                if (!running)
                 {
-                    return;
+                    SetUp();
+                    caseStack.SetUp(this);
+                    handlerChain = new List<Handler>();
+                    stopwatch = new Stopwatch();
+
+                    currentFlow = this;
+
+                    running = true;
+
+                    queue.Enqueue(new FlowStart());
                 }
-
-                SetUp();
-                caseStack.SetUp(this);
-                handlerChain = new List<Handler>();
-                stopwatch = new Stopwatch();
-
-                currentFlow = this;
-
-                running = true;
-
-                queue.Enqueue(new FlowStart());
             }
+            return this;
         }
 
         public override void ShutDown()

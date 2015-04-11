@@ -110,25 +110,24 @@ namespace x2.Flows
             }
         }
 
-        public override void StartUp()
+        public override Flow StartUp()
         {
             lock (syncRoot)
             {
-                if (thread != null)
+                if (thread == null)
                 {
-                    return;
-                }
-
-                SetUp();
-                caseStack.SetUp(this);
-                thread = new Thread(this.Run);
-                thread.Name = name;
-                thread.Start();
-                if (queue != null)
-                {
-                    queue.Enqueue(new FlowStart());
+                    SetUp();
+                    caseStack.SetUp(this);
+                    thread = new Thread(this.Run);
+                    thread.Name = name;
+                    thread.Start();
+                    if (queue != null)
+                    {
+                        queue.Enqueue(new FlowStart());
+                    }
                 }
             }
+            return this;
         }
 
         public override void ShutDown()

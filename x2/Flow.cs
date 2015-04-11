@@ -206,7 +206,7 @@ namespace x2
             binder.Unbind(token);
         }
 
-        public abstract void StartUp();
+        public abstract Flow StartUp();
         public abstract void ShutDown();
 
         public Flow Attach()

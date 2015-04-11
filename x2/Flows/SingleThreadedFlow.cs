@@ -36,22 +36,21 @@ namespace x2.Flows
             this.name = name;
         }
 
-        public override void StartUp()
+        public override Flow StartUp()
         {
             lock (syncRoot)
             {
-                if (thread != null)
+                if (thread == null)
                 {
-                    return;
+                    SetUp();
+                    caseStack.SetUp(this);
+                    thread = new Thread(this.Run);
+                    thread.Name = name;
+                    thread.Start();
+                    queue.Enqueue(new FlowStart());
                 }
-
-                SetUp();
-                caseStack.SetUp(this);
-                thread = new Thread(this.Run);
-                thread.Name = name;
-                thread.Start();
-                queue.Enqueue(new FlowStart());
             }
+            return this;
         }
 
         public override void ShutDown()
