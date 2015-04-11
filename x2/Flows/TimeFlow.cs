@@ -221,6 +221,11 @@ namespace x2.Flows
                 this.owner = owner;
             }
 
+            ~Repeater()
+            {
+                rwlock.Dispose();
+            }
+
             public void Add(object state, Tag timeTag)
             {
                 rwlock.EnterWriteLock();
@@ -332,8 +337,7 @@ namespace x2.Flows
                 throw new ArgumentNullException();
             }
             TimeFlow timeFlow = map.Create(name);
-            Hub.Instance.Attach(timeFlow);
-            timeFlow.StartUp();
+            timeFlow.StartUp().Attach();
             return timeFlow;
         }
 
@@ -414,6 +418,11 @@ namespace x2.Flows
             {
                 timeFlows = new Dictionary<string, TimeFlow>();
                 rwlock = new ReaderWriterLockSlim();
+            }
+
+            ~Map()
+            {
+                rwlock.Dispose();
             }
 
             internal TimeFlow Create(string name)

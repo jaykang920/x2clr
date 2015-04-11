@@ -38,9 +38,6 @@ namespace x2
             rwlock = new ReaderWriterLockSlim();
         }
 
-        /// <summary>
-        /// Destructor.
-        /// </summary>
         ~Hub()
         {
             rwlock.Dispose();

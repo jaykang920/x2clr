@@ -27,6 +27,11 @@ namespace x2
             Diag = new Diagnostics(this);
         }
 
+        ~Binder()
+        {
+            rwlock.Dispose();
+        }
+
         public virtual Token Bind(Event e, Handler handler)
         {
             rwlock.EnterWriteLock();

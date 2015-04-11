@@ -74,6 +74,8 @@ namespace x2.Links.SocketLink
 
             socket.Close();
             rwlock.Dispose();
+
+            disposed = true;
         }
 
         public void Listen(int port)
