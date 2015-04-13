@@ -178,8 +178,8 @@ namespace x2.Transforms
                     Log.Trace("BlockCipher.InverseTransform: input {0}",
                         BitConverter.ToString(ciphertext, 0, length));
                 }
-                System.Buffer.BlockCopy(ciphertext, length - DecryptionBlockSizeInBytes,
-                    decryptionIV, 0, DecryptionBlockSizeInBytes);
+                System.Buffer.BlockCopy(ciphertext, length - BlockSizeInBytes,
+                    decryptionIV, 0, BlockSizeInBytes);
                 cs.Write(ciphertext, 0, length);
 
 #else

@@ -443,7 +443,16 @@ namespace x2.Links.SocketLink
                     {
                         var req = (HandshakeReq)e;
                         var resp = new HandshakeResp { _Transform = false };
-                        byte[] response = BufferTransform.Handshake(req.Data);
+                        byte[] response = null;
+                        try
+                        {
+                            response = BufferTransform.Handshake(req.Data);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("{0} {1} error handshaking : {2}",
+                                link.Name, Handle, ex.ToString());
+                        }
                         if (response != null)
                         {
                             resp.Data = response;
@@ -455,14 +464,18 @@ namespace x2.Links.SocketLink
                     {
                         var ack = new HandshakeAck { _Transform = false };
                         var resp = (HandshakeResp)e;
-                        if (BufferTransform.FinalizeHandshake(resp.Data))
+                        try
                         {
-                            rxTransformReady = true;
-                            ack.Result = true;
+                            if (BufferTransform.FinalizeHandshake(resp.Data))
+                            {
+                                rxTransformReady = true;
+                                ack.Result = true;
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            // log
+                            Log.Error("{0} {1} error finishing handshake : {2}",
+                                link.Name, Handle, ex.ToString());
                         }
                         Send(ack);
                     }
@@ -484,7 +497,7 @@ namespace x2.Links.SocketLink
                         //
                         Hub.Post(new LinkSessionConnected {
                             LinkName = link.Name,
-                            Result = true,
+                            Result = ack.Result,
                             Context = this
                         });
                     }
