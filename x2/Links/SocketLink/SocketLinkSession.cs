@@ -146,13 +146,25 @@ namespace x2.Links.SocketLink
             {
                 return false;
             }
-            if (socket.Connected)
+            try
             {
-                socket.Shutdown(SocketShutdown.Both);
+                if (socket.Connected)
+                {
+                    socket.Shutdown(SocketShutdown.Both);
+                }
+                socket.Close();
+                return true;
             }
-            socket.Close();
-            socket = null;
-            return true;
+            catch (SocketException se)
+            {
+                Log.Warn("{0} {1} Error closing socket: {2}",
+                    link.Name, Handle, se.ToString());
+                return false;
+            }
+            finally
+            {
+                socket = null;
+            }
         }
 
         public int IncrementFailureCount()
