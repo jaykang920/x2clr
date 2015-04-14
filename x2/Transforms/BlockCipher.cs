@@ -79,10 +79,11 @@ namespace x2.Transforms
 
         public byte[] Handshake(byte[] challenge)
         {
+            byte[] decrypted;
             using (var rsa = new RSACryptoServiceProvider(rsaKeySize))
             {
                 rsa.FromXmlString(rsaMyPrivateKey);
-                byte[] decrypted = rsa.Decrypt(challenge, false);
+                decrypted = rsa.Decrypt(challenge, false);
 
                 decryptionKey = decrypted.SubArray(0, KeySizeInBytes);
                 decryptionIV = decrypted.SubArray(KeySizeInBytes, BlockSizeInBytes);
@@ -90,8 +91,10 @@ namespace x2.Transforms
                 // If we're free from old mono of such as Unity3D,
                 // we can simply sign the decrypted data to prove ourselves.
                 //return rsa.SignData(decrypted, new SHA1CryptoServiceProvider());
-                
-                // But if not, replay the data decrypted with our private key.
+            }
+            // But if not, replay the data decrypted with our private key.
+            using (var rsa = new RSACryptoServiceProvider(rsaKeySize))
+            {
                 rsa.FromXmlString(rsaPeerPublicKey);
                 return rsa.Encrypt(decrypted, false);
             }

@@ -497,7 +497,9 @@ namespace x2.Links.SocketLink
                         //
                         Hub.Post(new LinkSessionConnected {
                             LinkName = link.Name,
-                            Result = ack.Result,
+                            // FIXME!
+                            //Result = ack.Result,
+                            Result = true,
                             Context = this
                         });
                     }
