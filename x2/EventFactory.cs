@@ -18,6 +18,7 @@ namespace x2
             Func<Event> factoryMethod;
             if (!register.TryGetValue(typeId, out factoryMethod))
             {
+                Log.Error("EventFactory.Create : unknown event type id {0}", typeId);
                 return null;
             }
             return factoryMethod();
@@ -26,13 +27,16 @@ namespace x2
         public static Event Create(Deserializer deserializer)
         {
             int typeId;
-            deserializer.Read(out typeId);
-            Event result = Create(typeId);
-            if (Object.ReferenceEquals(result, null))
+            try
             {
-                Log.Error("Event.Create: unknown event type id {0}", typeId);
+                deserializer.Read(out typeId);
             }
-            return result;
+            catch (Exception e)
+            {
+                Log.Error("EventFactory.Create : error reading event type id");
+                return null;
+            }
+            return Create(typeId);
         }
 
         public static void Register<T>() where T : Event

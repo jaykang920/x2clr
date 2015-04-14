@@ -230,9 +230,9 @@ namespace x2.Links.SocketLink
                 {
                     headerLength = recvBuffer.ReadVariable(out header);
                 }
-                catch (IndexOutOfRangeException)
+                catch (System.IO.EndOfStreamException)
                 {
-                    // Need more to start.
+                    // Need more to start parsing.
                     BeginReceive(true);
                     return;
                 }
@@ -310,7 +310,7 @@ namespace x2.Links.SocketLink
                 {
                     headerLength = recvBuffer.ReadVariable(out header);
                 }
-                catch (IndexOutOfRangeException)
+                catch (System.IO.EndOfStreamException)
                 {
                     BeginReceive(true);
                     return;

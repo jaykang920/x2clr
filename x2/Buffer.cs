@@ -205,7 +205,7 @@ namespace x2
         {
             if ((front + numBytes) > back)
             {
-                throw new IndexOutOfRangeException();
+                throw new ArgumentOutOfRangeException();
             }
             front += numBytes;
             if (position < front)
@@ -218,7 +218,7 @@ namespace x2
         {
             if ((back + numBytes) > Capacity)
             {
-                throw new IndexOutOfRangeException();
+                throw new ArgumentOutOfRangeException();
             }
             back += numBytes;
         }
@@ -291,7 +291,7 @@ namespace x2
         {
             if ((front + lengthToRead) > back)
             {
-                throw new IndexOutOfRangeException();
+                throw new ArgumentOutOfRangeException();
             }
             marker = front + lengthToRead;
         }
@@ -309,7 +309,7 @@ namespace x2
             {
                 Log.Warn("front={0} pos={1} back={2} marker={3} numBytes={4}", front, position, back, marker, numBytes);
 
-                throw new IndexOutOfRangeException();
+                throw new System.IO.EndOfStreamException();
             }
         }
 
