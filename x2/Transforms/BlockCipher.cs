@@ -87,7 +87,13 @@ namespace x2.Transforms
                 decryptionKey = decrypted.SubArray(0, KeySizeInBytes);
                 decryptionIV = decrypted.SubArray(KeySizeInBytes, BlockSizeInBytes);
 
-                return rsa.SignData(decrypted, new SHA1CryptoServiceProvider());
+                // If we're free from old mono of such as Unity3D,
+                // we can simply sign the decrypted data to prove ourselves.
+                //return rsa.SignData(decrypted, new SHA1CryptoServiceProvider());
+                
+                // But if not, replay the data decrypted with our private key.
+                rsa.FromXmlString(rsaPeerPublicKey);
+                return rsa.Encrypt(decrypted, false);
             }
         }
 
@@ -95,9 +101,17 @@ namespace x2.Transforms
         {
             using (var rsa = new RSACryptoServiceProvider(rsaKeySize))
             {
-                rsa.FromXmlString(rsaPeerPublicKey);
                 byte[] expected = encryptionKey.Concat(encryptionIV);
-                return rsa.VerifyData(expected, new SHA1CryptoServiceProvider(), response);
+                
+                // If we're free from old mono of such as Unity3D,
+                // we can simply verify the peer signature.
+                //rsa.FromXmlString(rsaPeerPublicKey);
+                //return rsa.VerifyData(expected, new SHA1CryptoServiceProvider(), response);
+                
+                // But if not, verify the replayed data.
+                rsa.FromXmlString(rsaMyPrivateKey);
+                byte[] actual = rsa.Decrypt(response, false);
+                return actual.EqualsExtended(expected);
             }
         }
 
