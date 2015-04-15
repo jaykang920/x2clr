@@ -1,5 +1,5 @@
 // Copyright (c) 2013-2015 Jae-jun Kang
-// See the file COPYING for license details.
+// See the file LICENSE for details.
 
 using System;
 using System.Diagnostics;

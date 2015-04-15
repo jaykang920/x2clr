@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2clr", "x2\x2clr.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xpiler", "xpiler\xpiler.csproj", "{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2test", "tests\x2test.csproj", "{4F62C483-01DB-45B7-88A4-28D5B94A17E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2test", "test\x2test.csproj", "{4F62C483-01DB-45B7-88A4-28D5B94A17E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

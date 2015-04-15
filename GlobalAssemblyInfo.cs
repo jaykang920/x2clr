@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2013-2015 Jae-jun Kang
-// See the file COPYING for license details.
+// See the file LICENSE for details.
 
 using System.Reflection;
 
@@ -12,5 +12,5 @@ using System.Reflection;
 [assembly: AssemblyConfiguration("Release")]
 #endif
 
-[assembly: AssemblyVersion("0.5.3.0")]
-[assembly: AssemblyFileVersion("0.5.3.0")]
+[assembly: AssemblyVersion("0.5.4.0")]
+[assembly: AssemblyFileVersion("0.5.4.0")]
