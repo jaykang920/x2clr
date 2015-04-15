@@ -16,4 +16,4 @@ License
 -------
 
 x2clr is distributed under [MIT License](http://opensource.org/licenses/MIT).
-See the file COPYING for license details.
+See the file LICENSE for details.
