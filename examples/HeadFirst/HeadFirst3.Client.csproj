@@ -6,7 +6,7 @@
     <ProjectGuid>{798A1306-823B-4DCF-B186-76A9127824F9}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>x2.Samples.HeadFirst</RootNamespace>
+    <RootNamespace>x2.Examples.HeadFirst</RootNamespace>
     <AssemblyName>HeadFirst3.Client</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

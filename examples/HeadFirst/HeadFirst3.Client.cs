@@ -4,7 +4,7 @@ using x2;
 using x2.Flows;
 using x2.Links.SocketLink;
 
-namespace x2.Samples.HeadFirst
+namespace x2.Examples.HeadFirst
 {
     class HeadFirst3Client
     {

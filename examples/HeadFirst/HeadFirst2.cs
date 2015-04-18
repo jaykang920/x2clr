@@ -3,7 +3,7 @@ using System;
 using x2;
 using x2.Flows;
 
-namespace x2.Samples.HeadFirst
+namespace x2.Examples.HeadFirst
 {
     class HeadFirst2
     {

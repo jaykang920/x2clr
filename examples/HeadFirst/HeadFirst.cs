@@ -6,7 +6,7 @@ using System.Text;
 
 using x2;
 
-namespace x2.Samples.HeadFirst
+namespace x2.Examples.HeadFirst
 {
     public class CapitalizeReq : Event
     {
