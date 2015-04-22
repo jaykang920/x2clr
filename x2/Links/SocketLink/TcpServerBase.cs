@@ -72,10 +72,19 @@ namespace x2.Links.SocketLink
 
             if (disposed) { return; }
 
-            socket.Close();
-            rwlock.Dispose();
-
-            disposed = true;
+            try
+            {
+                socket.Close();
+                rwlock.Dispose();
+            }
+            catch (Exception e)
+            {
+                //Log.Warn("{0} {1}", Name, e.ToString());
+            }
+            finally
+            {
+                disposed = true;
+            }
         }
 
         public void Listen(int port)

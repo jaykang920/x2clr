@@ -70,6 +70,7 @@ namespace x2
             if (BufferTransform != null)
             {
                 BufferTransform.Dispose();
+                BufferTransform = null;
             }
 
             lock (names)
