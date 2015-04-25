@@ -7,59 +7,74 @@ using System.Collections.Generic;
 namespace x2
 {
     /// <summary>
-    /// A variable-length byte buffer class.
+    /// A variable-length byte buffer class whose capacity is limited to a
+    /// multiple of a power of 2.
     /// </summary>
-    /// The buffer length is limited to a multiple of a power of 2.
     public class Buffer
     {
         private List<byte[]> blocks;
+
         private readonly int blockSizeExponent;
         private readonly int remainderMask;
 
         private byte[] currentBlock;
         private int currentBlockIndex;
+
         private int position;
         private int back;
         private int front;
 
         private int marker;
 
-        private int BlockSize
+        /// <summary>
+        /// Gets the block size in bytes.
+        /// </summary>
+        public int BlockSize
         {
             get { return (1 << blockSizeExponent); }
         }
 
-        private int Capacity
+        /// <summary>
+        /// Gets the maximum capacity of the buffer.
+        /// </summary>
+        public int Capacity
         {
             get { return (BlockSize * blocks.Count); }
         }
 
+        /// <summary>
+        /// Checks whether the buffer is empty (i.e. whether its length is 0).
+        /// </summary>
         public bool IsEmpty
         {
             get { return (front == back); }
         }
 
+        /// <summary>
+        /// Gets the length of the buffered bytes.
+        /// </summary>
         public long Length
         {
             get { return (long)(back - front); }
         }
 
+        /// <summary>
+        /// Gets or sets the current zero-based position.
+        /// </summary>
         public long Position
         {
             get
             {
                 return (long)(position - front);
-                //return position;
             }
             set
             {
-                int v = (int)value;
-                v += front;
-                if (v < front || back < v)
+                int adjusted = (int)value + front;
+                if (adjusted < front || back < adjusted)
                 {
                     throw new IndexOutOfRangeException();
                 }
-                position = v;
+                position = adjusted;
                 int blockIndex = position >> blockSizeExponent;
                 if ((blockIndex != 0) && ((position & remainderMask) == 0))
                 {

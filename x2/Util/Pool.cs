@@ -92,7 +92,7 @@ namespace x2
     }
 
     /// <summary>
-    /// Pool of 2^n length byte buffer blocks.
+    /// Static pool of 2^n length byte buffer blocks.
     /// </summary>
     public static class BufferPool
     {
