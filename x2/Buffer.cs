@@ -211,6 +211,9 @@ namespace x2
             Position = Position + count;
         }
 
+        /// <summary>
+        /// Alias of (Position = 0).
+        /// </summary>
         public void Rewind()
         {
             Position = 0;

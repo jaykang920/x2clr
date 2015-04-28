@@ -11,9 +11,6 @@ namespace x2
     /// <summary>
     /// Minimal generic object pool.
     /// </summary>
-    /// <typeparam name="T">
-    /// The type of objects in the pool.
-    /// </typeparam>
     public class Pool<T> where T : class
     {
         private Stack<T> store;
@@ -42,7 +39,6 @@ namespace x2
         /// Initializes a new instance of the Pool(T) class, with the specified
         /// maximum capacity.
         /// </summary>
-        /// <param name="capacity"></param>
         public Pool(int capacity)
         {
             store = new Stack<T>();
@@ -76,11 +72,10 @@ namespace x2
         /// </remarks>
         public void Push(T item)
         {
-            if (item == null)
+            if (Object.ReferenceEquals(item, null))
             {
                 throw new ArgumentNullException();
             }
-
             lock (store)
             {
                 if (capacity == 0 || store.Count < capacity)
