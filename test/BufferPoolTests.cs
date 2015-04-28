@@ -7,63 +7,75 @@ using x2;
 namespace x2.Tests
 {
     [TestFixture]
-    public class PoolTests
+    public class BufferPoolTests
     {
-        class Foo
+        [Test]
+        public void TestAcquireRelease()
         {
-            public int bar;
+            byte[] b = BufferPool.Acquire(12);
+            Assert.AreNotSame(null, b);
+            Assert.AreEqual(1 << 12, b.Length);
+
+            BufferPool.Release(12, b);
+
+            byte[] b1 = BufferPool.Acquire(12);
+            Assert.AreNotSame(null, b1);
+            Assert.AreEqual(1 << 12, b1.Length);
+
+            Assert.AreSame(b, b1);
+
+            BufferPool.Release(12, b1);
         }
 
         [Test]
-        public void TestCreation()
+        [ExpectedException(ExpectedException=typeof(ArgumentOutOfRangeException))]
+        public void TestUnderAcquire()
         {
-            var p0 = new Pool<Foo>();
-            Assert.AreEqual(0, p0.Capacity);
-            Assert.AreEqual(0, p0.Count);
-
-            var p1 = new Pool<Foo>(1);
-            Assert.AreEqual(1, p1.Capacity);
-            Assert.AreEqual(0, p1.Count);
+            BufferPool.Acquire(0);
         }
 
         [Test]
-        [ExpectedException(ExpectedException=typeof(ArgumentNullException))]
-        public void TestNullPush()
+        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
+        public void TestOverAcquire()
         {
-            var p = new Pool<Foo>();
-            p.Push(null);
+            BufferPool.Acquire(32);
         }
 
         [Test]
-        public void TestPushPop()
+        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
+        public void TestUnderRelease()
         {
-            var p0 = new Pool<Foo>();
-            var p1 = new Pool<Foo>(1);
+            BufferPool.Release(0, null);
+        }
 
-            var f = new Foo();
-            var g = new Foo();
+        [Test]
+        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
+        public void TestOverRelease()
+        {
+            BufferPool.Release(0, null);
+        }
 
-            p0.Push(f);
-            Assert.AreEqual(1, p0.Count);
-            p0.Push(g);
-            Assert.AreEqual(2, p0.Count);
+        [Test]
+        [ExpectedException(ExpectedException = typeof(ArgumentNullException))]
+        public void TestNullRelease()
+        {
+            BufferPool.Release(12, null);
+        }
 
-            p1.Push(f);
-            Assert.AreEqual(1, p1.Count);
-            // capacity overflow
-            p1.Push(g);
-            Assert.AreEqual(1, p1.Count);
+        [Test]
+        [ExpectedException(ExpectedException = typeof(ArgumentException))]
+        public void TestInvalidArgRelease()
+        {
+            byte[] b = new byte[1 << 4 - 1];
+            BufferPool.Release(4, b);
+        }
 
-            Foo g1 = p0.Pop();
-            Assert.AreSame(g, g1);
-            Foo f1 = p0.Pop();
-            Assert.AreSame(f, f1);
-
-            Foo f2 = p1.Pop();
-            Assert.AreSame(f, f2);
-            // pop underflow
-            Foo g2 = p1.Pop();
-            Assert.AreSame(null, g2);
+        [Test]
+        [ExpectedException(ExpectedException = typeof(ArgumentException))]
+        public void TestInvalidRelease()
+        {
+            byte[] b = new byte[1 << 4];
+            BufferPool.Release(4, b);
         }
     }
 }

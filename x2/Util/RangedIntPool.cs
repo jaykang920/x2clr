@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections;
-using System.Diagnostics;
 
 namespace x2
 {
@@ -58,9 +57,11 @@ namespace x2
         /// </summary>
         public RangedIntPool(int minValue, int maxValue, bool advancing)
         {
+            if (minValue > maxValue)
+            {
+                throw new ArgumentException();
+            }
             this.advancing = advancing;
-            Debug.Assert(maxValue < Int32.MaxValue);
-            Debug.Assert(minValue <= maxValue);
             this.minValue = minValue;
             this.maxValue = maxValue;
             bitArray = new BitArray(maxValue - minValue + 1);
