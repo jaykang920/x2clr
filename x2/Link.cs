@@ -146,7 +146,7 @@ namespace x2
     /// </summary>
     public abstract class LinkSession : IDisposable
     {
-        private static RangedInt32Pool handlePool;
+        private static RangedIntPool handlePool;
         private volatile bool disposed;
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace x2
 
         static LinkSession()
         {
-            handlePool = new RangedInt32Pool(1, 65536, true);  // [1, 65536]
+            handlePool = new RangedIntPool(1, 65536, true);  // [1, 65536]
         }
 
         /// <summary>
