@@ -23,7 +23,7 @@ namespace x2
         public int Length { get { return bitArray.Length; } }
 
         /// <summary>
-        /// Initializes a new instance of the RangedInt32Pool class, containing
+        /// Initializes a new instance of the RangedIntPool class, containing
         /// integers of range [0, maxValue].
         /// </summary>
         public RangedIntPool(int maxValue)
@@ -32,7 +32,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Initializes a new instance of the RangedInt32Pool class with the
+        /// Initializes a new instance of the RangedIntPool class with the
         /// specified circulation behavior, containing integers of range
         /// [0, maxValue].
         /// </summary>
@@ -42,7 +42,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Initializes a new instance of the RangedInt32Pool class, containing
+        /// Initializes a new instance of the RangedIntPool class, containing
         /// integers of range [minValue, maxValue].
         /// </summary>
         public RangedIntPool(int minValue, int maxValue)
@@ -51,7 +51,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Initializes a new instance of the RangedInt32Pool class with the
+        /// Initializes a new instance of the RangedIntPool class with the
         /// specified circulation behavior, containing integers of range
         /// [minValue, maxValue].
         /// </summary>
