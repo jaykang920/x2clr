@@ -70,7 +70,6 @@ namespace x2
         /// <summary>
         /// Gets the next available value from the pool.
         /// </summary>
-        /// <returns></returns>
         public int Acquire()
         {
             int index = offset;

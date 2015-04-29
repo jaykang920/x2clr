@@ -147,7 +147,7 @@ namespace x2
         {
             Hash hash = new Hash(base.GetHashCode(fingerprint));
 
-            if (fingerprint[0])
+            if (fingerprint[tag.Offset + 0])
             {
                 hash.Update(_handle);
             }
@@ -173,7 +173,7 @@ namespace x2
             }
 
             Event o = (Event)other;
-            if (fingerprint[0])
+            if (fingerprint[tag.Offset + 0])
             {
                 if (_handle != o._handle)
                 {
