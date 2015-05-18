@@ -184,10 +184,10 @@ namespace x2.Links.SocketLink
             {
                 return;
             }
-            using (new ReadLock(rwlock))
+            using (new UpgradeableReadLock(rwlock))
             {
                 var list = sessions.Values;
-                for (int i = 0, count = list.Count; i < count; ++i)
+                for (int i = list.Count - 1; i >= 0; --i)
                 {
                     Keepalive(list[i]);
                 }
