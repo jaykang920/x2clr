@@ -496,6 +496,7 @@ namespace x2.Links.SocketLink
                         }
                         //
                         Hub.Post(new LinkSessionConnected {
+                            _Handle = Handle,
                             LinkName = link.Name,
                             Result = ack.Result,
                             Context = this

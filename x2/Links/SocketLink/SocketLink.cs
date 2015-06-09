@@ -79,6 +79,7 @@ namespace x2.Links.SocketLink
         public virtual void OnDisconnect(SocketLinkSession session)
         {
             Hub.Post(new LinkSessionDisconnected {
+                _Handle = session.Handle,
                 LinkName = Name,
                 Context = session
             });

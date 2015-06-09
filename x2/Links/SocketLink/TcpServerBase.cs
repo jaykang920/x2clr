@@ -303,6 +303,16 @@ namespace x2.Links.SocketLink
         }
 #endif
 
+        public SocketLinkSession GetLinkSession(int handle)
+        {
+            SocketLinkSession result;
+            if (sessions.TryGetValue(handle, out result))
+            {
+                return result;
+            }
+            return null;
+        }
+
         public void Send(Event e)
         {
             SocketLinkSession session;
