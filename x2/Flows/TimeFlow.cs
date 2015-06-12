@@ -337,7 +337,6 @@ namespace x2.Flows
                 throw new ArgumentNullException();
             }
             TimeFlow timeFlow = map.Create(name);
-            timeFlow.StartUp().Attach();
             return timeFlow;
         }
 
@@ -435,6 +434,7 @@ namespace x2.Flows
                     {
                         timeFlow = new TimeFlow(name);
                         timeFlows.Add(name, timeFlow);
+                        timeFlow.StartUp().Attach();
                     }
                     return timeFlow;
                 }
