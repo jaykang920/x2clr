@@ -293,7 +293,14 @@ namespace x2.Links.SocketLink
                         link.Preprocessor(retrieved, this);
                     }
 
-                    Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
+                    if (retrieved.GetTypeId() != SocketLinkEventType.KeepaliveEvent)
+                    {
+                        Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
+                    }
+                    else
+                    {
+                        Log.Trace("{0} {1} received event {2}", link.Name, Handle, retrieved);
+                    }
 
                     ProcessEvent(retrieved);
                 }
@@ -395,10 +402,6 @@ namespace x2.Links.SocketLink
         private void BeginSend(Event e)
         {
 #if SESSION_KEEPALIVE
-            if (e.GetTypeId() != (int)SocketLinkEventType.KeepaliveEvent)
-            {
-                hasSent = true;
-            }
 #endif
             e.Serialize(new Serializer(sendBuffer));
 
@@ -419,7 +422,14 @@ namespace x2.Links.SocketLink
 
             SendImpl();
 
-            Log.Debug("{0} {1} sent event {2}", link.Name, Handle, e);
+            if (e.GetTypeId() != SocketLinkEventType.KeepaliveEvent)
+            {
+                Log.Debug("{0} {1} sent event {2}", link.Name, Handle, e);
+            }
+            else
+            {
+                Log.Trace("{0} {1} sent event {2}", link.Name, Handle, e);
+            }
         }
 
         private void TrySendNext()
