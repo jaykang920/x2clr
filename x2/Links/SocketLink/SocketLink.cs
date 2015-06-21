@@ -171,7 +171,8 @@ namespace x2.Links.SocketLink
                 }
                 else
                 {
-                    if (session.IncrementFailureCount() > MaxSuccessiveFailureCount)
+                    if (MaxSuccessiveFailureCount > 0 &&
+                        session.IncrementFailureCount() > MaxSuccessiveFailureCount)
                     {
                         Log.Error("{0} {1} closed due to the keepalive failure",
                             Name, session.Handle);
