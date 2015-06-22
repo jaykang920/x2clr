@@ -34,7 +34,11 @@ namespace x2.Links.SocketLink
         /// <summary>
         /// Gets the underlying socket object.
         /// </summary>
-        public Socket Socket { get { return socket; } }
+        public Socket Socket
+        {
+            get { return socket; }
+            set { socket = value; }
+        }
 
 #if SESSION_KEEPALIVE
         /// <summary>

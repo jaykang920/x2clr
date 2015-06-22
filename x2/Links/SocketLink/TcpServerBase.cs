@@ -23,7 +23,7 @@ namespace x2.Links.SocketLink
         protected SortedList<int, SocketLinkSession> sessions;
 #if SESSION_RECOVERY
         protected Dictionary<string, SocketLinkSession> recoverable;
-        protected Dictionary<IntPtr, x2.Flows.Timer.Token> timeoutTokens;
+        protected Dictionary<int, x2.Flows.Timer.Token> timeoutTokens;
 #endif
         protected ReaderWriterLockSlim rwlock;
 
@@ -59,7 +59,7 @@ namespace x2.Links.SocketLink
             sessions = new SortedList<int, SocketLinkSession>();
 #if SESSION_RECOVERY
             recoverable = new Dictionary<string, SocketLinkSession>();
-            timeoutTokens = new Dictionary<IntPtr, x2.Flows.Timer.Token>();
+            timeoutTokens = new Dictionary<int, x2.Flows.Timer.Token>();
 #endif
             rwlock = new ReaderWriterLockSlim();
 
@@ -150,7 +150,7 @@ namespace x2.Links.SocketLink
                         session.HandOver(existing);
                         lock (existing.SyncRoot)
                         {
-                            existing.Status.Recovered = true;
+                            existing.recovered = true;
                         }
 
                         Hub.Post(new LinkSessionRecovered {
@@ -238,7 +238,7 @@ namespace x2.Links.SocketLink
             bool recovered;
             lock (session.SyncRoot)
             {
-                recovered = session.Status.Recovered;
+                recovered = session.recovered;
             }
             if (!recovered)
             {
@@ -252,7 +252,7 @@ namespace x2.Links.SocketLink
 
             using (new WriteLock(rwlock))
             {
-                sessions.Remove(session.Id);
+                sessions.Remove(session.Handle);
             }
         }
 

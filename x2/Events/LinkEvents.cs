@@ -329,7 +329,7 @@ namespace x2.Events
         new public static int TypeId { get { return tag.TypeId; } }
 
         private string linkName_;
-        private IntPtr oldHandle_;
+        private int oldHandle_;
         private object context_;
 
         public string LinkName
@@ -342,7 +342,7 @@ namespace x2.Events
             }
         }
 
-        public IntPtr OldHandle
+        public int OldHandle
         {
             get { return oldHandle_; }
             set

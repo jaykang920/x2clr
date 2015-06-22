@@ -53,7 +53,7 @@ namespace x2.Links.SocketLink
 #endif
 #if SESSION_RECOVERY
         protected volatile bool closing;
-        protected volatile bool recovered;
+        public volatile bool recovered;
 #endif
 
         public object SyncRoot { get { return syncRoot; } }
@@ -377,7 +377,7 @@ namespace x2.Links.SocketLink
             }
 
 #if SESSION_RECOVERY
-            if (Status.Closing)
+            if (closing)
             {
 #endif
                 link.OnDisconnect(this);
@@ -388,6 +388,7 @@ namespace x2.Links.SocketLink
                 if (Polarity == true)
                 {
                     var client = (TcpClientBase)link;
+                    client.Socket = null;
                     client.Connect(client.RemoteHost, client.RemotePort);
                 }
                 else
@@ -551,8 +552,8 @@ namespace x2.Links.SocketLink
                 BufferTransform = oldSession.BufferTransform;
                 if (BufferTransform != null)
                 {
-                    Status.RxTransformReady = true;
-                    Status.TxTransformReady = true;
+                    rxTransformReady = true;
+                    txTransformReady = true;
                 }
                 while (oldSession.sendQueue.Count != 0)
                 {

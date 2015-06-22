@@ -201,10 +201,12 @@ namespace x2
         {
             if (disposed) { return; }
 
+#if !SESSION_RECOVERY
             if (BufferTransform != null)
             {
                 BufferTransform.Dispose();
             }
+#endif
 
             handlePool.Release(Handle);  // release the session handle
 
