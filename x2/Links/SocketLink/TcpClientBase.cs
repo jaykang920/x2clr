@@ -212,7 +212,8 @@ namespace x2.Links.SocketLink
 
         protected override void OnSessionDisconnected(LinkSessionDisconnected e)
         {
-            Close();
+            session.Close();
+            session = null;
 
             if (AutoReconnect)
             {
