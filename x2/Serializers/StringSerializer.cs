@@ -27,52 +27,52 @@ namespace x2
         }
 
         // Name-value pair writers for primitive types
-        public override void Write(string name, bool value)
+        public void Write(string name, bool value)
         {
             WriteName(name);
             Write(value);
         }
-        public override void Write(string name, byte value)
+        public void Write(string name, byte value)
         {
             WriteName(name);
             Write(value);
         }
-        public override void Write(string name, sbyte value)
+        public void Write(string name, sbyte value)
         {
             WriteName(name);
             Write(value);
         }
-        public override void Write(string name, short value)
+        public void Write(string name, short value)
         {
             WriteName(name);
             Write(value);
         }
-        public override void Write(string name, int value)
+        public void Write(string name, int value)
         {
             WriteName(name);
             Write(value);
         }
-        public override void Write(string name, long value)
+        public void Write(string name, long value)
         {
             WriteName(name);
             Write(value);
         }
-        public override void Write(string name, float value)
+        public void Write(string name, float value)
         {
             WriteName(name);
             Write(value);
         }
-        public override void Write(string name, double value)
+        public void Write(string name, double value)
         {
             WriteName(name);
             Write(value);
         }
-        public override void Write(string name, string value)
+        public void Write(string name, string value)
         {
             WriteName(name);
             Write(value);
         }
-        public override void Write(string name, DateTime value)
+        public void Write(string name, DateTime value)
         {
             WriteName(name);
             Write(value);
@@ -86,61 +86,61 @@ namespace x2
         }
 
         // Name-value pair writers for composite types
-        public override void Write(string name, byte[] value)
+        public void Write(string name, byte[] value)
         {
             WriteName(name);
             Write(value);
         }
-        public override void Write(string name, List<int> value)
+        public void Write(string name, List<int> value)
         {
             WriteName(name);
             Write(value);
         }
-        public override void Write<T>(string name, List<T> value)
+        public void Write<T>(string name, List<T> value) where T : Cell
         {
             WriteName(name);
             Write(value);
         }
-        public override void Write<T>(string name, T value)
+        public void Write<T>(string name, T value) where T : Cell
         {
             WriteName(name);
             Write(value);
         }
 
         // Value writers for primitive types
-        public override void Write(bool value)
+        public void Write(bool value)
         {
             stringBuilder.Append(value);
         }
-        public override void Write(byte value)
+        public void Write(byte value)
         {
             stringBuilder.Append(value);
         }
-        public override void Write(sbyte value)
+        public void Write(sbyte value)
         {
             stringBuilder.Append(value);
         }
-        public override void Write(short value)
+        public void Write(short value)
         {
             stringBuilder.Append(value);
         }
-        public override void Write(int value)
+        public void Write(int value)
         {
             stringBuilder.Append(value);
         }
-        public override void Write(long value)
+        public void Write(long value)
         {
             stringBuilder.Append(value);
         }
-        public override void Write(float value)
+        public void Write(float value)
         {
             stringBuilder.Append(value);
         }
-        public override void Write(double value)
+        public void Write(double value)
         {
             stringBuilder.Append(value);
         }
-        public override void Write(string value)
+        public void Write(string value)
         {
             if (Object.ReferenceEquals(value, null))
             {
@@ -151,17 +151,17 @@ namespace x2
             stringBuilder.Append(value.Replace("\"", "\\\""));
             stringBuilder.Append('"');
         }
-        public override void Write(DateTime value)
+        public void Write(DateTime value)
         {
             stringBuilder.Append(value.ToString());
         }
 
         // Value writers for composite types
-        public override void Write(byte[] value)
+        public void Write(byte[] value)
         {
 
         }
-        public override void Write(List<int> value)
+        public void Write(List<int> value)
         {
             if (Object.ReferenceEquals(value, null))
             {
@@ -176,7 +176,7 @@ namespace x2
             }
             stringBuilder.Append(']');
         }
-        public override void Write<T>(List<T> value)
+        public void Write<T>(List<T> value) where T : Cell
         {
             if (Object.ReferenceEquals(value, null))
             {
@@ -192,7 +192,7 @@ namespace x2
             }
             stringBuilder.Append(" ]");
         }
-        public override void Write<T>(T value)
+        public void Write<T>(T value) where T : Cell
         {
             if (Object.ReferenceEquals(value, null))
             {
