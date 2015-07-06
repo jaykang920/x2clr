@@ -26,6 +26,7 @@ namespace x2
         // Name-value pair writers for composite types
         public abstract void Write(string name, byte[] value);
         public abstract void Write(string name, List<int> value);
+        public abstract void Write(string name, List<List<int>> value);
         public abstract void Write<T>(string name, List<T> value) where T : Cell;
         public abstract void Write<T>(string name, T value) where T : Cell;
 
@@ -44,6 +45,7 @@ namespace x2
         // Value writers for composite types
         public abstract void Write(byte[] value);
         public abstract void Write(List<int> value);
+        public abstract void Write(List<List<int>> value);
         public abstract void Write<T>(List<T> value) where T : Cell;
         public abstract void Write<T>(T value) where T : Cell;
     }

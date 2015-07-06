@@ -224,6 +224,22 @@ namespace x2
         }
 
         /// <summary>
+        /// Decodes an ordered list of Int32 lists out of the underlying stream.
+        /// </summary>
+        public void Read(out List<List<int>> value)
+        {
+            int count;
+            ReadVariableNonnegative(out count);
+            value = new List<List<int>>();
+            for (int i = 0; i < count; ++i)
+            {
+                List<int> element;
+                Read(out element);
+                value.Add(element);
+            }
+        }
+
+        /// <summary>
         /// Decodes an ordered list of Cell-derived objects out of the
         /// underlying stream.
         /// </summary>

@@ -139,10 +139,22 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes an ordered list of Cell-derived objects into the underlying
-        /// stream.
+        /// Encodes an ordered list of Int32 values into the underlying stream.
         /// </summary>
         public void Write(List<int> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            WriteVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                Write(value[i]);
+            }
+        }
+
+        /// <summary>
+        /// Encodes an ordered list of Int32 lists into the underlying stream.
+        /// </summary>
+        public void Write(List<List<int>> value)
         {
             int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
             WriteVariableNonnegative(count);

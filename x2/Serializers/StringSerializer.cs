@@ -96,6 +96,11 @@ namespace x2
             WriteName(name);
             Write(value);
         }
+        public override void Write(string name, List<List<int>> value)
+        {
+            WriteName(name);
+            Write(value);
+        }
         public override void Write<T>(string name, List<T> value)
         {
             WriteName(name);
@@ -162,6 +167,21 @@ namespace x2
 
         }
         public override void Write(List<int> value)
+        {
+            if (Object.ReferenceEquals(value, null))
+            {
+                stringBuilder.Append("null");
+                return;
+            }
+            stringBuilder.Append('[');
+            for (int i = 0, count = value.Count; i < count; ++i)
+            {
+                if (i != 0) { stringBuilder.Append(','); }
+                Write(value[i]);
+            }
+            stringBuilder.Append(']');
+        }
+        public override void Write(List<List<int>> value)
         {
             if (Object.ReferenceEquals(value, null))
             {
