@@ -274,7 +274,11 @@ namespace x2.Links.SocketLink
 #if SESSION_RECOVERY
             lock (recoverable)
             {
-                recoverable.Remove(session.Token);
+                // TODO
+                if (session.Token != null)
+                {
+                    recoverable.Remove(session.Token);
+                }
             }
 #endif
 
