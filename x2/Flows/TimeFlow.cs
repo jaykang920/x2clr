@@ -71,6 +71,30 @@ namespace x2.Flows
             }
         }
 
+        public void Remove(TItem item)
+        {
+            var keysToRemove = new List<TPriority>();
+            foreach (var pair in store)
+            {
+                var items = pair.Value;
+                for (int i = 0; i < items.Count; ++i)
+                {
+                    if (items[i].Equals(item))
+                    {
+                        items.RemoveAt(i--);
+                    }
+                }
+                if (items.Count == 0)
+                {
+                    keysToRemove.Add(pair.Key);
+                }
+            }
+            for (int i = 0, count = keysToRemove.Count; i < count; ++i)
+            {
+                store.Remove(keysToRemove[i]);
+            }
+        }
+
         // First() extension method workaround to clearly support .NEt 2.0
         private KeyValuePair<TPriority, List<TItem>> First()
         {
@@ -133,6 +157,14 @@ namespace x2.Flows
             lock (reserved)
             {
                 reserved.Remove(token.key, token.value);
+            }
+        }
+
+        public void Cancel(Event e)
+        {
+            lock (reserved)
+            {
+                reserved.Remove(e);
             }
         }
 
@@ -383,6 +415,11 @@ namespace x2.Flows
         public void Cancel(Timer.Token token)
         {
             timer.Cancel(token);
+        }
+
+        public void Cancel(Event e)
+        {
+            timer.Cancel(e);
         }
 
         public void ReserveRepetition(Event e, TimeSpan interval)
