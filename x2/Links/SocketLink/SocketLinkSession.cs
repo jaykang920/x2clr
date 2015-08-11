@@ -50,6 +50,7 @@ namespace x2.Links.SocketLink
 #if SESSION_KEEPALIVE
         protected volatile bool hasReceived;
         protected volatile bool hasSent;
+        protected volatile bool ignoreKeepaliveFailure;
 #endif
 #if SESSION_RECOVERY
         protected volatile bool closing;
@@ -69,6 +70,11 @@ namespace x2.Links.SocketLink
         {
             get { return hasSent; }
             set { hasSent = value; }
+        }
+        public bool IgnoreKeepaliveFailure
+        {
+            get { return ignoreKeepaliveFailure; }
+            set { ignoreKeepaliveFailure = value; }
         }
 #endif
 

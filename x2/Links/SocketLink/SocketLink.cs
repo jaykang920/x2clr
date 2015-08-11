@@ -173,7 +173,7 @@ namespace x2.Links.SocketLink
                     session.HasReceived = false;
                     session.ResetFailureCount();
                 }
-                else
+                else if (!session.IgnoreKeepaliveFailure)
                 {
                     if (MaxSuccessiveFailureCount > 0 &&
                         session.IncrementFailureCount() > MaxSuccessiveFailureCount)

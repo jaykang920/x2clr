@@ -14,7 +14,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;SESSION_KEEPALIVE SESSION_RECOVERY</DefineConstants>
+    <DefineConstants>DEBUG;SESSION_KEEPALIVE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\bin\Debug\x2clr.xml</DocumentationFile>
@@ -26,7 +26,7 @@
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\Release\</OutputPath>
-    <DefineConstants>SESSION_KEEPALIVE SESSION_RECOVERY</DefineConstants>
+    <DefineConstants>SESSION_KEEPALIVE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\bin\Release\x2clr.xml</DocumentationFile>
@@ -37,7 +37,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_Unity|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;UNITY_WORKAROUND SESSION_KEEPALIVE SESSION_RECOVERY</DefineConstants>
+    <DefineConstants>DEBUG;UNITY_WORKAROUND SESSION_KEEPALIVE</DefineConstants>
     <DocumentationFile>..\bin\Debug\x2clr.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DebugType>full</DebugType>
@@ -55,7 +55,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DefineConstants>UNITY_WORKAROUND SESSION_KEEPALIVE SESSION_RECOVERY</DefineConstants>
+    <DefineConstants>UNITY_WORKAROUND SESSION_KEEPALIVE</DefineConstants>
     <ConfigGroup>Release</ConfigGroup>
   </PropertyGroup>
   <ItemGroup>
