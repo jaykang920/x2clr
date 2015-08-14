@@ -240,6 +240,11 @@ namespace x2
         protected long bytesReceived;
         protected long bytesSent;
 
+        protected long totalEventsReceived;
+        protected long totalEventsSent;
+        protected long eventsReceived;
+        protected long eventsSent;
+
         public long TotalBytesReceived
         {
             get { return Interlocked.Read(ref totalBytesReceived); }
@@ -258,6 +263,26 @@ namespace x2
         public long BytesSent
         {
             get { return Interlocked.Read(ref bytesSent); }
+        }
+
+        public long TotalEventsReceived
+        {
+            get { return Interlocked.Read(ref totalEventsReceived); }
+        }
+
+        public long TotalEventsSent
+        {
+            get { return Interlocked.Read(ref totalEventsSent); }
+        }
+
+        public long EventsReceived
+        {
+            get { return Interlocked.Read(ref eventsReceived); }
+        }
+
+        public long EventsSent
+        {
+            get { return Interlocked.Read(ref eventsSent); }
         }
 
         internal virtual void AddBytesReceived(long bytesReceived)
@@ -280,6 +305,28 @@ namespace x2
         public void ResetBytesSent()
         {
             Interlocked.Exchange(ref bytesSent, 0L);
+        }
+
+        internal virtual void IncrementEventsReceived()
+        {
+            Interlocked.Increment(ref totalEventsReceived);
+            Interlocked.Increment(ref eventsReceived);
+        }
+
+        internal virtual void IncrementEventsSent()
+        {
+            Interlocked.Increment(ref totalEventsSent);
+            Interlocked.Increment(ref eventsSent);
+        }
+
+        public void ResetEventsReceived()
+        {
+            Interlocked.Exchange(ref eventsReceived, 0L);
+        }
+
+        public void ResetEventsSent()
+        {
+            Interlocked.Exchange(ref eventsSent, 0L);
         }
     }
 

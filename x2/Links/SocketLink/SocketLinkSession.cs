@@ -292,6 +292,8 @@ namespace x2.Links.SocketLink
                         goto next;
                     }
 
+                    Diag.IncrementEventsReceived();
+
                     retrieved._Handle = Handle;
 
                     if (link.Preprocessor != null)
@@ -345,6 +347,7 @@ namespace x2.Links.SocketLink
         protected void SendInternal(int bytesTransferred)
         {
             Diag.AddBytesSent(bytesTransferred);
+            Diag.IncrementEventsSent();
 
             Log.Trace("{0} {1} sent {2}/{3} byte(s)",
                 link.Name, Handle, bytesTransferred, lengthToSend);
@@ -597,12 +600,29 @@ namespace x2.Links.SocketLink
             {
                 base.AddBytesSent(bytesSent);
 
-                Interlocked.Add(ref totalBytesSent, bytesSent);
-                Interlocked.Add(ref this.bytesSent, bytesSent);
-
                 if (owner.Link.Diag != null)
                 {
                     owner.Link.Diag.AddBytesSent(bytesSent);
+                }
+            }
+
+            internal override void IncrementEventsReceived()
+            {
+                base.IncrementEventsReceived();
+
+                if (owner.Link.Diag != null)
+                {
+                    owner.Link.Diag.IncrementEventsReceived();
+                }
+            }
+
+            internal override void IncrementEventsSent()
+            {
+                base.IncrementEventsSent();
+
+                if (owner.Link.Diag != null)
+                {
+                    owner.Link.Diag.IncrementEventsSent();
                 }
             }
         }
