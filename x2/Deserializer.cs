@@ -371,6 +371,33 @@ namespace x2
         }
 
         /// <summary>
+        /// Decodes a 32-bit unsigned integer out of the specified byte buffer
+        /// segment, with unsigned LEB128 decoding.
+        /// </summary>
+        public static int ReadVariable(byte[] buffer, int offset, int length,
+            out uint value)
+        {
+            // Unsigned LEB128 decoding
+            value = 0U;
+            int i, shift = 0;
+            for (i = 0; i < 5; ++i)
+            {
+                if (i >= length)
+                {
+                    return 0;  // error
+                }
+                byte b = buffer[offset + i];
+                value |= (((uint)b & 0x7fU) << shift);
+                if ((b & 0x80) == 0)
+                {
+                    break;
+                }
+                shift += 7;
+            }
+            return (i < 5 ? (i + 1) : 0);
+        }
+
+        /// <summary>
         /// Decodes a 64-bit unsigned integer out of the underlying stream,
         /// with unsigned LEB128 decoding.
         /// </summary>
