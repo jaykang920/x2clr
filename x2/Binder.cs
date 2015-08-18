@@ -85,7 +85,11 @@ namespace x2
                                 HandlerSet handlers;
                                 if (handlerMap.TryGetValue(equivalent, out handlers))
                                 {
-                                    handlerChain.AddRange(handlers.GetList());
+                                    IList<Handler> list = handlers.GetList();
+                                    for (int j = 0, jCount = list.Count; j < jCount; ++j)
+                                    {
+                                        handlerChain.Add(list[j]);
+                                    }
                                 }
                             }
                         }

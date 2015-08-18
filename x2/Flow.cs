@@ -266,12 +266,12 @@ namespace x2
                 try
                 {
                     // Now using DateTime.UtcNow, instead of slow Stopwatch
-                    DateTime start = DateTime.UtcNow;
+                    DateTime begin = DateTime.UtcNow;
 
                     handler.Invoke(e);
 
-                    DateTime stop = DateTime.UtcNow;
-                    double totalMilliseconds = (stop - start).TotalMilliseconds;
+                    DateTime end = DateTime.UtcNow;
+                    long totalMilliseconds = (long)(end - begin).TotalMilliseconds;
                     if (totalMilliseconds >= SlowHandlerLogThreshold)
                     {
                         Log.Emit(SlowHandlerLogLevel,
