@@ -34,7 +34,6 @@ namespace x2.Flows
         {
             currentFlow = this;
             handlerChain = new List<Handler>();
-            stopwatch = new Stopwatch();
 
             while (true)
             {

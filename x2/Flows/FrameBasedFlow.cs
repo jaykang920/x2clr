@@ -161,7 +161,6 @@ namespace x2.Flows
             {
                 handlerChain = new List<Handler>();
             }
-            stopwatch = new Stopwatch();
 
             StartInternal();
 

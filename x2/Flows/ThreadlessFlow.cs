@@ -43,7 +43,6 @@ namespace x2.Flows
                     SetUp();
                     caseStack.SetUp(this);
                     handlerChain = new List<Handler>();
-                    stopwatch = new Stopwatch();
 
                     currentFlow = this;
 

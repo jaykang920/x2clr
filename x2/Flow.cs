@@ -22,9 +22,6 @@ namespace x2
         [ThreadStatic]
         protected static List<Handler> handlerChain;
 
-        [ThreadStatic]
-        protected static Stopwatch stopwatch;
-
         protected Binder binder;
         protected CaseStack caseStack;
         protected string name;
@@ -268,17 +265,18 @@ namespace x2
                 handler = handlerChain[i];
                 try
                 {
-                    stopwatch.Reset();
-                    stopwatch.Start();
+                    // Now using DateTime.UtcNow, instead of slow Stopwatch
+                    DateTime start = DateTime.UtcNow;
 
                     handler.Invoke(e);
-                    
-                    stopwatch.Stop();
-                    if (stopwatch.ElapsedMilliseconds >= SlowHandlerLogThreshold)
+
+                    DateTime stop = DateTime.UtcNow;
+                    double totalMilliseconds = (stop - start).TotalMilliseconds;
+                    if (totalMilliseconds >= SlowHandlerLogThreshold)
                     {
                         Log.Emit(SlowHandlerLogLevel,
-                            "{0} slow handler {1:#,0}ms {2}.{3} on {4}", 
-                            Name, stopwatch.ElapsedMilliseconds,
+                            "{0} slow handler {1:#,0}ms {2}.{3} on {4}",
+                            Name, totalMilliseconds,
                             handler.Action.Method.DeclaringType,
                             handler.Action.Method.Name, e);
                     }
