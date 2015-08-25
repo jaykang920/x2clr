@@ -29,24 +29,5 @@ namespace x2.Flows
         {
             queue.Enqueue(e);
         }
-
-        protected void Run()
-        {
-            currentFlow = this;
-            handlerChain = new List<Handler>();
-
-            while (true)
-            {
-                Event e = queue.Dequeue();
-                if (Object.ReferenceEquals(e, null))
-                {
-                    break;
-                }
-                Dispatch(e);
-            }
-
-            handlerChain = null;
-            currentFlow = null;
-        }
     }
 }

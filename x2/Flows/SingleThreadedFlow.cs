@@ -44,7 +44,7 @@ namespace x2.Flows
                 {
                     SetUp();
                     caseStack.SetUp(this);
-                    thread = new Thread(this.Run);
+                    thread = new Thread(Run);
                     thread.Name = name;
                     thread.Start();
                     queue.Enqueue(new FlowStart());
@@ -68,6 +68,30 @@ namespace x2.Flows
                 caseStack.TearDown(this);
                 TearDown();
             }
+        }
+
+        private void Run()
+        {
+            currentFlow = this;
+            handlerChain = new List<Handler>();
+            events = new List<Event>();
+
+            while (true)
+            {
+                queue.Dequeue(events);
+                if (events.Count == 0)
+                {
+                    break;
+                }
+                for (int i = 0, count = events.Count; i < count; ++i)
+                {
+                    Dispatch(events[i]);
+                }
+                events.Clear();
+            }
+
+            handlerChain = null;
+            currentFlow = null;
         }
     }
 }

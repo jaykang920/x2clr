@@ -2,6 +2,7 @@
 // See the file LICENSE for details.
 
 using System;
+using System.Collections.Generic;
 
 namespace x2
 {
@@ -14,7 +15,10 @@ namespace x2
 
         T Dequeue();
 
+        void Dequeue(List<T> list);
+
         int Enqueue(T item);
         bool TryDequeue(out T value);
+        bool TryDequeue(List<T> list);
     }
 }

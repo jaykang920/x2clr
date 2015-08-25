@@ -43,6 +43,7 @@ namespace x2.Flows
                     SetUp();
                     caseStack.SetUp(this);
                     handlerChain = new List<Handler>();
+                    events = new List<Event>();
 
                     currentFlow = this;
 
@@ -76,11 +77,12 @@ namespace x2.Flows
 
         public void Dispatch()
         {
-            Event e = queue.Dequeue();
-            if (e != null)
+            queue.Dequeue(events);
+            for (int i = 0, count = events.Count; i < count; ++i)
             {
-                Dispatch(e);
+                Dispatch(events[i]);
             }
+            events.Clear();
         }
 
         public Event TryDispatch()
@@ -92,6 +94,22 @@ namespace x2.Flows
                 return e;
             }
             return null;
+        }
+
+        public List<Event> TryDispatchAll()
+        {
+            var result = new List<Event>();
+            if (queue.TryDequeue(events))
+            {
+                for (int i = 0, count = events.Count; i < count; ++i)
+                {
+                    Event e = events[i];
+                    Dispatch(e);
+                    result.Add(e);
+                }
+                events.Clear();
+            }
+            return result;
         }
 
         public bool TryDequeue(out Event e)

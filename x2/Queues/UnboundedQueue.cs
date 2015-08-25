@@ -60,6 +60,25 @@ namespace x2.Queues
             }
         }
 
+        public void Dequeue(List<T> values)
+        {
+            lock (queue)
+            {
+                while (queue.Count == 0)
+                {
+                    if (closing)
+                    {
+                        return;
+                    }
+                    Monitor.Wait(queue);
+                }
+                while (queue.Count != 0)
+                {
+                    values.Add(queue.Dequeue());
+                }
+            }
+        }
+
         public int Enqueue(T item)
         {
             lock (queue)
@@ -83,6 +102,22 @@ namespace x2.Queues
                     return false;
                 }
                 value = queue.Dequeue();
+                return true;
+            }
+        }
+
+        public bool TryDequeue(List<T> values)
+        {
+            lock (queue)
+            {
+                if (queue.Count == 0)
+                {
+                    return false;
+                }
+                while (queue.Count != 0)
+                {
+                    values.Add(queue.Dequeue());
+                }
                 return true;
             }
         }

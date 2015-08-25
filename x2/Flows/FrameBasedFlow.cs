@@ -160,6 +160,7 @@ namespace x2.Flows
             if (queue != null)
             {
                 handlerChain = new List<Handler>();
+                events = new List<Event>();
             }
 
             StartInternal();
@@ -172,14 +173,23 @@ namespace x2.Flows
                 {
                     while ((DateTime.UtcNow.Ticks - Time.CurrentTicks) < Resolution)
                     {
-                        Event e;
-                        if (queue.TryDequeue(out e))
+                        if (queue.TryDequeue(events))
                         {
-                            Dispatch(e);
-
-                            if (e.GetTypeId() == (int)BuiltInType.FlowStop)
+                            for (int i = 0, count = events.Count; i < count; ++i)
                             {
-                                shouldStop = true;
+                                Event e = events[i];
+
+                                Dispatch(e);
+
+                                if (e.GetTypeId() == (int)BuiltInType.FlowStop)
+                                {
+                                    shouldStop = true;
+                                    break;
+                                }
+                            }
+                            events.Clear();
+                            if (shouldStop)
+                            {
                                 break;
                             }
                         }

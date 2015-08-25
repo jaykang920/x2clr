@@ -22,6 +22,9 @@ namespace x2
         [ThreadStatic]
         protected static List<Handler> handlerChain;
 
+        [ThreadStatic]
+        protected static List<Event> events;
+
         protected Binder binder;
         protected CaseStack caseStack;
         protected string name;
