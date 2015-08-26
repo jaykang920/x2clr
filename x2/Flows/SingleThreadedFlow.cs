@@ -90,6 +90,7 @@ namespace x2.Flows
                 events.Clear();
             }
 
+            events = null;
             handlerChain = null;
             currentFlow = null;
         }

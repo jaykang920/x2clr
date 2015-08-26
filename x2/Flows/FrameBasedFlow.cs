@@ -211,7 +211,11 @@ namespace x2.Flows
 
             Stop();
 
-            handlerChain = null;
+            if (queue != null)
+            {
+                handlerChain = null;
+                events = null;
+            }
             currentFlow = null;
         }
 

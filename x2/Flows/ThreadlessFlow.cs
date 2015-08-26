@@ -66,6 +66,7 @@ namespace x2.Flows
                 queue.Close(new FlowStop());
                 running = false;
 
+                events = null;
                 handlerChain = null;
 
                 currentFlow = null;
