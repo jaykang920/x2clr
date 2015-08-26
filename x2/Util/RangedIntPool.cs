@@ -72,25 +72,28 @@ namespace x2
         /// </summary>
         public int Acquire()
         {
-            int index = offset;
-            for (int i = 0, length = Length; i < length; ++i, ++index)
+            lock (bitArray)
             {
-                if (index >= length)
+                int index = offset;
+                for (int i = 0, length = Length; i < length; ++i, ++index)
                 {
-                    index = 0;
-                }
-                if (!bitArray[index])
-                {
-                    bitArray.Set(index, true);
-                    if (advancing)
+                    if (index >= length)
                     {
-                        offset = index + 1;
-                        if (offset >= length)
-                        {
-                            offset = 0;
-                        }
+                        index = 0;
                     }
-                    return (minValue + index);
+                    if (!bitArray[index])
+                    {
+                        bitArray.Set(index, true);
+                        if (advancing)
+                        {
+                            offset = index + 1;
+                            if (offset >= length)
+                            {
+                                offset = 0;
+                            }
+                        }
+                        return (minValue + index);
+                    }
                 }
             }
             throw new OutOfResourceException();
@@ -102,11 +105,14 @@ namespace x2
         public bool Claim(int value)
         {
             int index = value - minValue;
-            if (bitArray[index])
+            lock (bitArray)
             {
-                return false;
+                if (bitArray[index])
+                {
+                    return false;
+                }
+                bitArray.Set(index, true);
             }
-            bitArray.Set(index, true);
             return true;
         }
 
@@ -116,9 +122,12 @@ namespace x2
         public void Release(int value)
         {
             int index = value - minValue;
-            if (bitArray[index])
+            lock (bitArray)
             {
-                bitArray.Set(index, false);
+                if (bitArray[index])
+                {
+                    bitArray.Set(index, false);
+                }
             }
         }
     }
