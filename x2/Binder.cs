@@ -63,7 +63,8 @@ namespace x2
             }
         }
 
-        public virtual int BuildHandlerChain(Event e, List<Handler> handlerChain)
+        public virtual int BuildHandlerChain(Event e,
+            EventEquivalent equivalent, List<Handler> handlerChain)
         {
             rwlock.EnterReadLock();
             try
@@ -81,7 +82,10 @@ namespace x2
                             var slot = slots[i];
                             if (slot.IsEquivalent(fingerprint))
                             {
-                                EventEquivalent equivalent = new EventEquivalent(e, slot, typeId);
+                                equivalent.InnerEvent = e;
+                                equivalent.SetFingerprint(slot);
+                                equivalent.InnerTypeId = typeId;
+
                                 HandlerSet handlers;
                                 if (handlerMap.TryGetValue(equivalent, out handlers))
                                 {

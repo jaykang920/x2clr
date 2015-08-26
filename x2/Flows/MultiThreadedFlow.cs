@@ -85,6 +85,7 @@ namespace x2.Flows
         private void Run()
         {
             currentFlow = this;
+            equivalent = new EventEquivalent();
             handlerChain = new List<Handler>();
 
             while (true)
@@ -98,6 +99,7 @@ namespace x2.Flows
             }
 
             handlerChain = null;
+            equivalent = null;
             currentFlow = null;
         }
     }

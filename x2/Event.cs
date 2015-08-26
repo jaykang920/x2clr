@@ -251,24 +251,17 @@ namespace x2
 
     public class EventEquivalent : Event
     {
-        private readonly Event e;
-        private readonly int typeId;
-
-        public EventEquivalent(Event e, Fingerprint fingerprint, int typeId)
-            : base(fingerprint)
-        {
-            this.e = e;
-            this.typeId = typeId;
-        }
+        public Event InnerEvent { get; set; }
+        public int InnerTypeId { get; set; }
 
         public override bool EqualsTo(Cell other)
         {
-            return other.IsEquivalent(e);
+            return other.IsEquivalent(InnerEvent);
         }
 
         public override int GetHashCode()
         {
-            return e.GetHashCode(fingerprint, typeId);
+            return InnerEvent.GetHashCode(fingerprint, InnerTypeId);
         }
     }
 }

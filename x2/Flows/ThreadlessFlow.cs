@@ -42,10 +42,11 @@ namespace x2.Flows
                 {
                     SetUp();
                     caseStack.SetUp(this);
-                    handlerChain = new List<Handler>();
-                    events = new List<Event>();
 
                     currentFlow = this;
+                    equivalent = new EventEquivalent();
+                    events = new List<Event>();
+                    handlerChain = new List<Handler>();
 
                     running = true;
 
@@ -66,9 +67,9 @@ namespace x2.Flows
                 queue.Close(new FlowStop());
                 running = false;
 
-                events = null;
                 handlerChain = null;
-
+                events = null;
+                equivalent = null;
                 currentFlow = null;
 
                 caseStack.TearDown(this);

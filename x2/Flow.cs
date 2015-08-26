@@ -12,18 +12,18 @@ using x2.Events;
 namespace x2
 {
     /// <summary>
-    /// Represents an independent execution flow.
+    /// Represents an logically independent execution flow.
     /// </summary>
     public abstract class Flow
     {
         [ThreadStatic]
         protected static Flow currentFlow;
-
         [ThreadStatic]
-        protected static List<Handler> handlerChain;
-
+        protected static EventEquivalent equivalent;
         [ThreadStatic]
         protected static List<Event> events;
+        [ThreadStatic]
+        protected static List<Handler> handlerChain;
 
         protected Binder binder;
         protected CaseStack caseStack;
@@ -255,7 +255,7 @@ namespace x2
 
         protected void Dispatch(Event e)
         {
-            int chainLength = binder.BuildHandlerChain(e, handlerChain);
+            int chainLength = binder.BuildHandlerChain(e, equivalent, handlerChain);
             if (chainLength == 0)
             {
                 // unhandled event

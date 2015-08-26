@@ -87,6 +87,11 @@ namespace x2
             return fingerprint;
         }
 
+        internal void SetFingerprint(Fingerprint fingerprint)
+        {
+            this.fingerprint = fingerprint;
+        }
+
         /// <summary>
         /// Returns the hash code for the current object.
         /// </summary>

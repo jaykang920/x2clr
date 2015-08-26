@@ -159,8 +159,9 @@ namespace x2.Flows
             currentFlow = this;
             if (queue != null)
             {
-                handlerChain = new List<Handler>();
+                equivalent = new EventEquivalent();
                 events = new List<Event>();
+                handlerChain = new List<Handler>();
             }
 
             StartInternal();
@@ -215,6 +216,7 @@ namespace x2.Flows
             {
                 handlerChain = null;
                 events = null;
+                equivalent = null;
             }
             currentFlow = null;
         }

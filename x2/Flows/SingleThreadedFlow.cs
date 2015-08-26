@@ -73,8 +73,9 @@ namespace x2.Flows
         private void Run()
         {
             currentFlow = this;
-            handlerChain = new List<Handler>();
+            equivalent = new EventEquivalent();
             events = new List<Event>();
+            handlerChain = new List<Handler>();
 
             while (true)
             {
@@ -90,8 +91,9 @@ namespace x2.Flows
                 events.Clear();
             }
 
-            events = null;
             handlerChain = null;
+            events = null;
+            equivalent = null;
             currentFlow = null;
         }
     }
