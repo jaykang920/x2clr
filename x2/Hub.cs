@@ -290,12 +290,18 @@ namespace x2
         /// </summary>
         public sealed class Flows : IDisposable
         {
+            ~Flows()
+            {
+                ShutDown();
+            }
+
             /// <summary>
             /// Implements the IDisposable interface.
             /// </summary>
             public void Dispose()
             {
                 ShutDown();
+                GC.SuppressFinalize(this);
             }
 
             /// <summary>

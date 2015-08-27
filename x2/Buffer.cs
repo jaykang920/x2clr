@@ -10,7 +10,7 @@ namespace x2
     /// A variable-length byte buffer class whose capacity is limited to a
     /// multiple of a power of 2.
     /// </summary>
-    public class Buffer
+    public class Buffer : IDisposable
     {
         private List<byte[]> blocks;
 
@@ -115,6 +115,12 @@ namespace x2
         ~Buffer()
         {
             CleanUp();
+        }
+
+        public void Dispose()
+        {
+            CleanUp();
+            GC.SuppressFinalize(this);
         }
 
         public void CopyFrom(byte[] buffer, int offset, int length)

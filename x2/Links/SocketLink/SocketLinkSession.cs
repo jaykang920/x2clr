@@ -19,6 +19,8 @@ namespace x2.Links.SocketLink
     /// </summary>
     public abstract class SocketLinkSession : LinkSession
     {
+        private const int bufferBlockExponent = 12;
+
         protected object syncRoot = new Object();
         //protected object syncRx = new Object();
         protected object syncTx = new Object();
@@ -116,8 +118,8 @@ namespace x2.Links.SocketLink
 
             sendQueue = new Queue<Event>();
 
-            recvBuffer = new Buffer(12);
-            sendBuffer = new Buffer(12);
+            recvBuffer = new Buffer(bufferBlockExponent);
+            sendBuffer = new Buffer(bufferBlockExponent);
 
             recvBufferList = new List<ArraySegment<byte>>();
             sendBufferList = new List<ArraySegment<byte>>();
