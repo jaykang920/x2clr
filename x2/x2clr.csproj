@@ -76,6 +76,21 @@
     <Compile Include="Events\LinkEvents.cs" />
     <Compile Include="Events\TimeFlowEvents.cs" />
     <Compile Include="Deserializer.cs" />
+    <Compile Include="Links\ClientLink.cs" />
+    <Compile Include="Links\LinkEvents.cs" />
+    <Compile Include="Links\ServerLink.cs" />
+    <Compile Include="Links\Sockets\TcpServer.cs" />
+    <Compile Include="Links\Sockets\TcpSession.cs" />
+    <Compile Include="Links\SendBuffer.cs" />
+    <Compile Include="Links\Sockets\AsyncTcpClient.cs" />
+    <Compile Include="Links\Sockets\TcpClient.cs" />
+    <Compile Include="Links\Sockets\AbstractTcpClient.cs" />
+    <Compile Include="Links\Sockets\AbstractTcpSession.cs" />
+    <Compile Include="Links\Sockets\AsyncTcpSession.cs" />
+    <Compile Include="Links\Sockets\AsyncTcpServer.cs" />
+    <Compile Include="Links\LinkSession.cs" />
+    <Compile Include="Links\SessionBasedLink.cs" />
+    <Compile Include="Links\Sockets\AbstractTcpServer.cs" />
     <Compile Include="Serializer.Write.cs" />
     <Compile Include="Serializer.GetEncodedLength.cs" />
     <Compile Include="Serializer.cs" />
@@ -161,12 +176,18 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Events\TimeFlowEvents.xml" />
-    <Content Include="Links\SocketLink\SocketLinkEvents.xml" />
+    <Content Include="Links\LinkEvents.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Links\SocketLink\SocketLinkEvents.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>pushd $(ProjectDir)
-..\bin\$(ConfigGroup)\xpiler.exe -f . Events
+..\bin\$(ConfigGroup)\xpiler.exe -f . Events Links
 popd</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

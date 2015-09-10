@@ -210,7 +210,7 @@ namespace x2.Links.SocketLink
         }
 #endif
 
-        protected override void OnSessionDisconnected(LinkSessionDisconnected e)
+        protected override void OnSessionDisconnected(x2.Events.LinkSessionDisconnected e)
         {
             session.Close();
             session = null;

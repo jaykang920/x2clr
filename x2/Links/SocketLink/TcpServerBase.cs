@@ -287,7 +287,7 @@ namespace x2.Links.SocketLink
             base.OnDisconnect(session);
         }
 
-        protected override void OnSessionDisconnected(LinkSessionDisconnected e)
+        protected override void OnSessionDisconnected(x2.Events.LinkSessionDisconnected e)
         {
         }
 

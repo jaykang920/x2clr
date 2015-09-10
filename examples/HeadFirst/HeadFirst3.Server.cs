@@ -8,7 +8,7 @@ namespace x2.Examples.HeadFirst
 {
     class HeadFirst3Server
     {
-        class CapitalizerServer : AsyncTcpServer
+        class CapitalizerServer : x2.Links.Sockets.AsyncTcpServer
         {
             public CapitalizerServer()
                 : base("CapitalizerServer")

@@ -1,4 +1,4 @@
-<x2 namespace="x2.Links.SocketLink">
+<x2 namespace="x2/Links/SocketLink">
 
     <consts name="SocketLinkEventType">
         <const name="HandshakeReq">-10</const>

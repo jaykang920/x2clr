@@ -331,4 +331,203 @@ namespace x2
     }
 
     #endregion  // Diagnostics
+
+
+
+    /// <summary>
+    /// Common base class for link cases.
+    /// </summary>
+    public abstract class Link2 : Case
+    {
+        private static HashSet<string> names;
+
+        private volatile bool disposed;
+
+        /// <summary>
+        /// Gets or sets the BufferTransform for this link.
+        /// </summary>
+        public IBufferTransform BufferTransform { get; set; }
+
+        /// <summary>
+        /// Gets the name of this link.
+        /// </summary>
+        public string Name { get; private set; }
+
+        static Link2()
+        {
+            names = new HashSet<string>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the Link class.
+        /// </summary>
+        protected Link2(string name)
+        {
+            lock (names)
+            {
+                if (names.Contains(name))
+                {
+                    throw new ArgumentException("link name is already in use");
+                }
+
+                Name = name;
+                names.Add(name);
+            }
+        }
+
+        ~Link2()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Closes this link and releases all the associated resources.
+        /// </summary>
+        public void Close()
+        {
+            Dispose();
+        }
+
+        /// <summary>
+        /// Sends out the specified event through this link channel.
+        /// </summary>
+        public abstract void Send(Event e);
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposed) { return; }
+
+            if (BufferTransform != null)
+            {
+                BufferTransform.Dispose();
+                BufferTransform = null;
+            }
+
+            lock (names)
+            {
+                names.Remove(Name);
+            }
+
+            disposed = true;
+        }
+
+        /// <summary>
+        /// Cleans up this link on shutdown.
+        /// </summary>
+        protected override void TearDown()
+        {
+            Close();
+        }
+
+        #region Diagnostics
+
+        /// <summary>
+        /// Gets the diagnostics object.
+        /// </summary>
+        public Diagnostics Diag { get; protected set; }
+
+        /// <summary>
+        /// Link diagnostics helper class.
+        /// </summary>
+        public class Diagnostics
+        {
+            protected long totalBytesReceived;
+            protected long totalBytesSent;
+            protected long bytesReceived;
+            protected long bytesSent;
+
+            protected long totalEventsReceived;
+            protected long totalEventsSent;
+            protected long eventsReceived;
+            protected long eventsSent;
+
+            public long TotalBytesReceived
+            {
+                get { return Interlocked.Read(ref totalBytesReceived); }
+            }
+
+            public long TotalBytesSent
+            {
+                get { return Interlocked.Read(ref totalBytesSent); }
+            }
+
+            public long BytesReceived
+            {
+                get { return Interlocked.Read(ref bytesReceived); }
+            }
+
+            public long BytesSent
+            {
+                get { return Interlocked.Read(ref bytesSent); }
+            }
+
+            public long TotalEventsReceived
+            {
+                get { return Interlocked.Read(ref totalEventsReceived); }
+            }
+
+            public long TotalEventsSent
+            {
+                get { return Interlocked.Read(ref totalEventsSent); }
+            }
+
+            public long EventsReceived
+            {
+                get { return Interlocked.Read(ref eventsReceived); }
+            }
+
+            public long EventsSent
+            {
+                get { return Interlocked.Read(ref eventsSent); }
+            }
+
+            internal virtual void AddBytesReceived(long bytesReceived)
+            {
+                Interlocked.Add(ref totalBytesReceived, bytesReceived);
+                Interlocked.Add(ref this.bytesReceived, bytesReceived);
+            }
+
+            internal virtual void AddBytesSent(long bytesSent)
+            {
+                Interlocked.Add(ref totalBytesSent, bytesSent);
+                Interlocked.Add(ref this.bytesSent, bytesSent);
+            }
+
+            public void ResetBytesReceived()
+            {
+                Interlocked.Exchange(ref bytesReceived, 0L);
+            }
+
+            public void ResetBytesSent()
+            {
+                Interlocked.Exchange(ref bytesSent, 0L);
+            }
+
+            internal virtual void IncrementEventsReceived()
+            {
+                Interlocked.Increment(ref totalEventsReceived);
+                Interlocked.Increment(ref eventsReceived);
+            }
+
+            internal virtual void IncrementEventsSent()
+            {
+                Interlocked.Increment(ref totalEventsSent);
+                Interlocked.Increment(ref eventsSent);
+            }
+
+            public void ResetEventsReceived()
+            {
+                Interlocked.Exchange(ref eventsReceived, 0L);
+            }
+
+            public void ResetEventsSent()
+            {
+                Interlocked.Exchange(ref eventsSent, 0L);
+            }
+        }
+
+        #endregion  // Diagnostics
+    }
 }

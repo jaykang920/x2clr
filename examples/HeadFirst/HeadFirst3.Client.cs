@@ -8,7 +8,7 @@ namespace x2.Examples.HeadFirst
 {
     class HeadFirst3Client
     {
-        class CapitalizerClient : AsyncTcpClient
+        class CapitalizerClient : x2.Links.Sockets.AsyncTcpClient
         {
             public CapitalizerClient()
                 : base("CapitalizerClient")
