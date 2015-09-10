@@ -26,6 +26,11 @@ namespace x2
 
         private int marker;
 
+        // buffer room control
+        private const int minLevel = 0;
+        private const int maxLevel = 3;
+        private int level;
+
         /// <summary>
         /// Gets the block size in bytes.
         /// </summary>
@@ -196,15 +201,30 @@ namespace x2
 
         public void ListAvailableSegments(IList<ArraySegment<byte>> blockList)
         {
-            if ((Capacity - back) < BlockSize)
+            if (back < Capacity)
             {
-                blocks.Add(BufferPool.Acquire(blockSizeExponent));
+                if (level > minLevel) { --level; }
             }
+            else
+            {
+                if (level < maxLevel) { ++level; }
+            }
+            int roomFactor = 1 << level;
+            int numWholeBlocks = (Capacity - back) >> blockSizeExponent;
+            if (numWholeBlocks < roomFactor)
+            {
+                int count = (roomFactor - numWholeBlocks);
+                for (int i = 0; i < count; ++i)
+                {
+                    blocks.Add(BufferPool.Acquire(blockSizeExponent));
+                }
+            }
+
             int backIndex = back >> blockSizeExponent;
             int backOffset = back & remainderMask;
             blockList.Add(new ArraySegment<byte>(blocks[backIndex], backOffset,
                                                  BlockSize - backOffset));
-            for (int i = backIndex + 1; i < blocks.Count; ++i)
+            for (int i = backIndex + 1, count = blocks.Count; i < count; ++i)
             {
                 blockList.Add(new ArraySegment<byte>(blocks[i]));
             }

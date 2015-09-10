@@ -31,7 +31,7 @@ namespace x2
             {
                 deserializer.Read(out typeId);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Log.Error("EventFactory.Create : error reading event type id");
                 return null;

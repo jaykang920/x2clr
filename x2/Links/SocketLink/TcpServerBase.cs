@@ -77,7 +77,7 @@ namespace x2.Links.SocketLink
                 socket.Close();
                 rwlock.Dispose();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //Log.Warn("{0} {1}", Name, e.ToString());
             }
