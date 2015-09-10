@@ -37,6 +37,11 @@ namespace x2.Links
         protected int lengthToSend;
 
         protected bool rxBeginning;
+
+        protected bool rxTransformed;
+        protected bool rxTransformReady;
+        protected bool txTransformReady;
+
         protected volatile bool txFlag;
 
         protected object syncTx = new Object();
@@ -195,13 +200,11 @@ namespace x2.Links
                 e.Serialize(new Serializer(sendBuffer.Buffer));
 
                 uint header = 0;
-                /*
                 if (BufferTransform != null && txTransformReady && e._Transform)
                 {
-                    BufferTransform.Transform(sendBuffer, (int)sendBuffer.Length);
+                    BufferTransform.Transform(sendBuffer.Buffer, (int)sendBuffer.Buffer.Length);
                     header = 1;
                 }
-                */
                 header |= ((uint)sendBuffer.Buffer.Length << 1);
 
                 sendBuffer.HeaderLength = Serializer.WriteVariable(sendBuffer.HeaderBytes, header);
@@ -260,7 +263,7 @@ namespace x2.Links
                 }
                 rxBuffer.Shrink(headerLength);
                 lengthToReceive = (int)(header >> 1);
-                //rxTransformed = ((header & 1) != 0);
+                rxTransformed = ((header & 1) != 0);
             }
 
             // Handle split packets.
@@ -276,7 +279,6 @@ namespace x2.Links
 
                 Log.Trace("{0} {1} marked {2} byte(s) to read", link.Name, Handle, lengthToReceive);
 
-                /*
                 if (BufferTransform != null && rxTransformReady && rxTransformed)
                 {
                     try
@@ -289,7 +291,6 @@ namespace x2.Links
                         goto next;
                     }
                 }
-                */
                 rxBuffer.Position = 0;
 
                 var deserializer = new Deserializer(rxBuffer);
@@ -333,8 +334,8 @@ namespace x2.Links
                     }
                     */
 
-                    //ProcessEvent(retrieved);
-                    retrieved.Post();
+                    ProcessEvent(retrieved);
+
                     Diag.IncrementEventsReceived();
                 }
             next:
@@ -416,6 +417,84 @@ namespace x2.Links
             else
             {
                 txFlag = false;
+            }
+        }
+
+        private void ProcessEvent(Event e)
+        {
+            switch (e.GetTypeId())
+            {
+                case (int)LinkEventType.HandshakeReq:
+                    {
+                        var req = (HandshakeReq)e;
+                        var resp = new HandshakeResp { _Transform = false };
+                        byte[] response = null;
+                        try
+                        {
+                            response = BufferTransform.Handshake(req.Data);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("{0} {1} error handshaking : {2}",
+                                link.Name, Handle, ex.ToString());
+                        }
+                        if (response != null)
+                        {
+                            resp.Data = response;
+                        }
+                        Send(resp);
+                    }
+                    break;
+                case (int)LinkEventType.HandshakeResp:
+                    {
+                        var ack = new HandshakeAck { _Transform = false };
+                        var resp = (HandshakeResp)e;
+                        try
+                        {
+                            if (BufferTransform.FinalizeHandshake(resp.Data))
+                            {
+                                rxTransformReady = true;
+                                ack.Result = true;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("{0} {1} error finishing handshake : {2}",
+                                link.Name, Handle, ex.ToString());
+                        }
+                        Send(ack);
+                    }
+                    break;
+                case (int)LinkEventType.HandshakeAck:
+                    {
+                        var ack = (HandshakeAck)e;
+
+                        if (ack.Result)
+                        {
+                            txTransformReady = true;
+                        }
+
+                        if (Polarity == true)
+                        {
+                            var client = (ClientLink)link;
+                            client.Session = this;
+                        }
+
+                        Hub.Post(new LinkSessionConnected {
+                            _Handle = Handle,
+                            LinkName = link.Name,
+                            Result = ack.Result,
+                            Context = this
+                        });
+                    }
+                    break;
+                /*
+                case (int)SocketLinkEventType.KeepaliveEvent:
+                    break;
+                */
+                default:
+                    Hub.Post(e);
+                    break;
             }
         }
 

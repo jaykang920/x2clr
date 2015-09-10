@@ -14,11 +14,11 @@ namespace x2.Examples.HeadFirst
                 : base("CapitalizerServer")
             {
                 //OutgoingKeepaliveEnabled = true,
-                /*
+                ///*
                 BufferTransform = new BufferTransformStack()
                     .Add(new x2.Transforms.BlockCipher())
                     .Add(new x2.Transforms.Inverse());
-                */
+                //*/
             }
 
             protected override void SetUp()

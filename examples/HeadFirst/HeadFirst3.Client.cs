@@ -14,11 +14,11 @@ namespace x2.Examples.HeadFirst
                 : base("CapitalizerClient")
             {
                 //IncomingKeepaliveEnabled = true,
-                /*
+                ///*
                 BufferTransform = new BufferTransformStack()
                     .Add(new x2.Transforms.BlockCipher())
                     .Add(new x2.Transforms.Inverse());
-                */
+                //*/
             }
 
             protected override void SetUp()
@@ -32,7 +32,7 @@ namespace x2.Examples.HeadFirst
 
         public static void Main()
         {
-            Log.Level = LogLevel.Debug;
+            Log.Level = LogLevel.Trace;
             Log.Handler = (level, message) => Console.WriteLine(message);
 
             Hub.Instance

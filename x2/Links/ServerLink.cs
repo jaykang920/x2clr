@@ -81,11 +81,7 @@ namespace x2.Links
                 sessions.Add(session.Handle, session);
             }
 
-            new LinkSessionConnected {
-                LinkName = Name,
-                Result = true,
-                Context = session
-            }.Post();
+            OnSessionSetUp(session);
 
             return true;
         }

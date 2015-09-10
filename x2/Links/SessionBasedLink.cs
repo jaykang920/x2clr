@@ -14,6 +14,13 @@ namespace x2.Links
 {
     public abstract class SessionBasedLink : Link2
     {
+        static SessionBasedLink()
+        {
+            EventFactory.Register<HandshakeReq>();
+            EventFactory.Register<HandshakeResp>();
+            EventFactory.Register<HandshakeAck>();
+        }
+
         /// <summary>
         /// Initializes a new instance of the SessionfulLink class.
         /// </summary>
@@ -30,6 +37,32 @@ namespace x2.Links
 
         protected virtual void OnSessionConnected(bool result, object context) { }
         protected virtual void OnSessionDisconnected(object context) { }
+
+        protected void OnSessionSetUp(LinkSession2 session)
+        {
+            if (BufferTransform != null)
+            {
+                InitiateHandshake(session);
+            }
+            else
+            {
+                Hub.Post(new LinkSessionConnected {
+                    LinkName = Name,
+                    Result = true,
+                    Context = session
+                });
+            }
+        }
+
+        private void InitiateHandshake(LinkSession2 session)
+        {
+            session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
+
+            session.Send(new HandshakeReq {
+                _Transform = false,
+                Data = session.BufferTransform.InitializeHandshake()
+            });
+        }
 
         private void OnLinkSessionConnected(LinkSessionConnected e)
         {

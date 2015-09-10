@@ -20,6 +20,11 @@ namespace x2.Links
 
         private volatile bool disposed;
 
+        public LinkSession2 Session {
+            get { return session; }
+            set { session = value; }
+        }
+
         public ClientLink(string name)
             : base(name)
         {
@@ -61,16 +66,15 @@ namespace x2.Links
         {
             session.Polarity = true;
 
-            using (new WriteLock(rwlock))
+            if (BufferTransform == null)
             {
-                this.session = session;
+                using (new WriteLock(rwlock))
+                {
+                    this.session = session;
+                }
             }
 
-            new LinkSessionConnected {
-                LinkName = Name,
-                Result = true,
-                Context = session
-            }.Post();
+            OnSessionSetUp(session);
         }
 
         protected override void OnSessionDisconnected(object context)
