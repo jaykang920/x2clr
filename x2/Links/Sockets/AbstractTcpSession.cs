@@ -10,21 +10,25 @@ using x2;
 
 namespace x2.Links.Sockets
 {
+    /// <summary>
+    /// Abstract base class for TCP/IP link sessions.
+    /// </summary>
     public abstract class AbstractTcpSession : LinkSession2
     {
         protected Socket socket;
 
+        // Gets the underlying Socket object.
         public Socket Socket { get { return socket; } }
 
-        public AbstractTcpSession(SessionBasedLink link, Socket socket)
+        /// <summary>
+        /// Initializes a new instance of the AbstractTcpSession class.
+        /// </summary>
+        protected AbstractTcpSession(SessionBasedLink link, Socket socket)
             : base(link)
         {
             this.socket = socket;
         }
 
-        /// <summary>
-        /// Frees managed or unmanaged resources.
-        /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (disposed) { return; }

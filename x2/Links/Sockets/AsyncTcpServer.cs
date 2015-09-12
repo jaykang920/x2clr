@@ -10,12 +10,18 @@ using x2;
 
 namespace x2.Links.Sockets
 {
+    /// <summary>
+    /// TCP/IP server link based on the enhanced SocketAsyncEventArgs pattern.
+    /// </summary>
     public class AsyncTcpServer : AbstractTcpServer
     {
         private const int numConcurrentAcceptors = 16;
 
         private SocketAsyncEventArgs[] acceptEventArgs;
 
+        /// <summary>
+        /// Initializes a new instance of the AsyncTcpServer class.
+        /// </summary>
         public AsyncTcpServer(string name)
             : base(name)
         {
@@ -29,9 +35,6 @@ namespace x2.Links.Sockets
             }
         }
 
-        /// <summary>
-        /// Frees managed or unmanaged resources.
-        /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (disposed) { return; }
@@ -48,7 +51,10 @@ namespace x2.Links.Sockets
             base.Dispose(disposing);
         }
 
-        protected override void AcceptImpl()
+        /// <summary>
+        /// <see cref="AbstractTcpServer.AcceptInternal()"/>
+        /// </summary>
+        protected override void AcceptInternal()
         {
             for (int i = 0, count = acceptEventArgs.Length; i < count; ++i)
             {
@@ -78,9 +84,12 @@ namespace x2.Links.Sockets
         {
             if (e.SocketError == SocketError.Success)
             {
-                if (!AcceptInternal(new AsyncTcpSession(this, e.AcceptSocket)))
+                var clientSocket = e.AcceptSocket;
+
+                if (!OnAcceptInternal(new AsyncTcpSession(this, clientSocket)))
                 {
-                    e.AcceptSocket.Close();
+                    NotifySessionConnected(false, clientSocket.RemoteEndPoint);
+                    clientSocket.Close();
                 }
             }
             else

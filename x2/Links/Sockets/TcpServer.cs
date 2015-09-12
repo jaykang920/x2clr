@@ -10,14 +10,23 @@ using x2;
 
 namespace x2.Links.Sockets
 {
+    /// <summary>
+    /// TCP/IP server link based on the Begin/End pattern.
+    /// </summary>
     public class TcpServer : AbstractTcpServer
     {
+        /// <summary>
+        /// Initializes a new instance of the TcpServer class.
+        /// </summary>
         public TcpServer(string name)
             : base(name)
         {
         }
 
-        protected override void AcceptImpl()
+        /// <summary>
+        /// <see cref="AbstractTcpServer.AcceptInternal()"/>
+        /// </summary>
+        protected override void AcceptInternal()
         {
             socket.BeginAccept(OnAccept, null);
         }
@@ -29,17 +38,23 @@ namespace x2.Links.Sockets
             {
                 var clientSocket = socket.EndAccept(asyncResult);
 
-                if (!AcceptInternal(new TcpSession(this, clientSocket)))
+                if (!OnAcceptInternal(new TcpSession(this, clientSocket)))
                 {
+                    NotifySessionConnected(false, clientSocket.RemoteEndPoint);
                     clientSocket.Close();
                 }
-
-                AcceptImpl();
+            }
+            catch (ObjectDisposedException ode)
+            {
+                Log.Info("{0} listening socket closed", Name);
+                return;
             }
             catch (Exception e)
             {
-                Log.Warn("{0} accept error : {1}", Name, e.Message);
+                Log.Error("{0} accept error : {1}", Name, e.Message);
             }
+
+            AcceptInternal();
         }
     }
 }

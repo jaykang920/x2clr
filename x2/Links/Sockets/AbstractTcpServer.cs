@@ -15,7 +15,7 @@ using x2.Queues;
 namespace x2.Links.Sockets
 {
     /// <summary>
-    /// Common abstract base class for TCP/IP server links.
+    /// Abstract base class for TCP/IP server links.
     /// </summary>
     public abstract class AbstractTcpServer : ServerLink
     {
@@ -27,22 +27,10 @@ namespace x2.Links.Sockets
         /// </summary>
         public bool NoDelay { get; set; }
 
-        public AbstractTcpServer(string name) : base(name)
+        protected AbstractTcpServer(string name) : base(name)
         {
             // Default socket options
             NoDelay = true;
-        }
-
-        /// <summary>
-        /// Frees managed or unmanaged resources.
-        /// </summary>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposed) { return; }
-
-            socket.Close();
-
-            base.Dispose(disposing);
         }
 
         public void Listen(int port)
@@ -70,7 +58,7 @@ namespace x2.Links.Sockets
                 socket.Bind(endpoint);
                 socket.Listen(Int32.MaxValue);
 
-                AcceptImpl();
+                AcceptInternal();
 
                 Log.Info("{0} listening on {1}", Name, endpoint);
             }
@@ -81,9 +69,24 @@ namespace x2.Links.Sockets
             }
         }
 
-        protected abstract void AcceptImpl();
+        /// <summary>
+        /// Provides an actual implementation of Accept.
+        /// </summary>
+        protected abstract void AcceptInternal();
 
-        protected override bool AcceptInternal(LinkSession2 session)
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) { return; }
+
+            socket.Close();
+
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// <see cref="ServerLink.OnAcceptInternal(LinkSession2)"/>
+        /// </summary>
+        protected override bool OnAcceptInternal(LinkSession2 session)
         {
             var tcpSession = (AbstractTcpSession)session;
             var clientSocket = tcpSession.Socket;
@@ -91,12 +94,12 @@ namespace x2.Links.Sockets
             // Adjust client socket options.
             clientSocket.NoDelay = NoDelay;
 
+            tcpSession.BeginReceive(true);
+
             Log.Info("{0} {1} accepted from {2}",
                 Name, session.Handle, clientSocket.RemoteEndPoint);
 
-            tcpSession.BeginReceive(true);
-
-            return base.AcceptInternal(session);
+            return base.OnAcceptInternal(session);
         }
     }
 }

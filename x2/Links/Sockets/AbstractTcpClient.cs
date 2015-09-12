@@ -13,7 +13,7 @@ using x2.Flows;
 namespace x2.Links.Sockets
 {
     /// <summary>
-    /// Common abstract base class for TCP/IP client links.
+    /// Abstract base class for TCP/IP client links.
     /// </summary>
     public abstract class AbstractTcpClient : ClientLink
     {
@@ -23,9 +23,11 @@ namespace x2.Links.Sockets
         /// </summary>
         public bool NoDelay { get; set; }
 
-        public AbstractTcpClient(string name)
+        protected AbstractTcpClient(string name)
             : base(name)
         {
+            // Default socket options
+            NoDelay = true;
         }
 
         public void Connect(string host, int port)
@@ -50,7 +52,7 @@ namespace x2.Links.Sockets
             IPEndPoint ep = new IPEndPoint(ip, port);
             try
             {
-                ConnectImpl(ep);
+                ConnectInternal(ep);
 
                 Log.Info("{0} connecting to {1}", Name, ep);
             }
@@ -67,22 +69,28 @@ namespace x2.Links.Sockets
             }
         }
 
-        protected abstract void ConnectImpl(EndPoint endpoint);
+        /// <summary>
+        /// Provides an actual implementation of Connect.
+        /// </summary>
+        protected abstract void ConnectInternal(EndPoint endpoint);
 
-        protected override void ConnectInternal(LinkSession2 session)
+        /// <summary>
+        /// <see cref="ClientLink.OnConnectInternal(LinkSession2)"/>
+        /// </summary>
+        protected override void OnConnectInternal(LinkSession2 session)
         {
             var tcpSession = (AbstractTcpSession)session;
             Socket socket = tcpSession.Socket;
-
-            Log.Info("{0} {1} connected to {2}",
-                Name, session.Handle, socket.RemoteEndPoint);
 
             // Adjust socket options.
             socket.NoDelay = NoDelay;
 
             tcpSession.BeginReceive(true);
 
-            base.ConnectInternal(session);
+            Log.Info("{0} {1} connected to {2}",
+                Name, session.Handle, socket.RemoteEndPoint);
+
+            base.OnConnectInternal(session);
         }
     }
 }

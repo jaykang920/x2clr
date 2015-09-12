@@ -8,7 +8,6 @@ using System.Net.Sockets;
 using System.Threading;
 
 using x2;
-using x2.Events;
 
 namespace x2.Links.Sockets
 {
@@ -19,11 +18,14 @@ namespace x2.Links.Sockets
     {
         private SocketAsyncEventArgs connectEventArgs;
     
-        public AsyncTcpClient(string name) : base(name) { }
-
         /// <summary>
-        /// Frees managed or unmanaged resources.
+        /// Initializes a new instance of the AsyncTcpClient class.
         /// </summary>
+        public AsyncTcpClient(string name)
+            : base(name)
+        {
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (!Object.ReferenceEquals(connectEventArgs, null))
@@ -36,7 +38,10 @@ namespace x2.Links.Sockets
             base.Dispose(disposing);  // chain into the base implementation
         }
 
-        protected override void ConnectImpl(EndPoint endpoint)
+        /// <summary>
+        /// <see cref="AbstractTcpClient.ConnectInternal"/>
+        /// </summary>
+        protected override void ConnectInternal(EndPoint endpoint)
         {
             if (Object.ReferenceEquals(connectEventArgs, null))
             {
@@ -66,24 +71,21 @@ namespace x2.Links.Sockets
         // Completion callback for ConnectAsync
         private void OnConnect(SocketAsyncEventArgs e)
         {
+            var socket = (Socket)e.UserToken;
             if (e.SocketError == SocketError.Success)
             {
                 connectEventArgs.Completed -= OnConnectCompleted;
                 connectEventArgs.Dispose();
                 connectEventArgs = null;
 
-                ConnectInternal(new AsyncTcpSession(this, (Socket)e.UserToken));
+                OnConnectInternal(new AsyncTcpSession(this, socket));
             }
             else
             {
                 Log.Warn("{0} error connecting to {1} : {2}",
                     Name, e.RemoteEndPoint, e.SocketError);
 
-                new LinkSessionConnected {
-                    LinkName = Name,
-                    Result = false,
-                    Context = e.RemoteEndPoint
-                }.Post();
+                NotifySessionConnected(false, socket.RemoteEndPoint);
             }
         }
     }

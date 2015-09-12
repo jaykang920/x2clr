@@ -11,6 +11,9 @@ using x2;
 
 namespace x2.Links.Sockets
 {
+    /// <summary>
+    /// TCP/IP link session based on the enhanced SocketAsyncEventArgs pattern.
+    /// </summary>
     public class AsyncTcpSession : AbstractTcpSession
     {
         private SocketAsyncEventArgs recvEventArgs;
@@ -53,7 +56,7 @@ namespace x2.Links.Sockets
             base.Dispose(disposing);
         }
 
-        protected override void ReceiveImpl()
+        protected override void ReceiveInternal()
         {
             try
             {
@@ -80,7 +83,7 @@ namespace x2.Links.Sockets
             }
         }
 
-        protected override void SendImpl()
+        protected override void SendInternal()
         {
             try
             {
@@ -121,7 +124,7 @@ namespace x2.Links.Sockets
             {
                 if (e.BytesTransferred > 0)
                 {
-                    ReceiveInternal(e.BytesTransferred);
+                    OnReceiveInternal(e.BytesTransferred);
                     return;
                 }
 
@@ -148,7 +151,7 @@ namespace x2.Links.Sockets
             {
                 //lock (syncTx)
                 {
-                    SendInternal(e.BytesTransferred);
+                    OnSendInternal(e.BytesTransferred);
                 }
             }
             else

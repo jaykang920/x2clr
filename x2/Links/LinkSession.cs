@@ -6,9 +6,6 @@ using System.Collections.Generic;
 using System.Threading;
 
 using x2;
-using x2.Events;
-using x2.Flows;
-using x2.Queues;
 
 namespace x2.Links
 {
@@ -170,7 +167,7 @@ namespace x2.Links
         {
             rxBeginning = beginning;
 
-            ReceiveImpl();
+            ReceiveInternal();
         }
 
         internal void BeginSend()
@@ -231,13 +228,13 @@ namespace x2.Links
                 Diag.IncrementEventsSent();
             }
 
-            SendImpl();
+            SendInternal();
         }
 
-        protected abstract void ReceiveImpl();
-        protected abstract void SendImpl();
+        protected abstract void ReceiveInternal();
+        protected abstract void SendInternal();
 
-        protected void ReceiveInternal(int bytesTransferred)
+        protected void OnReceiveInternal(int bytesTransferred)
         {
             Diag.AddBytesReceived(bytesTransferred);
 
@@ -377,7 +374,7 @@ namespace x2.Links
             Close();
         }
 
-        protected void SendInternal(int bytesTransferred)
+        protected void OnSendInternal(int bytesTransferred)
         {
             Diag.AddBytesSent(bytesTransferred);
 

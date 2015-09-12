@@ -7,8 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-using x2.Events;
-using x2.Flows;
+using x2;
 
 namespace x2.Links.Sockets
 {
@@ -17,12 +16,18 @@ namespace x2.Links.Sockets
     /// </summary>
     public class TcpClient : AbstractTcpClient
     {
+        /// <summary>
+        /// Initializes a new instance of the TcpClient class.
+        /// </summary>
         public TcpClient(string name)
             : base(name)
         {
         }
 
-        protected override void ConnectImpl(EndPoint endpoint)
+        /// <summary>
+        /// <see cref="AbstractTcpClient.ConnectInternal"/>
+        /// </summary>
+        protected override void ConnectInternal(EndPoint endpoint)
         {
             var socket = new Socket(
                 endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -33,21 +38,19 @@ namespace x2.Links.Sockets
         // Asynchronous callback for BeginConnect
         private void OnConnect(IAsyncResult asyncResult)
         {
+            var socket = (Socket)asyncResult.AsyncState;
             try
             {
-                var socket = (Socket)asyncResult.AsyncState;
                 socket.EndConnect(asyncResult);
 
-                ConnectInternal(new TcpSession(this, socket));
+                OnConnectInternal(new TcpSession(this, socket));
             }
             catch (Exception e)
             {
-                var socket = (Socket)asyncResult.AsyncState;
-
                 Log.Warn("{0} error connecting to {1} : {2}",
                     Name, socket.RemoteEndPoint, e.Message);
 
-                //RetryInternal(endpoint);
+                NotifySessionConnected(false, socket.RemoteEndPoint);
             }
         }
     }

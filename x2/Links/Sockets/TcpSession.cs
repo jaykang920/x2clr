@@ -10,6 +10,9 @@ using x2;
 
 namespace x2.Links.Sockets
 {
+    /// <summary>
+    /// TCP/IP link session based on the Begin/End pattern.
+    /// </summary>
     public class TcpSession : AbstractTcpSession
     {
         public TcpSession(SessionBasedLink link, Socket socket)
@@ -17,7 +20,7 @@ namespace x2.Links.Sockets
         {
         }
 
-        protected override void ReceiveImpl()
+        protected override void ReceiveInternal()
         {
             if (socket == null || !socket.Connected)
             {
@@ -36,7 +39,7 @@ namespace x2.Links.Sockets
             }
         }
 
-        protected override void SendImpl()
+        protected override void SendInternal()
         {
             if (socket == null || !socket.Connected)
             {
@@ -61,7 +64,7 @@ namespace x2.Links.Sockets
 
                 if (bytesTransferred > 0)
                 {
-                    ReceiveInternal(bytesTransferred);
+                    OnReceiveInternal(bytesTransferred);
                     return;
                 }
 
@@ -83,7 +86,7 @@ namespace x2.Links.Sockets
             {
                 int bytesTransferred = socket.EndSend(asyncResult);
 
-                SendInternal(bytesTransferred);
+                OnSendInternal(bytesTransferred);
             }
             catch (Exception e)
             {

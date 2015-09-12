@@ -15,40 +15,29 @@ namespace x2.Links
     /// <summary>
     /// Common base class for single-session client links.
     /// </summary>
-    public class ClientLink : SessionBasedLink
+    public abstract class ClientLink : SessionBasedLink
     {
         protected LinkSession2 session;
 
         /// <summary>
-        /// Gets or sets the current link session.
+        /// Gets the current link session.
         /// </summary>
         public LinkSession2 Session {
-            get { return session; }
-            set { session = value; }
+            get
+            {
+                using (new ReadLock(rwlock))
+                {
+                    return session;
+                }
+            }
         }
 
         /// <summary>
         /// Initializes a new instance of the ClientLink class.
         /// </summary>
-        public ClientLink(string name)
+        protected ClientLink(string name)
             : base(name)
         {
-        }
-
-        /// <summary>
-        /// Frees managed or unmanaged resources.
-        /// </summary>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposed) { return; }
-
-            using (new WriteLock(rwlock))
-            {
-                session.Close();
-                session = null;
-            }
-
-            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -56,17 +45,15 @@ namespace x2.Links
         /// </summary>
         public override void Send(Event e)
         {
-            LinkSession2 session;
             using (new ReadLock(rwlock))
             {
-                session = this.session;
+                if (session == null)
+                {
+                    Log.Warn("{0} dropped event {1}", Name, e);
+                    return;
+                }
+                session.Send(e);
             }
-            if (session == null)
-            {
-                Log.Warn("{0} dropped event {1}", Name, e);
-                return;
-            }
-            session.Send(e);
         }
 
         internal override void NotifySessionConnected(bool result, object context)
@@ -93,7 +80,26 @@ namespace x2.Links
             base.NotifySessionDisconnected(handle, context);
         }
 
-        protected virtual void ConnectInternal(LinkSession2 session)
+        /// <summary>
+        /// Frees managed or unmanaged resources.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) { return; }
+
+            using (new WriteLock(rwlock))
+            {
+                session.Close();
+                session = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Called by a derived link class on a successful connect. 
+        /// </summary>
+        protected virtual void OnConnectInternal(LinkSession2 session)
         {
             session.Polarity = true;
 
