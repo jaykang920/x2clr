@@ -122,6 +122,9 @@ namespace x2
             CleanUp();
         }
 
+        /// <summary>
+        /// Implments IDisposable interface.
+        /// </summary>
         public void Dispose()
         {
             CleanUp();

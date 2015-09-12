@@ -27,8 +27,6 @@ namespace x2.Links.SocketLink
 #endif
         protected ReaderWriterLockSlim rwlock;
 
-        private volatile bool disposed;
-
         /// <summary>
         /// Gets or sets the maximum length of the pending connections queue.
         /// </summary>
@@ -68,8 +66,6 @@ namespace x2.Links.SocketLink
 
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
-
             if (disposed) { return; }
 
             try
@@ -81,10 +77,8 @@ namespace x2.Links.SocketLink
             {
                 //Log.Warn("{0} {1}", Name, e.ToString());
             }
-            finally
-            {
-                disposed = true;
-            }
+
+            base.Dispose(disposing);
         }
 
         public void Listen(int port)

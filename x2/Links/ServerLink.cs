@@ -12,37 +12,40 @@ using x2.Queues;
 
 namespace x2.Links
 {
-    public abstract class ServerLink : SessionBasedLink
+    /// <summary>
+    /// Common base class for multi-session server links.
+    /// </summary>
+    public class ServerLink : SessionBasedLink
     {
         protected SortedList<int, LinkSession2> sessions;
-        protected ReaderWriterLockSlim rwlock;
 
-        private volatile bool disposed;
-
+        /// <summary>
+        /// Initializes a new instance of the ServerLink class.
+        /// </summary>
         public ServerLink(string name)
             : base(name)
         {
             sessions = new SortedList<int, LinkSession2>();
-            rwlock = new ReaderWriterLockSlim();
         }
 
+        /// <summary>
+        /// Frees managed or unmanaged resources.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (disposed) { return; }
 
-            try
+            using (new WriteLock(rwlock))
             {
                 sessions.Clear();
-                rwlock.Dispose();
-            }
-            finally
-            {
-                disposed = true;
             }
 
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Sends out the specified event through this link channel.
+        /// </summary>
         public override void Send(Event e)
         {
             LinkSession2 session;
@@ -56,6 +59,9 @@ namespace x2.Links
             session.Send(e);
         }
 
+        /// <summary>
+        /// Broadcasts the specified event to all the connected clients.
+        /// </summary>
         public void Broadcast(Event e)
         {
             List<LinkSession2> snapshot;
@@ -74,14 +80,40 @@ namespace x2.Links
             }
         }
 
-        protected virtual bool AcceptInternal(LinkSession2 session)
+        internal override void NotifySessionConnected(bool result, object context)
+        {
+            if (result == true)
+            {
+                var session = (LinkSession2)context;
+                using (new WriteLock(rwlock))
+                {
+                    sessions.Add(session.Handle, session);
+                }
+            }
+
+            base.NotifySessionConnected(result, context);
+        }
+
+        internal override void NotifySessionDisconnected(int handle, object context)
         {
             using (new WriteLock(rwlock))
             {
-                sessions.Add(session.Handle, session);
+                sessions.Remove(handle);
             }
 
-            OnSessionSetUp(session);
+            base.NotifySessionDisconnected(handle, context);
+        }
+
+        protected virtual bool AcceptInternal(LinkSession2 session)
+        {
+            if (BufferTransform != null)
+            {
+                InitiateHandshake(session);
+            }
+            else
+            {
+                NotifySessionConnected(true, session);
+            }
 
             return true;
         }

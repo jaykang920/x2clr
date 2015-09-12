@@ -40,6 +40,9 @@ namespace x2.Links
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Frees managed or unmanaged resources.
+        /// </summary>
         protected virtual void Dispose(bool disposing)
         {
             buffer.Dispose();

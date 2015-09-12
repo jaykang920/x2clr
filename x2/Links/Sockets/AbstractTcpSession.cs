@@ -22,8 +22,13 @@ namespace x2.Links.Sockets
             this.socket = socket;
         }
 
+        /// <summary>
+        /// Frees managed or unmanaged resources.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
+            if (disposed) { return; }
+
             if (socket != null)
             {
                 if (socket.Connected)

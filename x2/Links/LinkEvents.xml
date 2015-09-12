@@ -16,6 +16,7 @@
     </event>
     <event name="LinkSessionDisconnected" id="LinkEventType.LinkSessionDisconnected" local="true">
         <property name="LinkName" type="string"/>
+        <property name="Handle" type="int32"/>
         <property name="Context" type="object"/>
     </event>
 

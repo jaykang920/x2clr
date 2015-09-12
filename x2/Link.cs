@@ -19,8 +19,6 @@ namespace x2
     {
         private static HashSet<string> names;
 
-        private volatile bool disposed;
-
         public string Name { get; private set; }
         public IBufferTransform BufferTransform { get; set; }
 
@@ -63,8 +61,6 @@ namespace x2
 
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
-
             if (disposed) { return; }
 
             if (BufferTransform != null)
@@ -78,7 +74,7 @@ namespace x2
                 names.Remove(Name);
             }
 
-            disposed = true;
+            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -86,8 +82,8 @@ namespace x2
         /// </summary>
         protected override void SetUp()
         {
-            Bind(new LinkSessionConnected { LinkName = Name }, OnLinkSessionConnected);
-            Bind(new LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
+            Bind(new x2.Events.LinkSessionConnected { LinkName = Name }, OnLinkSessionConnected);
+            Bind(new x2.Events.LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
 #if SESSION_RECOVERY
             Bind(new LinkSessionRecovered { LinkName = Name }, OnLinkSessionRecovered);
 #endif
@@ -335,13 +331,11 @@ namespace x2
 
 
     /// <summary>
-    /// Common base class for link cases.
+    /// Common abstract base class for link cases.
     /// </summary>
     public abstract class Link2 : Case
     {
         private static HashSet<string> names;
-
-        private volatile bool disposed;
 
         /// <summary>
         /// Gets or sets the BufferTransform for this link.
@@ -367,7 +361,8 @@ namespace x2
             {
                 if (names.Contains(name))
                 {
-                    throw new ArgumentException("link name is already in use");
+                    throw new ArgumentException(String.Format(
+                        "link name {0} is already in use", name));
                 }
 
                 Name = name;
@@ -393,10 +388,11 @@ namespace x2
         /// </summary>
         public abstract void Send(Event e);
 
+        /// <summary>
+        /// Frees managed or unmanaged resources.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
-
             if (disposed) { return; }
 
             if (BufferTransform != null)
@@ -410,7 +406,7 @@ namespace x2
                 names.Remove(Name);
             }
 
-            disposed = true;
+            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -424,9 +420,9 @@ namespace x2
         #region Diagnostics
 
         /// <summary>
-        /// Gets the diagnostics object.
+        /// Gets or sets the diagnostics object.
         /// </summary>
-        public Diagnostics Diag { get; protected set; }
+        public Diagnostics Diag { get; set; }
 
         /// <summary>
         /// Link diagnostics helper class.

@@ -21,6 +21,9 @@ namespace x2.Links.Sockets
     
         public AsyncTcpClient(string name) : base(name) { }
 
+        /// <summary>
+        /// Frees managed or unmanaged resources.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (!Object.ReferenceEquals(connectEventArgs, null))

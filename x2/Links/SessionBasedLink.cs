@@ -2,18 +2,19 @@
 // See the file LICENSE for details.
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
 
 using x2;
-using x2.Events;
-using x2.Flows;
-using x2.Queues;
 
 namespace x2.Links
 {
+    /// <summary>
+    /// Abstract base class for session-based links.
+    /// </summary>
     public abstract class SessionBasedLink : Link2
     {
+        protected ReaderWriterLockSlim rwlock;
+
         static SessionBasedLink()
         {
             EventFactory.Register<HandshakeReq>();
@@ -22,55 +23,106 @@ namespace x2.Links
         }
 
         /// <summary>
-        /// Initializes a new instance of the SessionfulLink class.
+        /// Initializes a new instance of the SessionBasedLink class.
         /// </summary>
-        protected SessionBasedLink(string name) : base(name) { }
+        protected SessionBasedLink(string name)
+            : base(name)
+        {
+            rwlock = new ReaderWriterLockSlim();
+        }
+
+        /// <summary>
+        /// Notifies the application that a session creation attempt has been
+        /// completed with the specified result.
+        /// </summary>
+        internal virtual void NotifySessionConnected(bool result, object context)
+        {
+            Hub.Post(new LinkSessionConnected {
+                LinkName = Name,
+                Result = result,
+                Context = context
+            });
+        }
+
+        /// <summary>
+        /// Notifies the application that the link session identified by the
+        /// specified session handle has been closed.
+        /// </summary>
+        internal virtual void NotifySessionDisconnected(int handle, object context)
+        {
+            Hub.Post(new LinkSessionDisconnected {
+                LinkName = Name,
+                Handle = handle,
+                Context = context
+            });
+        }
+
+        /// <summary>
+        /// Frees managed or unmanaged resources.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) { return; }
+
+            rwlock.Dispose();
+
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Called by a derived class to initiate a buffer transform handshake.
+        /// </summary>
+        protected void InitiateHandshake(LinkSession2 session)
+        {
+            if (Object.ReferenceEquals(BufferTransform, null))
+            {
+                return;
+            }
+
+            var bufferTransform = (IBufferTransform)BufferTransform.Clone();
+            session.BufferTransform = bufferTransform;
+
+            session.Send(new HandshakeReq {
+                _Transform = false,
+                Data = bufferTransform.InitializeHandshake()
+            });
+        }
+
+        /// <summary>
+        /// Called when a new session creation attempt is completed.
+        /// </summary>
+        protected virtual void OnSessionConnected(bool result, object context)
+        {
+        }
+
+        /// <summary>
+        /// Called when an existing link session is closed.
+        /// </summary>
+        protected virtual void OnSessionDisconnected(int handle, object context)
+        {
+        }
 
         /// <summary>
         /// Initializes this link on startup.
         /// </summary>
         protected override void SetUp()
         {
-            Bind(new LinkSessionConnected { LinkName = Name }, OnLinkSessionConnected);
-            Bind(new LinkSessionDisconnected { LinkName = Name }, OnLinkSessionDisconnected);
+            Bind(new LinkSessionConnected { LinkName = Name },
+                OnLinkSessionConnected);
+            Bind(new LinkSessionDisconnected { LinkName = Name },
+                OnLinkSessionDisconnected);
         }
 
-        protected virtual void OnSessionConnected(bool result, object context) { }
-        protected virtual void OnSessionDisconnected(object context) { }
-
-        protected void OnSessionSetUp(LinkSession2 session)
-        {
-            if (BufferTransform != null)
-            {
-                InitiateHandshake(session);
-            }
-            else
-            {
-                Hub.Post(new LinkSessionConnected {
-                    LinkName = Name,
-                    Result = true,
-                    Context = session
-                });
-            }
-        }
-
-        private void InitiateHandshake(LinkSession2 session)
-        {
-            session.BufferTransform = (IBufferTransform)BufferTransform.Clone();
-
-            session.Send(new HandshakeReq {
-                _Transform = false,
-                Data = session.BufferTransform.InitializeHandshake()
-            });
-        }
-
+        // LinkSessionConnected event handler
         private void OnLinkSessionConnected(LinkSessionConnected e)
         {
             OnSessionConnected(e.Result, e.Context);
         }
+
+        // LinkSessionDisconnected event handler
         private void OnLinkSessionDisconnected(LinkSessionDisconnected e)
         {
-            OnSessionDisconnected(e.Context);
+            OnSessionDisconnected(e.Handle, e.Context);
         }
     }
 }

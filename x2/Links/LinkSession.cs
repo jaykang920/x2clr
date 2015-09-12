@@ -44,9 +44,9 @@ namespace x2.Links
 
         protected volatile bool txFlag;
 
-        protected object syncTx = new Object();
+        protected object txSync = new Object();
 
-        private volatile bool disposed;
+        protected volatile bool disposed;
 
         /// <summary>
         /// Gets or sets the BufferTransform for this link session.
@@ -153,7 +153,7 @@ namespace x2.Links
                 return;
             }
 
-            lock (syncTx)
+            lock (txSync)
             {
                 eventsToSend.Add(e);
             }
@@ -175,7 +175,7 @@ namespace x2.Links
 
         internal void BeginSend()
         {
-            lock (syncTx)
+            lock (txSync)
             {
                 if (eventsToSend.Count == 0)
                 {
@@ -370,8 +370,10 @@ namespace x2.Links
             BeginReceive(true);
         }
 
-        protected void OnDisconnect()
+        protected void OnDisconnect(object context)
         {
+            Link.NotifySessionDisconnected(handle, context);
+
             Close();
         }
 
@@ -382,24 +384,8 @@ namespace x2.Links
             Log.Trace("{0} {1} sent {2}/{3} byte(s)",
                 link.Name, Handle, bytesTransferred, lengthToSend);
 
-            /* XXX TODO split send
-             * Do we really have to consider this case?
-            if (bytesTransferred < lengthToSend)
-            {
-                // Try to send the rest.
-                sendBuffer.Shrink(bytesTransferred);
-                lengthToSend = sendBuffer.Length;
-
-                sendBufferList.Clear();
-                sendBuffer.ListOccupiedSegments(sendBufferList);
-
-                SendImpl();
-                return;
-            }
-            */
-
             bool hasMore;
-            lock (syncTx)
+            lock (txSync)
             {
                 // assume complete send
                 for (int i = 0, count = buffersSending.Count; i < count; ++i)
@@ -468,24 +454,14 @@ namespace x2.Links
                 case (int)LinkEventType.HandshakeAck:
                     {
                         var ack = (HandshakeAck)e;
+                        bool result = ack.Result;
 
-                        if (ack.Result)
+                        if (result)
                         {
                             txTransformReady = true;
                         }
 
-                        if (Polarity == true)
-                        {
-                            var client = (ClientLink)link;
-                            client.Session = this;
-                        }
-
-                        Hub.Post(new LinkSessionConnected {
-                            _Handle = Handle,
-                            LinkName = link.Name,
-                            Result = ack.Result,
-                            Context = this
-                        });
+                        Link.NotifySessionConnected(result, (result ? this : null));
                     }
                     break;
                 /*
@@ -501,9 +477,9 @@ namespace x2.Links
         #region Diagnostics
 
         /// <summary>
-        /// Gets the diagnostics object.
+        /// Gets or sets the diagnostics object.
         /// </summary>
-        public Diagnostics Diag { get; protected set; }
+        public Diagnostics Diag { get; set; }
 
         /// <summary>
         /// Link session diagnostics helper class.

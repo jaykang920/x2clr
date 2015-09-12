@@ -21,8 +21,6 @@ namespace x2.Links.Sockets
     {
         protected Socket socket;
 
-        private volatile bool disposed;
-
         /// <summary>
         /// Gets or sets a value that indicates whether the client sockets are
         /// not to use the Nagle algorithm.
@@ -33,22 +31,16 @@ namespace x2.Links.Sockets
         {
             // Default socket options
             NoDelay = true;
-
-            Diag = new Diagnostics();
         }
 
+        /// <summary>
+        /// Frees managed or unmanaged resources.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (disposed) { return; }
 
-            try
-            {
-                socket.Close();
-            }
-            finally
-            {
-                disposed = true;
-            }
+            socket.Close();
 
             base.Dispose(disposing);
         }

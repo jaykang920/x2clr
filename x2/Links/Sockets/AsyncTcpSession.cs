@@ -2,6 +2,7 @@
 // See the file LICENSE for details.
 
 using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Threading;
@@ -15,8 +16,6 @@ namespace x2.Links.Sockets
         private SocketAsyncEventArgs recvEventArgs;
         private SocketAsyncEventArgs sendEventArgs;
 
-        private volatile bool disposed;
-
         public AsyncTcpSession(SessionBasedLink link, Socket socket)
             : base(link, socket)
         {
@@ -27,6 +26,9 @@ namespace x2.Links.Sockets
             sendEventArgs.Completed += OnSendCompleted;
         }
 
+        /// <summary>
+        /// Frees managed or unmanaged resources.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (disposed) { return; }
@@ -47,8 +49,6 @@ namespace x2.Links.Sockets
 
                 Log.Debug("{0} {1} freed sendEventArgs", link.Name, Handle);
             }
-
-            disposed = true;
 
             base.Dispose(disposing);
         }
@@ -136,7 +136,7 @@ namespace x2.Links.Sockets
                 }
             }
 
-            OnDisconnect();
+            OnDisconnect(socket.RemoteEndPoint);
         }
 
         // Completion callback for SendAsync
@@ -163,7 +163,7 @@ namespace x2.Links.Sockets
                     Log.Warn("{0} {1} send error {2}", link.Name, Handle, e.SocketError);
                 }
 
-                OnDisconnect();
+                OnDisconnect(socket.RemoteEndPoint);
             }
         }
     }

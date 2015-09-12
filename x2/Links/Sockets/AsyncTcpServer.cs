@@ -16,8 +16,6 @@ namespace x2.Links.Sockets
 
         private SocketAsyncEventArgs[] acceptEventArgs;
 
-        private volatile bool disposed;
-
         public AsyncTcpServer(string name)
             : base(name)
         {
@@ -31,6 +29,9 @@ namespace x2.Links.Sockets
             }
         }
 
+        /// <summary>
+        /// Frees managed or unmanaged resources.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (disposed) { return; }
@@ -43,8 +44,6 @@ namespace x2.Links.Sockets
             }
 
             acceptEventArgs = null;
-
-            disposed = true;
 
             base.Dispose(disposing);
         }

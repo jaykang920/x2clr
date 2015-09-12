@@ -209,6 +209,7 @@ namespace x2.Links
         new public static int TypeId { get { return tag.TypeId; } }
 
         private string linkName_;
+        private int handle_;
         private object context_;
 
         public string LinkName
@@ -221,19 +222,29 @@ namespace x2.Links
             }
         }
 
+        public int Handle
+        {
+            get { return handle_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                handle_ = value;
+            }
+        }
+
         public object Context
         {
             get { return context_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 1);
+                fingerprint.Touch(tag.Offset + 2);
                 context_ = value;
             }
         }
 
         static LinkSessionDisconnected()
         {
-            tag = new Tag(Event.tag, typeof(LinkSessionDisconnected), 2,
+            tag = new Tag(Event.tag, typeof(LinkSessionDisconnected), 3,
                     (int)LinkEventType.LinkSessionDisconnected);
         }
 
@@ -263,6 +274,10 @@ namespace x2.Links
             {
                 return false;
             }
+            if (handle_ != o.handle_)
+            {
+                return false;
+            }
             if (context_ != o.context_)
             {
                 return false;
@@ -283,6 +298,10 @@ namespace x2.Links
                 hash.Update(linkName_);
             }
             if (touched[1])
+            {
+                hash.Update(handle_);
+            }
+            if (touched[2])
             {
                 hash.Update(context_);
             }
@@ -316,6 +335,13 @@ namespace x2.Links
             }
             if (touched[1])
             {
+                if (handle_ != o.handle_)
+                {
+                    return false;
+                }
+            }
+            if (touched[2])
+            {
                 if (context_ != o.context_)
                 {
                     return false;
@@ -328,6 +354,7 @@ namespace x2.Links
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" LinkName=\"{0}\"", linkName_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Handle={0}", handle_);
             stringBuilder.AppendFormat(" Context={0}", context_);
         }
     }

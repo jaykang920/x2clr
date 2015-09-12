@@ -29,9 +29,10 @@ namespace x2
     /// </remarks>
     public class EventSink : IDisposable
     {
-        private WeakReference flow;
+        protected volatile bool disposed;
+
         private List<Binder.Token> bindings;
-        private bool disposed;
+        private WeakReference flow;
 
         /// <summary>
         /// Gets or sets the flow which this EventSink belongs to.
@@ -39,12 +40,13 @@ namespace x2
         public Flow Flow
         {
             get { return flow.Target as Flow; }
-            set
+            protected set
             {
                 if (bindings.Count != 0)
                 {
                     throw new InvalidOperationException();
                 }
+                EnsureNotDisposed();
                 flow = new WeakReference(value);
             }
         }
@@ -66,7 +68,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Implments IDisposable interface.
+        /// Releases all the handler bindings associated with this EventSink.
         /// </summary>
         public void Dispose()
         {
@@ -81,9 +83,36 @@ namespace x2
         {
             if (disposed) { return; }
 
-            CleanUp();
+            try
+            {
+                var flow = Flow;
+                if (flow == null) { return; }
 
-            disposed = true;
+                lock (bindings)
+                {
+                    for (int i = 0, count = bindings.Count; i < count; ++i)
+                    {
+                        flow.Unsubscribe(bindings[i]);
+                    }
+
+                    bindings.Clear();
+
+                    this.flow.Target = null;
+                }
+            }
+            catch (Exception) { }
+            finally
+            {
+                disposed = true;
+            }
+        }
+
+        protected void EnsureNotDisposed()
+        {
+            if (disposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
         }
 
         public void Bind<T>(T e, Action<T> handler)
@@ -181,27 +210,6 @@ namespace x2
             lock (bindings)
             {
                 bindings.Remove(binderToken);
-            }
-        }
-
-        // Releases all the handler bindings associated with this EventSink.
-        private void CleanUp()
-        {
-            var flow = Flow;
-            if (flow == null) { return; }
-
-            lock (bindings)
-            {
-                if (bindings.Count == 0) { return; }
-                
-                for (int i = 0, count = bindings.Count; i < count; ++i)
-                {
-                    flow.Unsubscribe(bindings[i]);
-                }
-
-                bindings.Clear();
-
-                this.flow.Target = null;
             }
         }
     }

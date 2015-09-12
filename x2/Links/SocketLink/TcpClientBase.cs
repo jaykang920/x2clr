@@ -289,7 +289,7 @@ namespace x2.Links.SocketLink
 
         protected void RetryInternal(EndPoint endpoint)
         {
-            new LinkSessionConnected {
+            new x2.Events.LinkSessionConnected {
                 LinkName = Name,
                 Result = false,
                 Context = endpoint

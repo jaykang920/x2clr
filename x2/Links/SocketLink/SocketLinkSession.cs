@@ -517,7 +517,7 @@ namespace x2.Links.SocketLink
                             client.Session = this;
                         }
                         //
-                        Hub.Post(new LinkSessionConnected {
+                        Hub.Post(new x2.Events.LinkSessionConnected {
                             _Handle = Handle,
                             LinkName = link.Name,
                             Result = ack.Result,
