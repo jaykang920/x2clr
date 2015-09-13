@@ -84,7 +84,7 @@ namespace x2.Links.Sockets
         }
 
         /// <summary>
-        /// <see cref="ServerLink.OnAcceptInternal(LinkSession2)"/>
+        /// <see cref="ServerLink.OnAcceptInternal"/>
         /// </summary>
         protected override bool OnAcceptInternal(LinkSession2 session)
         {

@@ -27,12 +27,25 @@ namespace x2.Links.Sockets
         /// <summary>
         /// <see cref="AbstractTcpClient.ConnectInternal"/>
         /// </summary>
-        protected override void ConnectInternal(EndPoint endpoint)
+        protected override void ConnectInternal(Socket socket, EndPoint endpoint)
         {
-            var socket = new Socket(
-                endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                if (Object.ReferenceEquals(socket, null))
+                {
+                    socket = new Socket(
+                        endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                }
 
-            socket.BeginConnect(endpoint, OnConnect, socket);
+                socket.BeginConnect(endpoint, OnConnect, socket);
+            }
+            catch (Exception e)
+            {
+                Log.Error("{0} error connecting to {1} : {2}",
+                    Name, endpoint, e.Message);
+
+                OnConnectError(socket, endpoint);
+            }
         }
 
         // Asynchronous callback for BeginConnect
@@ -50,7 +63,7 @@ namespace x2.Links.Sockets
                 Log.Warn("{0} error connecting to {1} : {2}",
                     Name, socket.RemoteEndPoint, e.Message);
 
-                NotifySessionConnected(false, socket.RemoteEndPoint);
+                OnConnectError(socket, socket.RemoteEndPoint);
             }
         }
     }

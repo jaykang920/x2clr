@@ -2,7 +2,6 @@
 // See the file LICENSE for details.
 
 using System;
-using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Threading;
@@ -12,7 +11,7 @@ using x2;
 namespace x2.Links.Sockets
 {
     /// <summary>
-    /// TCP/IP link session based on the enhanced SocketAsyncEventArgs pattern.
+    /// TCP/IP link session based on the SocketAsyncEventArgs pattern.
     /// </summary>
     public class AsyncTcpSession : AbstractTcpSession
     {
@@ -74,12 +73,13 @@ namespace x2.Links.Sockets
             }
             catch (ObjectDisposedException ode)
             {
-                Log.Info("{0} {1} recv error {2}", link.Name, Handle, ode.Message);
+                Log.Debug("{0} {1} recv error {2}", link.Name, Handle, ode.Message);
             }
             catch (Exception e)
             {
                 Log.Info("{0} {1} recv error {2}", link.Name, Handle, e.Message);
-                // discon
+
+                OnDisconnect(socket.RemoteEndPoint);
             }
         }
 
@@ -99,7 +99,13 @@ namespace x2.Links.Sockets
             }
             catch (ObjectDisposedException ode)
             {
-                Log.Info("{0} {1} send error {2}", link.Name, Handle, ode.Message);
+                Log.Debug("{0} {1} send error {2}", link.Name, Handle, ode.Message);
+            }
+            catch (Exception e)
+            {
+                Log.Info("{0} {1} send error {2}", link.Name, Handle, e.Message);
+
+                OnDisconnect(socket.RemoteEndPoint);
             }
         }
 

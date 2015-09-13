@@ -24,7 +24,7 @@ namespace x2.Links.Sockets
         }
 
         /// <summary>
-        /// <see cref="AbstractTcpServer.AcceptInternal()"/>
+        /// <see cref="AbstractTcpServer.AcceptInternal"/>
         /// </summary>
         protected override void AcceptInternal()
         {
@@ -44,7 +44,7 @@ namespace x2.Links.Sockets
                     clientSocket.Close();
                 }
             }
-            catch (ObjectDisposedException ode)
+            catch (ObjectDisposedException)
             {
                 Log.Info("{0} listening socket closed", Name);
                 return;

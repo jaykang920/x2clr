@@ -49,33 +49,20 @@ namespace x2.Links.Sockets
 
         private void Connect(IPAddress ip, int port)
         {
-            IPEndPoint ep = new IPEndPoint(ip, port);
-            try
-            {
-                ConnectInternal(ep);
+            IPEndPoint endpoint = new IPEndPoint(ip, port);
 
-                Log.Info("{0} connecting to {1}", Name, ep);
-            }
-            catch (Exception e)
-            {
-                Log.Error("{0} error connecting to {1} : {2}",
-                    Name, ep, e.Message);
+            Log.Info("{0} connecting to {1}", Name, endpoint);
 
-                new LinkSessionConnected {
-                    LinkName = Name,
-                    Result = false,
-                    Context = ep
-                }.Post();
-            }
+            ConnectInternal(null, endpoint);
         }
 
         /// <summary>
         /// Provides an actual implementation of Connect.
         /// </summary>
-        protected abstract void ConnectInternal(EndPoint endpoint);
+        protected abstract void ConnectInternal(Socket socket, EndPoint endpoint);
 
         /// <summary>
-        /// <see cref="ClientLink.OnConnectInternal(LinkSession2)"/>
+        /// <see cref="ClientLink.OnConnectInternal"/>
         /// </summary>
         protected override void OnConnectInternal(LinkSession2 session)
         {
@@ -91,6 +78,14 @@ namespace x2.Links.Sockets
                 Name, session.Handle, socket.RemoteEndPoint);
 
             base.OnConnectInternal(session);
+        }
+
+        /// <summary>
+        /// Called by a derived link class when a connection attempt fails.
+        /// </summary>
+        protected virtual void OnConnectError(Socket socket, EndPoint endpoint)
+        {
+            NotifySessionConnected(false, endpoint);
         }
     }
 }

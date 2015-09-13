@@ -12,7 +12,7 @@ using x2;
 namespace x2.Links.Sockets
 {
     /// <summary>
-    /// TCP/IP client link based on the enhanced SocketAsyncEventArgs pattern.
+    /// TCP/IP client link based on the SocketAsyncEventArgs pattern.
     /// </summary>
     public class AsyncTcpClient : AbstractTcpClient
     {
@@ -41,24 +41,35 @@ namespace x2.Links.Sockets
         /// <summary>
         /// <see cref="AbstractTcpClient.ConnectInternal"/>
         /// </summary>
-        protected override void ConnectInternal(EndPoint endpoint)
+        protected override void ConnectInternal(Socket socket, EndPoint endpoint)
         {
-            if (Object.ReferenceEquals(connectEventArgs, null))
+            try
             {
-                connectEventArgs = new SocketAsyncEventArgs();
-                connectEventArgs.Completed += OnConnectCompleted;
+                if (Object.ReferenceEquals(socket, null))
+                {
+                    socket = new Socket(
+                        endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                }
+                if (Object.ReferenceEquals(connectEventArgs, null))
+                {
+                    connectEventArgs = new SocketAsyncEventArgs();
+                    connectEventArgs.Completed += OnConnectCompleted;
+                }
+                connectEventArgs.RemoteEndPoint = endpoint;
+                connectEventArgs.UserToken = socket;
+
+                bool pending = socket.ConnectAsync(connectEventArgs);
+                if (!pending)
+                {
+                    OnConnect(connectEventArgs);
+                }
             }
-
-            var socket = new Socket(
-                endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-            connectEventArgs.RemoteEndPoint = endpoint;
-            connectEventArgs.UserToken = socket;
-
-            bool pending = socket.ConnectAsync(connectEventArgs);
-            if (!pending)
+            catch (Exception e)
             {
-                OnConnect(connectEventArgs);
+                Log.Error("{0} error connecting to {1} : {2}",
+                    Name, endpoint, e.Message);
+
+                OnConnectError(socket, endpoint);
             }
         }
 
@@ -85,7 +96,7 @@ namespace x2.Links.Sockets
                 Log.Warn("{0} error connecting to {1} : {2}",
                     Name, e.RemoteEndPoint, e.SocketError);
 
-                NotifySessionConnected(false, socket.RemoteEndPoint);
+                OnConnectError(socket, e.RemoteEndPoint);
             }
         }
     }

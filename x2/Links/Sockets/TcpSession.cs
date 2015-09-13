@@ -22,10 +22,6 @@ namespace x2.Links.Sockets
 
         protected override void ReceiveInternal()
         {
-            if (socket == null || !socket.Connected)
-            {
-                return;
-            }
             try
             {
                 rxBufferList.Clear();
@@ -35,23 +31,31 @@ namespace x2.Links.Sockets
             }
             catch (ObjectDisposedException ode)
             {
-                Log.Info("{0} {1} recv error {2}", link.Name, Handle, ode.Message);
+                Log.Debug("{0} {1} recv error {2}", link.Name, Handle, ode.Message);
+            }
+            catch (Exception e)
+            {
+                Log.Info("{0} {1} recv error {2}", link.Name, Handle, e.Message);
+
+                OnDisconnect(socket.RemoteEndPoint);
             }
         }
 
         protected override void SendInternal()
         {
-            if (socket == null || !socket.Connected)
-            {
-                return;
-            }
             try
             {
                 socket.BeginSend(txBufferList, SocketFlags.None, OnSend, null);
             }
             catch (ObjectDisposedException ode)
             {
-                Log.Info("{0} {1} send error {2}", link.Name, Handle, ode.Message);
+                Log.Debug("{0} {1} send error {2}", link.Name, Handle, ode.Message);
+            }
+            catch (Exception e)
+            {
+                Log.Info("{0} {1} send error {2}", link.Name, Handle, e.Message);
+
+                OnDisconnect(socket.RemoteEndPoint);
             }
         }
 

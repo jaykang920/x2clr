@@ -11,7 +11,7 @@ using x2;
 namespace x2.Links.Sockets
 {
     /// <summary>
-    /// TCP/IP server link based on the enhanced SocketAsyncEventArgs pattern.
+    /// TCP/IP server link based on the SocketAsyncEventArgs pattern.
     /// </summary>
     public class AsyncTcpServer : AbstractTcpServer
     {
@@ -52,7 +52,7 @@ namespace x2.Links.Sockets
         }
 
         /// <summary>
-        /// <see cref="AbstractTcpServer.AcceptInternal()"/>
+        /// <see cref="AbstractTcpServer.AcceptInternal"/>
         /// </summary>
         protected override void AcceptInternal()
         {
