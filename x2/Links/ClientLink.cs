@@ -89,8 +89,11 @@ namespace x2.Links
 
             using (new WriteLock(rwlock))
             {
-                session.Close();
-                session = null;
+                if (session != null)
+                {
+                    session.Close();
+                    session = null;
+                }
             }
 
             base.Dispose(disposing);
