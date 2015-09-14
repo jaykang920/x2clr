@@ -2,8 +2,9 @@
 // See the file LICENSE for details.
 
 using System;
-using System.Net.Sockets;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 
 using x2;
@@ -17,7 +18,9 @@ namespace x2.Links.Sockets
     {
         protected Socket socket;
 
-        // Gets the underlying Socket object.
+        /// <summary>
+        /// Gets the underlying Socket object.
+        /// </summary>
         public Socket Socket { get { return socket; } }
 
         /// <summary>
@@ -40,10 +43,27 @@ namespace x2.Links.Sockets
                     socket.Shutdown(SocketShutdown.Both);
                 }
                 socket.Close();
-                socket = null;
             }
 
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Called by a derived session class on send/receive error.
+        /// </summary>
+        protected void OnDisconnect()
+        {
+            EndPoint endpoint;
+            try
+            {
+                endpoint = socket.RemoteEndPoint;
+            }
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
+
+            OnDisconnect(endpoint);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace x2.Links.Sockets
             {
                 Log.Info("{0} {1} recv error {2}", link.Name, Handle, e.Message);
 
-                OnDisconnect(socket.RemoteEndPoint);
+                OnDisconnect();
             }
         }
 
@@ -55,7 +55,7 @@ namespace x2.Links.Sockets
             {
                 Log.Info("{0} {1} send error {2}", link.Name, Handle, e.Message);
 
-                OnDisconnect(socket.RemoteEndPoint);
+                OnDisconnect();
             }
         }
 
@@ -80,7 +80,7 @@ namespace x2.Links.Sockets
                 Log.Warn("{0} {1} recv error: {2}", link.Name, Handle, e.Message);
             }
 
-            OnDisconnect(socket.RemoteEndPoint);
+            OnDisconnect();
         }
 
         // Asynchronous callback for BeginSend
@@ -106,7 +106,7 @@ namespace x2.Links.Sockets
 
                 Log.Warn("{0} {1} send error: {2}", link.Name, Handle, e.Message);
 
-                OnDisconnect(socket.RemoteEndPoint);
+                OnDisconnect();
             }
         }
     }

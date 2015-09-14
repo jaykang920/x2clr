@@ -38,6 +38,7 @@ namespace x2.Links
         protected ClientLink(string name)
             : base(name)
         {
+            Diag = new Diagnostics();
         }
 
         /// <summary>
@@ -52,8 +53,8 @@ namespace x2.Links
                     Log.Warn("{0} dropped event {1}", Name, e);
                     return;
                 }
-                session.Send(e);
             }
+            session.Send(e);
         }
 
         internal override void NotifySessionConnected(bool result, object context)

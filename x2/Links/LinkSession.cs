@@ -135,7 +135,6 @@ namespace x2.Links
             rxBuffer.Dispose();
 
             handlePool.Release(handle);
-            link = null;
 
             disposed = true;
         }
@@ -381,15 +380,15 @@ namespace x2.Links
             Log.Trace("{0} {1} sent {2}/{3} byte(s)",
                 link.Name, Handle, bytesTransferred, lengthToSend);
 
+            // assume complete send
+            for (int i = 0, count = buffersSending.Count; i < count; ++i)
+            {
+                buffersSending[i].Dispose();
+            }
+
             bool hasMore;
             lock (txSync)
             {
-                // assume complete send
-                for (int i = 0, count = buffersSending.Count; i < count; ++i)
-                {
-                    buffersSending[i].Dispose();
-                }
-
                 hasMore = eventsToSend.Count != 0;
             }
 
@@ -494,7 +493,7 @@ namespace x2.Links
             {
                 base.AddBytesReceived(bytesReceived);
 
-                if (owner.Link.Diag != null)
+                if (owner.Link != null)
                 {
                     owner.Link.Diag.AddBytesReceived(bytesReceived);
                 }
@@ -504,7 +503,7 @@ namespace x2.Links
             {
                 base.AddBytesSent(bytesSent);
 
-                if (owner.Link.Diag != null)
+                if (owner.Link != null)
                 {
                     owner.Link.Diag.AddBytesSent(bytesSent);
                 }
@@ -514,7 +513,7 @@ namespace x2.Links
             {
                 base.IncrementEventsReceived();
 
-                if (owner.Link.Diag != null)
+                if (owner.Link != null)
                 {
                     owner.Link.Diag.IncrementEventsReceived();
                 }
@@ -524,7 +523,7 @@ namespace x2.Links
             {
                 base.IncrementEventsSent();
 
-                if (owner.Link.Diag != null)
+                if (owner.Link != null)
                 {
                     owner.Link.Diag.IncrementEventsSent();
                 }

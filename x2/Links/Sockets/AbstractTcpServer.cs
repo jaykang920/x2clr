@@ -50,11 +50,11 @@ namespace x2.Links.Sockets
                 throw new InvalidOperationException();
             }
 
+            EndPoint endpoint = new IPEndPoint(ip, port);
             try
             {
                 socket = new Socket(ip.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
-                EndPoint endpoint = new IPEndPoint(ip, port);
                 socket.Bind(endpoint);
                 socket.Listen(Int32.MaxValue);
 
@@ -62,9 +62,11 @@ namespace x2.Links.Sockets
 
                 Log.Info("{0} listening on {1}", Name, endpoint);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                socket = null;
+                Log.Error("{0} error listening on {1} : {2}",
+                    Name, endpoint, e.Message);
+
                 throw;
             }
         }

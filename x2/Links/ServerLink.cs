@@ -26,6 +26,8 @@ namespace x2.Links
             : base(name)
         {
             sessions = new SortedList<int, LinkSession2>();
+
+            Diag = new Diagnostics();
         }
 
         /// <summary>
@@ -33,13 +35,18 @@ namespace x2.Links
         /// </summary>
         public void Broadcast(Event e)
         {
+            var snapshot = new List<LinkSession2>(sessions.Count);
             using (new ReadLock(rwlock))
             {
                 var list = sessions.Values;
                 for (int i = 0, count = list.Count; i < count; ++i)
                 {
-                    list[i].Send(e);
+                    snapshot.Add(list[i]);
                 }
+            }
+            for (int i = 0, count = snapshot.Count; i < count; ++i)
+            {
+                snapshot.Add(snapshot[i]);
             }
         }
 
@@ -48,15 +55,15 @@ namespace x2.Links
         /// </summary>
         public override void Send(Event e)
         {
+            LinkSession2 session;
             using (new ReadLock(rwlock))
             {
-                LinkSession2 session;
                 if (!sessions.TryGetValue(e._Handle, out session))
                 {
                     return;
                 }
-                session.Send(e);
             }
+            session.Send(e);
         }
 
         internal override void NotifySessionConnected(bool result, object context)
@@ -113,5 +120,32 @@ namespace x2.Links
             }
             return true;
         }
+
+        #region Diagnostics
+
+        /// <summary>
+        /// Internal diagnostics helper class.
+        /// </summary>
+        public new class Diagnostics : Link2.Diagnostics
+        {
+            protected int connectionCount;
+
+            public int ConnectionCount
+            {
+                get { return connectionCount; }
+            }
+
+            internal void IncrementConnectionCount()
+            {
+                Interlocked.Increment(ref connectionCount);
+            }
+
+            internal void DecrementConnectionCount()
+            {
+                Interlocked.Decrement(ref connectionCount);
+            }
+        }
+
+        #endregion  // Diagnostics
     }
 }
