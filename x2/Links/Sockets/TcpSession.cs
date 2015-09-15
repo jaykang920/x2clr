@@ -35,7 +35,7 @@ namespace x2.Links.Sockets
             }
             catch (Exception e)
             {
-                Log.Info("{0} {1} recv error {2}", link.Name, Handle, e.Message);
+                Log.Info("{0} {1} recv error {2}", link.Name, Handle, e);
 
                 OnDisconnect();
             }
@@ -53,7 +53,7 @@ namespace x2.Links.Sockets
             }
             catch (Exception e)
             {
-                Log.Info("{0} {1} send error {2}", link.Name, Handle, e.Message);
+                Log.Info("{0} {1} send error {2}", link.Name, Handle, e);
 
                 OnDisconnect();
             }
@@ -77,7 +77,7 @@ namespace x2.Links.Sockets
             }
             catch (Exception e)
             {
-                Log.Warn("{0} {1} recv error: {2}", link.Name, Handle, e.Message);
+                Log.Warn("{0} {1} recv error: {2}", link.Name, Handle, e);
             }
 
             OnDisconnect();
@@ -104,7 +104,7 @@ namespace x2.Links.Sockets
                     }
                 }
 
-                Log.Warn("{0} {1} send error: {2}", link.Name, Handle, e.Message);
+                Log.Warn("{0} {1} send error: {2}", link.Name, Handle, e);
 
                 OnDisconnect();
             }

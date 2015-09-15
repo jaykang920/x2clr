@@ -13,7 +13,9 @@ namespace x2.Examples.HeadFirst
             public CapitalizerServer()
                 : base("CapitalizerServer")
             {
-                //OutgoingKeepaliveEnabled = true,
+                IncomingKeepaliveEnabled = true;
+                OutgoingKeepaliveEnabled = true;
+                MaxKeepaliveFailureCount = 1;
                 ///*
                 BufferTransform = new BufferTransformStack()
                     .Add(new x2.Transforms.BlockCipher())
@@ -32,7 +34,7 @@ namespace x2.Examples.HeadFirst
 
         public static void Main()
         {
-            Log.Level = LogLevel.Debug;
+            Log.Level = LogLevel.Trace;
             Log.Handler = (level, message) => Console.WriteLine(message);
 
             Hub.Instance

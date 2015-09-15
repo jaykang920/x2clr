@@ -18,6 +18,17 @@ namespace x2.Links
 
         private static RangedIntPool handlePool;
 
+        /// <summary>
+        /// A delegate type for hooking up event proprocess notifications.
+        /// </summary>
+        public delegate void PreprocessEventHandler(object sender, Event e);
+
+        /// <summary>
+        /// An event that clients can use to be notified whenever a new event is
+        /// ready for preprocessing.
+        /// </summary>
+        public event PreprocessEventHandler Preprocess;
+
         protected int handle;
         protected SessionBasedLink link;
         protected bool polarity;
@@ -210,21 +221,7 @@ namespace x2.Links
                 sendBuffer.ListOccupiedSegments(txBufferList);
                 lengthToSend += sendBuffer.Length;
 
-                /*
-                if (e.GetTypeId() != SocketLinkEventType.KeepaliveEvent)
-                {
-                */
-                //Log.Debug("{0} {1} sent event {2}", link.Name, Handle, e);
-
-                /*
-                }
-                else
-                {
-                    Log.Trace("{0} {1} sent event {2}", link.Name, Handle, e);
-                }
-                */
-
-                Diag.IncrementEventsSent();
+                LogEventSent(e);
             }
 
             SendInternal();
@@ -309,30 +306,17 @@ namespace x2.Links
 
                     retrieved._Handle = Handle;
 
-                    /*
-                    if (link.Preprocessor != null)
+                    if (Preprocess != null)
                     {
-                        link.Preprocessor(retrieved, this);
+                        Preprocess(this, retrieved);
                     }
-                    */
 
-                    /*
-                    if (retrieved.GetTypeId() != SocketLinkEventType.KeepaliveEvent)
+                    LogEventReceived(retrieved);
+
+                    if (!Process(retrieved))
                     {
-                    */
-                    Log.Debug("{0} {1} received event {2}", link.Name, Handle, retrieved);
-
-                    /*
+                        Hub.Post(retrieved);
                     }
-                    else
-                    {
-                        Log.Trace("{0} {1} received event {2}", link.Name, Handle, retrieved);
-                    }
-                    */
-
-                    ProcessEvent(retrieved);
-
-                    Diag.IncrementEventsReceived();
                 }
             next:
                 rxBuffer.Trim();
@@ -354,7 +338,7 @@ namespace x2.Links
                 }
                 rxBuffer.Shrink(headerLength);
                 lengthToReceive = (int)(header >> 1);
-                //rxTransformed = ((header & 1) != 0);
+                rxTransformed = ((header & 1) != 0);
 
                 if (rxBuffer.Length < lengthToReceive)
                 {
@@ -402,7 +386,7 @@ namespace x2.Links
             }
         }
 
-        private void ProcessEvent(Event e)
+        protected virtual bool Process(Event e)
         {
             switch (e.GetTypeId())
             {
@@ -460,14 +444,20 @@ namespace x2.Links
                         Link.NotifySessionConnected(result, (result ? this : null));
                     }
                     break;
-                /*
-                case (int)SocketLinkEventType.KeepaliveEvent:
-                    break;
-                */
                 default:
-                    Hub.Post(e);
-                    break;
+                    return false;
             }
+            return true;
+        }
+
+        protected virtual void LogEventReceived(Event e)
+        {
+            Diag.IncrementEventsReceived();
+        }
+
+        protected virtual void LogEventSent(Event e)
+        {
+            Diag.IncrementEventsSent();
         }
 
         #region Diagnostics

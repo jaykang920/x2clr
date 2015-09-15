@@ -224,6 +224,9 @@ namespace x2
                 // invalid channel name
                 return;
             }
+
+            flow.ChannelRefCount.Increment();
+
             List<Flow> subscribers;
             if (subscriptions.TryGetValue(channel, out subscribers))
             {
@@ -250,6 +253,7 @@ namespace x2
                 var subscribers = pair.Value;
                 if (subscribers.Remove(flow))
                 {
+                    flow.ChannelRefCount.Reset();
                     if (subscribers.Count == 0)
                     {
                         keysToRemove.Add(pair.Key);
@@ -271,13 +275,20 @@ namespace x2
                 // invalid channel name
                 return;
             }
+
             List<Flow> subscribers;
             if (!subscriptions.TryGetValue(channel, out subscribers))
             {
                 return;
             }
-            if (subscribers.Remove(flow))
+            int index = subscribers.IndexOf(flow);
+            if (index < 0)
             {
+                return;
+            }
+            if (flow.ChannelRefCount.Decrement() == 0)
+            {
+                subscribers.RemoveAt(index);
                 if (subscribers.Count == 0)
                 {
                     subscriptions.Remove(channel);

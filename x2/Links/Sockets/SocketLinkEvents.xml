@@ -1,0 +1,13 @@
+<x2 namespace="x2/Links/Sockets">
+
+    <consts name="SocketLinkEventType">
+        <const name="KeepaliveEvent">-20</const>
+        <const name="KeepaliveTick">-21</const>
+    </consts>
+
+    <event name="KeepaliveEvent" id="SocketLinkEventType.KeepaliveEvent">
+    </event>
+    <event name="KeepaliveTick" id="SocketLinkEventType.KeepaliveTick" local="true">
+    </event>
+
+</x2>

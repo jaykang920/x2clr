@@ -21,12 +21,62 @@ namespace x2.Links.Sockets
     {
         protected Socket socket;
 
+        private volatile bool incomingKeepaliveEnabled;
+        private volatile bool outgoingKeepaliveEnabled;
+
         /// <summary>
-        /// Gets or sets a value that indicates whether the client sockets are
-        /// not to use the Nagle algorithm.
+        /// Gets or sets a boolean value indicating whether the client sockets
+        /// are not to use the Nagle algorithm.
         /// </summary>
         public bool NoDelay { get; set; }
 
+        // Keepalive properties
+
+        /// <summary>
+        /// Gets or sets a boolean value indicating whether this link checks
+        /// for incomming keepalive events
+        /// </summary>
+        public bool IncomingKeepaliveEnabled
+        {
+            get { return incomingKeepaliveEnabled; }
+            set
+            {
+                incomingKeepaliveEnabled = value;
+                KeepaliveTicker.ChangeRef(value);
+            }
+        }
+        /// <summary>
+        /// Gets or sets a boolean value indicating whether this link emits
+        /// outgoing keepalive events.
+        /// </summary>
+        public bool OutgoingKeepaliveEnabled
+        {
+            get { return outgoingKeepaliveEnabled; }
+            set
+            {
+                outgoingKeepaliveEnabled = value;
+                KeepaliveTicker.ChangeRef(value);
+            }
+        }
+        /// <summary>
+        /// Gets or sets the maximum number of successive keepalive failures
+        /// allowed before the link closes the session.
+        /// </summary>
+        public int MaxKeepaliveFailureCount { get; set; }
+        /// <summary>
+        /// Gets or sets a boolean value indicating whether this link ignores
+        /// keepalive failures.
+        /// </summary>
+        public bool IgnoreKeepaliveFailure { get; set; }
+
+        static AbstractTcpServer()
+        {
+            EventFactory.Register<KeepaliveEvent>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the AbstractTcpServer class.
+        /// </summary>
         protected AbstractTcpServer(string name) : base(name)
         {
             // Default socket options
@@ -102,6 +152,59 @@ namespace x2.Links.Sockets
                 Name, session.Handle, clientSocket.RemoteEndPoint);
 
             return base.OnAcceptInternal(session);
+        }
+
+        protected override void SetUp()
+        {
+            base.SetUp();
+
+            Bind(KeepaliveTicker.Event, OnKeepaliveTick);
+
+            Flow.SubscribeTo(KeepaliveTicker.Channel);
+        }
+
+        protected override void TearDown()
+        {
+            Flow.UnsubscribeFrom(KeepaliveTicker.Channel);
+
+            base.TearDown();
+        }
+
+        private void OnKeepaliveTick(KeepaliveTick e)
+        {
+            if (!IncomingKeepaliveEnabled && !OutgoingKeepaliveEnabled)
+            {
+                return;
+            }
+
+            List<LinkSession2> snapshot;
+            using (new ReadLock(rwlock))
+            {
+                snapshot = new List<LinkSession2>(sessions.Count);
+                var list = sessions.Values;
+                for (int i = 0, count = list.Count; i < count; ++i)
+                {
+                    snapshot.Add(list[i]);
+                }
+            }
+            for (int i = 0, count = snapshot.Count; i < count; ++i)
+            {
+                var tcpSession = (AbstractTcpSession)snapshot[i];
+                if (tcpSession.Connected)
+                {
+                    int failureCount = tcpSession.Keepalive(
+                        incomingKeepaliveEnabled, outgoingKeepaliveEnabled);
+
+                    if (MaxKeepaliveFailureCount > 0 &&
+                        failureCount > MaxKeepaliveFailureCount)
+                    {
+                        Log.Error("{0} {1} closed due to the keepalive failure",
+                            Name, tcpSession.Handle);
+
+                        tcpSession.Close();
+                    }
+                }
+            }
         }
     }
 }

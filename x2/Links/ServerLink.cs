@@ -35,9 +35,10 @@ namespace x2.Links
         /// </summary>
         public void Broadcast(Event e)
         {
-            var snapshot = new List<LinkSession2>(sessions.Count);
+            List<LinkSession2> snapshot;
             using (new ReadLock(rwlock))
             {
+                snapshot = new List<LinkSession2>(sessions.Count);
                 var list = sessions.Values;
                 for (int i = 0, count = list.Count; i < count; ++i)
                 {
@@ -46,7 +47,7 @@ namespace x2.Links
             }
             for (int i = 0, count = snapshot.Count; i < count; ++i)
             {
-                snapshot.Add(snapshot[i]);
+                snapshot[i].Send(e);
             }
         }
 

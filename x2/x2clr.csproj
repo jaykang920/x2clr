@@ -79,6 +79,8 @@
     <Compile Include="Links\ClientLink.cs" />
     <Compile Include="Links\LinkEvents.cs" />
     <Compile Include="Links\ServerLink.cs" />
+    <Compile Include="Links\Sockets\SocketLinkEvents.cs" />
+    <Compile Include="Links\Sockets\KeepaliveTicker.cs" />
     <Compile Include="Links\Sockets\TcpServer.cs" />
     <Compile Include="Links\Sockets\TcpSession.cs" />
     <Compile Include="Links\SendBuffer.cs" />
@@ -121,6 +123,7 @@
     <Compile Include="Serializers\StringSerializer.cs" />
     <Compile Include="Transforms\BlockCipher.cs" />
     <Compile Include="Transforms\Inverse.cs" />
+    <Compile Include="Util\RefCount.cs" />
     <Compile Include="Util\Capo.cs" />
     <Compile Include="Util\Getopt.cs" />
     <Compile Include="Util\Hash.Update.cs" />
@@ -182,12 +185,15 @@
     <Content Include="Links\SocketLink\SocketLinkEvents.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Links\Sockets\SocketLinkEvents.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>pushd $(ProjectDir)
-..\bin\$(ConfigGroup)\xpiler.exe -f . Events Links
+..\bin\$(ConfigGroup)\xpiler.exe -f . Events Links Links/Sockets
 popd</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

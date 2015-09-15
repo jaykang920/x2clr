@@ -20,19 +20,22 @@ namespace x2.Links.Sockets
         private DateTime startTime;
         private EndPoint remoteEndPoint;
 
+        private volatile bool incomingKeepaliveEnabled;
+        private volatile bool outgoingKeepaliveEnabled;
+
         // Socket option properties
 
         /// <summary>
-        /// Gets or sets a value that indicates whether the client sockets are
-        /// not to use the Nagle algorithm.
+        /// Gets or sets a boolean value indicating whether the client sockets
+        /// are not to use the Nagle algorithm.
         /// </summary>
         public bool NoDelay { get; set; }
 
         // Connect properties
 
         /// <summary>
-        /// Gets or sets the maximum number of connection retry before the link
-        /// declares a connection failure.
+        /// Gets or sets the maximum number of connection retries before this
+        /// link declares a connection failure.
         /// </summary>
         /// <remarks>
         /// Default value is 0 (no retry). A negative integer such as -1 means
@@ -56,10 +59,53 @@ namespace x2.Links.Sockets
         /// </summary>
         public int ReconnectDelay { get; set; }
 
+        // Keepalive properties
+
+        /// <summary>
+        /// Gets or sets a boolean value indicating whether this link checks
+        /// for incomming keepalive events
+        /// </summary>
+        public bool IncomingKeepaliveEnabled
+        {
+            get { return incomingKeepaliveEnabled; }
+            set
+            {
+                incomingKeepaliveEnabled = value;
+                KeepaliveTicker.ChangeRef(value);
+            }
+        }
+        /// <summary>
+        /// Gets or sets a boolean value indicating whether this link emits
+        /// outgoing keepalive events.
+        /// </summary>
+        public bool OutgoingKeepaliveEnabled
+        {
+            get { return outgoingKeepaliveEnabled; }
+            set
+            {
+                outgoingKeepaliveEnabled = value;
+                KeepaliveTicker.ChangeRef(value);
+            }
+        }
+        /// <summary>
+        /// Gets or sets the maximum number of successive keepalive failures
+        /// before the link closes the session.
+        /// </summary>
+        public int MaxKeepaliveFailureCount { get; set; }
+        /// <summary>
+        /// Gets or sets a boolean value indicating whether this link ignores
+        /// the keepalive failure limit instead of clsoing the session.
+        /// </summary>
+        public bool IgnoreKeepaliveFailure { get; set; }
+
+        static AbstractTcpClient()
+        {
+            EventFactory.Register<KeepaliveEvent>();
+        }
+
         /// <summary>
         /// Initializes a new instance of the AbstractTcpClient class.
         /// </summary>
-        /// <param name="name"></param>
         protected AbstractTcpClient(string name)
             : base(name)
         {
@@ -187,6 +233,48 @@ namespace x2.Links.Sockets
                 socket.Close();
 
                 NotifySessionConnected(false, endpoint);
+            }
+        }
+
+        protected override void SetUp()
+        {
+            base.SetUp();
+
+            Bind(KeepaliveTicker.Event, OnKeepaliveTick);
+
+            Flow.SubscribeTo(KeepaliveTicker.Channel);
+        }
+
+        protected override void TearDown()
+        {
+            Flow.UnsubscribeFrom(KeepaliveTicker.Channel);
+
+            base.TearDown();
+        }
+
+        private void OnKeepaliveTick(KeepaliveTick e)
+        {
+            if (!IncomingKeepaliveEnabled && !OutgoingKeepaliveEnabled)
+            {
+                return;
+            }
+
+            var tcpSession = (AbstractTcpSession)Session;
+            if (tcpSession == null || !tcpSession.Connected)
+            {
+                return;
+            }
+
+            int failureCount = tcpSession.Keepalive(
+                incomingKeepaliveEnabled, outgoingKeepaliveEnabled);
+
+            if (MaxKeepaliveFailureCount > 0 &&
+                failureCount > MaxKeepaliveFailureCount)
+            {
+                Log.Error("{0} {1} closed due to the keepalive failure",
+                    Name, tcpSession.Handle);
+
+                tcpSession.Close();
             }
         }
     }

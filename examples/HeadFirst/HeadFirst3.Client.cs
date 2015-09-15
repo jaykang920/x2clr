@@ -13,7 +13,9 @@ namespace x2.Examples.HeadFirst
             public CapitalizerClient()
                 : base("CapitalizerClient")
             {
-                //IncomingKeepaliveEnabled = true,
+                IncomingKeepaliveEnabled = true;
+                OutgoingKeepaliveEnabled = true;
+                MaxKeepaliveFailureCount = 1;
                 ///*
                 BufferTransform = new BufferTransformStack()
                     .Add(new x2.Transforms.BlockCipher())

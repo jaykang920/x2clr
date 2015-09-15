@@ -40,7 +40,6 @@ namespace x2.Links.Sockets
             {
                 recvEventArgs.Completed -= OnReceiveCompleted;
                 recvEventArgs.Dispose();
-                recvEventArgs = null;
 
                 Log.Debug("{0} {1} freed recvEventArgs", link.Name, Handle);
             }
@@ -48,7 +47,6 @@ namespace x2.Links.Sockets
             {
                 sendEventArgs.Completed -= OnSendCompleted;
                 sendEventArgs.Dispose();
-                sendEventArgs = null;
 
                 Log.Debug("{0} {1} freed sendEventArgs", link.Name, Handle);
             }
@@ -78,7 +76,7 @@ namespace x2.Links.Sockets
             }
             catch (Exception e)
             {
-                Log.Info("{0} {1} recv error {2}", link.Name, Handle, e.Message);
+                Log.Info("{0} {1} recv error {2}", link.Name, Handle, e);
 
                 OnDisconnect();
             }
@@ -104,7 +102,7 @@ namespace x2.Links.Sockets
             }
             catch (Exception e)
             {
-                Log.Info("{0} {1} send error {2}", link.Name, Handle, e.Message);
+                Log.Info("{0} {1} send error {2}", link.Name, Handle, e);
 
                 OnDisconnect();
             }

@@ -29,6 +29,8 @@ namespace x2
         protected CaseStack caseStack;
         protected string name;
 
+        private RefCount channelRefCount;
+
         public/*internal*/ static Flow CurrentFlow
         {
             get { return currentFlow; }
@@ -55,6 +57,8 @@ namespace x2
 
         public LogLevel SlowHandlerLogLevel { get; set; }
         public int SlowHandlerLogThreshold { get; set; }
+
+        public RefCount ChannelRefCount { get { return channelRefCount; } }
 
         static Flow()
         {

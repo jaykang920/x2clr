@@ -230,7 +230,7 @@ namespace x2
                 int index = slots.BinarySearch(slot);
                 if (index >= 0)
                 {
-                    slots[index].IncrementRefCount();
+                    slots[index].RefCount.Increment();
                 }
                 else
                 {
@@ -256,7 +256,7 @@ namespace x2
                 int index = slots.BinarySearch(new Slot(fingerprint));
                 if (index >= 0)
                 {
-                    if (slots[index].DecrementRefCount() == 0)
+                    if (slots[index].RefCount.Decrement() == 0)
                     {
                         slots.RemoveAt(index);
                     }
@@ -328,7 +328,9 @@ namespace x2
     /// </summary>
     internal class Slot : Fingerprint, IComparable<Slot>
     {
-        private int refCount;
+        private RefCount refCount;
+
+        public RefCount RefCount { get { return refCount; } }
 
         /// <summary>
         /// Initializes a new instance of the Slot class that contains bit values
@@ -338,16 +340,7 @@ namespace x2
         public Slot(Fingerprint fingerprint)
             : base(fingerprint)
         {
-            refCount = 1;
-        }
-
-        /// <summary>
-        /// Increases the reference count of this Slot.
-        /// </summary>
-        /// <returns>The resultant reference count.</returns>
-        public int IncrementRefCount()
-        {
-            return Interlocked.Increment(ref refCount);
+            refCount.Increment();
         }
 
         /// <summary>
@@ -366,15 +359,6 @@ namespace x2
         public int CompareTo(Slot other)
         {
             return base.CompareTo(other);
-        }
-
-        /// <summary>
-        /// Decreases the reference count of this Slot.
-        /// </summary>
-        /// <returns>The resultant reference count.</returns>
-        public int DecrementRefCount()
-        {
-            return Interlocked.Decrement(ref refCount);
         }
     }
 }
