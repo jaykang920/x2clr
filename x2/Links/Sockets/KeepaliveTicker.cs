@@ -2,6 +2,7 @@
 // See the file LICENSE for details.
 
 using System;
+using System.Threading;
 
 namespace x2
 {
@@ -19,13 +20,13 @@ namespace x2
             Event = new KeepaliveTick { _Channel = Channel };
         }
 
-        private static AtomicInt refCount = new AtomicInt();
+        private static int refCount;
 
         public static void ChangeRef(bool flag)
         {
             if (flag)
             {
-                if (refCount.Increment() == 1)
+                if (Interlocked.Increment(ref refCount) == 1)
                 {
                     TimeFlow.Default.ReserveRepetition(Event,
                         new TimeSpan(0, 0, 5));
@@ -35,7 +36,7 @@ namespace x2
             }
             else
             {
-                if (refCount.Decrement() == 0)
+                if (Interlocked.Decrement(ref refCount) == 0)
                 {
                     TimeFlow.Default.CancelRepetition(Event);
 

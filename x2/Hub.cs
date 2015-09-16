@@ -225,7 +225,7 @@ namespace x2
                 return;
             }
 
-            flow.ChannelRefCount.Increment();
+            flow.AddChannelRef();
 
             List<Flow> subscribers;
             if (subscriptions.TryGetValue(channel, out subscribers))
@@ -253,7 +253,7 @@ namespace x2
                 var subscribers = pair.Value;
                 if (subscribers.Remove(flow))
                 {
-                    flow.ChannelRefCount.Reset();
+                    flow.ResetChannelRef();
                     if (subscribers.Count == 0)
                     {
                         keysToRemove.Add(pair.Key);
@@ -286,7 +286,7 @@ namespace x2
             {
                 return;
             }
-            if (flow.ChannelRefCount.Decrement() == 0)
+            if (flow.RemoveChannelRef() == 0)
             {
                 subscribers.RemoveAt(index);
                 if (subscribers.Count == 0)
