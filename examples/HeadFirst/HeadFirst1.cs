@@ -31,7 +31,7 @@ namespace x2.Examples.HeadFirst
         public static void Main()
         {
             Hub.Instance
-                .Attach(new SingleThreadedFlow()
+                .Attach(new SingleThreadFlow()
                     .Add(new CapitalizerCase())
                     .Add(new OutputCase()));
 

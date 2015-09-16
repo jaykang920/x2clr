@@ -36,7 +36,7 @@ namespace x2.Examples.HeadFirst
             Log.Handler = (level, message) => Console.WriteLine(message);
 
             Hub.Instance
-                .Attach(new SingleThreadedFlow()
+                .Attach(new SingleThreadFlow()
                     .Add(new OutputCase())
                     .Add(new CapitalizerClient()));
 

@@ -73,6 +73,8 @@
     <Compile Include="Extensions.Buffer.cs" />
     <Compile Include="Extensions.Collections.cs" />
     <Compile Include="Deserializer.cs" />
+    <Compile Include="Flows\MultiThreadFlow.cs" />
+    <Compile Include="Flows\SingleThreadFlow.cs" />
     <Compile Include="Links\ClientLink.cs" />
     <Compile Include="Links\LinkEvents.cs" />
     <Compile Include="Links\ServerLink.cs" />
@@ -101,7 +103,7 @@
     <Compile Include="Serializers\StringSerializer.cs" />
     <Compile Include="Transforms\BlockCipher.cs" />
     <Compile Include="Transforms\Inverse.cs" />
-    <Compile Include="Util\RefCount.cs" />
+    <Compile Include="Util\AtomicInt.cs" />
     <Compile Include="Util\Capo.cs" />
     <Compile Include="Util\Getopt.cs" />
     <Compile Include="Util\Hash.Update.cs" />
@@ -127,8 +129,6 @@
     <Compile Include="EventSink.cs" />
     <Compile Include="Fingerprint.cs" />
     <Compile Include="Flow.cs" />
-    <Compile Include="Flows\MultiThreadedFlow.cs" />
-    <Compile Include="Flows\SingleThreadedFlow.cs" />
     <Compile Include="Flows\ThreadlessFlow.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="Hub.cs" />

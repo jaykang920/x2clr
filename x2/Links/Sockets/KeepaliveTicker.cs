@@ -19,7 +19,7 @@ namespace x2
             Event = new KeepaliveTick { _Channel = Channel };
         }
 
-        private static RefCount refCount;
+        private static AtomicInt refCount = new AtomicInt();
 
         public static void ChangeRef(bool flag)
         {

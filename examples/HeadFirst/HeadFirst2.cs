@@ -9,9 +9,9 @@ namespace x2.Examples.HeadFirst
         public static void Main()
         {
             Hub.Instance
-                .Attach(new SingleThreadedFlow("CapitalizerFlow")
+                .Attach(new SingleThreadFlow("CapitalizerFlow")
                     .Add(new CapitalizerCase()))
-                .Attach(new SingleThreadedFlow("OutputFlow")
+                .Attach(new SingleThreadFlow("OutputFlow")
                     .Add(new OutputCase()));
 
             using (var flows = new Hub.Flows())

@@ -27,7 +27,7 @@ namespace x2
         protected CaseStack caseStack;
         protected string name;
 
-        private RefCount channelRefCount;
+        private AtomicInt channelRefCount;
 
         public/*internal*/ static Flow CurrentFlow
         {
@@ -56,7 +56,7 @@ namespace x2
         public LogLevel SlowHandlerLogLevel { get; set; }
         public int SlowHandlerLogThreshold { get; set; }
 
-        public RefCount ChannelRefCount { get { return channelRefCount; } }
+        public AtomicInt ChannelRefCount { get { return channelRefCount; } }
 
         static Flow()
         {
@@ -76,6 +76,8 @@ namespace x2
 
             SlowHandlerLogLevel = DefaultSlowHandlerLogLevel;
             SlowHandlerLogThreshold = DefaultSlowHandlerLogThreshold;
+
+            channelRefCount = new AtomicInt();
         }
 
         public static Binder.Token Bind<T>(T e, Action<T> action)

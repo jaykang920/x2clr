@@ -16,7 +16,7 @@ namespace x2
     {
         protected Socket socket;
 
-        private RefCount failureCount;
+        private AtomicInt keepaliveFailureCount;
         private volatile bool hasReceived;
         private volatile bool hasSent;
 
@@ -108,6 +108,7 @@ namespace x2
             : base(link)
         {
             this.socket = socket;
+            keepaliveFailureCount = new AtomicInt();
         }
 
         internal int Keepalive(bool checkIncoming, bool checkOutgoing)
@@ -119,13 +120,13 @@ namespace x2
                 if (hasReceived)
                 {
                     hasReceived = false;
-                    failureCount.Reset();
+                    keepaliveFailureCount.Reset();
                 }
                 else
                 {
                     if (!IgnoreKeepaliveFailure)
                     {
-                        result = failureCount.Increment();
+                        result = keepaliveFailureCount.Increment();
                     }
                 }
             }
