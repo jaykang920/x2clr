@@ -236,9 +236,19 @@ namespace x2.Links.Sockets
             }
         }
 
+        /// <summary>
+        /// Called when an existing link session is recovered.
+        /// </summary>
+        protected virtual void OnSessionRecovered(int handle, object context)
+        {
+        }
+
         protected override void SetUp()
         {
             base.SetUp();
+
+            Bind(new LinkSessionRecovered { LinkName = Name },
+                OnLinkSessionRecovered);
 
             Bind(KeepaliveTicker.Event, OnKeepaliveTick);
 
@@ -276,6 +286,12 @@ namespace x2.Links.Sockets
 
                 tcpSession.Close();
             }
+        }
+
+        // LinkSessionRecovered event handler
+        private void OnLinkSessionRecovered(LinkSessionRecovered e)
+        {
+            OnSessionRecovered(e.Handle, e.Context);
         }
     }
 }
