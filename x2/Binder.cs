@@ -338,6 +338,7 @@ namespace x2
         public Slot(Fingerprint fingerprint)
             : base(fingerprint)
         {
+            AddRef();  // begin with 1
         }
 
         public int AddRef()

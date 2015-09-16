@@ -14,6 +14,7 @@ namespace x2.Tests
         public void TestBinding()
         {
             Binder binder = new Binder();
+            var equivalent = new EventEquivalent();
 
             binder.Bind(new SampleEvent1(), new MethodHandler<SampleEvent1>(OnSampleEvent1));
 
@@ -24,29 +25,30 @@ namespace x2.Tests
             List<Handler> handlerChain = new List<Handler>();
 
             handlerChain.Clear();
-            Assert.AreEqual(1, binder.BuildHandlerChain(e1, handlerChain));
+            Assert.AreEqual(1, binder.BuildHandlerChain(e1, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSampleEvent1), handlerChain[0]);
             handlerChain.Clear();
-            Assert.AreEqual(1, binder.BuildHandlerChain(e2, handlerChain));
+            Assert.AreEqual(1, binder.BuildHandlerChain(e2, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSampleEvent1), handlerChain[0]);
             handlerChain.Clear();
-            Assert.AreEqual(1, binder.BuildHandlerChain(e3, handlerChain));
+            Assert.AreEqual(1, binder.BuildHandlerChain(e3, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSampleEvent1), handlerChain[0]);
 
             binder.Unbind(new SampleEvent1(), new MethodHandler<SampleEvent1>(OnSampleEvent1));
 
             handlerChain.Clear();
-            Assert.AreEqual(0, binder.BuildHandlerChain(e1, handlerChain));
+            Assert.AreEqual(0, binder.BuildHandlerChain(e1, equivalent, handlerChain));
             handlerChain.Clear();
-            Assert.AreEqual(0, binder.BuildHandlerChain(e2, handlerChain));
+            Assert.AreEqual(0, binder.BuildHandlerChain(e2, equivalent, handlerChain));
             handlerChain.Clear();
-            Assert.AreEqual(0, binder.BuildHandlerChain(e3, handlerChain));
+            Assert.AreEqual(0, binder.BuildHandlerChain(e3, equivalent, handlerChain));
         }
 
         [Test]
         public void TestDuplicateBinding()
         {
             Binder binder = new Binder();
+            var equivalent = new EventEquivalent();
             List<Handler> handlerChain = new List<Handler>();
 
             binder.Bind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSampleEvent1));
@@ -54,7 +56,7 @@ namespace x2.Tests
 
             binder.Unbind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSampleEvent1));
 
-            Assert.AreEqual(0, binder.BuildHandlerChain(new SampleEvent1 { Foo = 1 }, handlerChain));
+            Assert.AreEqual(0, binder.BuildHandlerChain(new SampleEvent1 { Foo = 1 }, equivalent, handlerChain));
 
             // with EventSink
 
@@ -65,13 +67,15 @@ namespace x2.Tests
             sink.Unbind(new SampleEvent1 { Foo = 1 }, sink.OnSampleEvent1);
 
             handlerChain.Clear();
-            Assert.AreEqual(0, binder.BuildHandlerChain(new SampleEvent1 { Foo = 1 }, handlerChain));
+            Assert.AreEqual(0, binder.BuildHandlerChain(new SampleEvent1 { Foo = 1 }, equivalent, handlerChain));
         }
 
         [Test]
         public void TestDuplicateUnbinding()
         {
             Binder binder = new Binder();
+            var equivalent = new EventEquivalent();
+            List<Handler> handlerChain = new List<Handler>();
 
             binder.Bind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSampleEvent1));
             binder.Bind(new SampleEvent1 { Foo = 2 }, new MethodHandler<SampleEvent1>(OnSpecificSampleEvent1));
@@ -79,11 +83,9 @@ namespace x2.Tests
             binder.Unbind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSampleEvent1));
             binder.Unbind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSampleEvent1));
 
-            List<Handler> handlerChain = new List<Handler>();
-
             handlerChain.Clear();
-            Assert.AreEqual(0, binder.BuildHandlerChain(new SampleEvent1 { Foo = 1 }, handlerChain));
-            Assert.AreEqual(1, binder.BuildHandlerChain(new SampleEvent1 { Foo = 2 }, handlerChain));
+            Assert.AreEqual(0, binder.BuildHandlerChain(new SampleEvent1 { Foo = 1 }, equivalent, handlerChain));
+            Assert.AreEqual(1, binder.BuildHandlerChain(new SampleEvent1 { Foo = 2 }, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSpecificSampleEvent1), handlerChain[0]);
 
             // with EventSink
@@ -95,8 +97,8 @@ namespace x2.Tests
             sink.Bind(new SampleEvent1 { Foo = 1 }, sink.OnSampleEvent1);
 
             handlerChain.Clear();
-            Assert.AreEqual(0, binder.BuildHandlerChain(new SampleEvent1 { Foo = 1 }, handlerChain));
-            Assert.AreEqual(1, binder.BuildHandlerChain(new SampleEvent1 { Foo = 2 }, handlerChain));
+            Assert.AreEqual(0, binder.BuildHandlerChain(new SampleEvent1 { Foo = 1 }, equivalent, handlerChain));
+            Assert.AreEqual(1, binder.BuildHandlerChain(new SampleEvent1 { Foo = 2 }, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSpecificSampleEvent1), handlerChain[0]);
         }
 
@@ -104,6 +106,7 @@ namespace x2.Tests
         public void TestHandlerChainBuilding()
         {
             Binder binder = new Binder();
+            var equivalent = new EventEquivalent();
 
             binder.Bind(new SampleEvent1(), new MethodHandler<SampleEvent1>(OnSampleEvent1));
             binder.Bind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSpecificSampleEvent1));
@@ -119,56 +122,56 @@ namespace x2.Tests
             List<Handler> handlerChain = new List<Handler>();
 
             handlerChain.Clear();
-            Assert.AreEqual(2, binder.BuildHandlerChain(e1, handlerChain));
+            Assert.AreEqual(2, binder.BuildHandlerChain(e1, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSampleEvent1), handlerChain[0]);
             Assert.AreEqual(new MethodHandler<Event>(OnEvent), handlerChain[1]);
 
             handlerChain.Clear();
-            Assert.AreEqual(3, binder.BuildHandlerChain(e2, handlerChain));
+            Assert.AreEqual(3, binder.BuildHandlerChain(e2, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSampleEvent1), handlerChain[0]);
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSpecificSampleEvent1), handlerChain[1]);
             Assert.AreEqual(new MethodHandler<Event>(OnEvent), handlerChain[2]);
 
             handlerChain.Clear();
-            Assert.AreEqual(3, binder.BuildHandlerChain(e3, handlerChain));
+            Assert.AreEqual(3, binder.BuildHandlerChain(e3, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSampleEvent1), handlerChain[0]);
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSpecificSampleEvent1), handlerChain[1]);
             Assert.AreEqual(new MethodHandler<Event>(OnEvent), handlerChain[2]);
 
             handlerChain.Clear();
-            Assert.AreEqual(2, binder.BuildHandlerChain(e4, handlerChain));
+            Assert.AreEqual(2, binder.BuildHandlerChain(e4, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSampleEvent1), handlerChain[0]);
             Assert.AreEqual(new MethodHandler<Event>(OnEvent), handlerChain[1]);
 
             handlerChain.Clear();
-            Assert.AreEqual(3, binder.BuildHandlerChain(e5, handlerChain));
+            Assert.AreEqual(3, binder.BuildHandlerChain(e5, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSampleEvent1), handlerChain[0]);
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSpecificSampleEvent1), handlerChain[1]);
             Assert.AreEqual(new MethodHandler<Event>(OnEvent), handlerChain[2]);
 
             handlerChain.Clear();
-            Assert.AreEqual(2, binder.BuildHandlerChain(e6, handlerChain));
+            Assert.AreEqual(2, binder.BuildHandlerChain(e6, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSampleEvent1), handlerChain[0]);
             Assert.AreEqual(new MethodHandler<Event>(OnEvent), handlerChain[1]);
 
             binder.Unbind(new SampleEvent1(), new MethodHandler<SampleEvent1>(OnSampleEvent1));
 
             handlerChain.Clear();
-            Assert.AreEqual(1, binder.BuildHandlerChain(e1, handlerChain));
+            Assert.AreEqual(1, binder.BuildHandlerChain(e1, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<Event>(OnEvent), handlerChain[0]);
 
             binder.Unbind(new Event(), new MethodHandler<Event>(OnEvent));
 
             handlerChain.Clear();
-            Assert.AreEqual(1, binder.BuildHandlerChain(e2, handlerChain));
+            Assert.AreEqual(1, binder.BuildHandlerChain(e2, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSpecificSampleEvent1), handlerChain[0]);
 
             handlerChain.Clear();
-            Assert.AreEqual(1, binder.BuildHandlerChain(e3, handlerChain));
+            Assert.AreEqual(1, binder.BuildHandlerChain(e3, equivalent, handlerChain));
             Assert.AreEqual(new MethodHandler<SampleEvent1>(OnSpecificSampleEvent1), handlerChain[0]);
 
             handlerChain.Clear();
-            Assert.AreEqual(0, binder.BuildHandlerChain(e4, handlerChain));
+            Assert.AreEqual(0, binder.BuildHandlerChain(e4, equivalent, handlerChain));
         }
 
         void OnEvent(Event e)
