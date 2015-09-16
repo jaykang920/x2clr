@@ -6,10 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-using x2.Events;
-using x2.Flows;
-
-namespace x2.Links.Sockets
+namespace x2
 {
     /// <summary>
     /// Abstract base class for TCP/IP client links.

@@ -8,11 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-using x2.Events;
-using x2.Flows;
-using x2.Queues;
-
-namespace x2.Links.Sockets
+namespace x2
 {
     /// <summary>
     /// Abstract base class for TCP/IP server links.

@@ -4,9 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-using x2;
-
-namespace x2.Links
+namespace x2
 {
     public class SendBuffer : IDisposable
     {

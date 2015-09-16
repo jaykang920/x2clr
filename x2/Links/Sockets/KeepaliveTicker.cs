@@ -3,10 +3,7 @@
 
 using System;
 
-using x2;
-using x2.Flows;
-
-namespace x2.Links.Sockets
+namespace x2
 {
     /// <summary>
     /// Keepalive timer tick helper class.

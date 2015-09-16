@@ -1,0 +1,17 @@
+<x2 namespace="x2">
+    <consts name="BuiltinEventType">
+        <const name="FlowStart">-1</const>
+        <const name="FlowStop">-2</const>
+
+        <const name="TimeoutEvent">-3</const>
+
+        <!-- -10 to -99 : reserved for links -->
+    </consts>
+
+    <event name="FlowStart" id="BuiltinEventType.FlowStart" local="true"/>
+    <event name="FlowStop" id="BuiltinEventType.FlowStop" local="true"/>
+
+    <event name="TimeoutEvent" id="BuiltinEventType.TimeoutEvent" local="true">
+        <property name="Key" type="object"/>
+    </event>
+</x2>

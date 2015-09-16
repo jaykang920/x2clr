@@ -5,10 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-using x2.Events;
-using x2.Flows;
-
-namespace x2.Yields
+namespace x2
 {
     /// <summary>
     /// YieldInstruction that waits for multiple events.

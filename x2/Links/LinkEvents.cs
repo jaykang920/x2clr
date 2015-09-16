@@ -6,7 +6,7 @@ using System.Text;
 
 using x2;
 
-namespace x2.Links
+namespace x2
 {
     public static class LinkEventType
     {

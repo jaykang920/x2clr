@@ -1,7 +1,6 @@
 using System;
 
 using x2;
-using x2.Flows;
 
 namespace x2.Examples.HeadFirst
 {

@@ -1,4 +1,4 @@
-<x2 namespace="x2/Links">
+<x2 namespace="x2">
 
     <consts name="LinkEventType">
         <const name="LinkSessionConnected">-4</const>

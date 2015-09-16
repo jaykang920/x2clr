@@ -4,10 +4,7 @@
 using System;
 using System.Collections;
 
-using x2.Events;
-using x2.Flows;
-
-namespace x2.Yields
+namespace x2
 {
     /// <summary>
     /// YieldInstruction that waits for the specified time in seconds.

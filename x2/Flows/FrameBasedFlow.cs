@@ -6,10 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-using x2.Events;
-using x2.Queues;
-
-namespace x2.Flows
+namespace x2
 {
     /// <summary>
     /// Utility class to handle time information within a frame-based flow.
@@ -182,7 +179,7 @@ namespace x2.Flows
 
                                 Dispatch(e);
 
-                                if (e.GetTypeId() == (int)BuiltInType.FlowStop)
+                                if (e.GetTypeId() == (int)BuiltinEventType.FlowStop)
                                 {
                                     shouldStop = true;
                                     break;

@@ -6,7 +6,7 @@ using System.Text;
 
 using x2;
 
-namespace x2.Links.Sockets
+namespace x2
 {
     public static class SocketLinkEventType
     {

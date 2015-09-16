@@ -6,9 +6,7 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Threading;
 
-using x2;
-
-namespace x2.Links.Sockets
+namespace x2
 {
     /// <summary>
     /// TCP/IP link session based on the Begin/End pattern.

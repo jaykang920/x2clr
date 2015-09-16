@@ -1,4 +1,4 @@
-<x2 namespace="x2/Links/Sockets">
+<x2 namespace="x2">
 
     <consts name="SocketLinkEventType">
         <const name="LinkSessionRecovered">-6</const>

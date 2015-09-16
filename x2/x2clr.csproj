@@ -65,16 +65,13 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="BuiltinEvents.cs" />
     <Compile Include="EventFactory.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Extensions.Array.cs" />
     <Compile Include="Extensions.Event.cs" />
     <Compile Include="Extensions.Buffer.cs" />
     <Compile Include="Extensions.Collections.cs" />
-    <Compile Include="Events\BuiltIntype.cs" />
-    <Compile Include="Events\FlowEvents.cs" />
-    <Compile Include="Events\LinkEvents.cs" />
-    <Compile Include="Events\TimeFlowEvents.cs" />
     <Compile Include="Deserializer.cs" />
     <Compile Include="Links\ClientLink.cs" />
     <Compile Include="Links\LinkEvents.cs" />
@@ -152,14 +149,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Events\BuiltIntype.xml">
+    <Content Include="BuiltinEvents.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Events\FlowEvents.xml" />
-    <Content Include="Events\LinkEvents.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Events\TimeFlowEvents.xml" />
     <Content Include="Links\LinkEvents.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -171,7 +163,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>pushd $(ProjectDir)
-..\bin\$(ConfigGroup)\xpiler.exe -f . Events Links Links/Sockets
+..\bin\$(ConfigGroup)\xpiler.exe -f . Links Links/Sockets
 popd</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

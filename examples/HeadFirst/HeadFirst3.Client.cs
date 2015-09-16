@@ -1,13 +1,12 @@
 using System;
 
 using x2;
-using x2.Flows;
 
 namespace x2.Examples.HeadFirst
 {
     class HeadFirst3Client
     {
-        class CapitalizerClient : x2.Links.Sockets.AsyncTcpClient
+        class CapitalizerClient : AsyncTcpClient
         {
             public CapitalizerClient()
                 : base("CapitalizerClient")
@@ -17,8 +16,8 @@ namespace x2.Examples.HeadFirst
                 MaxKeepaliveFailureCount = 1;
                 ///*
                 BufferTransform = new BufferTransformStack()
-                    .Add(new x2.Transforms.BlockCipher())
-                    .Add(new x2.Transforms.Inverse());
+                    .Add(new BlockCipher())
+                    .Add(new Inverse());
                 //*/
             }
 

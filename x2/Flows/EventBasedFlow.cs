@@ -6,10 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-using x2.Events;
-using x2.Queues;
-
-namespace x2.Flows
+namespace x2
 {
     /// <summary>
     /// Abstract base class for event-based (waiting) execution flows.

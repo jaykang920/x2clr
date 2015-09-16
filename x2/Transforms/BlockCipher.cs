@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace x2.Transforms
+namespace x2
 {
     /// <summary>
     /// A simple example of BufferTransform that performs block encryption and

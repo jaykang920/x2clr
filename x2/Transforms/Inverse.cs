@@ -3,7 +3,7 @@
 
 using System;
 
-namespace x2.Transforms
+namespace x2
 {
     /// <summary>
     /// A trivial example of BufferTransform that just invert every bit.

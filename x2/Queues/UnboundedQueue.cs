@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace x2.Queues
+namespace x2
 {
     public class UnboundedQueue<T> : IQueue<T>
     {
