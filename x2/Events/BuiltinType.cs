@@ -13,9 +13,6 @@ namespace x2.Events
         public const int FlowStart = -1;
         public const int FlowStop = -2;
         public const int TimeoutEvent = -3;
-        public const int LinkSessionConnected = -4;
-        public const int LinkSessionDisconnected = -5;
-        public const int LinkSessionRecovered = -6;
 
         private static ConstsInfo<int> info;
 
@@ -25,9 +22,6 @@ namespace x2.Events
             info.Add("FlowStart", -1);
             info.Add("FlowStop", -2);
             info.Add("TimeoutEvent", -3);
-            info.Add("LinkSessionConnected", -4);
-            info.Add("LinkSessionDisconnected", -5);
-            info.Add("LinkSessionRecovered", -6);
         }
 
         public static string GetName(int value)

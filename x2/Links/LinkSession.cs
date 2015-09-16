@@ -12,22 +12,11 @@ namespace x2.Links
     /// <summary>
     /// Abstract base class for concrete link sessions.
     /// </summary>
-    public abstract class LinkSession2 : IDisposable
+    public abstract class LinkSession : IDisposable
     {
         protected const int bufferBlockExponent = 12;
 
         private static RangedIntPool handlePool;
-
-        /// <summary>
-        /// A delegate type for hooking up event proprocess notifications.
-        /// </summary>
-        public delegate void PreprocessEventHandler(object sender, Event e);
-
-        /// <summary>
-        /// An event that clients can use to be notified whenever a new event is
-        /// ready for preprocessing.
-        /// </summary>
-        public event PreprocessEventHandler Preprocess;
 
         protected int handle;
         protected SessionBasedLink link;
@@ -81,7 +70,7 @@ namespace x2.Links
             set { polarity = value; }
         }
 
-        static LinkSession2()
+        static LinkSession()
         {
             handlePool = new RangedIntPool(1, 65536, true);  // [1, 65536]
         }
@@ -89,7 +78,7 @@ namespace x2.Links
         /// <summary>
         /// Initializes a new instance of the LinkSession class.
         /// </summary>
-        protected LinkSession2(SessionBasedLink link)
+        protected LinkSession(SessionBasedLink link)
         {
             handle = handlePool.Acquire();
             this.link = link;
@@ -105,7 +94,7 @@ namespace x2.Links
             Diag = new Diagnostics(this);
         }
 
-        ~LinkSession2()
+        ~LinkSession()
         {
             Dispose(false);
         }
@@ -306,10 +295,7 @@ namespace x2.Links
 
                     retrieved._Handle = Handle;
 
-                    if (Preprocess != null)
-                    {
-                        Preprocess(this, retrieved);
-                    }
+                    link.OnPreprocess(this, retrieved);
 
                     LogEventReceived(retrieved);
 
@@ -470,11 +456,11 @@ namespace x2.Links
         /// <summary>
         /// Link session diagnostics helper class.
         /// </summary>
-        public class Diagnostics : Link2.Diagnostics
+        public class Diagnostics : Link.Diagnostics
         {
-            protected LinkSession2 owner;
+            protected LinkSession owner;
 
-            public Diagnostics(LinkSession2 owner)
+            public Diagnostics(LinkSession owner)
             {
                 this.owner = owner;
             }

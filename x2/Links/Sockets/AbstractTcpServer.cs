@@ -24,6 +24,13 @@ namespace x2.Links.Sockets
         private volatile bool incomingKeepaliveEnabled;
         private volatile bool outgoingKeepaliveEnabled;
 
+        public bool Listening
+        {
+            get { return (socket != null && socket.IsBound); }
+        }
+
+        // Socket option properties
+
         /// <summary>
         /// Gets or sets a boolean value indicating whether the client sockets
         /// are not to use the Nagle algorithm.
@@ -138,7 +145,7 @@ namespace x2.Links.Sockets
         /// <summary>
         /// <see cref="ServerLink.OnAcceptInternal"/>
         /// </summary>
-        protected override bool OnAcceptInternal(LinkSession2 session)
+        protected override bool OnAcceptInternal(LinkSession session)
         {
             var tcpSession = (AbstractTcpSession)session;
             var clientSocket = tcpSession.Socket;
@@ -187,10 +194,10 @@ namespace x2.Links.Sockets
                 return;
             }
 
-            List<LinkSession2> snapshot;
+            List<LinkSession> snapshot;
             using (new ReadLock(rwlock))
             {
-                snapshot = new List<LinkSession2>(sessions.Count);
+                snapshot = new List<LinkSession>(sessions.Count);
                 var list = sessions.Values;
                 for (int i = 0, count = list.Count; i < count; ++i)
                 {

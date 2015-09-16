@@ -14,7 +14,7 @@ namespace x2.Links.Sockets
     /// <summary>
     /// Abstract base class for TCP/IP link sessions.
     /// </summary>
-    public abstract class AbstractTcpSession : LinkSession2
+    public abstract class AbstractTcpSession : LinkSession
     {
         protected Socket socket;
 

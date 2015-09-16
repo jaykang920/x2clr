@@ -11,9 +11,20 @@ namespace x2.Links
     /// <summary>
     /// Abstract base class for session-based links.
     /// </summary>
-    public abstract class SessionBasedLink : Link2
+    public abstract class SessionBasedLink : Link
     {
         protected ReaderWriterLockSlim rwlock;
+
+        /// <summary>
+        /// A delegate type for hooking up event proprocess notifications.
+        /// </summary>
+        public delegate void PreprocessEventHandler(LinkSession session, Event e);
+
+        /// <summary>
+        /// An event that clients can use to be notified whenever a new event is
+        /// ready for preprocessing.
+        /// </summary>
+        public event PreprocessEventHandler Preprocess;
 
         static SessionBasedLink()
         {
@@ -57,6 +68,14 @@ namespace x2.Links
             });
         }
 
+        internal protected void OnPreprocess(LinkSession session, Event e)
+        {
+            if (Preprocess != null)
+            {
+                Preprocess(session, e);
+            }
+        }
+
         /// <summary>
         /// Frees managed or unmanaged resources.
         /// </summary>
@@ -72,7 +91,7 @@ namespace x2.Links
         /// <summary>
         /// Called by a derived class to initiate a buffer transform handshake.
         /// </summary>
-        protected void InitiateHandshake(LinkSession2 session)
+        protected void InitiateHandshake(LinkSession session)
         {
             if (Object.ReferenceEquals(BufferTransform, null))
             {

@@ -23,6 +23,11 @@ namespace x2.Links.Sockets
         private volatile bool incomingKeepaliveEnabled;
         private volatile bool outgoingKeepaliveEnabled;
 
+        public bool Connected
+        {
+            get { return (session != null && ((AbstractTcpSession)session).Connected); }
+        }
+
         // Socket option properties
 
         /// <summary>
@@ -187,7 +192,7 @@ namespace x2.Links.Sockets
         /// <summary>
         /// <see cref="ClientLink.OnConnectInternal"/>
         /// </summary>
-        protected override void OnConnectInternal(LinkSession2 session)
+        protected override void OnConnectInternal(LinkSession session)
         {
             var tcpSession = (AbstractTcpSession)session;
             Socket socket = tcpSession.Socket;

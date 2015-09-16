@@ -17,12 +17,12 @@ namespace x2.Links
     /// </summary>
     public abstract class ClientLink : SessionBasedLink
     {
-        protected LinkSession2 session;
+        protected LinkSession session;
 
         /// <summary>
         /// Gets the current link session.
         /// </summary>
-        public LinkSession2 Session {
+        public LinkSession Session {
             get
             {
                 using (new ReadLock(rwlock))
@@ -61,7 +61,7 @@ namespace x2.Links
         {
             if (result == true)
             {
-                var session = (LinkSession2)context;
+                var session = (LinkSession)context;
                 using (new WriteLock(rwlock))
                 {
                     this.session = session;
@@ -103,7 +103,7 @@ namespace x2.Links
         /// <summary>
         /// Called by a derived link class on a successful connect. 
         /// </summary>
-        protected virtual void OnConnectInternal(LinkSession2 session)
+        protected virtual void OnConnectInternal(LinkSession session)
         {
             session.Polarity = true;
 

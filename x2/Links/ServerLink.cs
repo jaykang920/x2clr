@@ -17,7 +17,7 @@ namespace x2.Links
     /// </summary>
     public abstract class ServerLink : SessionBasedLink
     {
-        protected SortedList<int, LinkSession2> sessions;
+        protected SortedList<int, LinkSession> sessions;
 
         /// <summary>
         /// Initializes a new instance of the ServerLink class.
@@ -25,7 +25,7 @@ namespace x2.Links
         protected ServerLink(string name)
             : base(name)
         {
-            sessions = new SortedList<int, LinkSession2>();
+            sessions = new SortedList<int, LinkSession>();
 
             Diag = new Diagnostics();
         }
@@ -35,10 +35,10 @@ namespace x2.Links
         /// </summary>
         public void Broadcast(Event e)
         {
-            List<LinkSession2> snapshot;
+            List<LinkSession> snapshot;
             using (new ReadLock(rwlock))
             {
-                snapshot = new List<LinkSession2>(sessions.Count);
+                snapshot = new List<LinkSession>(sessions.Count);
                 var list = sessions.Values;
                 for (int i = 0, count = list.Count; i < count; ++i)
                 {
@@ -56,7 +56,7 @@ namespace x2.Links
         /// </summary>
         public override void Send(Event e)
         {
-            LinkSession2 session;
+            LinkSession session;
             using (new ReadLock(rwlock))
             {
                 if (!sessions.TryGetValue(e._Handle, out session))
@@ -71,7 +71,7 @@ namespace x2.Links
         {
             if (result == true)
             {
-                var session = (LinkSession2)context;
+                var session = (LinkSession)context;
                 using (new WriteLock(rwlock))
                 {
                     sessions.Add(session.Handle, session);
@@ -109,7 +109,7 @@ namespace x2.Links
         /// <summary>
         /// Called by a derived link class on a successful accept.
         /// </summary>
-        protected virtual bool OnAcceptInternal(LinkSession2 session)
+        protected virtual bool OnAcceptInternal(LinkSession session)
         {
             if (BufferTransform != null)
             {
@@ -127,7 +127,7 @@ namespace x2.Links
         /// <summary>
         /// Internal diagnostics helper class.
         /// </summary>
-        public new class Diagnostics : Link2.Diagnostics
+        public new class Diagnostics : Link.Diagnostics
         {
             protected int connectionCount;
 

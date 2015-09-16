@@ -101,25 +101,6 @@
     <Compile Include="Coroutine.cs" />
     <Compile Include="Flows\EventBasedFlow.cs" />
     <Compile Include="Flows\FrameBasedFlow.cs" />
-    <Compile Include="Links\SocketLink\AsyncTcpClient.cs" />
-    <Compile Include="Links\SocketLink\AsyncTcpLinkSession.cs" />
-    <Compile Include="Links\SocketLink\AsyncTcpServer.cs" />
-    <Compile Include="Links\SocketLink\SocketLink.cs" />
-    <Compile Include="Links\SocketLink\SocketLinkEvents.cs" />
-    <Compile Include="Links\SocketLink\SocketLinkSession.cs" />
-    <Compile Include="Links\SocketLink\TcpClient.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Links\SocketLink\TcpClientBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Links\SocketLink\TcpLinkSession.cs" />
-    <Compile Include="Links\SocketLink\TcpServer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Links\SocketLink\TcpServerBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Serializers\StringSerializer.cs" />
     <Compile Include="Transforms\BlockCipher.cs" />
     <Compile Include="Transforms\Inverse.cs" />
@@ -180,9 +161,6 @@
     </Content>
     <Content Include="Events\TimeFlowEvents.xml" />
     <Content Include="Links\LinkEvents.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Links\SocketLink\SocketLinkEvents.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Links\Sockets\SocketLinkEvents.xml">
