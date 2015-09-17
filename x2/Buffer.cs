@@ -324,11 +324,20 @@ namespace x2
             }
             if (count > 0)
             {
+                int roomFactor = 1 << level;
                 List<byte[]> blocksToRemove = blocks.GetRange(index, count);
                 blocks.RemoveRange(index, count);
                 for (int i = 0; i < blocksToRemove.Count; ++i)
                 {
-                    BufferPool.Release(blockSizeExponent, blocksToRemove[i]);
+                    byte[] block = blocksToRemove[i];
+                    if (i < roomFactor)
+                    {
+                        blocks.Add(block);
+                    }
+                    else
+                    {
+                        BufferPool.Release(blockSizeExponent, blocksToRemove[i]);
+                    }
                 }
             }
             Position = 0;

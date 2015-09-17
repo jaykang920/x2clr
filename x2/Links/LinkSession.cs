@@ -37,7 +37,7 @@ namespace x2
         protected bool rxTransformReady;
         protected bool txTransformReady;
 
-        protected volatile bool txFlag;
+        protected bool txFlag;
 
         protected object txSync = new Object();
 
@@ -132,6 +132,12 @@ namespace x2
             rxBufferList.Clear();
             rxBuffer.Dispose();
 
+            for (int i = 0, count = buffersSending.Count; i < count; ++i)
+            {
+                buffersSending[i].Dispose();
+            }
+            buffersSending.Clear();
+
             handlePool.Release(handle);
 
             disposed = true;
@@ -150,14 +156,16 @@ namespace x2
             lock (txSync)
             {
                 eventsToSend.Add(e);
-            }
 
-            if (!txFlag)
-            {
+                if (txFlag)
+                {
+                    return;
+                }
+
                 txFlag = true;
-
-                BeginSend();
             }
+
+            BeginSend();
         }
 
         internal void BeginReceive(bool beginning)
@@ -186,11 +194,30 @@ namespace x2
             // capture send buffer
             txBufferList.Clear();
             lengthToSend = 0;
-            for (int i = 0, count = eventsSending.Count; i < count; ++i)
+            int count = eventsSending.Count;
+            int bufferCount = buffersSending.Count;
+            if (bufferCount < count)
+            {
+                for (int i = 0, n = count - bufferCount; i < n; ++i)
+                {
+                    buffersSending.Add(new SendBuffer());
+                }
+            }
+            else
+            {
+                for (int i = 0, n = bufferCount - count; i < n; ++i)
+                {
+                    int j = bufferCount - (i + 1);
+                    buffersSending[j].Dispose();
+                    buffersSending.RemoveAt(j);
+                }
+            }
+            for (int i = 0; i < count; ++i)
             {
                 Event e = eventsSending[i];
 
-                var sendBuffer = new SendBuffer();
+                var sendBuffer = buffersSending[i];
+                sendBuffer.Reset();
                 e.Serialize(new Serializer(sendBuffer.Buffer));
 
                 uint header = 0;
@@ -202,8 +229,6 @@ namespace x2
                 header |= ((uint)sendBuffer.Buffer.Length << 1);
 
                 sendBuffer.HeaderLength = Serializer.WriteVariable(sendBuffer.HeaderBytes, header);
-
-                buffersSending.Add(sendBuffer);
 
                 sendBuffer.ListOccupiedSegments(txBufferList);
                 lengthToSend += sendBuffer.Length;
@@ -348,26 +373,16 @@ namespace x2
             Log.Trace("{0} {1} sent {2}/{3} byte(s)",
                 link.Name, Handle, bytesTransferred, lengthToSend);
 
-            // assume complete send
-            for (int i = 0, count = buffersSending.Count; i < count; ++i)
-            {
-                buffersSending[i].Dispose();
-            }
-
-            bool hasMore;
             lock (txSync)
             {
-                hasMore = eventsToSend.Count != 0;
+                if (eventsToSend.Count == 0)
+                {
+                    txFlag = false;
+                    return;
+                }
             }
 
-            if (hasMore)
-            {
-                BeginSend();
-            }
-            else
-            {
-                txFlag = false;
-            }
+            BeginSend();
         }
 
         protected virtual bool Process(Event e)

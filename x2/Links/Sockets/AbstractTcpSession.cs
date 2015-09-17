@@ -153,11 +153,19 @@ namespace x2
 
             if (socket != null)
             {
-                if (socket.Connected)
+                try
                 {
-                    socket.Shutdown(SocketShutdown.Both);
+                    if (socket.Connected)
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    socket.Close();
                 }
-                socket.Close();
+                catch (Exception e)
+                {
+                    Log.Warn("{0} {1} close : {2}",
+                        Link.Name, handle, e.Message);
+                }
             }
 
             base.Dispose(disposing);

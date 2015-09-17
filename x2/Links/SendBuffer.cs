@@ -51,6 +51,12 @@ namespace x2
             blockList.Add(new ArraySegment<byte>(headerBytes, 0, headerLength));
             buffer.ListOccupiedSegments(blockList);
         }
+
+        public void Reset()
+        {
+            headerLength = 0;
+            buffer.Rewind();
+        }
     }
 
 }
