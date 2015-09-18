@@ -24,7 +24,7 @@ namespace x2
         public SendBuffer()
         {
             headerBytes = new byte[5];
-            buffer = new Buffer(12);
+            buffer = new Buffer();
         }
 
         ~SendBuffer()

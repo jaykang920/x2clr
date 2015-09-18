@@ -44,7 +44,6 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="BinderTests.cs" />
-    <Compile Include="BufferPoolTests.cs" />
     <Compile Include="PoolTests.cs" />
     <Compile Include="SerializerTests.cs" />
     <Compile Include="BufferTests.cs" />

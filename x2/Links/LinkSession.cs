@@ -81,7 +81,7 @@ namespace x2
             handle = handlePool.Acquire();
             this.link = link;
 
-            rxBuffer = new Buffer(bufferBlockExponent);
+            rxBuffer = new Buffer();
             rxBufferList = new List<ArraySegment<byte>>();
             txBufferList = new List<ArraySegment<byte>>();
 

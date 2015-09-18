@@ -103,13 +103,13 @@
     <Compile Include="Serializers\StringSerializer.cs" />
     <Compile Include="Transforms\BlockCipher.cs" />
     <Compile Include="Transforms\Inverse.cs" />
+    <Compile Include="Util\SegmentPool.cs" />
     <Compile Include="Util\Capo.cs" />
     <Compile Include="Util\Getopt.cs" />
     <Compile Include="Util\Hash.Update.cs" />
     <Compile Include="Util\Hash.StaticUpdate.cs" />
     <Compile Include="Util\Hash.cs" />
     <Compile Include="Util\Log.cs" />
-    <Compile Include="Util\BufferPool.cs" />
     <Compile Include="Util\RangedIntPool.cs" />
     <Compile Include="Util\Pool.cs" />
     <Compile Include="Util\ReadWriteLock.cs" />

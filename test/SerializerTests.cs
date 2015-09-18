@@ -16,7 +16,7 @@ namespace x2.Tests
             //using (var stream = new MemoryStream())
             {
                 float f;
-                Buffer stream = new Buffer(12);
+                Buffer stream = new Buffer();
                 Serializer serializer = new Serializer(stream);
                 Deserializer deserializer = new Deserializer(stream);
 
@@ -72,7 +72,7 @@ namespace x2.Tests
             //using (var stream = new MemoryStream())
             {
                 double d;
-                Buffer stream = new Buffer(12);
+                Buffer stream = new Buffer();
                 Serializer serializer = new Serializer(stream);
                 Deserializer deserializer = new Deserializer(stream);
 
@@ -128,7 +128,7 @@ namespace x2.Tests
             //using (var stream = new MemoryStream())
             {
                 int i, bytes;
-                Buffer stream = new Buffer(12);
+                Buffer stream = new Buffer();
                 Serializer serializer = new Serializer(stream);
                 Deserializer deserializer = new Deserializer(stream);
 
@@ -190,7 +190,7 @@ namespace x2.Tests
             //using (var stream = new MemoryStream())
             {
                 long l, bytes;
-                Buffer stream = new Buffer(12);
+                Buffer stream = new Buffer();
                 Serializer serializer = new Serializer(stream);
                 Deserializer deserializer = new Deserializer(stream);
 

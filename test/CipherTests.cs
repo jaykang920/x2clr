@@ -22,7 +22,7 @@ namespace x2.Tests
             cipher1.FinalizeHandshake(bytes1);
             cipher2.FinalizeHandshake(bytes2);
 
-            Buffer buffer = new Buffer(12);
+            Buffer buffer = new Buffer();
 
             string text = new String('x', 5300);
             Assert.AreEqual(5300, text.Length);

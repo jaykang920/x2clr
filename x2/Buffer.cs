@@ -12,12 +12,12 @@ namespace x2
     /// </summary>
     public class Buffer : IDisposable
     {
-        private List<byte[]> blocks;
+        private List<Segment> blocks;
 
         private readonly int blockSizeExponent;
         private readonly int remainderMask;
 
-        private byte[] currentBlock;
+        private Segment currentBlock;
         private int currentBlockIndex;
 
         private int position;
@@ -93,17 +93,18 @@ namespace x2
             }
         }
 
-        public Buffer(int blockSizeExponent)
+        public Buffer()
         {
+            int blockSizeExponent = SegmentPool.SegmentSizeExponent;
             if (blockSizeExponent < 0 || 31 < blockSizeExponent)
             {
                 throw new ArgumentOutOfRangeException();
             }
-            blocks = new List<byte[]>();
+            blocks = new List<Segment>();
             this.blockSizeExponent = blockSizeExponent;
             remainderMask = ~(~0 << blockSizeExponent);
 
-            blocks.Add(BufferPool.Acquire(blockSizeExponent));
+            blocks.Add(SegmentPool.Acquire());
 
             currentBlockIndex = 0;
             currentBlock = blocks[currentBlockIndex];
@@ -140,8 +141,9 @@ namespace x2
             while (bytesCopied < length)
             {
                 bytesToCopy = Math.Min(BlockSize - dstOffset, length - bytesCopied);
+                Segment block = blocks[blockIndex++];
                 System.Buffer.BlockCopy(buffer, offset + bytesCopied,
-                  blocks[blockIndex++], dstOffset, bytesToCopy);
+                  block.Array, block.Offset + dstOffset, bytesToCopy);
                 dstOffset = 0;
                 bytesCopied += bytesToCopy;
             }
@@ -156,7 +158,8 @@ namespace x2
             while (bytesCopied < length)
             {
                 bytesToCopy = Math.Min(BlockSize - srcOffset, length - bytesCopied);
-                System.Buffer.BlockCopy(blocks[blockIndex++], srcOffset,
+                Segment block = blocks[blockIndex++];
+                System.Buffer.BlockCopy(block.Array, block.Offset + srcOffset,
                   buffer, bytesCopied, bytesToCopy);
                 srcOffset = 0;
                 bytesCopied += bytesToCopy;
@@ -186,19 +189,29 @@ namespace x2
             int endOffset = end & remainderMask;
             if (beginIndex == endIndex)
             {
-                blockList.Add(new ArraySegment<byte>(blocks[beginIndex], beginOffset,
-                                                     endOffset - beginOffset));
+                blockList.Add(new ArraySegment<byte>(
+                    blocks[beginIndex].Array,
+                    blocks[beginIndex].Offset + beginOffset,
+                    endOffset - beginOffset));
                 return;
             }
-            blockList.Add(new ArraySegment<byte>(blocks[beginIndex], beginOffset,
-                                                 BlockSize - beginOffset));
+            blockList.Add(new ArraySegment<byte>(
+                blocks[beginIndex].Array,
+                blocks[beginIndex].Offset + beginOffset,
+                BlockSize - beginOffset));
             for (int i = beginIndex + 1; i < endIndex; ++i)
             {
-                blockList.Add(new ArraySegment<byte>(blocks[i]));
+                blockList.Add(new ArraySegment<byte>(
+                    blocks[i].Array,
+                    blocks[i].Offset,
+                    BlockSize));
             }
             if (endOffset != 0)
             {
-                blockList.Add(new ArraySegment<byte>(blocks[endIndex], 0, endOffset));
+                blockList.Add(new ArraySegment<byte>(
+                    blocks[endIndex].Array,
+                    blocks[endIndex].Offset,
+                    endOffset));
             }
         }
 
@@ -219,17 +232,22 @@ namespace x2
                 int count = (roomFactor - numWholeBlocks);
                 for (int i = 0; i < count; ++i)
                 {
-                    blocks.Add(BufferPool.Acquire(blockSizeExponent));
+                    blocks.Add(SegmentPool.Acquire());
                 }
             }
 
             int backIndex = back >> blockSizeExponent;
             int backOffset = back & remainderMask;
-            blockList.Add(new ArraySegment<byte>(blocks[backIndex], backOffset,
-                                                 BlockSize - backOffset));
+            blockList.Add(new ArraySegment<byte>(
+                blocks[backIndex].Array,
+                blocks[backIndex].Offset + backOffset,
+                BlockSize - backOffset));
             for (int i = backIndex + 1, count = blocks.Count; i < count; ++i)
             {
-                blockList.Add(new ArraySegment<byte>(blocks[i]));
+                blockList.Add(new ArraySegment<byte>(
+                    blocks[i].Array,
+                    blocks[i].Offset,
+                    BlockSize));
             }
         }
 
@@ -285,12 +303,14 @@ namespace x2
             get
             {
                 index += front;
-                return blocks[index >> blockSizeExponent][index & remainderMask];
+                Segment block = blocks[index >> blockSizeExponent];
+                return block.Array[block.Offset + (index & remainderMask)];
             }
             set
             {
                 index += front;
-                blocks[index >> blockSizeExponent][index & remainderMask] = value;
+                Segment block = blocks[index >> blockSizeExponent];
+                block.Array[block.Offset + (index & remainderMask)] = value;
             }
         }
 
@@ -325,18 +345,18 @@ namespace x2
             if (count > 0)
             {
                 int roomFactor = 1 << level;
-                List<byte[]> blocksToRemove = blocks.GetRange(index, count);
+                List<Segment> blocksToRemove = blocks.GetRange(index, count);
                 blocks.RemoveRange(index, count);
                 for (int i = 0; i < blocksToRemove.Count; ++i)
                 {
-                    byte[] block = blocksToRemove[i];
+                    Segment block = blocksToRemove[i];
                     if (i < roomFactor)
                     {
                         blocks.Add(block);
                     }
                     else
                     {
-                        BufferPool.Release(blockSizeExponent, blocksToRemove[i]);
+                        SegmentPool.Release(blocksToRemove[i]);
                     }
                 }
             }
@@ -374,7 +394,7 @@ namespace x2
             int required = position + numBytes;
             while (required >= Capacity)
             {
-                blocks.Add(BufferPool.Acquire(blockSizeExponent));
+                blocks.Add(SegmentPool.Acquire());
             }
             if (required > back)
             {
@@ -385,13 +405,13 @@ namespace x2
         public byte GetByte()
         {
             BlockFeed();
-            return currentBlock[position++ & remainderMask];
+            return currentBlock.Array[currentBlock.Offset + (position++ & remainderMask)];
         }
 
         public void PutByte(byte value)
         {
             BlockFeed();
-            currentBlock[position++ & remainderMask] = value;
+            currentBlock.Array[currentBlock.Offset + (position++ & remainderMask)] = value;
         }
 
         private void BlockFeed()
@@ -411,10 +431,10 @@ namespace x2
             }
             for (int i = 0, count = blocks.Count; i < count; ++i)
             {
-                BufferPool.Release(blockSizeExponent, blocks[i]);
+                SegmentPool.Release(blocks[i]);
             }
             blocks.Clear();
-            currentBlock = null;
+            currentBlock = new Segment();
         }
     }
 }
