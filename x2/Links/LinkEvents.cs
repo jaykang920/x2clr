@@ -10,22 +10,22 @@ namespace x2
 {
     public static class LinkEventType
     {
-        public const int LinkSessionConnected = -4;
-        public const int LinkSessionDisconnected = -5;
-        public const int HandshakeReq = -10;
-        public const int HandshakeResp = -11;
-        public const int HandshakeAck = -12;
+        public const int LinkSessionConnected = -10;
+        public const int LinkSessionDisconnected = -11;
+        public const int HandshakeReq = -12;
+        public const int HandshakeResp = -13;
+        public const int HandshakeAck = -14;
 
         private static ConstsInfo<int> info;
 
         static LinkEventType()
         {
             info = new ConstsInfo<int>();
-            info.Add("LinkSessionConnected", -4);
-            info.Add("LinkSessionDisconnected", -5);
-            info.Add("HandshakeReq", -10);
-            info.Add("HandshakeResp", -11);
-            info.Add("HandshakeAck", -12);
+            info.Add("LinkSessionConnected", -10);
+            info.Add("LinkSessionDisconnected", -11);
+            info.Add("HandshakeReq", -12);
+            info.Add("HandshakeResp", -13);
+            info.Add("HandshakeAck", -14);
         }
 
         public static string GetName(int value)

@@ -1,12 +1,12 @@
 <x2 namespace="x2">
 
     <consts name="LinkEventType">
-        <const name="LinkSessionConnected">-4</const>
-        <const name="LinkSessionDisconnected">-5</const>
+        <const name="LinkSessionConnected">-10</const>
+        <const name="LinkSessionDisconnected">-11</const>
 
-        <const name="HandshakeReq">-10</const>
-        <const name="HandshakeResp">-11</const>
-        <const name="HandshakeAck">-12</const>
+        <const name="HandshakeReq">-12</const>
+        <const name="HandshakeResp">-13</const>
+        <const name="HandshakeAck">-14</const>
     </consts>
 
     <event name="LinkSessionConnected" id="LinkEventType.LinkSessionConnected" local="true">

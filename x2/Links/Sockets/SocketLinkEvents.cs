@@ -10,24 +10,24 @@ namespace x2
 {
     public static class SocketLinkEventType
     {
-        public const int LinkSessionRecovered = -6;
-        public const int KeepaliveEvent = -20;
-        public const int KeepaliveTick = -21;
-        public const int SessionReq = -30;
-        public const int SessionResp = -31;
-        public const int SessionAck = -32;
+        public const int LinkSessionRecovered = -20;
+        public const int KeepaliveEvent = -21;
+        public const int KeepaliveTick = -22;
+        public const int SessionReq = -23;
+        public const int SessionResp = -24;
+        public const int SessionAck = -25;
 
         private static ConstsInfo<int> info;
 
         static SocketLinkEventType()
         {
             info = new ConstsInfo<int>();
-            info.Add("LinkSessionRecovered", -6);
-            info.Add("KeepaliveEvent", -20);
-            info.Add("KeepaliveTick", -21);
-            info.Add("SessionReq", -30);
-            info.Add("SessionResp", -31);
-            info.Add("SessionAck", -32);
+            info.Add("LinkSessionRecovered", -20);
+            info.Add("KeepaliveEvent", -21);
+            info.Add("KeepaliveTick", -22);
+            info.Add("SessionReq", -23);
+            info.Add("SessionResp", -24);
+            info.Add("SessionAck", -25);
         }
 
         public static string GetName(int value)

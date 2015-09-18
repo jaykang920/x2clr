@@ -1,14 +1,14 @@
 <x2 namespace="x2">
 
     <consts name="SocketLinkEventType">
-        <const name="LinkSessionRecovered">-6</const>
+        <const name="LinkSessionRecovered">-20</const>
         
-        <const name="KeepaliveEvent">-20</const>
-        <const name="KeepaliveTick">-21</const>
+        <const name="KeepaliveEvent">-21</const>
+        <const name="KeepaliveTick">-22</const>
 
-        <const name="SessionReq">-30</const>
-        <const name="SessionResp">-31</const>
-        <const name="SessionAck">-32</const>
+        <const name="SessionReq">-23</const>
+        <const name="SessionResp">-24</const>
+        <const name="SessionAck">-25</const>
     </consts>
 
     <event name="LinkSessionRecovered" id="SocketLinkEventType.LinkSessionRecovered" local="true">
