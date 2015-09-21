@@ -1,3 +1,7 @@
+## 0.6.1 (2015-09-21)
+
+- Initial NuGet packages
+
 ## 0.6.0 (2015-09-18)
 
 - enhanced overall performance, especially for default socket links. re-wrote
