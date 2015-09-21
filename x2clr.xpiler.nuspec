@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>x2clr.xpiler</id>
+    <version>0.6.1</version>
+    <authors>Jae-jun Kang</authors>
+    <owners>Jae-jun Kang</owners>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>https://github.com/jaykang920/x2clr</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>x2clr xpiler</description>
+    <releaseNotes>Initial NuGet package</releaseNotes>
+    <copyright>Copyright © 2013-2015 Jae-jun Kang</copyright>
+    <tags>x2 x2clr xpiler</tags>
+  </metadata>
+
+  <files>
+    <file src="LICENSE"/>
+    <file src="bin\Release\xpiler.exe" target="tools"/>
+    <file src="bin\Release\xpiler.pdb" target="tools"/>
+  </files>
+</package>
