@@ -2,13 +2,15 @@
 <package >
   <metadata>
     <id>x2clr</id>
+    <title>x2clr</title>
     <version>0.6.1</version>
     <authors>Jae-jun Kang</authors>
     <owners>Jae-jun Kang</owners>
     <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
     <projectUrl>https://github.com/jaykang920/x2clr</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>CLR (.NET/Mono) port of x2</description>
+    <summary>CLR (.NET/Mono) port of x2</summary>
+    <description>x2clr is the reference port of x2 written in C# targeting CLR (Common Language Runtime) environments such as .NET or Mono.</description>
     <releaseNotes>Initial NuGet package</releaseNotes>
     <copyright>Copyright © 2013-2015 Jae-jun Kang</copyright>
     <tags>x2 x2clr distributed communication network socket</tags>
