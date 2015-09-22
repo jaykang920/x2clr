@@ -184,7 +184,10 @@ namespace x2
                     return;
                 }
                 // swap buffer
-                eventsSending.Clear();
+                if (eventsSending.Count != 0)
+                {
+                    eventsSending.Clear();
+                }
                 List<Event> temp = eventsSending;
                 eventsSending = eventsToSend;
                 eventsToSend = temp;
@@ -316,11 +319,11 @@ namespace x2
                         goto next;
                     }
 
+                    LogEventReceived(retrieved);
+
                     retrieved._Handle = Handle;
 
                     link.OnPreprocess(this, retrieved);
-
-                    LogEventReceived(retrieved);
 
                     if (!Process(retrieved))
                     {
@@ -377,6 +380,7 @@ namespace x2
             {
                 if (eventsToSend.Count == 0)
                 {
+                    eventsSending.Clear();
                     txFlag = false;
                     return;
                 }
