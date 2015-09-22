@@ -9,8 +9,21 @@ C# targeting CLR (Common Language Runtime) environments such as .NET or Mono.
 Requirements
 ------------
 
-* Visual Studio 2008 (9.0) or newer equivalent to compile C# 3.0
-* .NET framework 3.5 or newer equivalent to run
+* .NET framework 3.5 or newer equivalent environment to run
+* Visual Studio 2008 (9.0) or newer equivalent tool to compile C# 3.0
+
+Installation
+------------
+
+x2clr can be installed via the NuGet UI (as [x2clr](https://www.nuget.org/packages/x2clr)), or via the NuGet Package Manager console command:
+
+    PM> Install-Package x2clr
+
+x2clr relies on its xpiler to convert x2 definition files into corresponding C# source code files. So most probably you will want to install the [x2clr.xpiler](https://www.nuget.org/packages/x2clr.xpiler) too.
+
+    PM> Install-Package x2clr.xpiler
+
+ZIP archives containing specific tagged versions of the source code are available in [releases](https://github.com/jaykang920/x2clr/releases).
 
 License
 -------
