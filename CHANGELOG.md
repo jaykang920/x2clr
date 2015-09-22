@@ -1,3 +1,8 @@
+## 0.6.2 (2015-09-22)
+
+- Links/Sockets/ServerLink: fixed the bug that Diag.ConnectionCount was not updated.
+- Links/Sockets/AbstractTcpClient: duplicate connect attempt now throws InvalidOperationException
+
 ## 0.6.1 (2015-09-21)
 
 - Initial NuGet packages
