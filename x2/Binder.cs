@@ -120,9 +120,10 @@ namespace x2
                 }
 
                 var token = new Token(e, handler);
-                if (handler.Action.Target is EventSink)
+
+                var eventSink = handler.Action.Target as EventSink;
+                if (!Object.ReferenceEquals(eventSink, null))
                 {
-                    var eventSink = (EventSink)handler.Action.Target;
                     eventSink.RemoveBinding(token);
                 }
             }

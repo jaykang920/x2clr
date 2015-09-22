@@ -2,15 +2,13 @@
 <package >
   <metadata>
     <id>x2clr.xpiler</id>
-    <title>x2clr.xpiler</title>
     <version>0.6.1</version>
     <authors>Jae-jun Kang</authors>
     <owners>Jae-jun Kang</owners>
-    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <licenseUrl>https://github.com/jaykang920/x2clr/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/jaykang920/x2clr</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <summary>xpiler for x2clr, generating C# source files out of x2 definitions</summary>
-    <description>x2clr xpiler</description>
+    <description>Generates C# source code files out of x2 definition files.</description>
     <releaseNotes>Initial NuGet package</releaseNotes>
     <copyright>Copyright © 2013-2015 Jae-jun Kang</copyright>
     <tags>x2 x2clr xpiler</tags>

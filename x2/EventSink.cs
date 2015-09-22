@@ -100,7 +100,10 @@ namespace x2
                     this.flow.Target = null;
                 }
             }
-            catch (Exception) { }
+            catch (Exception e)
+            {
+                Log.Warn("error removing EventSink bindings : {0}", e);
+            }
             finally
             {
                 disposed = true;
