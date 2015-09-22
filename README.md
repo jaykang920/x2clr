@@ -28,7 +28,7 @@ ZIP archives containing specific tagged versions of the source code are availabl
 Getting Started
 ---------------
 
-[HeadFirst examples](https://github.com/jaykang920/x2clr/wiki/HeadFirst-Examples) can be a simple start to learn how to organize x2 applications. 
+[HeadFirst examples](https://github.com/jaykang920/x2clr/wiki/HeadFirst-Examples) can be a simple start point to learn how x2 applications are organized.
 
 License
 -------
