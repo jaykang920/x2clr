@@ -9,7 +9,6 @@
     <projectUrl>https://github.com/jaykang920/x2clr</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Generates C# source code files out of x2 definition files.</description>
-    <releaseNotes>Initial NuGet package</releaseNotes>
     <copyright>Copyright © 2013-2015 Jae-jun Kang</copyright>
     <tags>x2 x2clr xpiler</tags>
   </metadata>
