@@ -20,6 +20,8 @@ namespace x2
         private volatile bool incomingKeepaliveEnabled;
         private volatile bool outgoingKeepaliveEnabled;
 
+        private volatile bool connecting;
+
         public bool Connected
         {
             get { return (session != null && ((AbstractTcpSession)session).Connected); }
@@ -140,14 +142,23 @@ namespace x2
         /// </summary>
         public void Connect(IPAddress ip, int port)
         {
-            IPEndPoint endpoint = new IPEndPoint(ip, port);
+            if (connecting)
+            {
+                throw new InvalidOperationException();
+            }
 
-            Log.Info("{0} connecting to {1}", Name, endpoint);
+            using (new ReadLock(rwlock))
+            {
+                if (session != null &&
+                    ((AbstractTcpSession)session).Connected)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
 
-            // Reset the retry counter.
-            retryCount = 0;
+            connecting = true;
 
-            Connect(null, endpoint);
+            Connect(null, new IPEndPoint(ip, port));
         }
 
         /// <summary>
@@ -164,6 +175,11 @@ namespace x2
 
         private void Connect(Socket socket, EndPoint endpoint)
         {
+            Log.Info("{0} connecting to {1}", Name, endpoint);
+
+            // Reset the retry counter.
+            retryCount = 0;
+
             startTime = DateTime.UtcNow;
 
             ConnectInternal(socket, endpoint);
@@ -205,6 +221,8 @@ namespace x2
             Log.Info("{0} {1} connected to {2}",
                 Name, session.Handle, socket.RemoteEndPoint);
 
+            connecting = false;
+            
             base.OnConnectInternal(session);
         }
 
@@ -235,6 +253,8 @@ namespace x2
                 socket.Close();
 
                 NotifySessionConnected(false, endpoint);
+
+                connecting = false;
             }
         }
 
