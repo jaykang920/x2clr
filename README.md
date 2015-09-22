@@ -25,6 +25,11 @@ The xpiler converts x2 definition files into corresponding C# source code files.
 
 ZIP archives containing specific tagged versions of the source code are available in [releases](https://github.com/jaykang920/x2clr/releases).
 
+Getting Started
+---------------
+
+[HeadFirst examples](https://github.com/jaykang920/x2clr/wiki/HeadFirst-Examples) can be a simple start to learn how to organize x2 applications. 
+
 License
 -------
 
