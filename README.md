@@ -35,7 +35,7 @@ Getting Started
 Community
 ---------
 
-Join the project [Gitter chat room](https://gitter.im/jaykang920/x2clr?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) to talk.
+Join the project [Gitter chat room](https://gitter.im/jaykang920/x2clr?utm_source=share-link&utm_medium=link&utm_campaign=share-link) to talk.
 
 License
 -------
