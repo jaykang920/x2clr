@@ -1,6 +1,8 @@
 x2clr
 =====
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jaykang920/x2clr?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 _Under development now_
 
 x2clr is the reference port of [x2](https://github.com/jaykang920/x2) written in
@@ -28,7 +30,12 @@ ZIP archives containing specific tagged versions of the source code are availabl
 Getting Started
 ---------------
 
-[HeadFirst examples](https://github.com/jaykang920/x2clr/wiki/HeadFirst-Examples) can be a simple start point to learn how x2 applications are organized.
+[HeadFirst examples](https://github.com/jaykang920/x2clr/wiki/HeadFirst-Examples) can be a simple start point to learn how x2clr applications are organized.
+
+Community
+---------
+
+Join the project [Gitter chat room](https://gitter.im/jaykang920/x2clr?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) to talk.
 
 License
 -------
