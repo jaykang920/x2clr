@@ -1,3 +1,6 @@
+- fixed ServerLink.Diagnostics connection counting
+- added support for using(new Hub.Flows().StartUp()) block
+
 ## 0.6.2 (2015-09-22)
 
 - Links/Sockets/ServerLink: fixed the bug that Diag.ConnectionCount was not updated.
