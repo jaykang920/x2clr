@@ -1,6 +1,8 @@
 x2clr
 =====
 
+[![Join the chat at https://gitter.im/jaykang920/x2clr](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jaykang920/x2clr?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 _Under development now_
 
 x2clr is the reference port of [x2](https://github.com/jaykang920/x2) written in
