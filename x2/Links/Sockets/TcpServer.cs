@@ -35,11 +35,12 @@ namespace x2
             try
             {
                 var clientSocket = socket.EndAccept(asyncResult);
+                var session = new TcpSession(this, clientSocket);
 
-                if (!OnAcceptInternal(new TcpSession(this, clientSocket)))
+                if (!OnAcceptInternal(session))
                 {
                     NotifySessionConnected(false, clientSocket.RemoteEndPoint);
-                    clientSocket.Close();
+                    session.Close();
                 }
             }
             catch (ObjectDisposedException)

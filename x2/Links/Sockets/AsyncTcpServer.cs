@@ -83,11 +83,12 @@ namespace x2
             if (e.SocketError == SocketError.Success)
             {
                 var clientSocket = e.AcceptSocket;
+                var session = new AsyncTcpSession(this, clientSocket);
 
-                if (!OnAcceptInternal(new AsyncTcpSession(this, clientSocket)))
+                if (!OnAcceptInternal(session))
                 {
                     NotifySessionConnected(false, clientSocket.RemoteEndPoint);
-                    clientSocket.Close();
+                    session.Close();
                 }
             }
             else

@@ -90,6 +90,11 @@ namespace x2
             buffersSending = new List<SendBuffer>();
 
             Diag = new Diagnostics(this);
+
+            if (link is ServerLink)
+            {
+                ((ServerLink.Diagnostics)link.Diag).IncrementConnectionCount();
+            }
         }
 
         ~LinkSession()
@@ -139,6 +144,11 @@ namespace x2
             buffersSending.Clear();
 
             handlePool.Release(handle);
+
+            if (link is ServerLink)
+            {
+                ((ServerLink.Diagnostics)link.Diag).DecrementConnectionCount();
+            }
 
             disposed = true;
         }

@@ -73,8 +73,6 @@ namespace x2
                 }
             }
 
-            ((Diagnostics)Diag).IncrementConnectionCount();
-
             base.NotifySessionConnected(result, context);
         }
 
@@ -84,8 +82,6 @@ namespace x2
             {
                 sessions.Remove(handle);
             }
-
-            ((Diagnostics)Diag).DecrementConnectionCount();
 
             base.NotifySessionDisconnected(handle, context);
         }
