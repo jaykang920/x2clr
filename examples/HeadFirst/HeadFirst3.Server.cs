@@ -40,10 +40,8 @@ namespace x2.Examples.HeadFirst
                     .Add(new CapitalizerCase())
                     .Add(new CapitalizerServer()));
 
-            using (var flows = new Hub.Flows())
+            using (new Hub.Flows().StartUp())
             {
-                flows.StartUp();
-
                 while (true)
                 {
                     string message = Console.ReadLine();

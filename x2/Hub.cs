@@ -297,7 +297,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Represents the attached flows for cleanup convenience.
+        /// Represents the set of attached flows for convenient cleanup.
         /// </summary>
         public sealed class Flows : IDisposable
         {
@@ -318,9 +318,10 @@ namespace x2
             /// <summary>
             /// Starts all the attached flows.
             /// </summary>
-            public void StartUp()
+            public Flows StartUp()
             {
                 Hub.StartUp();
+                return this;
             }
 
             /// <summary>
