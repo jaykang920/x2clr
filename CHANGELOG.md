@@ -1,3 +1,4 @@
+- added initial non-reliable UDP socket links
 - fixed ServerLink.Diagnostics connection counting
 - added support for using(new Hub.Flows().StartUp()) block
 
