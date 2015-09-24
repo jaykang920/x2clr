@@ -224,15 +224,14 @@ namespace x2
                 sendBuffer.Reset();
                 e.Serialize(new Serializer(sendBuffer.Buffer));
 
-                uint header = 0;
+                bool transformed = false;
                 if (BufferTransform != null && txTransformReady && e._Transform)
                 {
                     BufferTransform.Transform(sendBuffer.Buffer, (int)sendBuffer.Buffer.Length);
-                    header = 1;
+                    transformed = true;
                 }
-                header |= ((uint)sendBuffer.Buffer.Length << 1);
 
-                sendBuffer.HeaderLength = Serializer.WriteVariable(sendBuffer.HeaderBytes, header);
+                BuildHeader(sendBuffer, transformed);
 
                 sendBuffer.ListOccupiedSegments(txBufferList);
                 lengthToSend += sendBuffer.Length;
@@ -242,6 +241,9 @@ namespace x2
 
             SendInternal();
         }
+
+        protected abstract void BuildHeader(SendBuffer sendBuffer, bool transformed);
+        protected abstract bool ParseHeader();
 
         protected abstract void ReceiveInternal();
         protected abstract void SendInternal();
@@ -258,21 +260,12 @@ namespace x2
             if (rxBeginning)
             {
                 rxBuffer.Rewind();
-                uint header;
-                int headerLength;
-                try
+
+                if (!ParseHeader())
                 {
-                    headerLength = rxBuffer.ReadVariable(out header);
-                }
-                catch (System.IO.EndOfStreamException)
-                {
-                    // Need more to start parsing.
                     BeginReceive(true);
                     return;
                 }
-                rxBuffer.Shrink(headerLength);
-                lengthToReceive = (int)(header >> 1);
-                rxTransformed = ((header & 1) != 0);
             }
 
             // Handle split packets.
@@ -338,20 +331,11 @@ namespace x2
                     break;
                 }
 
-                uint header;
-                int headerLength;
-                try
-                {
-                    headerLength = rxBuffer.ReadVariable(out header);
-                }
-                catch (System.IO.EndOfStreamException)
+                if (!ParseHeader())
                 {
                     BeginReceive(true);
                     return;
                 }
-                rxBuffer.Shrink(headerLength);
-                lengthToReceive = (int)(header >> 1);
-                rxTransformed = ((header & 1) != 0);
 
                 if (rxBuffer.Length < lengthToReceive)
                 {

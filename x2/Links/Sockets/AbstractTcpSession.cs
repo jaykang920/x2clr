@@ -183,6 +183,33 @@ namespace x2
             }
         }
 
+        protected override void BuildHeader(SendBuffer sendBuffer, bool transformed)
+        {
+            uint header = (uint)(transformed ? 1 : 0);
+            header |= ((uint)sendBuffer.Buffer.Length << 1);
+
+            sendBuffer.HeaderLength = Serializer.WriteVariable(sendBuffer.HeaderBytes, header);
+        }
+
+        protected override bool ParseHeader()
+        {
+            uint header;
+            int headerLength;
+            try
+            {
+                headerLength = rxBuffer.ReadVariable(out header);
+            }
+            catch (System.IO.EndOfStreamException)
+            {
+                // Need more to start parsing.
+                return false;
+            }
+            rxBuffer.Shrink(headerLength);
+            lengthToReceive = (int)(header >> 1);
+            rxTransformed = ((header & 1) != 0);
+            return true;
+        }
+
         protected override bool Process(Event e)
         {
             switch (e.GetTypeId())
