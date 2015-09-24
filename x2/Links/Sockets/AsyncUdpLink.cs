@@ -124,8 +124,10 @@ namespace x2
         {
             e.BufferList = null;
 
+            int bytesTransferred = 0;
             if (e.SocketError == SocketError.Success)
             {
+                bytesTransferred = e.BytesTransferred;
             }
             else
             {
@@ -140,7 +142,7 @@ namespace x2
                 }
             }
 
-            OnSendToInternal();
+            OnSendToInternal(bytesTransferred);
         }
     }
 }

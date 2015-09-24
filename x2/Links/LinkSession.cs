@@ -257,7 +257,7 @@ namespace x2
 
             if (rxBeginning)
             {
-                rxBuffer.Position = 0;
+                rxBuffer.Rewind();
                 uint header;
                 int headerLength;
                 try
@@ -300,7 +300,7 @@ namespace x2
                         goto next;
                     }
                 }
-                rxBuffer.Position = 0;
+                rxBuffer.Rewind();
 
                 var deserializer = new Deserializer(rxBuffer);
                 Event retrieved = EventFactory.Create(deserializer);

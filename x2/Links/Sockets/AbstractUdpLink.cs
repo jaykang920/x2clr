@@ -43,6 +43,8 @@ namespace x2
             txQueue = new Queue<Event>();
 
             rwlock = new ReaderWriterLockSlim();
+
+            Diag = new Diagnostics();
         }
 
         protected override void Dispose(bool disposing)
@@ -273,11 +275,14 @@ namespace x2
                 BufferTransform.Transform(txBuffer, (int)txBuffer.Length);
             }
 
-            Log.Debug("{0} {1} sent event {2}", Name, handle, e);
-
             try
             {
                 SendToInternal(endPoint);
+
+                Diag.IncrementEventsSent();
+
+                Log.Debug("{0} {1} sent event {2}", Name, handle, e);
+
                 return;
             }
             catch (ObjectDisposedException)
@@ -290,7 +295,7 @@ namespace x2
             }
 
         next:
-            OnSendToInternal();
+            OnSendToInternal(0);
         }
 
         protected abstract void ReceiveFromInternal();
@@ -298,6 +303,8 @@ namespace x2
 
         protected void OnReceiveFromInternal(int bytesTransferred, EndPoint endPoint)
         {
+            Diag.AddBytesReceived(bytesTransferred);
+
             int handle;
             using (new ReadLock(rwlock))
             {
@@ -345,14 +352,21 @@ namespace x2
                     retrieved._Handle = handle;
                 }
 
-                Log.Debug("{0} {1} received event {2}", Name, handle, retrieved);
-
                 Hub.Post(retrieved);
+
+                Diag.IncrementEventsReceived();
+
+                Log.Debug("{0} {1} received event {2}", Name, handle, retrieved);
             }
         }
 
-        protected void OnSendToInternal()
+        protected void OnSendToInternal(int bytesTransferred)
         {
+            if (bytesTransferred != 0)
+            {
+                Diag.AddBytesSent(bytesTransferred);
+            }
+
             Event e;
             lock (txSync)
             {

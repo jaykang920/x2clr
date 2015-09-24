@@ -91,9 +91,10 @@ namespace x2
         // Asynchronous callback for BeginSendTo
         private void OnSendTo(IAsyncResult asyncResult)
         {
+            int bytesTransferred = 0;
             try
             {
-                int bytesTransferred = socket.EndSendTo(asyncResult);
+                bytesTransferred = socket.EndSendTo(asyncResult);
             }
             catch (ObjectDisposedException)
             {
@@ -114,7 +115,7 @@ namespace x2
                 Log.Warn("{0} sendto error {1}", Name, e);
             }
 
-            OnSendToInternal();
+            OnSendToInternal(bytesTransferred);
         }
     }
 }
