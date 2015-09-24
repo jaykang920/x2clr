@@ -93,6 +93,21 @@ namespace x2
             }
         }
 
+        /// <summary>
+        /// Gets the first segment of this buffer.
+        /// </summary>
+        public Segment FirstSegment
+        {
+            get
+            {
+                if (blocks.Count < 1)
+                {
+                    return new Segment();
+                }
+                return blocks[0];
+            }
+        }
+
         public Buffer()
         {
             int blockSizeExponent = SegmentPool.SegmentSizeExponent;
@@ -256,6 +271,12 @@ namespace x2
             CheckLengthToRead(count);
             CopyTo(buffer, position, count);
             Position = Position + count;
+        }
+
+        public void Reset()
+        {
+            Position = 0;
+            back = front;
         }
 
         /// <summary>

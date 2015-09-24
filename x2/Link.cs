@@ -203,4 +203,24 @@ namespace x2
 
         #endregion  // Diagnostics
     }
+
+    internal static class HandlePool
+    {
+        private static RangedIntPool pool;
+
+        static HandlePool()
+        {
+            pool = new RangedIntPool(1, 65536, true);  // [1, 65536]
+        }
+
+        public static int Acquire()
+        {
+            return pool.Acquire();
+        }
+
+        public static void Release(int handle)
+        {
+            pool.Release(handle);
+        }
+    }
 }

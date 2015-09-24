@@ -73,8 +73,22 @@ namespace x2
                 // (bytesTransferred == 0) implies a graceful shutdown
                 Log.Info("{0} {1} disconnected", link.Name, Handle);
             }
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
             catch (Exception e)
             {
+                var se = e as SocketException;
+                if (se != null)
+                {
+                    if (se.SocketErrorCode == SocketError.OperationAborted)
+                    {
+                        // Socket has been closed.
+                        return;
+                    }
+                }
+
                 Log.Warn("{0} {1} recv error: {2}", link.Name, Handle, e);
             }
 
@@ -89,6 +103,10 @@ namespace x2
                 int bytesTransferred = socket.EndSend(asyncResult);
 
                 OnSendInternal(bytesTransferred);
+            }
+            catch (ObjectDisposedException)
+            {
+                return;
             }
             catch (Exception e)
             {

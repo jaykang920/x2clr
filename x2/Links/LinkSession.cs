@@ -12,10 +12,6 @@ namespace x2
     /// </summary>
     public abstract class LinkSession : IDisposable
     {
-        protected const int bufferBlockExponent = 12;
-
-        private static RangedIntPool handlePool;
-
         protected int handle;
         protected SessionBasedLink link;
         protected bool polarity;
@@ -68,17 +64,12 @@ namespace x2
             set { polarity = value; }
         }
 
-        static LinkSession()
-        {
-            handlePool = new RangedIntPool(1, 65536, true);  // [1, 65536]
-        }
-
         /// <summary>
         /// Initializes a new instance of the LinkSession class.
         /// </summary>
         protected LinkSession(SessionBasedLink link)
         {
-            handle = handlePool.Acquire();
+            handle = HandlePool.Acquire();
             this.link = link;
 
             rxBuffer = new Buffer();
@@ -143,7 +134,7 @@ namespace x2
             }
             buffersSending.Clear();
 
-            handlePool.Release(handle);
+            HandlePool.Release(handle);
 
             if (link is ServerLink)
             {

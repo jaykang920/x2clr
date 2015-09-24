@@ -4,21 +4,13 @@ using x2;
 
 namespace x2.Examples.HeadFirst
 {
-    class HeadFirst3Client
+    class HeadFirst4Client
     {
-        class CapitalizerClient : TcpClient
+        class CapitalizerClient : UdpLink
         {
             public CapitalizerClient()
                 : base("CapitalizerClient")
             {
-                IncomingKeepaliveEnabled = true;
-                OutgoingKeepaliveEnabled = true;
-                MaxKeepaliveFailureCount = 1;
-                ///*
-                BufferTransform = new BufferTransformStack()
-                    .Add(new BlockCipher())
-                    .Add(new Inverse());
-                //*/
             }
 
             protected override void SetUp()
@@ -26,7 +18,9 @@ namespace x2.Examples.HeadFirst
                 base.SetUp();
                 EventFactory.Register<CapitalizeResp>();
                 new CapitalizeReq().Bind(Send);
-                Connect("127.0.0.1", 6789);
+                Bind(6788).Listen();
+                AddEndPoint(new System.Net.IPEndPoint(
+                    System.Net.IPAddress.Parse("127.0.0.1"), 6789));
             }
         }
 

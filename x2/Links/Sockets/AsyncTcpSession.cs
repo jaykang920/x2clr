@@ -34,20 +34,15 @@ namespace x2
         {
             if (disposed) { return; }
 
-            if (recvEventArgs != null)
-            {
-                recvEventArgs.Completed -= OnReceiveCompleted;
-                recvEventArgs.Dispose();
+            recvEventArgs.Completed -= OnReceiveCompleted;
+            recvEventArgs.Dispose();
 
-                Log.Debug("{0} {1} freed recvEventArgs", link.Name, Handle);
-            }
-            if (sendEventArgs != null)
-            {
-                sendEventArgs.Completed -= OnSendCompleted;
-                sendEventArgs.Dispose();
+            Log.Debug("{0} {1} freed recvEventArgs", link.Name, Handle);
 
-                Log.Debug("{0} {1} freed sendEventArgs", link.Name, Handle);
-            }
+            sendEventArgs.Completed -= OnSendCompleted;
+            sendEventArgs.Dispose();
+
+            Log.Debug("{0} {1} freed sendEventArgs", link.Name, Handle);
 
             base.Dispose(disposing);
         }
@@ -136,7 +131,12 @@ namespace x2
             }
             else
             {
-                if (e.SocketError != SocketError.OperationAborted)
+                if (e.SocketError == SocketError.OperationAborted)
+                {
+                    // Socket has been closed.
+                    return;
+                }
+                else
                 {
                     Log.Warn("{0} {1} recv error {2}", link.Name, Handle, e.SocketError);
                 }
@@ -152,10 +152,7 @@ namespace x2
 
             if (e.SocketError == SocketError.Success)
             {
-                //lock (syncTx)
-                {
-                    OnSendInternal(e.BytesTransferred);
-                }
+                OnSendInternal(e.BytesTransferred);
             }
             else
             {
