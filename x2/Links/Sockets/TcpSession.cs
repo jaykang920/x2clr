@@ -27,13 +27,13 @@ namespace x2
 
                 socket.BeginReceive(rxBufferList, SocketFlags.None, OnReceive, null);
             }
-            catch (ObjectDisposedException ode)
+            catch (ObjectDisposedException)
             {
-                Log.Debug("{0} {1} recv error {2}", link.Name, Handle, ode.Message);
+                return;
             }
             catch (Exception e)
             {
-                Log.Info("{0} {1} recv error {2}", link.Name, Handle, e);
+                Log.Warn("{0} {1} recv error {2}", link.Name, Handle, e);
 
                 OnDisconnect();
             }
@@ -45,13 +45,13 @@ namespace x2
             {
                 socket.BeginSend(txBufferList, SocketFlags.None, OnSend, null);
             }
-            catch (ObjectDisposedException ode)
+            catch (ObjectDisposedException)
             {
-                Log.Debug("{0} {1} send error {2}", link.Name, Handle, ode.Message);
+                return;
             }
             catch (Exception e)
             {
-                Log.Info("{0} {1} send error {2}", link.Name, Handle, e);
+                Log.Warn("{0} {1} send error {2}", link.Name, Handle, e);
 
                 OnDisconnect();
             }

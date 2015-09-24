@@ -14,17 +14,17 @@ namespace x2
     /// </summary>
     public class AsyncTcpSession : AbstractTcpSession
     {
-        private SocketAsyncEventArgs recvEventArgs;
-        private SocketAsyncEventArgs sendEventArgs;
+        private SocketAsyncEventArgs rxEventArgs;
+        private SocketAsyncEventArgs txEventArgs;
 
         public AsyncTcpSession(SessionBasedLink link, Socket socket)
             : base(link, socket)
         {
-            recvEventArgs = new SocketAsyncEventArgs();
-            sendEventArgs = new SocketAsyncEventArgs();
+            rxEventArgs = new SocketAsyncEventArgs();
+            txEventArgs = new SocketAsyncEventArgs();
 
-            recvEventArgs.Completed += OnReceiveCompleted;
-            sendEventArgs.Completed += OnSendCompleted;
+            rxEventArgs.Completed += OnReceiveCompleted;
+            txEventArgs.Completed += OnSendCompleted;
         }
 
         /// <summary>
@@ -34,13 +34,13 @@ namespace x2
         {
             if (disposed) { return; }
 
-            recvEventArgs.Completed -= OnReceiveCompleted;
-            recvEventArgs.Dispose();
+            rxEventArgs.Completed -= OnReceiveCompleted;
+            rxEventArgs.Dispose();
 
             Log.Debug("{0} {1} freed recvEventArgs", link.Name, Handle);
 
-            sendEventArgs.Completed -= OnSendCompleted;
-            sendEventArgs.Dispose();
+            txEventArgs.Completed -= OnSendCompleted;
+            txEventArgs.Dispose();
 
             Log.Debug("{0} {1} freed sendEventArgs", link.Name, Handle);
 
@@ -53,23 +53,23 @@ namespace x2
             {
                 rxBufferList.Clear();
                 rxBuffer.ListAvailableSegments(rxBufferList);
-                recvEventArgs.BufferList = rxBufferList;
+                rxEventArgs.BufferList = rxBufferList;
 
-                bool pending = socket.ReceiveAsync(recvEventArgs);
+                bool pending = socket.ReceiveAsync(rxEventArgs);
                 if (!pending)
                 {
                     Log.Debug("{0} {1} ReceiveAsync completed immediately", link.Name, Handle);
 
-                    OnReceive(recvEventArgs);
+                    OnReceive(rxEventArgs);
                 }
             }
-            catch (ObjectDisposedException ode)
+            catch (ObjectDisposedException)
             {
-                Log.Debug("{0} {1} recv error {2}", link.Name, Handle, ode.Message);
+                return;
             }
             catch (Exception e)
             {
-                Log.Info("{0} {1} recv error {2}", link.Name, Handle, e);
+                Log.Warn("{0} {1} recv error {2}", link.Name, Handle, e);
 
                 OnDisconnect();
             }
@@ -79,23 +79,23 @@ namespace x2
         {
             try
             {
-                sendEventArgs.BufferList = txBufferList;
+                txEventArgs.BufferList = txBufferList;
 
-                bool pending = socket.SendAsync(sendEventArgs);
+                bool pending = socket.SendAsync(txEventArgs);
                 if (!pending)
                 {
                     Log.Debug("{0} {1} SendAsync completed immediately", link.Name, Handle);
 
-                    OnSend(sendEventArgs);
+                    OnSend(txEventArgs);
                 }
             }
-            catch (ObjectDisposedException ode)
+            catch (ObjectDisposedException)
             {
-                Log.Debug("{0} {1} send error {2}", link.Name, Handle, ode.Message);
+                return;
             }
             catch (Exception e)
             {
-                Log.Info("{0} {1} send error {2}", link.Name, Handle, e);
+                Log.Warn("{0} {1} send error {2}", link.Name, Handle, e);
 
                 OnDisconnect();
             }
