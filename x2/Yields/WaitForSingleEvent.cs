@@ -14,6 +14,7 @@ namespace x2
         public const double DefaultTimeout = 30.0;
 
         private readonly Coroutine coroutine;
+
         private readonly Binder.Token handlerToken;
         private readonly Binder.Token timeoutToken;
         private readonly Timer.Token? timerToken;
@@ -59,12 +60,13 @@ namespace x2
         {
             WaitHandlePool.Release(handlerToken.Key._WaitHandle);
 
+            Flow.Unbind(handlerToken);
+
             if (timerToken.HasValue)
             {
                 TimeFlow.Default.Cancel(timerToken.Value);
                 Flow.Unbind(timeoutToken);
             }
-            Flow.Unbind(handlerToken);
 
             coroutine.Context = e;
             coroutine.Continue();
@@ -75,8 +77,8 @@ namespace x2
         {
             WaitHandlePool.Release(handlerToken.Key._WaitHandle);
 
-            Flow.Unbind(timeoutToken);
             Flow.Unbind(handlerToken);
+            Flow.Unbind(timeoutToken);
 
             Log.Error("WaitForSingleEvent timeout for {0}", handlerToken.Key);
 
@@ -90,15 +92,20 @@ namespace x2
     /// </summary>
     public class WaitForSingleResponse : WaitForSingleEvent
     {
-        public WaitForSingleResponse(Coroutine coroutine, Event request, Event response)
-            : base(coroutine, request, response, DefaultTimeout)
+        public WaitForSingleResponse(Coroutine coroutine, Event request,
+                Event response)
+            : this(coroutine, request, response, DefaultTimeout)
         {
-            request.Post();
         }
 
-        public WaitForSingleResponse(Coroutine coroutine, Event request, Event response, double seconds)
+        public WaitForSingleResponse(Coroutine coroutine, Event request,
+                Event response, double seconds)
             : base(coroutine, request, response, seconds)
         {
+            if (Object.ReferenceEquals(request, null))
+            {
+                throw new ArgumentNullException();
+            }
             request.Post();
         }
     }

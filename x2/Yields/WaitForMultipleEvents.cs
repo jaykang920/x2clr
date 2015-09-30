@@ -12,19 +12,60 @@ namespace x2
     /// </summary>
     public class WaitForMultipleEvents : YieldInstruction
     {
-        private Coroutine coroutine;
-        private Event[] expected, actual;
+        public const double DefaultTimeout = 30.0;
+
+        private readonly Coroutine coroutine;
+        private readonly Event[] expected, actual;
+
+        private readonly Binder.Token[] handlerTokens;
+        private readonly Binder.Token timeoutToken;
+        private readonly Timer.Token? timerToken;
+
         private int count;
 
         public WaitForMultipleEvents(Coroutine coroutine, params Event[] e)
+            : this(coroutine, null, DefaultTimeout, e)
+        {
+        }
+
+        public WaitForMultipleEvents(Coroutine coroutine, double seconds,
+                params Event[] e)
+            : this(coroutine, null, seconds, e)
+        {
+        }
+
+        protected WaitForMultipleEvents(Coroutine coroutine, Event[] requests,
+            double seconds, params Event[] e)
         {
             this.coroutine = coroutine;
+
+            if (!Object.ReferenceEquals(requests, null))
+            {
+                int waitHandle = WaitHandlePool.Acquire();
+                for (int i = 0, count = requests.Length; i < count; ++i)
+                {
+                    requests[i]._WaitHandle = waitHandle;
+                }
+                for (int i = 0, count = e.Length; i < count; ++i)
+                {
+                    e[i]._WaitHandle = waitHandle;
+                }
+            }
+
             expected = e;
             actual = new Event[expected.Length];
 
+            handlerTokens = new Binder.Token[expected.Length];
             for (int i = 0; i < expected.Length; ++i)
             {
-                Flow.Bind(expected[i], OnEvent);
+                handlerTokens[i] = Flow.Bind(expected[i], OnEvent);
+            }
+
+            if (seconds > 0)
+            {
+                TimeoutEvent timeoutEvent = new TimeoutEvent { Key = this };
+                timeoutToken = Flow.Bind(timeoutEvent, OnTimeout);
+                timerToken = TimeFlow.Default.Reserve(timeoutEvent, seconds);
             }
         }
 
@@ -41,7 +82,8 @@ namespace x2
             {
                 if (actual[i] == null && expected[i].IsEquivalent(e))
                 {
-                    Flow.Unbind(expected[i], OnEvent);
+                    Flow.Unbind(handlerTokens[i]);
+                    handlerTokens[i] = new Binder.Token();
                     actual[i] = e;
                     ++count;
                     break;
@@ -50,10 +92,33 @@ namespace x2
 
             if (count >= expected.Length)
             {
+                if (timerToken.HasValue)
+                {
+                    TimeFlow.Default.Cancel(timerToken.Value);
+                    Flow.Unbind(timeoutToken);
+                }
+
                 coroutine.Context = actual;
                 coroutine.Continue();
                 coroutine.Context = null;
             }
+        }
+
+        void OnTimeout(TimeoutEvent e)
+        {
+            for (int i = 0, count = actual.Length; i < count; ++i)
+            {
+                if (Object.ReferenceEquals(actual[i], null))
+                {
+                    Flow.Unbind(handlerTokens[i]);
+                }
+            }
+            Flow.Unbind(timeoutToken);
+
+            Log.Error("WaitForMultipleEvents timeout for {0}", expected);
+
+            coroutine.Context = actual;  // incomplete array indicates timeout
+            coroutine.Continue();
         }
     }
 
@@ -62,9 +127,20 @@ namespace x2
     /// </summary>
     public class WaitForMultipleResponses : WaitForMultipleEvents
     {
-        public WaitForMultipleResponses(Coroutine coroutine, Event[] requests, params Event[] responses)
-            : base(coroutine, responses)
+        public WaitForMultipleResponses(Coroutine coroutine, Event[] requests,
+                params Event[] responses)
+            : this(coroutine, requests, DefaultTimeout, responses)
         {
+        }
+
+        public WaitForMultipleResponses(Coroutine coroutine, Event[] requests,
+                double seconds, params Event[] responses)
+            : base(coroutine, requests, DefaultTimeout, responses)
+        {
+            if (Object.ReferenceEquals(requests, null))
+            {
+                throw new ArgumentNullException();
+            }
             for (int i = 0; i < requests.Length; ++i)
             {
                 requests[i].Post();
