@@ -64,6 +64,10 @@ namespace x2
             {
                 self._Handle = request._Handle;
             }
+            if (request._WaitHandle != 0)
+            {
+                self._WaitHandle = request._WaitHandle;
+            }
             return self;
         }
 

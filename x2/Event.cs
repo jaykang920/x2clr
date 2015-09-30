@@ -23,6 +23,7 @@ namespace x2
         private string _channel;
         private int _handle;
         private bool _transform = true;
+        private int _waitHandle;
 
         /// <summary>
         /// Gets or sets the name of the hub channel which this event is
@@ -57,9 +58,22 @@ namespace x2
             set { _transform = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the coroutine wait handle associated with this event.
+        /// </summary>
+        public int _WaitHandle
+        {
+            get { return _waitHandle; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                _waitHandle = value;
+            }
+        }
+
         static Event()
         {
-            tag = new Tag(null, typeof(Event), 1, 0);
+            tag = new Tag(null, typeof(Event), 2, 0);
         }
 
         /// <summary>
@@ -118,13 +132,15 @@ namespace x2
             {
                 return false;
             }
-
             Event o = (Event)other;
             if (_handle != o._handle)
             {
                 return false;
             }
-
+            if (_waitHandle != o._waitHandle)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -146,12 +162,15 @@ namespace x2
         public override int GetHashCode(Fingerprint fingerprint)
         {
             Hash hash = new Hash(base.GetHashCode(fingerprint));
-
-            if (fingerprint[tag.Offset + 0])
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
             {
                 hash.Update(_handle);
             }
-
+            if (touched[1])
+            {
+                hash.Update(_waitHandle);
+            }
             return hash.Code;
         }
 
@@ -171,16 +190,22 @@ namespace x2
             {
                 return false;
             }
-
             Event o = (Event)other;
-            if (fingerprint[tag.Offset + 0])
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
             {
                 if (_handle != o._handle)
                 {
                     return false;
                 }
             }
-
+            if (touched[1])
+            {
+                if (_waitHandle != o._waitHandle)
+                {
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -205,12 +230,28 @@ namespace x2
         public override void Deserialize(Deserializer deserializer)
         {
             base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[1])
+            {
+                deserializer.Read(out _waitHandle);
+            }
         }
 
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("WaitHandle", out _waitHandle);
+        }
+        
         public override int GetEncodedLength()
         {
             int length = Serializer.GetEncodedLength(GetTypeId());
             length += base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[1])
+            {
+                length += Serializer.GetEncodedLength(_waitHandle);
+            }
             return length;
         }
 
@@ -218,9 +259,16 @@ namespace x2
         {
             serializer.Write(GetTypeId());
             base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[1])
+            {
+                serializer.Write(_waitHandle);
+            }
         }
         public override void Serialize(VerboseSerializer serializer)
         {
+            base.Serialize(serializer);
+            serializer.Write("WaitHandle", _waitHandle);
         }
 
         /// <summary>
