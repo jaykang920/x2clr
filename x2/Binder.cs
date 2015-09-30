@@ -138,7 +138,7 @@ namespace x2
             rwlock.EnterWriteLock();
             try
             {
-                UnbindInternal(token.key, token.value);
+                UnbindInternal(token.Key, token.Value);
             }
             finally
             {
@@ -167,8 +167,11 @@ namespace x2
 
         public struct Token
         {
-            public Event key;
-            public Handler value;
+            private Event key;
+            private Handler value;
+
+            public Event Key { get { return key; } }
+            public Handler Value { get { return value; } }
 
             public override bool Equals(object obj)
             {

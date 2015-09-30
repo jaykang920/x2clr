@@ -11,7 +11,7 @@ namespace x2
     /// </summary>
     public class WaitForSeconds : YieldInstruction
     {
-        private Coroutine coroutine;
+        private readonly Coroutine coroutine;
         private readonly Binder.Token token;
 
         public WaitForSeconds(Coroutine coroutine, double seconds)

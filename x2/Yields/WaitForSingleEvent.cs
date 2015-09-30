@@ -11,21 +11,36 @@ namespace x2
     /// </summary>
     public class WaitForSingleEvent : YieldInstruction
     {
-        private Coroutine coroutine;
+        public const double DefaultTimeout = 30.0;
+
+        private readonly Coroutine coroutine;
         private readonly Binder.Token handlerToken;
         private readonly Binder.Token timeoutToken;
         private readonly Timer.Token? timerToken;
 
         public WaitForSingleEvent(Coroutine coroutine, Event e)
-            : this(coroutine, e, 30.0)
+            : this(coroutine, null, e, DefaultTimeout)
         {
         }
 
         public WaitForSingleEvent(Coroutine coroutine, Event e, double seconds)
+            : this(coroutine, null, e, seconds)
+        {
+        }
+
+        protected WaitForSingleEvent(Coroutine coroutine, Event request, Event e, double seconds)
         {
             this.coroutine = coroutine;
+
+            if (!Object.ReferenceEquals(request, null))
+            {
+                int waitHandle = WaitHandlePool.Acquire();
+                request._WaitHandle = waitHandle;
+                e._WaitHandle = waitHandle;
+            }
+
             handlerToken = Flow.Bind(e, OnEvent);
-            if (seconds >= 0)
+            if (seconds > 0)
             {
                 TimeoutEvent timeoutEvent = new TimeoutEvent { Key = this };
                 timeoutToken = Flow.Bind(timeoutEvent, OnTimeout);
@@ -42,6 +57,8 @@ namespace x2
 
         void OnEvent(Event e)
         {
+            WaitHandlePool.Release(handlerToken.Key._WaitHandle);
+
             if (timerToken.HasValue)
             {
                 TimeFlow.Default.Cancel(timerToken.Value);
@@ -56,10 +73,12 @@ namespace x2
 
         void OnTimeout(TimeoutEvent e)
         {
+            WaitHandlePool.Release(handlerToken.Key._WaitHandle);
+
             Flow.Unbind(timeoutToken);
             Flow.Unbind(handlerToken);
 
-            Log.Error("WaitForSingleEvent timeout for {0}", handlerToken.key);
+            Log.Error("WaitForSingleEvent timeout for {0}", handlerToken.Key);
 
             coroutine.Context = null;  // indicates timeout
             coroutine.Continue();
@@ -72,13 +91,13 @@ namespace x2
     public class WaitForSingleResponse : WaitForSingleEvent
     {
         public WaitForSingleResponse(Coroutine coroutine, Event request, Event response)
-            : base(coroutine, response)
+            : base(coroutine, request, response, DefaultTimeout)
         {
             request.Post();
         }
 
         public WaitForSingleResponse(Coroutine coroutine, Event request, Event response, double seconds)
-            : base(coroutine, response, seconds)
+            : base(coroutine, request, response, seconds)
         {
             request.Post();
         }
