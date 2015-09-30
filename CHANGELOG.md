@@ -1,3 +1,5 @@
+- added new internal property, _WaitHandle, to the Event class, to improve coroutine response matching
+
 ## 0.6.3 (2015-09-25)
 
 - added initial non-reliable UDP socket links
