@@ -112,14 +112,14 @@ namespace x2
             }
         }
 
-        public override Flow StartUp()
+        public override Flow Startup()
         {
             lock (syncRoot)
             {
                 if (thread == null)
                 {
-                    SetUp();
-                    caseStack.SetUp(this);
+                    Setup();
+                    caseStack.Setup(this);
                     thread = new Thread(this.Run);
                     thread.Name = name;
                     thread.Start();
@@ -132,7 +132,7 @@ namespace x2
             return this;
         }
 
-        public override void ShutDown()
+        public override void Shutdown()
         {
             lock (syncRoot)
             {
@@ -151,8 +151,8 @@ namespace x2
                 thread.Join();
                 thread = null;
 
-                caseStack.TearDown(this);
-                TearDown();
+                caseStack.Teardown(this);
+                Teardown();
             }
         }
 

@@ -21,9 +21,9 @@ namespace x2.Examples.HeadFirst
                 //*/
             }
 
-            protected override void SetUp()
+            protected override void Setup()
             {
-                base.SetUp();
+                base.Setup();
                 EventFactory.Register<CapitalizeResp>();
                 new CapitalizeReq().Bind(Send);
                 Connect("127.0.0.1", 6789);
@@ -40,7 +40,7 @@ namespace x2.Examples.HeadFirst
                     .Add(new OutputCase())
                     .Add(new CapitalizerClient()));
 
-            using (new Hub.Flows().StartUp())
+            using (new Hub.Flows().Startup())
             {
                 while (true)
                 {

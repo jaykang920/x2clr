@@ -15,12 +15,12 @@ namespace x2
         /// <summary>
         /// Initializes this case with the specified holding flow.
         /// </summary>
-        void SetUp(Flow holder);
+        void Setup(Flow holder);
 
         /// <summary>
         /// Cleans up this case with the specified holding flow.
         /// </summary>
-        void TearDown(Flow holder);
+        void Teardown(Flow holder);
     }
 
     /// <summary>
@@ -31,14 +31,14 @@ namespace x2
         /// <summary>
         /// Initializes this case with the specified holding flow.
         /// </summary>
-        public void SetUp(Flow holder)
+        public void Setup(Flow holder)
         {
             Flow = holder;
 
             Flow backup = Flow.CurrentFlow;
             Flow.CurrentFlow = holder;
 
-            SetUp();
+            Setup();
 
             Flow.CurrentFlow = backup;
         }
@@ -46,12 +46,12 @@ namespace x2
         /// <summary>
         /// Cleans up this case with the specified holding flow.
         /// </summary>
-        public void TearDown(Flow holder)
+        public void Teardown(Flow holder)
         {
             Flow backup = Flow.CurrentFlow;
             Flow.CurrentFlow = holder;
 
-            TearDown();
+            Teardown();
 
             Flow.CurrentFlow = backup;
 
@@ -61,12 +61,12 @@ namespace x2
         /// <summary>
         /// Initializes this case on startup.
         /// </summary>
-        protected virtual void SetUp() { }
+        protected virtual void Setup() { }
 
         /// <summary>
         /// Cleans up this case on shutdown.
         /// </summary>
-        protected virtual void TearDown() { }
+        protected virtual void Teardown() { }
     }
 
     public class CaseStack : ICase
@@ -98,7 +98,7 @@ namespace x2
             }
         }
 
-        public void SetUp(Flow holder)
+        public void Setup(Flow holder)
         {
             List<ICase> snapshot;
             lock (cases)
@@ -109,11 +109,11 @@ namespace x2
             }
             for (int i = 0, count = snapshot.Count; i < count; ++i)
             {
-                snapshot[i].SetUp(holder);
+                snapshot[i].Setup(holder);
             }
         }
 
-        public void TearDown(Flow holder)
+        public void Teardown(Flow holder)
         {
             List<ICase> snapshot;
             lock (cases)
@@ -124,7 +124,7 @@ namespace x2
             }
             for (int i = snapshot.Count - 1; i >= 0; --i)
             {
-                snapshot[i].TearDown(holder);
+                snapshot[i].Teardown(holder);
             }
         }
     }

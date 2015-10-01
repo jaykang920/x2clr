@@ -164,9 +164,9 @@ namespace x2
         {
         }
 
-        protected override void SetUp()
+        protected override void Setup()
         {
-            base.SetUp();
+            base.Setup();
 
             Bind(new LinkSessionRecovered { LinkName = Name },
                 OnLinkSessionRecovered);
@@ -176,11 +176,11 @@ namespace x2
             Flow.SubscribeTo(KeepaliveTicker.Channel);
         }
 
-        protected override void TearDown()
+        protected override void Teardown()
         {
             Flow.UnsubscribeFrom(KeepaliveTicker.Channel);
 
-            base.TearDown();
+            base.Teardown();
         }
 
         private void OnKeepaliveTick(KeepaliveTick e)

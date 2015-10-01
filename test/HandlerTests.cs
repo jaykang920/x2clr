@@ -39,7 +39,7 @@ namespace x2.Tests
         private IntBox intBox2 = new IntBox();
 
         [TestFixtureSetUp]
-        public void SetUp()
+        public void Setup()
         {
             IntBox.StaticValue = 0;
             intBox1.Value = 0;

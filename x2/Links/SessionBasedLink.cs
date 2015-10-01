@@ -122,7 +122,7 @@ namespace x2
         /// <summary>
         /// Initializes this link on startup.
         /// </summary>
-        protected override void SetUp()
+        protected override void Setup()
         {
             Bind(new LinkSessionConnected { LinkName = Name },
                 OnLinkSessionConnected);

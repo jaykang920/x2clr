@@ -35,7 +35,7 @@ namespace x2.Examples.HeadFirst
                     .Add(new CapitalizerCase())
                     .Add(new OutputCase()));
 
-            using (new Hub.Flows().StartUp())
+            using (new Hub.Flows().Startup())
             {
                 while (true)
                 {

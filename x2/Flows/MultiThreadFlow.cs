@@ -35,14 +35,14 @@ namespace x2
             this.name = name;
         }
 
-        public override Flow StartUp()
+        public override Flow Startup()
         {
             lock (syncRoot)
             {
                 if (threads.Count == 0)
                 {
-                    SetUp();
-                    caseStack.SetUp(this);
+                    Setup();
+                    caseStack.Setup(this);
                     for (int i = 0; i < numThreads; ++i)
                     {
                         Thread thread = new Thread(Run);
@@ -56,7 +56,7 @@ namespace x2
             return this;
         }
 
-        public override void ShutDown()
+        public override void Shutdown()
         {
             lock (syncRoot)
             {
@@ -74,8 +74,8 @@ namespace x2
                 }
                 threads.Clear();
 
-                caseStack.TearDown(this);
-                TearDown();
+                caseStack.Teardown(this);
+                Teardown();
             }
         }
 

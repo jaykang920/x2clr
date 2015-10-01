@@ -468,7 +468,7 @@ namespace x2
                     {
                         timeFlow = new TimeFlow(name);
                         timeFlows.Add(name, timeFlow);
-                        timeFlow.StartUp().Attach();
+                        timeFlow.Startup().Attach();
                     }
                     return timeFlow;
                 }

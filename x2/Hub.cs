@@ -145,14 +145,14 @@ namespace x2
             }
             for (int i = 0, count = snapshot.Count; i < count; ++i)
             {
-                snapshot[i].StartUp();
+                snapshot[i].Startup();
             }
         }
 
         /// <summary>
         /// Starts all the flows attached to the hub.
         /// </summary>
-        public static void StartUp()
+        public static void Startup()
         {
             Instance.StartAttachedFlows();
         }
@@ -166,14 +166,14 @@ namespace x2
             }
             for (int i = 0, count = snapshot.Count; i < count; ++i)
             {
-                snapshot[i].ShutDown();
+                snapshot[i].Shutdown();
             }
         }
 
         /// <summary>
         /// Stops all the flows attached to the hub.
         /// </summary>
-        public static void ShutDown()
+        public static void Shutdown()
         {
             Instance.StopAttachedFlows();
         }
@@ -303,7 +303,7 @@ namespace x2
         {
             ~Flows()
             {
-                ShutDown();
+                Shutdown();
             }
 
             /// <summary>
@@ -311,25 +311,25 @@ namespace x2
             /// </summary>
             public void Dispose()
             {
-                ShutDown();
+                Shutdown();
                 GC.SuppressFinalize(this);
             }
 
             /// <summary>
             /// Starts all the attached flows.
             /// </summary>
-            public Flows StartUp()
+            public Flows Startup()
             {
-                Hub.StartUp();
+                Hub.Startup();
                 return this;
             }
 
             /// <summary>
             /// Stops all the attached flows.
             /// </summary>
-            public void ShutDown()
+            public void Shutdown()
             {
-                Hub.ShutDown();
+                Hub.Shutdown();
             }
         }
     }

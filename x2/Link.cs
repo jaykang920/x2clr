@@ -89,7 +89,7 @@ namespace x2
         /// <summary>
         /// Cleans up this link on shutdown.
         /// </summary>
-        protected override void TearDown()
+        protected override void Teardown()
         {
             Close();
         }

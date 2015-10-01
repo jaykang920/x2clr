@@ -14,7 +14,7 @@ namespace x2.Examples.HeadFirst
                 .Attach(new SingleThreadFlow("OutputFlow")
                     .Add(new OutputCase()));
 
-            using (new Hub.Flows().StartUp())
+            using (new Hub.Flows().Startup())
             {
                 while (true)
                 {

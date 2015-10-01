@@ -205,8 +205,8 @@ namespace x2
             binder.Unbind(token);
         }
 
-        public abstract Flow StartUp();
-        public abstract void ShutDown();
+        public abstract Flow Startup();
+        public abstract void Shutdown();
 
         public Flow Attach()
         {
@@ -309,13 +309,13 @@ namespace x2
             handlerChain.Clear();
         }
 
-        protected virtual void SetUp()
+        protected virtual void Setup()
         {
             Subscribe(new FlowStart(), OnFlowStart);
             Subscribe(new FlowStop(), OnFlowStop);
         }
 
-        protected virtual void TearDown()
+        protected virtual void Teardown()
         {
             Unsubscribe(new FlowStop(), OnFlowStop);
             Unsubscribe(new FlowStart(), OnFlowStart);

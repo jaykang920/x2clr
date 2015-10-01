@@ -35,14 +35,14 @@ namespace x2
             }
         }
 
-        public override Flow StartUp()
+        public override Flow Startup()
         {
             lock (syncRoot)
             {
                 if (!running)
                 {
-                    SetUp();
-                    caseStack.SetUp(this);
+                    Setup();
+                    caseStack.Setup(this);
 
                     currentFlow = this;
                     equivalent = new EventEquivalent();
@@ -57,7 +57,7 @@ namespace x2
             return this;
         }
 
-        public override void ShutDown()
+        public override void Shutdown()
         {
             lock (syncRoot)
             {
@@ -73,8 +73,8 @@ namespace x2
                 equivalent = null;
                 currentFlow = null;
 
-                caseStack.TearDown(this);
-                TearDown();
+                caseStack.Teardown(this);
+                Teardown();
             }
         }
 

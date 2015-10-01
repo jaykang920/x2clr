@@ -13,9 +13,9 @@ namespace x2.Examples.HeadFirst
             {
             }
 
-            protected override void SetUp()
+            protected override void Setup()
             {
-                base.SetUp();
+                base.Setup();
                 EventFactory.Register<CapitalizeResp>();
                 new CapitalizeReq().Bind(Send);
                 Bind(6788).Listen();
@@ -34,7 +34,7 @@ namespace x2.Examples.HeadFirst
                     .Add(new OutputCase())
                     .Add(new CapitalizerClient()));
 
-            using (new Hub.Flows().StartUp())
+            using (new Hub.Flows().Startup())
             {
                 while (true)
                 {
