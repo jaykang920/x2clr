@@ -11,53 +11,78 @@ namespace x2
     /// </summary>
     public static class Config
     {
-        // Log
-
         /// <summary>
         /// Gets or sets the minimum log level.
         /// </summary>
         public static LogLevel LogLevel { get; set;}
 
-        // Segment buffer (chunk size >= segment size)
-
-        /// <summary>
-        /// Gets or sets the buffer chunk size in 2^n.
-        /// </summary>
-        public static int ChunkSizeExponent { get; set; }
-        /// <summary>
-        /// Gets or sets the buffer segment size in 2^n.
-        /// </summary>
-        public static int SegmentSizeExponent { get; set; }
-        /// <summary>
-        /// Gets the buffer chunk size in bytes.
-        /// </summary>
-        public static int ChunkSize
+        public static class Buffer
         {
-            get { return (1 << ChunkSizeExponent); }
+            public static class SizeExponent
+            {
+                /// <summary>
+                /// Gets or sets the buffer chunk size exponent n in 2^n.
+                /// </summary>
+                public static int Chunk { get; set; }
+                /// <summary>
+                /// Gets or sets the buffer segment size exponent n in 2^n.
+                /// </summary>
+                public static int Segment { get; set; }
+            }
+
+            /// <summary>
+            /// Gets the buffer chunk size in bytes.
+            /// </summary>
+            public static int ChunkSize
+            {
+                get { return (1 << SizeExponent.Chunk); }
+            }
+            /// <summary>
+            /// Gets the buffer segment size in bytes.
+            /// </summary>
+            public static int SegmentSize
+            {
+                get { return (1 << SizeExponent.Segment); }
+            }
+
+            public static class RoomFactor
+            {
+                public static int MinLevel { get; set; }
+                public static int MaxLevel { get; set; }
+            }
         }
-        /// <summary>
-        /// Gets the buffer segment size in bytes.
-        /// </summary>
-        public static int SegmentSize
+
+        public static class Coroutine
         {
-            get { return (1 << SegmentSizeExponent); }
+            /// <summary>
+            /// Gets or sets the maximum number of wait handles.
+            /// </summary>
+            public static int MaxWaitHandles { get; set; }
+            /// <summary>
+            /// Gets or sets the default wait timeout in seconds.
+            /// </summary>
+            public static double DefaultTimeout { get; set; }
         }
 
-        // Coroutine
+        public static class Flow
+        {
+            public static class Logging
+            {
+                public static class SlowHandler
+                {
+                    public static LogLevel LogLevel { get; set; }
+                    public static int Threshold { get; set; }
+                }
 
-        /// <summary>
-        /// Gets or sets the maximum number of wait handles.
-        /// </summary>
-        public static int MaxWaitHandles { get; set; }
-        /// <summary>
-        /// Gets or sets the default wait timeout in seconds.
-        /// </summary>
-        public static double DefaultWaitTimeout { get; set; }
+                public static class LongQueue
+                {
+                    public static LogLevel LogLevel { get; set; }
+                    public static int Threshold { get; set; }
+                }
+            }
+        }
 
-        // Flow
-
-        public static LogLevel DefaultSlowHandlerLogLevel { get; set; }
-        public static int DefaultSlowHandlerLogThreshold { get; set; }
+        public static int MaxLinkHandles { get; set; }
 
         static Config()
         {
@@ -65,14 +90,21 @@ namespace x2
 
             LogLevel = LogLevel.Info;
 
-            ChunkSizeExponent = 24;  // 16MB
-            SegmentSizeExponent = 12;  // 4KB
+            // chunkSizeExp >= segmentSizeExp
+            Buffer.SizeExponent.Chunk = 24;  // 16MB
+            Buffer.SizeExponent.Segment = 12;  // 4KB
+            Buffer.RoomFactor.MinLevel = 0;  // x1
+            Buffer.RoomFactor.MaxLevel = 3;  // x8
 
-            MaxWaitHandles = 1024;
-            DefaultWaitTimeout = 30.0;
+            Coroutine.MaxWaitHandles = 1024;
+            Coroutine.DefaultTimeout = 30.0;
 
-            DefaultSlowHandlerLogLevel = LogLevel.Warning;
-            DefaultSlowHandlerLogThreshold = 100;
+            Flow.Logging.SlowHandler.LogLevel = LogLevel.Warning;
+            Flow.Logging.SlowHandler.Threshold = 100;
+            Flow.Logging.LongQueue.LogLevel = LogLevel.Error;
+            Flow.Logging.LongQueue.Threshold = 100;
+
+            MaxLinkHandles = 65536;
         }
 
         /// <summary>
@@ -86,14 +118,22 @@ namespace x2
 
             LogLevel = section.Log.Level;
 
-            ChunkSizeExponent = section.Buffer.ChunkSizeExponent;
-            SegmentSizeExponent = section.Buffer.SegmentSizeExponent;
+            BufferElement buffer = section.Buffer;
+            Buffer.SizeExponent.Chunk = buffer.SizeExponent.Chunk;
+            Buffer.SizeExponent.Segment = buffer.SizeExponent.Segment;
+            Buffer.RoomFactor.MinLevel = buffer.RoomFactor.MinLevel;
+            Buffer.RoomFactor.MaxLevel = buffer.RoomFactor.MaxLevel;
 
-            MaxWaitHandles = section.Coroutine.MaxWaitHandles;
-            DefaultWaitTimeout = section.Coroutine.DefaultTimeout;
+            Coroutine.MaxWaitHandles = section.Coroutine.MaxWaitHandles;
+            Coroutine.DefaultTimeout = section.Coroutine.DefaultTimeout;
 
-            DefaultSlowHandlerLogLevel = section.Flow.DefaultSlowHandlerLogLevel;
-            DefaultSlowHandlerLogThreshold = section.Flow.DefaultSlowHandlerLogThreshold;
+            FlowLoggingElement logging = section.Flow.Logging;
+            Flow.Logging.SlowHandler.LogLevel = logging.SlowHandler.LogLevel;
+            Flow.Logging.SlowHandler.Threshold = logging.SlowHandler.Threshold;
+            Flow.Logging.LongQueue.LogLevel = logging.LongQueue.LogLevel;
+            Flow.Logging.LongQueue.Threshold = logging.LongQueue.Threshold;
+
+            MaxLinkHandles = section.Link.MaxHandles;
         }
     }
 }

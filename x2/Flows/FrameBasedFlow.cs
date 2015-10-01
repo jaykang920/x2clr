@@ -101,9 +101,14 @@ namespace x2
 
         public override void Feed(Event e)
         {
-            if (queue != null)
+            if (Object.ReferenceEquals(queue, null))
             {
-                queue.Enqueue(e);
+                return;
+            }
+            int length = queue.Enqueue(e);
+            if (length >= LongQueueLogThreshold)
+            {
+                Log.Emit(LongQueueLogLevel, "{0} long queue {2}", Name, length);
             }
         }
 

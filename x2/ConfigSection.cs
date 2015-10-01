@@ -6,9 +6,7 @@ using System.Configuration;
 
 namespace x2
 {
-    /// <summary>
-    /// The x2clr configuration section handler.
-    /// </summary>
+    // x2clr configuration section handler
     public sealed class ConfigSection : ConfigurationSection
     {
         [ConfigurationProperty("log")]
@@ -38,11 +36,16 @@ namespace x2
             get { return (FlowElement)this["flow"]; }
             set { this["flow"] = value; }
         }
+
+        [ConfigurationProperty("link")]
+        public LinkElement Link
+        {
+            get { return (LinkElement)this["link"]; }
+            set { this["link"] = value; }
+        }
     }
 
-    /// <summary>
-    /// The x2clr/log configuration element handler.
-    /// </summary>
+    // x2clr/log configuration element handler
     public class LogElement : ConfigurationElement
     {
         [ConfigurationProperty("level")]
@@ -53,29 +56,61 @@ namespace x2
         }
     }
 
-    /// <summary>
-    /// The x2clr/buffer configuration element handler.
-    /// </summary>
+    // x2clr/buffer configuration element handler
     public class BufferElement : ConfigurationElement
     {
-        [ConfigurationProperty("chunkSizeExponent")]
-        public int ChunkSizeExponent
+        [ConfigurationProperty("sizeExponent")]
+        public SizeExponentElement SizeExponent
         {
-            get { return (int)this["chunkSizeExponent"]; }
-            set { this["chunkSizeExponent"] = value; }
+            get { return (SizeExponentElement)this["sizeExponent"]; }
+            set { this["sizeExponent"] = value; }
         }
 
-        [ConfigurationProperty("segmentSizeExponent")]
-        public int SegmentSizeExponent
+        [ConfigurationProperty("roomFactor")]
+        public RoomFactorElement RoomFactor
         {
-            get { return (int)this["segmentSizeExponent"]; }
-            set { this["segmentSizeExponent"] = value; }
+            get { return (RoomFactorElement)this["roomFactor"]; }
+            set { this["roomFactor"] = value; }
         }
     }
 
-    /// <summary>
-    /// The x2clr/coroutine configuration element handler.
-    /// </summary>
+    // x2clr/buffer/sizeExponent configuration element handler
+    public class SizeExponentElement : ConfigurationElement
+    {
+        [ConfigurationProperty("chunk")]
+        public int Chunk
+        {
+            get { return (int)this["chunk"]; }
+            set { this["chunk"] = value; }
+        }
+
+        [ConfigurationProperty("segment")]
+        public int Segment
+        {
+            get { return (int)this["segment"]; }
+            set { this["segment"] = value; }
+        }
+    }
+
+    // x2clr/buffer/roomFactor configuration element handler
+    public class RoomFactorElement : ConfigurationElement
+    {
+        [ConfigurationProperty("minLevel")]
+        public int MinLevel
+        {
+            get { return (int)this["minLevel"]; }
+            set { this["minLevel"] = value; }
+        }
+
+        [ConfigurationProperty("maxLevel")]
+        public int MaxLevel
+        {
+            get { return (int)this["maxLevel"]; }
+            set { this["maxLevel"] = value; }
+        }
+    }
+
+    // x2clr/coroutine configuration element handler
     public class CoroutineElement : ConfigurationElement
     {
         [ConfigurationProperty("maxWaitHandles")]
@@ -93,23 +128,79 @@ namespace x2
         }
     }
 
-    /// <summary>
-    /// The x2clr/flow configuration element handler.
-    /// </summary>
+    // x2clr/flow configuration element handler
     public class FlowElement : ConfigurationElement
     {
-        [ConfigurationProperty("defaultSlowHandlerLogLevel")]
-        public LogLevel DefaultSlowHandlerLogLevel
+        [ConfigurationProperty("logging")]
+        public FlowLoggingElement Logging
         {
-            get { return (LogLevel)this["defaultSlowHandlerLogLevel"]; }
-            set { this["defaultSlowHandlerLogLevel"] = value; }
+            get { return (FlowLoggingElement)this["logging"]; }
+            set { this["logging"] = value; }
+        }
+    }
+
+    // x2clr/flow/logging configuration element handler
+    public class FlowLoggingElement : ConfigurationElement
+    {
+        [ConfigurationProperty("slowHandler")]
+        public SlowHandlerElement SlowHandler
+        {
+            get { return (SlowHandlerElement)this["slowHandler"]; }
+            set { this["slowHandler"] = value; }
         }
 
-        [ConfigurationProperty("defaultSlowHandlerLogThreshold")]
-        public int DefaultSlowHandlerLogThreshold
+        [ConfigurationProperty("longQueue")]
+        public LongQueueElement LongQueue
         {
-            get { return (int)this["defaultSlowHandlerLogThreshold"]; }
-            set { this["defaultSlowHandlerLogThreshold"] = value; }
+            get { return (LongQueueElement)this["longQueue"]; }
+            set { this["longQueue"] = value; }
+        }
+    }
+
+    // x2clr/flow/logging/slowHandler configuration element handler
+    public class SlowHandlerElement : ConfigurationElement
+    {
+        [ConfigurationProperty("logLevel")]
+        public LogLevel LogLevel
+        {
+            get { return (LogLevel)this["logLevel"]; }
+            set { this["logLevel"] = value; }
+        }
+
+        [ConfigurationProperty("threshold")]
+        public int Threshold
+        {
+            get { return (int)this["threshold"]; }
+            set { this["threshold"] = value; }
+        }
+    }
+
+    // x2clr/flow/logging/longQueue configuration element handler
+    public class LongQueueElement : ConfigurationElement
+    {
+        [ConfigurationProperty("logLevel")]
+        public LogLevel LogLevel
+        {
+            get { return (LogLevel)this["logLevel"]; }
+            set { this["logLevel"] = value; }
+        }
+
+        [ConfigurationProperty("threshold")]
+        public int Threshold
+        {
+            get { return (int)this["threshold"]; }
+            set { this["threshold"] = value; }
+        }
+    }
+
+    // x2clr/link configuration element handler
+    public class LinkElement : ConfigurationElement
+    {
+        [ConfigurationProperty("maxHandles")]
+        public int MaxHandles
+        {
+            get { return (int)this["maxHandles"]; }
+            set { this["maxHandles"] = value; }
         }
     }
 }

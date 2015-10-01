@@ -2,7 +2,6 @@
 // See the file LICENSE for details.
 
 using System;
-using System.Collections;
 
 namespace x2
 {
@@ -18,7 +17,7 @@ namespace x2
         private readonly Timer.Token? timerToken;
 
         public WaitForSingleEvent(Coroutine coroutine, Event e)
-            : this(coroutine, null, e, Config.DefaultWaitTimeout)
+            : this(coroutine, null, e, Config.Coroutine.DefaultTimeout)
         {
         }
 
@@ -100,7 +99,7 @@ namespace x2
     {
         public WaitForSingleResponse(Coroutine coroutine, Event request,
                 Event response)
-            : this(coroutine, request, response, Config.DefaultWaitTimeout)
+            : this(coroutine, request, response, Config.Coroutine.DefaultTimeout)
         {
         }
 

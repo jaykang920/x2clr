@@ -2,8 +2,6 @@
 // See the file LICENSE for details.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace x2
 {
@@ -20,9 +18,10 @@ namespace x2
         private readonly Timer.Token? timerToken;
 
         private int count;
+        private int waitHandle;
 
         public WaitForMultipleEvents(Coroutine coroutine, params Event[] e)
-            : this(coroutine, null, Config.DefaultWaitTimeout, e)
+            : this(coroutine, null, Config.Coroutine.DefaultTimeout, e)
         {
         }
 
@@ -39,7 +38,7 @@ namespace x2
 
             if (!Object.ReferenceEquals(requests, null))
             {
-                int waitHandle = WaitHandlePool.Acquire();
+                waitHandle = WaitHandlePool.Acquire();
                 for (int i = 0, count = requests.Length; i < count; ++i)
                 {
                     requests[i]._WaitHandle = waitHandle;
@@ -96,7 +95,6 @@ namespace x2
                     Flow.Unbind(timeoutToken);
                 }
 
-                int waitHandle = handlerTokens[0].Key._WaitHandle;
                 if (waitHandle != 0)
                 {
                     WaitHandlePool.Release(waitHandle);
@@ -119,7 +117,6 @@ namespace x2
             }
             Flow.Unbind(timeoutToken);
 
-            int waitHandle = handlerTokens[0].Key._WaitHandle;
             if (waitHandle != 0)
             {
                 WaitHandlePool.Release(waitHandle);
@@ -139,7 +136,7 @@ namespace x2
     {
         public WaitForMultipleResponses(Coroutine coroutine, Event[] requests,
                 params Event[] responses)
-            : this(coroutine, requests, Config.DefaultWaitTimeout, responses)
+            : this(coroutine, requests, Config.Coroutine.DefaultTimeout, responses)
         {
         }
 

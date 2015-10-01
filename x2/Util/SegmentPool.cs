@@ -70,8 +70,8 @@ namespace x2
     /// </summary>
     public sealed class SegmentedBuffer
     {
-        private static int chunkSize = Config.ChunkSize;
-        private static int segmentSize = Config.SegmentSize;
+        private static readonly int chunkSize = Config.Buffer.ChunkSize;
+        private static readonly int segmentSize = Config.Buffer.SegmentSize;
 
         private byte[] buffer;
         private int currentOffset;

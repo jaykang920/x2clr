@@ -12,13 +12,15 @@ namespace x2
     /// </summary>
     public class Buffer : IDisposable
     {
-        private static int blockSizeExponent = Config.SegmentSizeExponent;
-        private static int remainderMask = ~(~0 << blockSizeExponent);
+        static readonly int sizeExponent = Config.Buffer.SizeExponent.Segment;
+        static readonly int remainderMask = ~(~0 << sizeExponent);
+        static readonly int minLevel = Config.Buffer.RoomFactor.MinLevel;
+        static readonly int maxLevel = Config.Buffer.RoomFactor.MaxLevel;
 
         private List<Segment> blocks;
 
-        private Segment currentBlock;
-        private int currentBlockIndex;
+        private Segment current;
+        private int currentIndex;
 
         private int position;
         private int back;
@@ -26,17 +28,14 @@ namespace x2
 
         private int marker;
 
-        // buffer room control
-        private const int minLevel = 0;
-        private const int maxLevel = 3;
-        private int level;
+        private int level;  // read buffer room factor level
 
         /// <summary>
         /// Gets the block size in bytes.
         /// </summary>
         public int BlockSize
         {
-            get { return (1 << blockSizeExponent); }
+            get { return (1 << sizeExponent); }
         }
 
         /// <summary>
@@ -80,15 +79,15 @@ namespace x2
                     throw new IndexOutOfRangeException();
                 }
                 position = adjusted;
-                int blockIndex = position >> blockSizeExponent;
+                int blockIndex = position >> sizeExponent;
                 if ((blockIndex != 0) && ((position & remainderMask) == 0))
                 {
                     --blockIndex;
                 }
-                if (blockIndex != currentBlockIndex)
+                if (blockIndex != currentIndex)
                 {
-                    currentBlockIndex = blockIndex;
-                    currentBlock = blocks[currentBlockIndex];
+                    currentIndex = blockIndex;
+                    current = blocks[currentIndex];
                 }
             }
         }
@@ -110,7 +109,7 @@ namespace x2
 
         public Buffer()
         {
-            if (blockSizeExponent < 0 || 31 < blockSizeExponent)
+            if (sizeExponent < 0 || 31 < sizeExponent)
             {
                 throw new ArgumentOutOfRangeException();
             }
@@ -118,8 +117,8 @@ namespace x2
 
             blocks.Add(SegmentPool.Acquire());
 
-            currentBlockIndex = 0;
-            currentBlock = blocks[currentBlockIndex];
+            currentIndex = 0;
+            current = blocks[currentIndex];
             position = 0;
             back = 0;
             front = 0;
@@ -147,7 +146,7 @@ namespace x2
         public void CopyFrom(byte[] buffer, int offset, int length)
         {
             EnsureCapacityToWrite(length);
-            int blockIndex = position >> blockSizeExponent;
+            int blockIndex = position >> sizeExponent;
             int dstOffset = position & remainderMask;
             int bytesToCopy, bytesCopied = 0;
             while (bytesCopied < length)
@@ -164,7 +163,7 @@ namespace x2
 
         private void CopyTo(byte[] buffer, int offset, int length)
         {
-            int blockIndex = offset >> blockSizeExponent;
+            int blockIndex = offset >> sizeExponent;
             int srcOffset = offset & remainderMask;
             int bytesToCopy, bytesCopied = 0;
             while (bytesCopied < length)
@@ -195,9 +194,9 @@ namespace x2
 
         private void ListSegments(IList<ArraySegment<byte>> blockList, int begin, int end)
         {
-            int beginIndex = begin >> blockSizeExponent;
+            int beginIndex = begin >> sizeExponent;
             int beginOffset = begin & remainderMask;
-            int endIndex = end >> blockSizeExponent;
+            int endIndex = end >> sizeExponent;
             int endOffset = end & remainderMask;
             if (beginIndex == endIndex)
             {
@@ -238,7 +237,7 @@ namespace x2
                 if (level < maxLevel) { ++level; }
             }
             int roomFactor = 1 << level;
-            int numWholeBlocks = (Capacity - back) >> blockSizeExponent;
+            int numWholeBlocks = (Capacity - back) >> sizeExponent;
             if (numWholeBlocks < roomFactor)
             {
                 int count = (roomFactor - numWholeBlocks);
@@ -248,7 +247,7 @@ namespace x2
                 }
             }
 
-            int backIndex = back >> blockSizeExponent;
+            int backIndex = back >> sizeExponent;
             int backOffset = back & remainderMask;
             blockList.Add(new ArraySegment<byte>(
                 blocks[backIndex].Array,
@@ -321,13 +320,13 @@ namespace x2
             get
             {
                 index += front;
-                Segment block = blocks[index >> blockSizeExponent];
+                Segment block = blocks[index >> sizeExponent];
                 return block.Array[block.Offset + (index & remainderMask)];
             }
             set
             {
                 index += front;
-                Segment block = blocks[index >> blockSizeExponent];
+                Segment block = blocks[index >> sizeExponent];
                 block.Array[block.Offset + (index & remainderMask)] = value;
             }
         }
@@ -352,7 +351,7 @@ namespace x2
             else
             {
                 index = 0;
-                count = position >> blockSizeExponent;
+                count = position >> sizeExponent;
                 if (count >= blocks.Count)
                 {
                     count = blocks.Count - 1;
@@ -423,13 +422,13 @@ namespace x2
         public byte GetByte()
         {
             BlockFeed();
-            return currentBlock.Array[currentBlock.Offset + (position++ & remainderMask)];
+            return current.Array[current.Offset + (position++ & remainderMask)];
         }
 
         public void PutByte(byte value)
         {
             BlockFeed();
-            currentBlock.Array[currentBlock.Offset + (position++ & remainderMask)] = value;
+            current.Array[current.Offset + (position++ & remainderMask)] = value;
         }
 
         private void BlockFeed()
@@ -437,7 +436,7 @@ namespace x2
             if (((position & remainderMask) == 0) &&
                 ((position & ~remainderMask) != 0))
             {
-                currentBlock = blocks[++currentBlockIndex];
+                current = blocks[++currentIndex];
             }
         }
 
@@ -452,7 +451,7 @@ namespace x2
                 SegmentPool.Release(blocks[i]);
             }
             blocks.Clear();
-            currentBlock = new Segment();
+            current = new Segment();
         }
     }
 }

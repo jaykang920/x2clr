@@ -24,7 +24,11 @@ namespace x2
 
         public override void Feed(Event e)
         {
-            queue.Enqueue(e);
+            int length = queue.Enqueue(e);
+            if (length >= LongQueueLogThreshold)
+            {
+                Log.Emit(LongQueueLogLevel, "{0} long queue {2}", Name, length);
+            }
         }
     }
 }

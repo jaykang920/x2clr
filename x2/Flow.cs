@@ -53,6 +53,9 @@ namespace x2
         public LogLevel SlowHandlerLogLevel { get; set; }
         public int SlowHandlerLogThreshold { get; set; }
 
+        public LogLevel LongQueueLogLevel { get; set; }
+        public int LongQueueLogThreshold { get; set; }
+
         static Flow()
         {
             DefaultExceptionHandler = OnException;
@@ -66,8 +69,10 @@ namespace x2
 
             ExceptionHandler = DefaultExceptionHandler;
 
-            SlowHandlerLogLevel = Config.DefaultSlowHandlerLogLevel;
-            SlowHandlerLogThreshold = Config.DefaultSlowHandlerLogThreshold;
+            SlowHandlerLogLevel = Config.Flow.Logging.SlowHandler.LogLevel;
+            SlowHandlerLogThreshold = Config.Flow.Logging.SlowHandler.Threshold;
+            LongQueueLogLevel = Config.Flow.Logging.LongQueue.LogLevel;
+            LongQueueLogThreshold = Config.Flow.Logging.LongQueue.Threshold;
         }
 
         public static Binder.Token Bind<T>(T e, Action<T> action)

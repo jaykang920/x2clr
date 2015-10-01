@@ -210,7 +210,7 @@ namespace x2
 
         static HandlePool()
         {
-            pool = new RangedIntPool(1, 65536, true);  // [1, 65536]
+            pool = new RangedIntPool(1, Config.MaxLinkHandles, true);
         }
 
         public static int Acquire()

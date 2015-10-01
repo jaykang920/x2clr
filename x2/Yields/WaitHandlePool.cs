@@ -12,7 +12,7 @@ namespace x2
 
         static WaitHandlePool()
         {
-            pool = new RangedIntPool(1, Config.MaxWaitHandles, true);
+            pool = new RangedIntPool(1, Config.Coroutine.MaxWaitHandles, true);
         }
 
         public static int Acquire()

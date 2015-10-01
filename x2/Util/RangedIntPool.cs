@@ -104,6 +104,10 @@ namespace x2
         /// </summary>
         public bool Claim(int value)
         {
+            if (value < minValue || maxValue < value)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
             int index = value - minValue;
             lock (bitArray)
             {
@@ -121,6 +125,10 @@ namespace x2
         /// </summary>
         public void Release(int value)
         {
+            if (value < minValue || maxValue < value)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
             int index = value - minValue;
             lock (bitArray)
             {
