@@ -102,7 +102,7 @@ namespace x2
             Flow.Logging.SlowHandler.LogLevel = LogLevel.Warning;
             Flow.Logging.SlowHandler.Threshold = 100;
             Flow.Logging.LongQueue.LogLevel = LogLevel.Error;
-            Flow.Logging.LongQueue.Threshold = 100;
+            Flow.Logging.LongQueue.Threshold = 10000;
 
             MaxLinkHandles = 65536;
         }
