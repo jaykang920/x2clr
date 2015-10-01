@@ -196,7 +196,6 @@ namespace xpiler
             Indent(1); Out.WriteLine("{");
             Indent(2); Out.WriteLine("return info.TryParse(name, out result);");
             Indent(1); Out.WriteLine("}");
-            Out.WriteLine();
             Indent(0); Out.WriteLine("}");
         }
 

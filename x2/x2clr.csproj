@@ -67,6 +67,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="BuiltinEvents.cs" />
+    <Compile Include="ConstsInfo.cs" />
     <Compile Include="EventFactory.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Extensions.Array.cs" />
@@ -100,7 +101,6 @@
     <Compile Include="Serializer.GetEncodedLength.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="BufferTransform.cs" />
-    <Compile Include="Consts.cs" />
     <Compile Include="Coroutine.cs" />
     <Compile Include="Flows\EventBasedFlow.cs" />
     <Compile Include="Flows\FrameBasedFlow.cs" />

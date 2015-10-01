@@ -42,7 +42,6 @@ namespace x2
         {
             return info.TryParse(name, out result);
         }
-
     }
 
     public class LinkSessionConnected : Event

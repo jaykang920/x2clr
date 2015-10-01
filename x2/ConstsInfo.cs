@@ -7,15 +7,15 @@ using System.Collections.Generic;
 namespace x2
 {
     /// <summary>
-    /// Provides the common housekeeping methods for constants.
+    /// Provides the common housekeeping methods for static constants.
     /// </summary>
     public sealed class ConstsInfo<T>
     {
-        private Dictionary<string, T> map;
+        private SortedList<string, T> map;
 
         public ConstsInfo()
         {
-            map = new Dictionary<string, T>();
+            map = new SortedList<string, T>();
         }
 
         public void Add(string name, T value)
@@ -25,11 +25,12 @@ namespace x2
 
         public string GetName(T value)
         {
-            foreach (var pair in map)
+            IList<T> values = map.Values;
+            for (int i = 0, count = values.Count; i < count; ++i)
             {
-                if (pair.Value.Equals(value))
+                if (values[i].Equals(value))
                 {
-                    return pair.Key;
+                    return map.Keys[i];
                 }
             }
             return null;

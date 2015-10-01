@@ -36,7 +36,6 @@ namespace x2.Tests
         {
             return info.TryParse(name, out result);
         }
-
     }
 
     public class SampleCell1 : Cell
