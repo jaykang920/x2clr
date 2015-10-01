@@ -12,10 +12,10 @@ namespace x2
     /// </summary>
     public class Buffer : IDisposable
     {
-        private List<Segment> blocks;
+        private static int blockSizeExponent = Config.SegmentSizeExponent;
+        private static int remainderMask = ~(~0 << blockSizeExponent);
 
-        private readonly int blockSizeExponent;
-        private readonly int remainderMask;
+        private List<Segment> blocks;
 
         private Segment currentBlock;
         private int currentBlockIndex;
@@ -110,14 +110,11 @@ namespace x2
 
         public Buffer()
         {
-            int blockSizeExponent = SegmentPool.SegmentSizeExponent;
             if (blockSizeExponent < 0 || 31 < blockSizeExponent)
             {
                 throw new ArgumentOutOfRangeException();
             }
             blocks = new List<Segment>();
-            this.blockSizeExponent = blockSizeExponent;
-            remainderMask = ~(~0 << blockSizeExponent);
 
             blocks.Add(SegmentPool.Acquire());
 

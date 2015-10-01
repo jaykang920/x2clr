@@ -70,6 +70,9 @@ namespace x2
     /// </summary>
     public sealed class SegmentedBuffer
     {
+        private static int chunkSize = Config.ChunkSize;
+        private static int segmentSize = Config.SegmentSize;
+
         private byte[] buffer;
         private int currentOffset;
         private Stack<int> freeOffsetPool;
@@ -79,7 +82,7 @@ namespace x2
         public SegmentedBuffer()
         {
             freeOffsetPool = new Stack<int>();
-            buffer = new byte[SegmentPool.BufferSize];
+            buffer = new byte[chunkSize];
         }
 
         public bool Acquire(ref Segment segment)
@@ -96,13 +99,13 @@ namespace x2
             int offset;
             lock (syncRoot)
             {
-                if ((SegmentPool.BufferSize - SegmentPool.SegmentSize) < currentOffset)
+                if ((chunkSize - segmentSize) < currentOffset)
                 {
                     return false;
                 }
 
                 offset = currentOffset;
-                currentOffset += SegmentPool.SegmentSize;
+                currentOffset += segmentSize;
             }
             segment = new Segment(buffer, offset);
             return true;
@@ -127,23 +130,9 @@ namespace x2
     /// </summary>
     public sealed class SegmentPool
     {
-        // BufferSizeExponent >= SegmentSizeExponent
-        public const int BufferSizeExponent = 24;  // 16MB
-        public const int SegmentSizeExponent = 12;  // 4KB
-
         private static List<SegmentedBuffer> pools;
 
         private static ReaderWriterLockSlim rwlock;
-
-        public static int BufferSize
-        {
-            get { return (1 << BufferSizeExponent); }
-        }
-
-        public static int SegmentSize
-        {
-            get { return (1 << SegmentSizeExponent); }
-        }
 
         static SegmentPool()
         {

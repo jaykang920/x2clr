@@ -11,8 +11,6 @@ namespace x2
     /// </summary>
     public class WaitForSingleEvent : YieldInstruction
     {
-        public const double DefaultTimeout = 30.0;
-
         private readonly Coroutine coroutine;
 
         private readonly Binder.Token handlerToken;
@@ -20,7 +18,7 @@ namespace x2
         private readonly Timer.Token? timerToken;
 
         public WaitForSingleEvent(Coroutine coroutine, Event e)
-            : this(coroutine, null, e, DefaultTimeout)
+            : this(coroutine, null, e, Config.DefaultWaitTimeout)
         {
         }
 
@@ -94,7 +92,7 @@ namespace x2
     {
         public WaitForSingleResponse(Coroutine coroutine, Event request,
                 Event response)
-            : this(coroutine, request, response, DefaultTimeout)
+            : this(coroutine, request, response, Config.DefaultWaitTimeout)
         {
         }
 

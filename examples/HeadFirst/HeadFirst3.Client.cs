@@ -32,7 +32,7 @@ namespace x2.Examples.HeadFirst
 
         public static void Main()
         {
-            Log.Level = LogLevel.Trace;
+            Config.LogLevel = LogLevel.Trace;
             Log.Handler = (level, message) => Console.WriteLine(message);
 
             Hub.Instance

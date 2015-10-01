@@ -40,9 +40,6 @@ namespace x2
         /// </summary>
         public static Action<string, Exception> DefaultExceptionHandler { get; set; }
 
-        public static LogLevel DefaultSlowHandlerLogLevel { get; set; }
-        public static int DefaultSlowHandlerLogThreshold { get; set; }  // in millisec
-
         /// <summary>
         /// Gets or sets the exception handler for this flow.
         /// </summary>
@@ -59,9 +56,6 @@ namespace x2
         static Flow()
         {
             DefaultExceptionHandler = OnException;
-
-            DefaultSlowHandlerLogLevel = LogLevel.Warning;
-            DefaultSlowHandlerLogThreshold = 100;
         }
 
         protected Flow()
@@ -72,8 +66,8 @@ namespace x2
 
             ExceptionHandler = DefaultExceptionHandler;
 
-            SlowHandlerLogLevel = DefaultSlowHandlerLogLevel;
-            SlowHandlerLogThreshold = DefaultSlowHandlerLogThreshold;
+            SlowHandlerLogLevel = Config.DefaultSlowHandlerLogLevel;
+            SlowHandlerLogThreshold = Config.DefaultSlowHandlerLogThreshold;
         }
 
         public static Binder.Token Bind<T>(T e, Action<T> action)

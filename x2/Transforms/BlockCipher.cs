@@ -145,7 +145,7 @@ namespace x2
                 {
                     var segment = buffers[i];
 
-                    if (Log.Level <= LogLevel.Trace)
+                    if (Config.LogLevel <= LogLevel.Trace)
                     {
                         Log.Trace("BlockCipher.Transform: input block {0}",
                             BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
@@ -160,7 +160,7 @@ namespace x2
                 int result = (int)ms.Length;
                 var streamBuffer = ms.GetBuffer();
 
-                if (Log.Level <= LogLevel.Trace)
+                if (Config.LogLevel <= LogLevel.Trace)
                 {
                     Log.Trace("BlockCipher.Transform: output {0} {1}",
                         result, BitConverter.ToString(streamBuffer, 0, result));
@@ -219,7 +219,7 @@ namespace x2
                 {
                     var segment = buffers[i];
 
-                    if (Log.Level <= LogLevel.Trace)
+                    if (Config.LogLevel <= LogLevel.Trace)
                     {
                         Log.Trace("BlockCipher.InverseTransform: input block {0}",
                             BitConverter.ToString(segment.Array, segment.Offset, segment.Count));
@@ -234,7 +234,7 @@ namespace x2
                 int result = (int)ms.Length;
                 var streamBuffer = ms.GetBuffer();
 
-                if (Log.Level <= LogLevel.Trace)
+                if (Config.LogLevel <= LogLevel.Trace)
                 {
                     Log.Trace("BlockCipher.InverseTransform: output {0} {1}",
                         result, BitConverter.ToString(streamBuffer, 0, result));

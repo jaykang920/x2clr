@@ -30,18 +30,13 @@ namespace x2
     public static class Log
     {
         /// <summary>
-        /// Gets or sets the minimum log level to emit.
-        /// </summary>
-        public static LogLevel Level { get; set; }
-
-        /// <summary>
         /// Gets or sets the application-provided log handler.
         /// </summary>
         public static LogHandler Handler { get; set; }
 
         public static void Emit(LogLevel level, string message)
         {
-            if (Handler == null || Level > level)
+            if (Handler == null || Config.LogLevel > level)
             {
                 return;
             }
@@ -50,7 +45,7 @@ namespace x2
 
         public static void Emit(LogLevel level, string format, object arg0)
         {
-            if ((Handler == null) || Level > level)
+            if ((Handler == null) || Config.LogLevel > level)
             {
                 return;
             }
@@ -59,7 +54,7 @@ namespace x2
 
         public static void Emit(LogLevel level, string format, object arg0, object arg1)
         {
-            if ((Handler == null) || Level > level)
+            if ((Handler == null) || Config.LogLevel > level)
             {
                 return;
             }
@@ -68,7 +63,7 @@ namespace x2
 
         public static void Emit(LogLevel level, string format, object arg0, object arg1, object arg2)
         {
-            if ((Handler == null) || Level > level)
+            if ((Handler == null) || Config.LogLevel > level)
             {
                 return;
             }
@@ -77,7 +72,7 @@ namespace x2
 
         public static void Emit(LogLevel level, string format, params object[] args)
         {
-            if ((Handler == null) || Level > level)
+            if ((Handler == null) || Config.LogLevel > level)
             {
                 return;
             }

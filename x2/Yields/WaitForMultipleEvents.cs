@@ -12,8 +12,6 @@ namespace x2
     /// </summary>
     public class WaitForMultipleEvents : YieldInstruction
     {
-        public const double DefaultTimeout = 30.0;
-
         private readonly Coroutine coroutine;
         private readonly Event[] expected, actual;
 
@@ -24,7 +22,7 @@ namespace x2
         private int count;
 
         public WaitForMultipleEvents(Coroutine coroutine, params Event[] e)
-            : this(coroutine, null, DefaultTimeout, e)
+            : this(coroutine, null, Config.DefaultWaitTimeout, e)
         {
         }
 
@@ -129,13 +127,13 @@ namespace x2
     {
         public WaitForMultipleResponses(Coroutine coroutine, Event[] requests,
                 params Event[] responses)
-            : this(coroutine, requests, DefaultTimeout, responses)
+            : this(coroutine, requests, Config.DefaultWaitTimeout, responses)
         {
         }
 
         public WaitForMultipleResponses(Coroutine coroutine, Event[] requests,
                 double seconds, params Event[] responses)
-            : base(coroutine, requests, DefaultTimeout, responses)
+            : base(coroutine, requests, seconds, responses)
         {
             if (Object.ReferenceEquals(requests, null))
             {
