@@ -96,6 +96,12 @@ namespace x2
                     Flow.Unbind(timeoutToken);
                 }
 
+                int waitHandle = handlerTokens[0].Key._WaitHandle;
+                if (waitHandle != 0)
+                {
+                    WaitHandlePool.Release(waitHandle);
+                }
+
                 coroutine.Context = actual;
                 coroutine.Continue();
                 coroutine.Context = null;
@@ -112,6 +118,12 @@ namespace x2
                 }
             }
             Flow.Unbind(timeoutToken);
+
+            int waitHandle = handlerTokens[0].Key._WaitHandle;
+            if (waitHandle != 0)
+            {
+                WaitHandlePool.Release(waitHandle);
+            }
 
             Log.Error("WaitForMultipleEvents timeout for {0}", expected);
 

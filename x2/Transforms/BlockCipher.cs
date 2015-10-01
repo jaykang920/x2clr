@@ -131,7 +131,7 @@ namespace x2
                 // Multiple Write() calls are not properly handled there.
 
                 byte[] plaintext = buffer.ToArray();
-                if (Log.Level <= LogLevel.Trace)
+                if (Config.LogLevel <= LogLevel.Trace)
                 {
                     Log.Trace("BlockCipher.Transform: input {0}",
                         BitConverter.ToString(plaintext, plaintext.Length - length, length));
@@ -190,7 +190,7 @@ namespace x2
                 // Multiple Write() calls are not properly handled there.
 
                 byte[] ciphertext = buffer.ToArray();
-                if (Log.Level <= LogLevel.Trace)
+                if (Config.LogLevel <= LogLevel.Trace)
                 {
                     Log.Trace("BlockCipher.InverseTransform: input {0}",
                         BitConverter.ToString(ciphertext, 0, length));

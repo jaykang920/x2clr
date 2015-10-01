@@ -56,14 +56,18 @@ namespace x2
 
         void OnEvent(Event e)
         {
-            WaitHandlePool.Release(handlerToken.Key._WaitHandle);
-
             Flow.Unbind(handlerToken);
 
             if (timerToken.HasValue)
             {
                 TimeFlow.Default.Cancel(timerToken.Value);
                 Flow.Unbind(timeoutToken);
+            }
+
+            int waitHandle = handlerToken.Key._WaitHandle;
+            if (waitHandle != 0)
+            {
+                WaitHandlePool.Release(waitHandle);
             }
 
             coroutine.Context = e;
@@ -73,10 +77,14 @@ namespace x2
 
         void OnTimeout(TimeoutEvent e)
         {
-            WaitHandlePool.Release(handlerToken.Key._WaitHandle);
-
             Flow.Unbind(handlerToken);
             Flow.Unbind(timeoutToken);
+
+            int waitHandle = handlerToken.Key._WaitHandle;
+            if (waitHandle != 0)
+            {
+                WaitHandlePool.Release(waitHandle);
+            }
 
             Log.Error("WaitForSingleEvent timeout for {0}", handlerToken.Key);
 
