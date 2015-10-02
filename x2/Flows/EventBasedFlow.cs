@@ -26,5 +26,14 @@ namespace x2
         {
             queue.Enqueue(e);
         }
+
+        protected override void OnHeartbeat()
+        {
+            int length = queue.Length;
+            if (length >= LongQueueLogThreshold)
+            {
+                Log.Emit(LongQueueLogLevel, "{0} queue length {1}", name, length);
+            }
+        }
     }
 }

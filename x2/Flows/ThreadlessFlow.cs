@@ -8,10 +8,8 @@ using System.Threading;
 
 namespace x2
 {
-    public class ThreadlessFlow : Flow
+    public class ThreadlessFlow : EventBasedFlow
     {
-        protected IQueue<Event> queue;
-        protected readonly object syncRoot;
         protected bool running;
 
         public ThreadlessFlow()
@@ -20,15 +18,9 @@ namespace x2
         }
 
         public ThreadlessFlow(IQueue<Event> queue)
+            : base(queue)
         {
-            this.queue = queue;
-            syncRoot = new Object();
             running = false;
-        }
-
-        public override void Feed(Event e)
-        {
-            queue.Enqueue(e);
         }
 
         public override Flow Startup()

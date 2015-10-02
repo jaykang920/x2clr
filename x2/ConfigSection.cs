@@ -37,6 +37,13 @@ namespace x2
             set { this["flow"] = value; }
         }
 
+        [ConfigurationProperty("heartbeat")]
+        public HeartbeatElement Heartbeat
+        {
+            get { return (HeartbeatElement)this["heartbeat"]; }
+            set { this["heartbeat"] = value; }
+        }
+
         [ConfigurationProperty("link")]
         public LinkElement Link
         {
@@ -190,6 +197,17 @@ namespace x2
         {
             get { return (int)this["threshold"]; }
             set { this["threshold"] = value; }
+        }
+    }
+
+    // x2clr/heartbeat configuration element handler
+    public class HeartbeatElement : ConfigurationElement
+    {
+        [ConfigurationProperty("interval")]
+        public int Interval
+        {
+            get { return (int)this["interval"]; }
+            set { this["interval"] = value; }
         }
     }
 

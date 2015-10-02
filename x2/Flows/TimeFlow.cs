@@ -238,7 +238,7 @@ namespace x2
         private class Repeater
         {
             private ReaderWriterLockSlim rwlock;
-            private SortedList<object, Tag> map;
+            private Dictionary<object, Tag> map;
             private Timer owner;
 
             private Tag defaultCase;
@@ -246,7 +246,7 @@ namespace x2
             public Repeater(Timer owner)
             {
                 rwlock = new ReaderWriterLockSlim();
-                map = new SortedList<object, Tag>();
+                map = new Dictionary<object, Tag>();
                 this.owner = owner;
             }
 
@@ -306,11 +306,9 @@ namespace x2
                     }
                     if (map.Count != 0)
                     {
-                        var keys = map.Keys;
-                        var values = map.Values;
-                        for (int i = 0, count = map.Count; i < count; ++i)
+                        foreach (var pair in map)
                         {
-                            TryFire(utcNow, keys[i], values[i]);
+                            TryFire(utcNow, pair.Key, pair.Value);
                         }
                     }
                 }
@@ -338,6 +336,8 @@ namespace x2
         private static Map map;
 
         private Timer timer;
+
+        private int serial;
 
         /// <summary>
         /// Gets the default(anonymous) TimeFlow.
@@ -393,22 +393,38 @@ namespace x2
 
         public Timer.Token Reserve(Event e, double seconds)
         {
+            if (Object.ReferenceEquals(e, null))
+            {
+                throw new ArgumentNullException();
+            }
             return timer.Reserve(e, seconds);
         }
         
         public Timer.Token Reserve(Event e, TimeSpan delay)
         {
+            if (Object.ReferenceEquals(e, null))
+            {
+                throw new ArgumentNullException();
+            }
             return timer.Reserve(e, delay);
         }
 
-        public Timer.Token ReserveAtLocalTime(object state, DateTime localTime)
+        public Timer.Token ReserveAtLocalTime(Event e, DateTime localTime)
         {
-            return timer.ReserveAtLocalTime(state, localTime);
+            if (Object.ReferenceEquals(e, null))
+            {
+                throw new ArgumentNullException();
+            }
+            return timer.ReserveAtLocalTime(e, localTime);
         }
 
-        public Timer.Token ReserveAtUniversalTime(object state, DateTime universalTime)
+        public Timer.Token ReserveAtUniversalTime(Event e, DateTime universalTime)
         {
-            return timer.ReserveAtUniversalTime(state, universalTime);
+            if (Object.ReferenceEquals(e, null))
+            {
+                throw new ArgumentNullException();
+            }
+            return timer.ReserveAtUniversalTime(e, universalTime);
         }
 
         public void Cancel(Timer.Token token)
@@ -418,21 +434,37 @@ namespace x2
 
         public void Cancel(Event e)
         {
+            if (Object.ReferenceEquals(e, null))
+            {
+                throw new ArgumentNullException();
+            }
             timer.Cancel(e);
         }
 
         public void ReserveRepetition(Event e, TimeSpan interval)
         {
+            if (Object.ReferenceEquals(e, null))
+            {
+                throw new ArgumentNullException();
+            }
             timer.ReserveRepetition(e, interval);
         }
 
         public void ReserveRepetition(Event e, DateTime nextUtcTime, TimeSpan interval)
         {
+            if (Object.ReferenceEquals(e, null))
+            {
+                throw new ArgumentNullException();
+            }
             timer.ReserveRepetition(e, nextUtcTime, interval);
         }
 
         public void CancelRepetition(Event e)
         {
+            if (Object.ReferenceEquals(e, null))
+            {
+                throw new ArgumentNullException();
+            }
             timer.CancelRepetition(e);
         }
 
@@ -446,7 +478,7 @@ namespace x2
 
         private class Map
         {
-            private IDictionary<string, TimeFlow> timeFlows;
+            private Dictionary<string, TimeFlow> timeFlows;
             private ReaderWriterLockSlim rwlock;
 
             public Map()

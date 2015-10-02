@@ -82,6 +82,8 @@ namespace x2
             }
         }
 
+        public static int HeartbeatInterval { get; set; }
+
         public static int MaxLinkHandles { get; set; }
 
         static Config()
@@ -102,7 +104,9 @@ namespace x2
             Flow.Logging.SlowHandler.LogLevel = LogLevel.Warning;
             Flow.Logging.SlowHandler.Threshold = 100;
             Flow.Logging.LongQueue.LogLevel = LogLevel.Error;
-            Flow.Logging.LongQueue.Threshold = 10000;
+            Flow.Logging.LongQueue.Threshold = 1000;
+
+            HeartbeatInterval = 5;
 
             MaxLinkHandles = 65536;
         }
@@ -132,6 +136,8 @@ namespace x2
             Flow.Logging.SlowHandler.Threshold = logging.SlowHandler.Threshold;
             Flow.Logging.LongQueue.LogLevel = logging.LongQueue.LogLevel;
             Flow.Logging.LongQueue.Threshold = logging.LongQueue.Threshold;
+
+            HeartbeatInterval = section.Heartbeat.Interval;
 
             MaxLinkHandles = section.Link.MaxHandles;
         }

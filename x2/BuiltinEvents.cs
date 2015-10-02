@@ -10,18 +10,20 @@ namespace x2
 {
     public static class BuiltinEventType
     {
-        public const int FlowStart = -1;
-        public const int FlowStop = -2;
-        public const int TimeoutEvent = -3;
+        public const int HeartbeatEvent = -1;
+        public const int FlowStart = -2;
+        public const int FlowStop = -3;
+        public const int TimeoutEvent = -4;
 
         private static ConstsInfo<int> info;
 
         static BuiltinEventType()
         {
             info = new ConstsInfo<int>();
-            info.Add("FlowStart", -1);
-            info.Add("FlowStop", -2);
-            info.Add("TimeoutEvent", -3);
+            info.Add("HeartbeatEvent", -1);
+            info.Add("FlowStart", -2);
+            info.Add("FlowStop", -3);
+            info.Add("TimeoutEvent", -4);
         }
 
         public static string GetName(int value)
@@ -37,6 +39,73 @@ namespace x2
         public static bool TryParse(string name, out int result)
         {
             return info.TryParse(name, out result);
+        }
+    }
+
+    public class HeartbeatEvent : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        static HeartbeatEvent()
+        {
+            tag = new Tag(Event.tag, typeof(HeartbeatEvent), 0,
+                    (int)BuiltinEventType.HeartbeatEvent);
+        }
+
+        new public static HeartbeatEvent New()
+        {
+            return new HeartbeatEvent();
+        }
+
+        public HeartbeatEvent()
+            : base(tag.NumProps)
+        {
+        }
+
+        protected HeartbeatEvent(int length)
+            : base(length + tag.NumProps)
+        {
+        }
+
+        public override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override bool IsEquivalent(Cell other)
+        {
+            if (!base.IsEquivalent(other))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
         }
     }
 

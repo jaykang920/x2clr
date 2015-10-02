@@ -152,6 +152,19 @@ namespace x2
             }
         }
 
+        protected override void OnHeartbeat()
+        {
+            if (queue == null)
+            {
+                return;
+            }
+            int length = queue.Length;
+            if (length >= LongQueueLogThreshold)
+            {
+                Log.Emit(LongQueueLogLevel, "{0} queue length {1}", name, length);
+            }
+        }
+
         private void Run()
         {
             currentFlow = this;

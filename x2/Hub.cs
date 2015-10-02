@@ -155,6 +155,9 @@ namespace x2
         public static void Startup()
         {
             Instance.StartAttachedFlows();
+
+            TimeFlow.Default.ReserveRepetition(new HeartbeatEvent(),
+                new TimeSpan(0, 0, Config.HeartbeatInterval));
         }
 
         private void StopAttachedFlows()
@@ -175,6 +178,8 @@ namespace x2
         /// </summary>
         public static void Shutdown()
         {
+            TimeFlow.Default.CancelRepetition(new HeartbeatEvent());
+
             Instance.StopAttachedFlows();
         }
 

@@ -1,12 +1,16 @@
 <x2 namespace="x2">
     <consts name="BuiltinEventType">
-        <const name="FlowStart">-1</const>
-        <const name="FlowStop">-2</const>
+        <const name="HeartbeatEvent">-1</const>
 
-        <const name="TimeoutEvent">-3</const>
+        <const name="FlowStart">-2</const>
+        <const name="FlowStop">-3</const>
+
+        <const name="TimeoutEvent">-4</const>
 
         <!-- -10 to -99 : reserved for links -->
     </consts>
+
+    <event name="HeartbeatEvent" id="BuiltinEventType.HeartbeatEvent" local="true"/>
 
     <event name="FlowStart" id="BuiltinEventType.FlowStart" local="true"/>
     <event name="FlowStop" id="BuiltinEventType.FlowStop" local="true"/>

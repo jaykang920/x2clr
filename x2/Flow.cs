@@ -311,6 +311,7 @@ namespace x2
 
         protected virtual void Setup()
         {
+            Subscribe(new HeartbeatEvent(), OnHeartbeatEvent);
             Subscribe(new FlowStart(), OnFlowStart);
             Subscribe(new FlowStop(), OnFlowStop);
         }
@@ -319,11 +320,19 @@ namespace x2
         {
             Unsubscribe(new FlowStop(), OnFlowStop);
             Unsubscribe(new FlowStart(), OnFlowStart);
+            Unsubscribe(new HeartbeatEvent(), OnHeartbeatEvent);
         }
 
-        protected virtual void OnStart() {}
+        protected virtual void OnHeartbeat() { }
 
-        protected virtual void OnStop() {}
+        protected virtual void OnStart() { }
+
+        protected virtual void OnStop() { }
+
+        private void OnHeartbeatEvent(HeartbeatEvent e)
+        {
+            OnHeartbeat();
+        }
 
         private void OnFlowStart(FlowStart e)
         {
