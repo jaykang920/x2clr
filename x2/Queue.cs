@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 namespace x2
 {
+    /// <summary>
+    /// Defines the methods and properties of a blocking queue.
+    /// </summary>
     public interface IQueue<T>
     {
         int Length { get; }
@@ -15,10 +18,10 @@ namespace x2
 
         T Dequeue();
 
-        void Dequeue(List<T> list);
+        int Dequeue(IList<T> list);
 
         void Enqueue(T item);
         bool TryDequeue(out T value);
-        bool TryDequeue(List<T> list);
+        bool TryDequeue(IList<T> list);
     }
 }

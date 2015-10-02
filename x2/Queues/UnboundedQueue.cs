@@ -60,7 +60,7 @@ namespace x2
             }
         }
 
-        public void Dequeue(List<T> values)
+        public int Dequeue(IList<T> values)
         {
             lock (queue)
             {
@@ -68,14 +68,17 @@ namespace x2
                 {
                     if (closing)
                     {
-                        return;
+                        return 0;
                     }
                     Monitor.Wait(queue);
                 }
+                int n = 0;
                 while (queue.Count != 0)
                 {
                     values.Add(queue.Dequeue());
+                    ++n;
                 }
+                return n;
             }
         }
 
@@ -86,7 +89,10 @@ namespace x2
                 if (!closing)
                 {
                     queue.Enqueue(item);
-                    Monitor.Pulse(queue);
+                    if (queue.Count == 1)
+                    {
+                        Monitor.Pulse(queue);
+                    }
                 }
             }
         }
@@ -105,7 +111,7 @@ namespace x2
             }
         }
 
-        public bool TryDequeue(List<T> values)
+        public bool TryDequeue(IList<T> values)
         {
             lock (queue)
             {

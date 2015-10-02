@@ -76,7 +76,10 @@ namespace x2
 
         public void Dispatch()
         {
-            queue.Dequeue(events);
+            if (queue.Dequeue(events) == 0)
+            {
+                return;
+            }
             for (int i = 0, count = events.Count; i < count; ++i)
             {
                 Dispatch(events[i]);

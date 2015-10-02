@@ -76,8 +76,7 @@ namespace x2
 
             while (true)
             {
-                queue.Dequeue(events);
-                if (events.Count == 0)
+                if (queue.Dequeue(events) == 0)
                 {
                     break;
                 }
