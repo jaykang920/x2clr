@@ -105,11 +105,7 @@ namespace x2
             {
                 return;
             }
-            int length = queue.Enqueue(e);
-            if (length >= LongQueueLogThreshold)
-            {
-                Log.Emit(LongQueueLogLevel, "{0} long queue {2}", Name, length);
-            }
+            queue.Enqueue(e);
         }
 
         public override Flow Startup()

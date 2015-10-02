@@ -17,7 +17,7 @@ namespace x2
 
         void Dequeue(List<T> list);
 
-        int Enqueue(T item);
+        void Enqueue(T item);
         bool TryDequeue(out T value);
         bool TryDequeue(List<T> list);
     }

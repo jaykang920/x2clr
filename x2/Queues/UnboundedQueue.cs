@@ -79,7 +79,7 @@ namespace x2
             }
         }
 
-        public int Enqueue(T item)
+        public void Enqueue(T item)
         {
             lock (queue)
             {
@@ -88,7 +88,6 @@ namespace x2
                     queue.Enqueue(item);
                     Monitor.Pulse(queue);
                 }
-                return queue.Count;
             }
         }
 
