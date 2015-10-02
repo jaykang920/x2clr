@@ -238,7 +238,7 @@ namespace x2
         private class Repeater
         {
             private ReaderWriterLockSlim rwlock;
-            private IDictionary<object, Tag> map;
+            private SortedList<object, Tag> map;
             private Timer owner;
 
             private Tag defaultCase;
@@ -246,7 +246,7 @@ namespace x2
             public Repeater(Timer owner)
             {
                 rwlock = new ReaderWriterLockSlim();
-                map = new Dictionary<object, Tag>();
+                map = new SortedList<object, Tag>();
                 this.owner = owner;
             }
 
@@ -306,14 +306,16 @@ namespace x2
                     }
                     if (map.Count != 0)
                     {
-                        foreach (var pair in map)
+                        var keys = map.Keys;
+                        var values = map.Values;
+                        for (int i = 0, count = map.Count; i < count; ++i)
                         {
-                            TryFire(utcNow, pair.Key, pair.Value);
+                            TryFire(utcNow, keys[i], values[i]);
                         }
                     }
                 }
                 finally
-                {   
+                {
                     rwlock.ExitReadLock();
                 }
             }
