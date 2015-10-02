@@ -1,6 +1,13 @@
+Features:
+
 - added Config class and its properties, supporting application configuration loading
+- added periodic global heartbeat events
 - added new internal property, _WaitHandle, to the Event class, to automate coroutine response matching
 - renamed a few methods: Startup, Shutdown, Setup, Teardown
+
+Bugfixes:
+
+- fixed the growing send buffer bug
 
 ## 0.6.3 (2015-09-25)
 
