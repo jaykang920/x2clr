@@ -55,7 +55,7 @@ namespace x2
         public void Reset()
         {
             headerLength = 0;
-            buffer.Rewind();
+            buffer.Trim();
         }
     }
 
