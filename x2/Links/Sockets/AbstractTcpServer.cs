@@ -169,7 +169,7 @@ namespace x2
             Bind(new LinkSessionRecovered { LinkName = Name },
                 OnLinkSessionRecovered);
 
-            Bind(new HeartbeatEvent(), OnHeartbeatEvent);
+            Bind(Hub.HeartbeatEvent, OnHeartbeatEvent);
         }
 
         private void OnHeartbeatEvent(HeartbeatEvent e)
