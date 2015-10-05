@@ -62,11 +62,13 @@ namespace x2
         public HeartbeatEvent()
             : base(tag.NumProps)
         {
+            Initialize();
         }
 
         protected HeartbeatEvent(int length)
             : base(length + tag.NumProps)
         {
+            Initialize();
         }
 
         public override bool EqualsTo(Cell other)
@@ -103,9 +105,39 @@ namespace x2
             return true;
         }
 
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            return length;
+        }
+
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
+        }
+
+        private void Initialize()
+        {
         }
     }
 

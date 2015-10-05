@@ -72,11 +72,7 @@ namespace x2
         public bool IncomingKeepaliveEnabled
         {
             get { return incomingKeepaliveEnabled; }
-            set
-            {
-                incomingKeepaliveEnabled = value;
-                KeepaliveTicker.ChangeRef(value);
-            }
+            set { incomingKeepaliveEnabled = value; }
         }
         /// <summary>
         /// Gets or sets a boolean value indicating whether this link emits
@@ -85,11 +81,7 @@ namespace x2
         public bool OutgoingKeepaliveEnabled
         {
             get { return outgoingKeepaliveEnabled; }
-            set
-            {
-                outgoingKeepaliveEnabled = value;
-                KeepaliveTicker.ChangeRef(value);
-            }
+            set { outgoingKeepaliveEnabled = value; }
         }
         /// <summary>
         /// Gets or sets the maximum number of successive keepalive failures
@@ -104,7 +96,7 @@ namespace x2
 
         static AbstractTcpClient()
         {
-            EventFactory.Register<KeepaliveEvent>();
+            EventFactory.Register<HeartbeatEvent>();
         }
 
         /// <summary>
@@ -272,19 +264,10 @@ namespace x2
             Bind(new LinkSessionRecovered { LinkName = Name },
                 OnLinkSessionRecovered);
 
-            Bind(KeepaliveTicker.Event, OnKeepaliveTick);
-
-            Flow.SubscribeTo(KeepaliveTicker.Channel);
+            Bind(new HeartbeatEvent(), OnHeartbeatEvent);
         }
 
-        protected override void Teardown()
-        {
-            Flow.UnsubscribeFrom(KeepaliveTicker.Channel);
-
-            base.Teardown();
-        }
-
-        private void OnKeepaliveTick(KeepaliveTick e)
+        private void OnHeartbeatEvent(HeartbeatEvent e)
         {
             if (!IncomingKeepaliveEnabled && !OutgoingKeepaliveEnabled)
             {

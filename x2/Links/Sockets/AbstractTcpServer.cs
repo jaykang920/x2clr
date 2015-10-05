@@ -45,7 +45,6 @@ namespace x2
             set
             {
                 incomingKeepaliveEnabled = value;
-                KeepaliveTicker.ChangeRef(value);
             }
         }
         /// <summary>
@@ -58,7 +57,6 @@ namespace x2
             set
             {
                 outgoingKeepaliveEnabled = value;
-                KeepaliveTicker.ChangeRef(value);
             }
         }
         /// <summary>
@@ -74,7 +72,7 @@ namespace x2
 
         static AbstractTcpServer()
         {
-            EventFactory.Register<KeepaliveEvent>();
+            EventFactory.Register<HeartbeatEvent>();
         }
 
         /// <summary>
@@ -171,19 +169,10 @@ namespace x2
             Bind(new LinkSessionRecovered { LinkName = Name },
                 OnLinkSessionRecovered);
 
-            Bind(KeepaliveTicker.Event, OnKeepaliveTick);
-
-            Flow.SubscribeTo(KeepaliveTicker.Channel);
+            Bind(new HeartbeatEvent(), OnHeartbeatEvent);
         }
 
-        protected override void Teardown()
-        {
-            Flow.UnsubscribeFrom(KeepaliveTicker.Channel);
-
-            base.Teardown();
-        }
-
-        private void OnKeepaliveTick(KeepaliveTick e)
+        private void OnHeartbeatEvent(HeartbeatEvent e)
         {
             if (!IncomingKeepaliveEnabled && !OutgoingKeepaliveEnabled)
             {

@@ -19,6 +19,7 @@ namespace x2
 
         private ReaderWriterLockSlim rwlock;
 
+        public static HeartbeatEvent HeartbeatEvent { get; private set; }
         /// <summary>
         /// Gets the singleton instance of the hub.
         /// </summary>
@@ -26,6 +27,7 @@ namespace x2
 
         static Hub()
         {
+            HeartbeatEvent = new HeartbeatEvent { _Transform = false };
             Instance = new Hub();
         }
 
@@ -156,7 +158,7 @@ namespace x2
         {
             Instance.StartAttachedFlows();
 
-            TimeFlow.Default.ReserveRepetition(new HeartbeatEvent(),
+            TimeFlow.Default.ReserveRepetition(HeartbeatEvent,
                 new TimeSpan(0, 0, Config.HeartbeatInterval));
         }
 
@@ -178,7 +180,7 @@ namespace x2
         /// </summary>
         public static void Shutdown()
         {
-            TimeFlow.Default.CancelRepetition(new HeartbeatEvent());
+            TimeFlow.Default.CancelRepetition(HeartbeatEvent);
 
             Instance.StopAttachedFlows();
         }

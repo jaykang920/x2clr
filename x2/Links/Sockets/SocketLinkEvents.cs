@@ -11,8 +11,6 @@ namespace x2
     public static class SocketLinkEventType
     {
         public const int LinkSessionRecovered = -20;
-        public const int KeepaliveEvent = -21;
-        public const int KeepaliveTick = -22;
         public const int SessionReq = -23;
         public const int SessionResp = -24;
         public const int SessionAck = -25;
@@ -23,8 +21,6 @@ namespace x2
         {
             info = new ConstsInfo<int>();
             info.Add("LinkSessionRecovered", -20);
-            info.Add("KeepaliveEvent", -21);
-            info.Add("KeepaliveTick", -22);
             info.Add("SessionReq", -23);
             info.Add("SessionResp", -24);
             info.Add("SessionAck", -25);
@@ -200,172 +196,6 @@ namespace x2
             stringBuilder.AppendFormat(" LinkName=\"{0}\"", linkName_.Replace("\"", "\\\""));
             stringBuilder.AppendFormat(" Handle={0}", handle_);
             stringBuilder.AppendFormat(" Context={0}", context_);
-        }
-    }
-
-    public class KeepaliveEvent : Event
-    {
-        new protected static readonly Tag tag;
-
-        new public static int TypeId { get { return tag.TypeId; } }
-
-        static KeepaliveEvent()
-        {
-            tag = new Tag(Event.tag, typeof(KeepaliveEvent), 0,
-                    (int)SocketLinkEventType.KeepaliveEvent);
-        }
-
-        new public static KeepaliveEvent New()
-        {
-            return new KeepaliveEvent();
-        }
-
-        public KeepaliveEvent()
-            : base(tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected KeepaliveEvent(int length)
-            : base(length + tag.NumProps)
-        {
-            Initialize();
-        }
-
-        public override bool EqualsTo(Cell other)
-        {
-            if (!base.EqualsTo(other))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode(Fingerprint fingerprint)
-        {
-            var hash = new Hash(base.GetHashCode(fingerprint));
-            return hash.Code;
-        }
-
-        public override int GetTypeId()
-        {
-            return tag.TypeId;
-        }
-
-        public override Cell.Tag GetTypeTag() 
-        {
-            return tag;
-        }
-
-        public override bool IsEquivalent(Cell other)
-        {
-            if (!base.IsEquivalent(other))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override void Deserialize(Deserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-        }
-
-        public override void Deserialize(VerboseDeserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-        }
-
-        public override void Serialize(Serializer serializer)
-        {
-            base.Serialize(serializer);
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-        }
-
-        public override int GetEncodedLength()
-        {
-            int length = base.GetEncodedLength();
-            return length;
-        }
-
-        protected override void Describe(StringBuilder stringBuilder)
-        {
-            base.Describe(stringBuilder);
-        }
-
-        private void Initialize()
-        {
-        }
-    }
-
-    public class KeepaliveTick : Event
-    {
-        new protected static readonly Tag tag;
-
-        new public static int TypeId { get { return tag.TypeId; } }
-
-        static KeepaliveTick()
-        {
-            tag = new Tag(Event.tag, typeof(KeepaliveTick), 0,
-                    (int)SocketLinkEventType.KeepaliveTick);
-        }
-
-        new public static KeepaliveTick New()
-        {
-            return new KeepaliveTick();
-        }
-
-        public KeepaliveTick()
-            : base(tag.NumProps)
-        {
-        }
-
-        protected KeepaliveTick(int length)
-            : base(length + tag.NumProps)
-        {
-        }
-
-        public override bool EqualsTo(Cell other)
-        {
-            if (!base.EqualsTo(other))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode(Fingerprint fingerprint)
-        {
-            var hash = new Hash(base.GetHashCode(fingerprint));
-            return hash.Code;
-        }
-
-        public override int GetTypeId()
-        {
-            return tag.TypeId;
-        }
-
-        public override Cell.Tag GetTypeTag() 
-        {
-            return tag;
-        }
-
-        public override bool IsEquivalent(Cell other)
-        {
-            if (!base.IsEquivalent(other))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        protected override void Describe(StringBuilder stringBuilder)
-        {
-            base.Describe(stringBuilder);
         }
     }
 

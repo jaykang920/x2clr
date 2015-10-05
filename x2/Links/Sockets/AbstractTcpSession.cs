@@ -140,7 +140,7 @@ namespace x2
                 {
                     Log.Trace("{0} {1} sent keepalive event", link.Name, handle);
 
-                    Send(new KeepaliveEvent { _Transform = false });
+                    Send(Hub.HeartbeatEvent);
                 }
             }
 
@@ -214,7 +214,7 @@ namespace x2
         {
             switch (e.GetTypeId())
             {
-                case (int)SocketLinkEventType.KeepaliveEvent:
+                case BuiltinEventType.HeartbeatEvent:
                     break;
                 default:
                     return base.Process(e);
@@ -226,7 +226,7 @@ namespace x2
         {
             hasReceived = true;
 
-            if (e.GetTypeId() != SocketLinkEventType.KeepaliveEvent)
+            if (e.GetTypeId() != BuiltinEventType.HeartbeatEvent)
             {
                 Log.Debug("{0} {1} received event {2}", link.Name, Handle, e);
             }
@@ -242,7 +242,7 @@ namespace x2
         {
             hasSent = true;
 
-            if (e.GetTypeId() != SocketLinkEventType.KeepaliveEvent)
+            if (e.GetTypeId() != BuiltinEventType.HeartbeatEvent)
             {
                 Log.Debug("{0} {1} sent event {2}", link.Name, Handle, e);
             }

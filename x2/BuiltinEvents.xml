@@ -10,7 +10,7 @@
         <!-- -10 to -99 : reserved for links -->
     </consts>
 
-    <event name="HeartbeatEvent" id="BuiltinEventType.HeartbeatEvent" local="true"/>
+    <event name="HeartbeatEvent" id="BuiltinEventType.HeartbeatEvent"/>
 
     <event name="FlowStart" id="BuiltinEventType.FlowStart" local="true"/>
     <event name="FlowStop" id="BuiltinEventType.FlowStop" local="true"/>

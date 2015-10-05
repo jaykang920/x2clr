@@ -2,9 +2,6 @@
 
     <consts name="SocketLinkEventType">
         <const name="LinkSessionRecovered">-20</const>
-        
-        <const name="KeepaliveEvent">-21</const>
-        <const name="KeepaliveTick">-22</const>
 
         <const name="SessionReq">-23</const>
         <const name="SessionResp">-24</const>
@@ -15,11 +12,6 @@
         <property name="LinkName" type="string"/>
         <property name="Handle" type="int32"/>
         <property name="Context" type="object"/>
-    </event>
-
-    <event name="KeepaliveEvent" id="SocketLinkEventType.KeepaliveEvent">
-    </event>
-    <event name="KeepaliveTick" id="SocketLinkEventType.KeepaliveTick" local="true">
     </event>
 
     <event name="SessionReq" id="SocketLinkEventType.SessionReq">

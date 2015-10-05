@@ -99,14 +99,14 @@ namespace x2
             Buffer.RoomFactor.MaxLevel = 3;  // x8
 
             Coroutine.MaxWaitHandles = 1024;
-            Coroutine.DefaultTimeout = 30.0;
+            Coroutine.DefaultTimeout = 30.0;  // in seconds
 
             Flow.Logging.SlowHandler.LogLevel = LogLevel.Warning;
-            Flow.Logging.SlowHandler.Threshold = 100;
+            Flow.Logging.SlowHandler.Threshold = 100;  // in milliseconds
             Flow.Logging.LongQueue.LogLevel = LogLevel.Error;
             Flow.Logging.LongQueue.Threshold = 1000;
 
-            HeartbeatInterval = 5;
+            HeartbeatInterval = 5;  // in seconds
 
             MaxLinkHandles = 65536;
         }

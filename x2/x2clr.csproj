@@ -84,7 +84,6 @@
     <Compile Include="Links\LinkEvents.cs" />
     <Compile Include="Links\ServerLink.cs" />
     <Compile Include="Links\Sockets\SocketLinkEvents.cs" />
-    <Compile Include="Links\Sockets\KeepaliveTicker.cs" />
     <Compile Include="Links\Sockets\TcpServer.cs" />
     <Compile Include="Links\Sockets\TcpSession.cs" />
     <Compile Include="Links\SendBuffer.cs" />
