@@ -1,3 +1,5 @@
+## 0.7.0 (2015-10-05)
+
 Features:
 
 - added Config class and its properties, supporting application configuration loading
