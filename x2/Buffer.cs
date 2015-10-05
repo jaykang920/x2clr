@@ -131,7 +131,7 @@ namespace x2
         /// </summary>
         ~Buffer()
         {
-            CleanUp();
+            Cleanup();
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace x2
         /// </summary>
         public void Dispose()
         {
-            CleanUp();
+            Cleanup();
             GC.SuppressFinalize(this);
         }
 
@@ -440,7 +440,7 @@ namespace x2
             }
         }
 
-        private void CleanUp()
+        private void Cleanup()
         {
             if (blocks.Count == 0)
             {
