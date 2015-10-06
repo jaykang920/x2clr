@@ -337,8 +337,6 @@ namespace x2
 
         private Timer timer;
 
-        private int serial;
-
         /// <summary>
         /// Gets the default(anonymous) TimeFlow.
         /// </summary>
