@@ -185,7 +185,7 @@ namespace x2
         {
             OnDisconnect(RemoteEndPoint);
 
-            Dispose();
+            CloseInternal();
         }
 
         protected override void BuildHeader(SendBuffer sendBuffer, bool transformed)

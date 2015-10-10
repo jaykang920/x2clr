@@ -99,6 +99,11 @@ namespace x2
         /// </summary>
         public virtual void Close()
         {
+            CloseInternal();
+        }
+
+        protected internal void CloseInternal()
+        {
             Dispose();
         }
 

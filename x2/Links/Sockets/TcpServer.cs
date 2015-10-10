@@ -40,7 +40,7 @@ namespace x2
                 if (!OnAcceptInternal(session))
                 {
                     NotifySessionConnected(false, clientSocket.RemoteEndPoint);
-                    session.Close();
+                    session.CloseInternal();
                 }
             }
             catch (ObjectDisposedException)
