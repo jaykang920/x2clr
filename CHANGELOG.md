@@ -1,3 +1,8 @@
+Bugfixes:
+
+- TcpClient: fixed the unhandled exception on connection failure
+- *TcpSession: fixed the problem that a LinkSessionDisconnected event is not posted on active close
+
 ## 0.7.0 (2015-10-05)
 
 Features:
