@@ -37,12 +37,12 @@ namespace x2
             rxEventArgs.Completed -= OnReceiveCompleted;
             rxEventArgs.Dispose();
 
-            Log.Debug("{0} {1} freed recvEventArgs", link.Name, Handle);
+            Log.Debug("{0} {1} freed recvEventArgs", link.Name, handle);
 
             txEventArgs.Completed -= OnSendCompleted;
             txEventArgs.Dispose();
 
-            Log.Debug("{0} {1} freed sendEventArgs", link.Name, Handle);
+            Log.Debug("{0} {1} freed sendEventArgs", link.Name, handle);
 
             base.Dispose(disposing);
         }
@@ -58,18 +58,16 @@ namespace x2
                 bool pending = socket.ReceiveAsync(rxEventArgs);
                 if (!pending)
                 {
-                    Log.Debug("{0} {1} ReceiveAsync completed immediately", link.Name, Handle);
+                    Log.Debug("{0} {1} ReceiveAsync completed immediately",
+                        link.Name, handle);
 
                     OnReceive(rxEventArgs);
                 }
             }
-            catch (ObjectDisposedException)
-            {
-                return;
-            }
+            catch (ObjectDisposedException) { }
             catch (Exception e)
             {
-                Log.Warn("{0} {1} recv error {2}", link.Name, Handle, e);
+                Log.Warn("{0} {1} recv error {2}", link.Name, handle, e);
 
                 OnDisconnect();
             }
@@ -84,18 +82,16 @@ namespace x2
                 bool pending = socket.SendAsync(txEventArgs);
                 if (!pending)
                 {
-                    Log.Debug("{0} {1} SendAsync completed immediately", link.Name, Handle);
+                    Log.Debug("{0} {1} SendAsync completed immediately",
+                        link.Name, handle);
 
                     OnSend(txEventArgs);
                 }
             }
-            catch (ObjectDisposedException)
-            {
-                return;
-            }
+            catch (ObjectDisposedException) { }
             catch (Exception e)
             {
-                Log.Warn("{0} {1} send error {2}", link.Name, Handle, e);
+                Log.Warn("{0} {1} send error {2}", link.Name, handle, e);
 
                 OnDisconnect();
             }
@@ -116,58 +112,71 @@ namespace x2
         // Completion callback for ReceiveAsync
         private void OnReceive(SocketAsyncEventArgs e)
         {
-            e.BufferList = null;
-
-            if (e.SocketError == SocketError.Success)
+            try
             {
-                if (e.BytesTransferred > 0)
-                {
-                    OnReceiveInternal(e.BytesTransferred);
-                    return;
-                }
+                e.BufferList = null;
 
-                // (e.BytesTransferred == 0) implies a graceful shutdown
-                Log.Info("{0} {1} disconnected", link.Name, Handle);
-            }
-            else
-            {
-                if (e.SocketError == SocketError.OperationAborted)
+                if (e.SocketError == SocketError.Success)
                 {
-                    // Socket has been closed.
-                    return;
+                    if (e.BytesTransferred > 0)
+                    {
+                        OnReceiveInternal(e.BytesTransferred);
+                        return;
+                    }
+
+                    // (e.BytesTransferred == 0) implies a graceful shutdown
+                    Log.Info("{0} {1} disconnected", link.Name, handle);
                 }
                 else
                 {
-                    Log.Warn("{0} {1} recv error {2}", link.Name, Handle, e.SocketError);
+                    if (e.SocketError == SocketError.OperationAborted)
+                    {
+                        return;
+                    }
+                    Log.Warn("{0} {1} recv error {2}", link.Name, handle, e.SocketError);
                 }
             }
-
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("{0} {1} recv error {2}", link.Name, handle, ex);
+            }
             OnDisconnect();
         }
 
         // Completion callback for SendAsync
         private void OnSend(SocketAsyncEventArgs e)
         {
-            e.BufferList = null;
+            try
+            {
+                e.BufferList = null;
 
-            if (e.SocketError == SocketError.Success)
-            {
-                OnSendInternal(e.BytesTransferred);
-            }
-            else
-            {
-                if (e.SocketError == SocketError.OperationAborted)
+                if (e.SocketError == SocketError.Success)
                 {
-                    // Socket has been closed.
+                    OnSendInternal(e.BytesTransferred);
                     return;
                 }
                 else
                 {
-                    Log.Warn("{0} {1} send error {2}", link.Name, Handle, e.SocketError);
+                    if (e.SocketError == SocketError.OperationAborted)
+                    {
+                        return;
+                    }
+                    Log.Warn("{0} {1} send error {2}", link.Name, handle, e.SocketError);
                 }
-
-                OnDisconnect();
             }
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("{0} {1} send error {2}", link.Name, handle, ex);
+            }
+            OnDisconnect();
         }
     }
 }

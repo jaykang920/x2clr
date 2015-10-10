@@ -83,13 +83,18 @@ namespace x2
         {
             if (disposed) { return; }
 
+            LinkSession session = null;
             using (new WriteLock(rwlock))
             {
-                if (session != null)
+                if (this.session != null)
                 {
-                    session.Close();
-                    session = null;
+                    session = this.session;
+                    this.session = null;
                 }
+            }
+            if (session != null)
+            {
+                session.Close();
             }
 
             base.Dispose(disposing);

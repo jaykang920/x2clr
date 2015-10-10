@@ -27,13 +27,10 @@ namespace x2
 
                 socket.BeginReceive(rxBufferList, SocketFlags.None, OnReceive, null);
             }
-            catch (ObjectDisposedException)
-            {
-                return;
-            }
+            catch (ObjectDisposedException) { }
             catch (Exception e)
             {
-                Log.Warn("{0} {1} recv error {2}", link.Name, Handle, e);
+                Log.Warn("{0} {1} recv error {2}", link.Name, handle, e);
 
                 OnDisconnect();
             }
@@ -45,13 +42,10 @@ namespace x2
             {
                 socket.BeginSend(txBufferList, SocketFlags.None, OnSend, null);
             }
-            catch (ObjectDisposedException)
-            {
-                return;
-            }
+            catch (ObjectDisposedException) { }
             catch (Exception e)
             {
-                Log.Warn("{0} {1} send error {2}", link.Name, Handle, e);
+                Log.Warn("{0} {1} send error {2}", link.Name, handle, e);
 
                 OnDisconnect();
             }
@@ -71,7 +65,7 @@ namespace x2
                 }
 
                 // (bytesTransferred == 0) implies a graceful shutdown
-                Log.Info("{0} {1} disconnected", link.Name, Handle);
+                Log.Info("{0} {1} disconnected", link.Name, handle);
             }
             catch (ObjectDisposedException)
             {
@@ -80,18 +74,13 @@ namespace x2
             catch (Exception e)
             {
                 var se = e as SocketException;
-                if (se != null)
+                if (se != null &&
+                    se.SocketErrorCode == SocketError.OperationAborted)
                 {
-                    if (se.SocketErrorCode == SocketError.OperationAborted)
-                    {
-                        // Socket has been closed.
-                        return;
-                    }
+                    return;
                 }
-
-                Log.Warn("{0} {1} recv error: {2}", link.Name, Handle, e);
+                Log.Warn("{0} {1} recv error {2}", link.Name, handle, e);
             }
-
             OnDisconnect();
         }
 
@@ -104,24 +93,16 @@ namespace x2
 
                 OnSendInternal(bytesTransferred);
             }
-            catch (ObjectDisposedException)
-            {
-                return;
-            }
+            catch (ObjectDisposedException) { }
             catch (Exception e)
             {
                 var se = e as SocketException;
-                if (se != null)
+                if (se != null &&
+                    se.SocketErrorCode == SocketError.OperationAborted)
                 {
-                    if (se.SocketErrorCode == SocketError.OperationAborted)
-                    {
-                        // Socket has been closed.
-                        return;
-                    }
+                    return;
                 }
-
-                Log.Warn("{0} {1} send error: {2}", link.Name, Handle, e);
-
+                Log.Warn("{0} {1} send error {2}", link.Name, handle, e);
                 OnDisconnect();
             }
         }

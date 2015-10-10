@@ -13,6 +13,8 @@ namespace x2
     /// </summary>
     public class TcpClient : AbstractTcpClient
     {
+        private EndPoint remoteEndPoint;
+
         /// <summary>
         /// Initializes a new instance of the TcpClient class.
         /// </summary>
@@ -34,6 +36,7 @@ namespace x2
                         endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 }
 
+                remoteEndPoint = endpoint;
                 socket.BeginConnect(endpoint, OnConnect, socket);
             }
             catch (Exception e)
@@ -58,9 +61,9 @@ namespace x2
             catch (Exception e)
             {
                 Log.Warn("{0} error connecting to {1} : {2}",
-                    Name, socket.RemoteEndPoint, e.Message);
+                    Name, remoteEndPoint, e.Message);
 
-                OnConnectError(socket, socket.RemoteEndPoint);
+                OnConnectError(socket, remoteEndPoint);
             }
         }
     }

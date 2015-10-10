@@ -94,9 +94,10 @@ namespace x2
         }
 
         /// <summary>
-        /// Closes this link session and releases all the associated resources.
+        /// Actively closes this link session and releases all the associated
+        /// resources.
         /// </summary>
-        public void Close()
+        public virtual void Close()
         {
             Dispose();
         }
@@ -116,6 +117,8 @@ namespace x2
         protected virtual void Dispose(bool disposing)
         {
             if (disposed) { return; }
+
+            disposed = true;
 
             Log.Info("{0} {1} closed", link.Name, handle);
 
@@ -140,8 +143,6 @@ namespace x2
             {
                 ((ServerLink.Diagnostics)link.Diag).DecrementConnectionCount();
             }
-
-            disposed = true;
         }
 
         /// <summary>
@@ -349,9 +350,9 @@ namespace x2
 
         protected void OnDisconnect(object context)
         {
-            Link.NotifySessionDisconnected(handle, context);
+            Log.Debug("{0} {1} OnDisconnect {2}", link.Name, handle, context);
 
-            Close();
+            Link.NotifySessionDisconnected(handle, context);
         }
 
         protected void OnSendInternal(int bytesTransferred)
@@ -359,7 +360,7 @@ namespace x2
             Diag.AddBytesSent(bytesTransferred);
 
             Log.Trace("{0} {1} sent {2}/{3} byte(s)",
-                link.Name, Handle, bytesTransferred, lengthToSend);
+                link.Name, handle, bytesTransferred, lengthToSend);
 
             lock (txSync)
             {

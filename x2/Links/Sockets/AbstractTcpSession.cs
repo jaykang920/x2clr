@@ -69,7 +69,7 @@ namespace x2
                 {
                     endpoint = socket.RemoteEndPoint;
                 }
-                catch (ObjectDisposedException)
+                catch (Exception)
                 {
                     return null;
                 }
@@ -108,6 +108,13 @@ namespace x2
             : base(link)
         {
             this.socket = socket;
+        }
+
+        public override void Close()
+        {
+            OnDisconnect(RemoteEndPoint);
+
+            base.Close();
         }
 
         internal int Keepalive(bool checkIncoming, bool checkOutgoing)
@@ -176,11 +183,9 @@ namespace x2
         /// </summary>
         protected void OnDisconnect()
         {
-            IPEndPoint endpoint = RemoteEndPoint;
-            if (endpoint != null)
-            {
-                OnDisconnect(endpoint);
-            }
+            OnDisconnect(RemoteEndPoint);
+
+            Dispose();
         }
 
         protected override void BuildHeader(SendBuffer sendBuffer, bool transformed)
