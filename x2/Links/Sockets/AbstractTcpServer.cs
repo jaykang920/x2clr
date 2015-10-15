@@ -131,7 +131,10 @@ namespace x2
         {
             if (disposed) { return; }
 
-            socket.Close();
+            if (socket != null)
+            {
+                socket.Close();
+            }
 
             base.Dispose(disposing);
         }
