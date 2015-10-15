@@ -1,3 +1,7 @@
+Bugfixes:
+
+- *TcpServer: fixed unhandled exception on close without listening
+
 ## 0.7.1 (2015-10-12)
 
 Bugfixes:
