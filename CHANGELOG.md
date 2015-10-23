@@ -1,3 +1,7 @@
+Features:
+
+- added support for property type 'list(datetime)'
+
 Bugfixes:
 
 - *TcpServer: fixed unhandled exception on close without listening
