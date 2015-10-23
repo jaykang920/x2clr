@@ -133,6 +133,21 @@ namespace x2
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified ordered
+        /// list of DateTime values.
+        /// </summary>
+        public static int GetEncodedLength(List<DateTime> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            int length = GetEncodedLengthVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                length += GetEncodedLength(value[i]);
+            }
+            return length;
+        }
+
+        /// <summary>
+        /// Gets the number of bytes required to encode the specified ordered
         /// list of Int32 lists.
         /// </summary>
         public static int GetEncodedLength(List<List<int>> value)
