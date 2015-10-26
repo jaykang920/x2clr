@@ -1,5 +1,6 @@
 Features:
 
+- added support for property type 'list(float32)'
 - added support for property type 'list(datetime)'
 
 Bugfixes:
