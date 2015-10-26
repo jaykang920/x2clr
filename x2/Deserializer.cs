@@ -224,6 +224,23 @@ namespace x2
         }
 
         /// <summary>
+        /// Decodes an ordered list of 32-bit floating-point values out of the
+        /// underlying stream.
+        /// </summary>
+        public void Read(out List<float> value)
+        {
+            int count;
+            ReadVariableNonnegative(out count);
+            value = new List<float>();
+            for (int i = 0; i < count; ++i)
+            {
+                float element;
+                Read(out element);
+                value.Add(element);
+            }
+        }
+
+        /// <summary>
         /// Decodes an ordered list of DateTime values out of the underlying stream.
         /// </summary>
         public void Read(out List<DateTime> value)

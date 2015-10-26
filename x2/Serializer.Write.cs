@@ -152,6 +152,20 @@ namespace x2
         }
 
         /// <summary>
+        /// Encodes an ordered list of 32-bit floating-point values into the
+        /// underlying stream.
+        /// </summary>
+        public void Write(List<float> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            WriteVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                Write(value[i]);
+            }
+        }
+
+        /// <summary>
         /// Encodes an ordered list of DateTime values into the underlying stream.
         /// </summary>
         public void Write(List<DateTime> value)
