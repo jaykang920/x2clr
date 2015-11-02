@@ -45,6 +45,11 @@ namespace x2
         public IBufferTransform BufferTransform { get; set; }
 
         /// <summary>
+        /// Gets or sets the context object associated with this link session.
+        /// </summary>
+        public object Context { get; set; }
+
+        /// <summary>
         /// Gets the link session handle that is unique in the current process.
         /// </summary>
         public int Handle { get { return handle; } }
