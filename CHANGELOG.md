@@ -2,6 +2,7 @@ Features:
 
 - Event: added support for guarded hub posting with the using directive
 - added support for nested coroutines
+- LinkSession: added support for external context object
 - added support for property type 'list(float32)'
 - added support for property type 'list(datetime)'
 
