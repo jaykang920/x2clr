@@ -122,6 +122,7 @@
     <Compile Include="VerboseDeserializer.cs" />
     <Compile Include="VerboseSerializer.cs" />
     <Compile Include="Yields\WaitForMultipleEvents.cs" />
+    <Compile Include="Yields\WaitForCompletion.cs" />
     <Compile Include="Yields\WaitHandlePool.cs" />
     <Compile Include="Yields\WaitForSeconds.cs" />
     <Compile Include="Flows\TimeFlow.cs" />

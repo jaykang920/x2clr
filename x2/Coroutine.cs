@@ -17,26 +17,28 @@ namespace x2
         }
 
         // IEnumerator interface implementation
-        public abstract object Current { get; }
-        public abstract bool MoveNext();
+        public virtual object Current { get { return null; } }
+        public virtual bool MoveNext() { return false; }
         public void Reset() { }  // not supported
     }
 
-    public class Coroutine : YieldInstruction
+    public class Coroutine
     {
         private IEnumerator routine;
         private bool running;
         private bool started;
 
-        public object Context { get; set; }
+        private Coroutine parent;
 
-        public override object Current
-        {
-            get { return (running ? routine.Current : null); }
-        }
+        public object Context { get; set; }
 
         public Coroutine()
         {
+        }
+
+        public Coroutine(Coroutine parent)
+        {
+            this.parent = parent;
         }
 
         public static void Start(Func<Coroutine, IEnumerator> func)
@@ -63,46 +65,32 @@ namespace x2
             coroutine.Start(func(coroutine, arg1, arg2, arg3));
         }
 
-        public IEnumerator Start(IEnumerator routine)
+        public void Start(IEnumerator routine)
         {
             this.routine = routine;
             running = (routine != null);
-            MoveNext();
-            return this;
+            Continue();
         }
 
-        public override bool MoveNext()
+        public bool Continue()
         {
             if (!started)
             {
                 started = true;
                 return routine.MoveNext();
             }
-
             if (running)
             {
-                if (routine.Current.GetType().IsSubclassOf(typeof(Coroutine)))
-                {
-                    Coroutine coroutine = (Coroutine)routine.Current;
-                    if (coroutine.running)
-                    {
-                        return true;
-                    }
-
-                }
-                else if (routine.Current.GetType().IsSubclassOf(typeof(YieldInstruction)))
-                {
-                    YieldInstruction instruction = (YieldInstruction)routine.Current;
-                    if (instruction.Continue())
-                    {
-                        return true;
-                    }
-                }
                 if (routine.MoveNext())
                 {
                     return true;
                 }
                 running = false;
+
+                if (parent != null)
+                {
+                    parent.Continue();
+                }
             }
             return false;
         }

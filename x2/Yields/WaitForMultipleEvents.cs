@@ -66,13 +66,6 @@ namespace x2
             }
         }
 
-        public override object Current { get { return null; } }
-
-        public override bool MoveNext()
-        {
-            return false;
-        }
-
         void OnEvent(Event e)
         {
             for (int i = 0; i < expected.Length; ++i)

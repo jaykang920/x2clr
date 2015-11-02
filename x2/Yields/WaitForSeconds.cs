@@ -22,13 +22,6 @@ namespace x2
             TimeFlow.Default.Reserve(e, seconds);
         }
 
-        public override object Current { get { return null; } }
-
-        public override bool MoveNext()
-        {
-            return false;
-        }
-
         void OnTimeout(TimeoutEvent e)
         {
             Flow.Unbind(token);
