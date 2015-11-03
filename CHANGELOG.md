@@ -1,3 +1,5 @@
+## 0.7.2 (2015-11-03)
+
 Features:
 
 - Event: added support for guarded hub posting with the using directive
