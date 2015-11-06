@@ -77,21 +77,24 @@ namespace x2
             if (!started)
             {
                 started = true;
-                return routine.MoveNext();
             }
-            if (running)
+            else if (!running)
             {
-                if (routine.MoveNext())
-                {
-                    return true;
-                }
-                running = false;
-
-                if (parent != null)
-                {
-                    parent.Continue();
-                }
+                return false;
             }
+
+            if (routine.MoveNext())
+            {
+                return true;
+            }
+
+            running = false;
+
+            if (parent != null)
+            {
+                parent.Continue();
+            }
+
             return false;
         }
     }
