@@ -1,6 +1,7 @@
 Bugfixes:
 
 - fixed the bug that do-nothing nested coroutines never return
+- added additional safeguard for handler exception
 
 ## 0.7.2 (2015-11-03)
 
