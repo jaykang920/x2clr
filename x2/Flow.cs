@@ -269,6 +269,13 @@ namespace x2
 
         protected void Dispatch(Event e)
         {
+            // Safeguard for exclusive exception handling environments,
+            // like Unity3D.
+            if (handlerChain.Count != 0)
+            {
+                handlerChain.Clear();
+            }
+
             int chainLength = binder.BuildHandlerChain(e, equivalent, handlerChain);
             if (chainLength == 0)
             {
