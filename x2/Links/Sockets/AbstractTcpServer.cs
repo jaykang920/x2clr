@@ -20,6 +20,9 @@ namespace x2
         private volatile bool incomingKeepaliveEnabled;
         private volatile bool outgoingKeepaliveEnabled;
 
+        /// <summary>
+        /// Gets whether this link is currently listening or not.
+        /// </summary>
         public bool Listening
         {
             get { return (socket != null && socket.IsBound); }
@@ -206,7 +209,7 @@ namespace x2
                         Log.Error("{0} {1} closed due to the keepalive failure",
                             Name, tcpSession.Handle);
 
-                        tcpSession.Close();
+                        tcpSession.OnDisconnect();
                     }
                 }
             }

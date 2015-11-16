@@ -13,6 +13,23 @@ namespace x2
     {
         protected ReaderWriterLockSlim rwlock;
 
+        private volatile bool sessionRecoveryEnabled;
+
+        /// <summary>
+        /// Gets or sets a boolean value inidicating whether this link supports
+        /// automatic session recovery on instant disconnection.
+        /// </summary>
+        public bool SessionRecoveryEnabled
+        {
+            get { return sessionRecoveryEnabled; }
+            set { sessionRecoveryEnabled = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the session recovery timeout (in seconds).
+        /// </summary>
+        public int SessionRecoveryTimeout { get; set; }
+
         /// <summary>
         /// A delegate type for hooking up event proprocess notifications.
         /// </summary>
@@ -38,6 +55,8 @@ namespace x2
             : base(name)
         {
             rwlock = new ReaderWriterLockSlim();
+
+            SessionRecoveryTimeout = 10;  // 10 seconds by default
         }
 
         /// <summary>
@@ -51,6 +70,8 @@ namespace x2
                 Result = result,
                 Context = context
             });
+
+            Log.Info("{0} connected {1} {2}", Name, result, context);
         }
 
         /// <summary>
@@ -64,7 +85,22 @@ namespace x2
                 Handle = handle,
                 Context = context
             });
+
+            Log.Info("{0} disconnected {1} {2}", Name, handle, context);
         }
+
+        internal virtual void NotifySessionRecovered(int handle, object context)
+        {
+            Hub.Post(new LinkSessionRecovered {
+                LinkName = Name,
+                Handle = handle,
+                Context = context
+            });
+
+            Log.Info("{0} recovered {1} {2}", Name, handle, context);
+        }
+
+        internal abstract void OnInstantDisconnect(LinkSession session);
 
         internal protected void OnPreprocess(LinkSession session, Event e)
         {
@@ -117,6 +153,21 @@ namespace x2
         /// </summary>
         protected virtual void OnSessionDisconnected(int handle, object context)
         {
+        }
+
+        /// <summary>
+        /// Called when a new link session is ready for open.
+        /// </summary>
+        protected void OnSessionSetup(LinkSession session)
+        {
+            if (BufferTransform != null)
+            {
+                InitiateHandshake(session);
+            }
+            else
+            {
+                NotifySessionConnected(true, session);
+            }
         }
 
         /// <summary>

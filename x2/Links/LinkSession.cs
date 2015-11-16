@@ -37,6 +37,7 @@ namespace x2
 
         protected object txSync = new Object();
 
+        protected volatile bool closing;
         protected volatile bool disposed;
 
         /// <summary>
@@ -68,6 +69,11 @@ namespace x2
             get { return polarity; }
             set { polarity = value; }
         }
+
+        /// <summary>
+        /// Gets or sets the session token for this session.
+        /// </summary>
+        public string Token { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the LinkSession class.
@@ -104,8 +110,14 @@ namespace x2
         /// </summary>
         public virtual void Close()
         {
+            closing = true;
+
+            OnClose();
+
             CloseInternal();
         }
+
+        protected abstract void OnClose();
 
         protected internal void CloseInternal()
         {
@@ -178,6 +190,12 @@ namespace x2
             }
 
             BeginSend();
+        }
+
+        public void TakeOver(LinkSession oldSession)
+        {
+            Token = oldSession.Token;
+            BufferTransform = oldSession.BufferTransform;
         }
 
         internal void BeginReceive(bool beginning)
@@ -362,7 +380,14 @@ namespace x2
         {
             Log.Debug("{0} {1} OnDisconnect {2}", link.Name, handle, context);
 
-            Link.NotifySessionDisconnected(handle, context);
+            if (link.SessionRecoveryEnabled && !closing)
+            {
+                link.OnInstantDisconnect(this);
+            }
+            else
+            {
+                link.NotifySessionDisconnected(handle, context);
+            }
         }
 
         protected void OnSendInternal(int bytesTransferred)
@@ -440,7 +465,25 @@ namespace x2
                             txTransformReady = true;
                         }
 
-                        Link.NotifySessionConnected(result, (result ? this : null));
+                        link.NotifySessionConnected(result, (result ? this : null));
+                    }
+                    break;
+                case (int)LinkEventType.SessionReq:
+                    {
+                        if (link.SessionRecoveryEnabled && polarity == false)
+                        {
+                            var server = (ServerLink)link;
+                            server.OnSessionReq(this, (SessionReq)e);
+                        }
+                    }
+                    break;
+                case (int)LinkEventType.SessionResp:
+                    {
+                        if (link.SessionRecoveryEnabled && polarity == true)
+                        {
+                            var client = (ClientLink)link;
+                            client.OnSessionResp(this, (SessionResp)e);
+                        }
                     }
                     break;
                 default:

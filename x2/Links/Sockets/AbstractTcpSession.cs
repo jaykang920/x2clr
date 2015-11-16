@@ -110,11 +110,19 @@ namespace x2
             this.socket = socket;
         }
 
-        public override void Close()
+        /// <summary>
+        /// Called on send/receive error.
+        /// </summary>
+        public void OnDisconnect()
         {
             OnDisconnect(RemoteEndPoint);
 
-            base.Close();
+            CloseInternal();
+        }
+
+        protected override void OnClose()
+        {
+            OnDisconnect(RemoteEndPoint);
         }
 
         internal int Keepalive(bool checkIncoming, bool checkOutgoing)
@@ -133,6 +141,9 @@ namespace x2
                     if (!IgnoreKeepaliveFailure)
                     {
                         result = Interlocked.Increment(ref keepaliveFailureCount);
+
+                        Log.Warn("{0} {1} keepalive failure count {2}",
+                            link.Name, handle, result);
                     }
                 }
             }
@@ -178,16 +189,6 @@ namespace x2
             base.Dispose(disposing);
         }
 
-        /// <summary>
-        /// Called by a derived session class on send/receive error.
-        /// </summary>
-        protected void OnDisconnect()
-        {
-            OnDisconnect(RemoteEndPoint);
-
-            CloseInternal();
-        }
-
         protected override void BuildHeader(SendBuffer sendBuffer, bool transformed)
         {
             uint header = (uint)(transformed ? 1 : 0);
@@ -220,6 +221,7 @@ namespace x2
             switch (e.GetTypeId())
             {
                 case BuiltinEventType.HeartbeatEvent:
+                    // Do nothing
                     break;
                 default:
                     return base.Process(e);

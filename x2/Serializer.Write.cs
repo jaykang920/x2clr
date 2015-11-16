@@ -94,6 +94,10 @@ namespace x2
             // UTF-8 encoding
             int length = GetEncodedLengthUTF8(value);
             WriteVariableNonnegative(length);
+            if (length == 0)
+            {
+                return;
+            }
             buffer.EnsureCapacityToWrite(length);
             for (int i = 0, count = value.Length; i < count; ++i)
             {

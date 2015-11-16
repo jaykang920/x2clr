@@ -12,12 +12,14 @@ namespace x2
     /// </summary>
     public abstract class ClientLink : SessionBasedLink
     {
-        protected LinkSession session;
+        protected LinkSession session;      // current link session
+        protected LinkSession tempSession;  // temporary link session
 
         /// <summary>
         /// Gets the current link session.
         /// </summary>
-        public LinkSession Session {
+        public LinkSession Session
+        {
             get
             {
                 using (new ReadLock(rwlock))
@@ -25,6 +27,11 @@ namespace x2
                     return session;
                 }
             }
+        }
+
+        static ClientLink()
+        {
+            EventFactory.Register<SessionResp>();
         }
 
         /// <summary>
@@ -61,6 +68,8 @@ namespace x2
                 {
                     this.session = session;
                 }
+                Log.Debug("{0} set session {1} {2}",
+                    Name, session.Handle, session.Token);
             }
 
             base.NotifySessionConnected(result, context);
@@ -70,10 +79,60 @@ namespace x2
         {
             using (new WriteLock(rwlock))
             {
-                this.session = null;
+                if (!Object.ReferenceEquals(session, null))
+                {
+                    Log.Debug("{0} reset session {1} {2}",
+                        Name, session.Handle, session.Token);
+                    session = null;
+                }
             }
 
             base.NotifySessionDisconnected(handle, context);
+        }
+
+        internal override void NotifySessionRecovered(int handle, object context)
+        {
+            base.NotifySessionRecovered(handle, context);
+        }
+
+        internal void OnSessionResp(LinkSession session, SessionResp e)
+        {
+            LinkSession currentSession = Session;
+            string sessionToken = null;
+            if (!Object.ReferenceEquals(currentSession, null))
+            {
+                sessionToken = currentSession.Token;
+            }
+
+            // Save the session token from the server.
+            session.Token = e.Token;
+
+            if (String.IsNullOrEmpty(sessionToken))
+            {
+                Log.Debug("{0} {1} session token {2}",
+                    Name, session.Handle, session.Token);
+
+                OnSessionSetup(session);
+            }
+            else
+            {
+                if (sessionToken.Equals(e.Token))
+                {
+                    // Recovered
+                    session.TakeOver(this.session);
+                    this.session = session;
+
+                    NotifySessionRecovered(this.session.Handle, session);
+                }
+                else
+                {
+                    NotifySessionDisconnected(currentSession.Handle, null);
+
+                    OnSessionSetup(session);
+                }
+
+                tempSession = null;
+            }
         }
 
         /// <summary>
@@ -107,14 +166,31 @@ namespace x2
         {
             session.Polarity = true;
 
-            if (BufferTransform != null)
+            if (SessionRecoveryEnabled)
             {
-                InitiateHandshake(session);
+                // Temporarily save the given session.
+                tempSession = session;
+
+                SendSessionReq(session);
             }
             else
             {
-                NotifySessionConnected(true, session);
+                OnSessionSetup(session);
             }
+        }
+
+        private void SendSessionReq(LinkSession tempSession)
+        {
+            var req = new SessionReq { _Transform = false };
+
+            LinkSession currentSession = Session;
+            if (!Object.ReferenceEquals(currentSession, null) &&
+                !String.IsNullOrEmpty(currentSession.Token))
+            {
+                req.Token = currentSession.Token;
+            }
+
+            tempSession.Send(req);
         }
     }
 }

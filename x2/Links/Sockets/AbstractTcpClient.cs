@@ -21,7 +21,11 @@ namespace x2
         private volatile bool outgoingKeepaliveEnabled;
 
         private volatile bool connecting;
+        private volatile bool recovering;
 
+        /// <summary>
+        /// Gets whether this client link is currently connected or not.
+        /// </summary>
         public bool Connected
         {
             get { return (session != null && ((AbstractTcpSession)session).Connected); }
@@ -55,7 +59,8 @@ namespace x2
 
         /// <summary>
         /// Gets or sets a boolean value indicating whether this link should
-        /// start a new connection attempt automatically on disconnect.
+        /// start a new connection attempt automatically on disconnect, toward
+        /// the previous remote endpoint.
         /// </summary>
         public bool AutoReconnect { get; set; }
         /// <summary>
@@ -138,6 +143,7 @@ namespace x2
             {
                 throw new InvalidOperationException();
             }
+            connecting = true;
 
             using (new ReadLock(rwlock))
             {
@@ -147,8 +153,6 @@ namespace x2
                     throw new InvalidOperationException();
                 }
             }
-
-            connecting = true;
 
             Connect(null, new IPEndPoint(ip, port));
         }
@@ -162,6 +166,9 @@ namespace x2
             {
                 return;
             }
+
+            connecting = true;
+
             Connect(null, remoteEndPoint);
         }
 
@@ -177,6 +184,14 @@ namespace x2
             ConnectInternal(socket, endpoint);
         }
 
+        internal override void NotifySessionConnected(bool result, object context)
+        {
+            base.NotifySessionConnected(result, context);
+
+            connecting = false;
+            recovering = false;
+        }
+
         internal override void NotifySessionDisconnected(int handle, object context)
         {
             base.NotifySessionDisconnected(handle, context);
@@ -187,6 +202,13 @@ namespace x2
 
                 Reconnect();
             }
+        }
+
+        internal override void OnInstantDisconnect(LinkSession session)
+        {
+            recovering = true;
+
+            Reconnect();
         }
 
         /// <summary>
@@ -212,8 +234,6 @@ namespace x2
 
             Log.Info("{0} {1} connected to {2}",
                 Name, session.Handle, socket.RemoteEndPoint);
-
-            connecting = false;
             
             base.OnConnectInternal(session);
         }
@@ -244,9 +264,18 @@ namespace x2
             {
                 socket.Close();
 
-                NotifySessionConnected(false, endpoint);
-
                 connecting = false;
+
+                if (recovering)
+                {
+                    recovering = false;
+
+                    NotifySessionDisconnected(Session.Handle, endpoint);
+                }
+                else
+                {
+                    NotifySessionConnected(false, endpoint);
+                }
             }
         }
 
@@ -289,7 +318,7 @@ namespace x2
                 Log.Error("{0} {1} closed due to the keepalive failure",
                     Name, tcpSession.Handle);
 
-                tcpSession.Close();
+                tcpSession.OnDisconnect();
             }
         }
 

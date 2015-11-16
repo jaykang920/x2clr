@@ -15,6 +15,10 @@ namespace x2
         public const int HandshakeReq = -12;
         public const int HandshakeResp = -13;
         public const int HandshakeAck = -14;
+        public const int LinkSessionRecovered = -15;
+        public const int SessionReq = -16;
+        public const int SessionResp = -17;
+        public const int SessionAck = -18;
 
         private static ConstsInfo<int> info;
 
@@ -26,6 +30,10 @@ namespace x2
             info.Add("HandshakeReq", -12);
             info.Add("HandshakeResp", -13);
             info.Add("HandshakeAck", -14);
+            info.Add("LinkSessionRecovered", -15);
+            info.Add("SessionReq", -16);
+            info.Add("SessionResp", -17);
+            info.Add("SessionAck", -18);
         }
 
         public static string GetName(int value)
@@ -814,6 +822,568 @@ namespace x2
         private void Initialize()
         {
             result_ = false;
+        }
+    }
+
+    public class LinkSessionRecovered : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        private string linkName_;
+        private int handle_;
+        private object context_;
+
+        public string LinkName
+        {
+            get { return linkName_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                linkName_ = value;
+            }
+        }
+
+        public int Handle
+        {
+            get { return handle_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                handle_ = value;
+            }
+        }
+
+        public object Context
+        {
+            get { return context_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 2);
+                context_ = value;
+            }
+        }
+
+        static LinkSessionRecovered()
+        {
+            tag = new Tag(Event.tag, typeof(LinkSessionRecovered), 3,
+                    (int)LinkEventType.LinkSessionRecovered);
+        }
+
+        new public static LinkSessionRecovered New()
+        {
+            return new LinkSessionRecovered();
+        }
+
+        public LinkSessionRecovered()
+            : base(tag.NumProps)
+        {
+        }
+
+        protected LinkSessionRecovered(int length)
+            : base(length + tag.NumProps)
+        {
+        }
+
+        public override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            LinkSessionRecovered o = (LinkSessionRecovered)other;
+            if (linkName_ != o.linkName_)
+            {
+                return false;
+            }
+            if (handle_ != o.handle_)
+            {
+                return false;
+            }
+            if (context_ != o.context_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(linkName_);
+            }
+            if (touched[1])
+            {
+                hash.Update(handle_);
+            }
+            if (touched[2])
+            {
+                hash.Update(context_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override bool IsEquivalent(Cell other)
+        {
+            if (!base.IsEquivalent(other))
+            {
+                return false;
+            }
+            LinkSessionRecovered o = (LinkSessionRecovered)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (linkName_ != o.linkName_)
+                {
+                    return false;
+                }
+            }
+            if (touched[1])
+            {
+                if (handle_ != o.handle_)
+                {
+                    return false;
+                }
+            }
+            if (touched[2])
+            {
+                if (context_ != o.context_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" LinkName=\"{0}\"", linkName_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Handle={0}", handle_);
+            stringBuilder.AppendFormat(" Context={0}", context_);
+        }
+    }
+
+    public class SessionReq : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        private string token_;
+
+        public string Token
+        {
+            get { return token_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                token_ = value;
+            }
+        }
+
+        static SessionReq()
+        {
+            tag = new Tag(Event.tag, typeof(SessionReq), 1,
+                    (int)LinkEventType.SessionReq);
+        }
+
+        new public static SessionReq New()
+        {
+            return new SessionReq();
+        }
+
+        public SessionReq()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected SessionReq(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        public override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            SessionReq o = (SessionReq)other;
+            if (token_ != o.token_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(token_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override bool IsEquivalent(Cell other)
+        {
+            if (!base.IsEquivalent(other))
+            {
+                return false;
+            }
+            SessionReq o = (SessionReq)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (token_ != o.token_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                deserializer.Read(out token_);
+            }
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("Token", out token_);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(token_);
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+            serializer.Write("Token", token_);
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(token_);
+            }
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Token=\"{0}\"", token_.Replace("\"", "\\\""));
+        }
+
+        private void Initialize()
+        {
+            token_ = "";
+        }
+    }
+
+    public class SessionResp : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        private string token_;
+
+        public string Token
+        {
+            get { return token_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                token_ = value;
+            }
+        }
+
+        static SessionResp()
+        {
+            tag = new Tag(Event.tag, typeof(SessionResp), 1,
+                    (int)LinkEventType.SessionResp);
+        }
+
+        new public static SessionResp New()
+        {
+            return new SessionResp();
+        }
+
+        public SessionResp()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected SessionResp(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        public override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            SessionResp o = (SessionResp)other;
+            if (token_ != o.token_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(token_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override bool IsEquivalent(Cell other)
+        {
+            if (!base.IsEquivalent(other))
+            {
+                return false;
+            }
+            SessionResp o = (SessionResp)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (token_ != o.token_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                deserializer.Read(out token_);
+            }
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("Token", out token_);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(token_);
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+            serializer.Write("Token", token_);
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetEncodedLength(token_);
+            }
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Token=\"{0}\"", token_.Replace("\"", "\\\""));
+        }
+
+        private void Initialize()
+        {
+            token_ = "";
+        }
+    }
+
+    public class SessionAck : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        static SessionAck()
+        {
+            tag = new Tag(Event.tag, typeof(SessionAck), 0,
+                    (int)LinkEventType.SessionAck);
+        }
+
+        new public static SessionAck New()
+        {
+            return new SessionAck();
+        }
+
+        public SessionAck()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected SessionAck(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        public override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override bool IsEquivalent(Cell other)
+        {
+            if (!base.IsEquivalent(other))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+        }
+
+        private void Initialize()
+        {
         }
     }
 }

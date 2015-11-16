@@ -7,6 +7,12 @@
         <const name="HandshakeReq">-12</const>
         <const name="HandshakeResp">-13</const>
         <const name="HandshakeAck">-14</const>
+
+        <const name="LinkSessionRecovered">-15</const>
+
+        <const name="SessionReq">-16</const>
+        <const name="SessionResp">-17</const>
+        <const name="SessionAck">-18</const>
     </consts>
 
     <event name="LinkSessionConnected" id="LinkEventType.LinkSessionConnected" local="true">
@@ -28,6 +34,21 @@
     </event>
     <event name="HandshakeAck" id="LinkEventType.HandshakeAck">
         <property name="Result" type="bool"/>
+    </event>
+
+    <event name="LinkSessionRecovered" id="LinkEventType.LinkSessionRecovered" local="true">
+        <property name="LinkName" type="string"/>
+        <property name="Handle" type="int32"/>
+        <property name="Context" type="object"/>
+    </event>
+
+    <event name="SessionReq" id="LinkEventType.SessionReq">
+        <property name="Token" type="string"/>
+    </event>
+    <event name="SessionResp" id="LinkEventType.SessionResp">
+        <property name="Token" type="string"/>
+    </event>
+    <event name="SessionAck" id="LinkEventType.SessionAck">
     </event>
 
 </x2>

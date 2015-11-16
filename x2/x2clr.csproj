@@ -83,7 +83,6 @@
     <Compile Include="Links\ClientLink.cs" />
     <Compile Include="Links\LinkEvents.cs" />
     <Compile Include="Links\ServerLink.cs" />
-    <Compile Include="Links\Sockets\SocketLinkEvents.cs" />
     <Compile Include="Links\Sockets\TcpServer.cs" />
     <Compile Include="Links\Sockets\TcpSession.cs" />
     <Compile Include="Links\SendBuffer.cs" />
@@ -160,9 +159,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Links\LinkEvents.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Links\Sockets\SocketLinkEvents.xml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
