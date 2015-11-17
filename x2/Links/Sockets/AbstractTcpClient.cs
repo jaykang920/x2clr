@@ -164,6 +164,7 @@ namespace x2
         {
             if (remoteEndPoint == null)
             {
+                Log.Error("{0} no reconnect target", Name);
                 return;
             }
 
@@ -206,6 +207,15 @@ namespace x2
 
         internal override void OnInstantDisconnect(LinkSession session)
         {
+            LinkSession currentSession = Session;
+            if (!Object.ReferenceEquals(session, currentSession))
+            {
+                Log.Warn("{0} gave up session recovery {1}", Name, session.Handle);
+                return;
+            }
+
+            Thread.Sleep(1000);
+
             recovering = true;
 
             Reconnect();
@@ -270,7 +280,7 @@ namespace x2
                 {
                     recovering = false;
 
-                    OnLinkSessionDisconnectedInternal(Session.Handle, endpoint);
+                    OnLinkSessionDisconnectedInternal(Session.Handle, Session);
                 }
                 else
                 {

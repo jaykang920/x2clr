@@ -35,7 +35,7 @@ namespace x2
 
         protected bool txFlag;
 
-        protected object txSync = new Object();
+        protected object syncRoot = new Object();
 
         protected volatile bool closing;
         protected volatile bool disposed;
@@ -81,6 +81,8 @@ namespace x2
         public string Token { get; set; }
 
         internal virtual int InternalHandle { get { return handle; } }
+
+        internal object SyncRoot { get { return syncRoot; } }
 
         /// <summary>
         /// Initializes a new instance of the LinkSession class.
@@ -171,7 +173,7 @@ namespace x2
                 return;
             }
 
-            lock (txSync)
+            lock (syncRoot)
             {
                 eventsToSend.Add(e);
 
@@ -188,8 +190,11 @@ namespace x2
 
         public void TakeOver(LinkSession oldSession)
         {
+            Handle = oldSession.Handle;
             Token = oldSession.Token;
             BufferTransform = oldSession.BufferTransform;
+
+            Log.Debug("{0} {1} session takeover {2}", link.Name, handle, Token);
         }
 
         internal void BeginReceive(bool beginning)
@@ -201,7 +206,7 @@ namespace x2
 
         internal void BeginSend()
         {
-            lock (txSync)
+            lock (syncRoot)
             {
                 if (eventsToSend.Count == 0)
                 {
@@ -375,11 +380,19 @@ namespace x2
 
         protected void OnDisconnect(object context)
         {
-            Log.Debug("{0} {1} OnDisconnect", link.Name, handle);
+            Log.Debug("{0} {1} OnDisconnect", link.Name, InternalHandle);
+
+            if (handle <= 0)
+            {
+                return;
+            }
 
             if (link.SessionRecoveryEnabled && !closing)
             {
-                link.OnInstantDisconnect(this);
+                lock (syncRoot)
+                {
+                    link.OnInstantDisconnect(this);
+                }
             }
             else
             {
@@ -394,7 +407,7 @@ namespace x2
             Log.Trace("{0} {1} sent {2}/{3} byte(s)",
                 link.Name, InternalHandle, bytesTransferred, lengthToSend);
 
-            lock (txSync)
+            lock (syncRoot)
             {
                 if (eventsToSend.Count == 0)
                 {

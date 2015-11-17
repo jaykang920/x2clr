@@ -96,8 +96,46 @@ namespace x2
             }
         }
 
+        protected override void OnSessionRecoveredInternal(int handle, object context)
+        {
+            var session = (LinkSession)context;
+            using (new WriteLock(rwlock))
+            {
+                sessions[handle] = session;
+            }
+            lock (recoverable)
+            {
+                recoverable[session.Token] = session;
+            }
+        }
+
         internal override void OnInstantDisconnect(LinkSession session)
         {
+            // Ensure that the specified session is recoverable.
+            LinkSession existing = null;
+            lock (recoverable)
+            {
+                recoverable.TryGetValue(session.Token, out existing);
+            }
+            if (!Object.ReferenceEquals(session, existing))
+            {
+                Log.Info("{0} {1} unrecoverable session", Name, session.Handle);
+
+                OnLinkSessionDisconnectedInternal(session.Handle, session);
+                return;
+            }
+
+            existing = null;
+            using (new ReadLock(rwlock))
+            {
+                sessions.TryGetValue(session.Handle, out existing);
+            }
+            if (!Object.ReferenceEquals(session, existing))
+            {
+                Log.Warn("{0} {1} gave up session recovery", Name, session.Handle);
+                return;
+            }
+
             var e = new TimeoutEvent { Key = session };
 
             Binder.Token binderToken = this.Flow.Subscribe(e, OnSessionRecoveryTimeout);
@@ -107,7 +145,7 @@ namespace x2
                 recoveryTokens.Add(session.Handle, binderToken);
             }
 
-            Log.Trace("{0} started recovery timer for {1}", Name, session.Handle);
+            Log.Trace("{0} {1} started recovery timer", Name, session.Handle);
 
             using (new WriteLock(rwlock))
             {
@@ -133,13 +171,14 @@ namespace x2
                 }
                 if (found)
                 {
-                    int handle = existing.Handle;
-                    CancelRecoveryTimer(handle);
+                    lock (existing.SyncRoot)
+                    {
+                        int handle = existing.Handle;
+                        CancelRecoveryTimer(handle);
+                        session.TakeOver(existing);
 
-                    session.TakeOver(existing);
-
-                    OnSessionRecoveredInternal(handle, session);
-
+                        OnLinkSessionRecoveredInternal(handle, session);
+                    }
                     recovered = true;
                 }
             }
@@ -150,7 +189,7 @@ namespace x2
                 session.Token = Guid.NewGuid().ToString("N");
 
                 Log.Debug("{0} {1} issued session token {2}",
-                    Name, session.Handle, session.Token);
+                    Name, session.InternalHandle, session.Token);
 
                 lock (recoverable)
                 {
@@ -178,7 +217,7 @@ namespace x2
                 return;
             }
 
-            Log.Debug("{0} session recovery timeout {1} {2}",
+            Log.Debug("{0} {1} session recovery timeout {1} {2}",
                 Name, session.Handle, session.Token);
 
             lock (recoverable)
@@ -189,6 +228,8 @@ namespace x2
             {
                 recoveryTokens.Remove(session.Handle);
             }
+
+            OnLinkSessionDisconnectedInternal(session.Handle, session);
         }
 
         void CancelRecoveryTimer(int handle)
@@ -208,7 +249,7 @@ namespace x2
                 this.Flow.Unsubscribe(binderToken);
                 TimeFlow.Default.Cancel(binderToken.Key);
 
-                Log.Trace("{0} canceled recovery timer for {1}", Name, handle);
+                Log.Trace("{0} {1} canceled recovery timer", Name, handle);
             }
         }
 

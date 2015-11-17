@@ -14,7 +14,7 @@ namespace x2.Examples.HeadFirst
                 IncomingKeepaliveEnabled = true;
                 OutgoingKeepaliveEnabled = true;
                 MaxKeepaliveFailureCount = 1;
-                //SessionRecoveryEnabled = true;
+                SessionRecoveryEnabled = true;
                 ///*
                 BufferTransform = new BufferTransformStack()
                     .Add(new BlockCipher())

@@ -13,7 +13,6 @@ namespace x2
     public abstract class ClientLink : SessionBasedLink
     {
         protected LinkSession session;      // current link session
-        protected LinkSession tempSession;  // temporary link session
 
         /// <summary>
         /// Gets the current link session.
@@ -48,15 +47,13 @@ namespace x2
         /// </summary>
         public override void Send(Event e)
         {
-            using (new ReadLock(rwlock))
+            LinkSession currentSession = Session;
+            if (Object.ReferenceEquals(currentSession, null))
             {
-                if (session == null)
-                {
-                    Log.Warn("{0} dropped event {1}", Name, e);
-                    return;
-                }
+                Log.Warn("{0} dropped event {1}", Name, e);
+                return;
             }
-            session.Send(e);
+            currentSession.Send(e);
         }
 
         protected override void OnSessionConnectedInternal(bool result, object context)
@@ -69,7 +66,7 @@ namespace x2
                     this.session = session;
                 }
 
-                Log.Debug("{0} set session {1} {2}",
+                Log.Debug("{0} {1} set session {2}",
                     Name, session.Handle, session.Token);
             }
         }
@@ -80,7 +77,7 @@ namespace x2
             {
                 if (!Object.ReferenceEquals(session, null))
                 {
-                    Log.Debug("{0} reset session {1} {2}",
+                    Log.Debug("{0} {1} cleared session {2}",
                         Name, session.Handle, session.Token);
 
                     session = null;
@@ -90,6 +87,14 @@ namespace x2
 
         protected override void OnSessionRecoveredInternal(int handle, object context)
         {
+            var session = (LinkSession)context;
+            using (new WriteLock(rwlock))
+            {
+                this.session = session;
+            }
+
+            Log.Debug("{0} {1} reset session {2}",
+                Name, session.Handle, session.Token);
         }
 
         internal void OnSessionResp(LinkSession session, SessionResp e)
@@ -104,32 +109,26 @@ namespace x2
             // Save the session token from the server.
             session.Token = e.Token;
 
-            if (String.IsNullOrEmpty(sessionToken))
-            {
-                Log.Debug("{0} {1} session token {2}",
-                    Name, session.Handle, session.Token);
+            Log.Trace("{0} {1} session token {2}",
+                Name, session.InternalHandle, e.Token);
 
-                OnSessionSetup(session);
-            }
-            else
+            if (!String.IsNullOrEmpty(sessionToken))
             {
                 if (sessionToken.Equals(e.Token))
                 {
-                    // Recovered
+                    // Recovered from instant disconnection.
                     session.TakeOver(this.session);
-                    this.session = session;
 
-                    OnSessionRecoveredInternal(this.session.Handle, session);
+                    OnLinkSessionRecoveredInternal(session.Handle, session);
+                    return;
                 }
                 else
                 {
                     OnLinkSessionDisconnectedInternal(currentSession.Handle, currentSession);
-
-                    OnSessionSetup(session);
                 }
-
-                tempSession = null;
             }
+
+            OnSessionSetup(session);
         }
 
         /// <summary>
@@ -165,9 +164,6 @@ namespace x2
 
             if (SessionRecoveryEnabled)
             {
-                // Temporarily save the given session.
-                tempSession = session;
-
                 SendSessionReq(session);
             }
             else
@@ -176,7 +172,7 @@ namespace x2
             }
         }
 
-        private void SendSessionReq(LinkSession tempSession)
+        private void SendSessionReq(LinkSession session)
         {
             var req = new SessionReq { _Transform = false };
 
@@ -187,7 +183,7 @@ namespace x2
                 req.Token = currentSession.Token;
             }
 
-            tempSession.Send(req);
+            session.Send(req);
         }
     }
 }

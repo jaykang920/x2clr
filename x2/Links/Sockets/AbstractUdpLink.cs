@@ -23,7 +23,7 @@ namespace x2
         protected bool txFlag;
 
         protected ReaderWriterLockSlim rwlock;
-        protected object txSync = new Object();
+        protected object syncRoot = new Object();
 
         /// <summary>
         /// Initializes a new instance of the AbsractUdpLink class.
@@ -197,7 +197,7 @@ namespace x2
         /// </summary>
         public override void Send(Event e)
         {
-            lock (txSync)
+            lock (syncRoot)
             {
                 if (txFlag)
                 {
@@ -368,7 +368,7 @@ namespace x2
             }
 
             Event e;
-            lock (txSync)
+            lock (syncRoot)
             {
                 if (txQueue.Count == 0)
                 {

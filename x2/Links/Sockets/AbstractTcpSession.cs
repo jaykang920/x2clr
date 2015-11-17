@@ -85,9 +85,9 @@ namespace x2
         /// </summary>
         public void OnDisconnect()
         {
-            OnDisconnect(this);
-
             CloseInternal();
+
+            OnDisconnect(this);
         }
 
         /// <summary>
@@ -121,8 +121,11 @@ namespace x2
                     {
                         result = Interlocked.Increment(ref keepaliveFailureCount);
 
-                        Log.Warn("{0} {1} keepalive failure count {2}",
-                            link.Name, handle, result);
+                        if (result > 1)
+                        {
+                            Log.Warn("{0} {1} keepalive failure count {2}",
+                                link.Name, InternalHandle, result);
+                        }
                     }
                 }
             }
@@ -135,7 +138,8 @@ namespace x2
                 }
                 else
                 {
-                    Log.Trace("{0} {1} sent keepalive event", link.Name, handle);
+                    Log.Trace("{0} {1} sent keepalive event",
+                        link.Name, InternalHandle);
 
                     Send(Hub.HeartbeatEvent);
                 }
@@ -161,7 +165,7 @@ namespace x2
                 catch (Exception e)
                 {
                     Log.Warn("{0} {1} close : {2}",
-                        Link.Name, handle, e.Message);
+                        Link.Name, InternalHandle, e.Message);
                 }
             }
 

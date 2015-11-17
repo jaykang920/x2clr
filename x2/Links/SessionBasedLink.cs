@@ -95,8 +95,6 @@ namespace x2
             // Release the link session handle.
             HandlePool.Release(handle);
 
-            OnSessionDisconnectedInternal(handle, context);
-
             Hub.Post(new LinkSessionDisconnected {
                 LinkName = Name,
                 Handle = handle,

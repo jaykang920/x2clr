@@ -12,9 +12,9 @@ namespace x2.Examples.HeadFirst
                 : base("CapitalizerServer")
             {
                 IncomingKeepaliveEnabled = true;
-                OutgoingKeepaliveEnabled = true;
+                OutgoingKeepaliveEnabled = false;
                 MaxKeepaliveFailureCount = 1;
-                //SessionRecoveryEnabled = true;
+                SessionRecoveryEnabled = true;
                 ///*
                 BufferTransform = new BufferTransformStack()
                     .Add(new BlockCipher())
