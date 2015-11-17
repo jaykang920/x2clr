@@ -1,3 +1,7 @@
+Features:
+
+- LinkSession: added support for instant disconnection recovery
+
 Bugfixes:
 
 - fixed the bug that do-nothing nested coroutines never return
