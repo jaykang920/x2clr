@@ -90,9 +90,17 @@ namespace x2
 
         protected override void OnSessionDisconnectedInternal(int handle, object context)
         {
+            var session = (LinkSession)context;
             using (new WriteLock(rwlock))
             {
                 sessions.Remove(handle);
+            }
+            if (SessionRecoveryEnabled)
+            {
+                lock (recoverable)
+                {
+                    recoverable.Remove(session.Token);
+                }
             }
         }
 
@@ -220,10 +228,6 @@ namespace x2
             Log.Debug("{0} {1} session recovery timeout {1} {2}",
                 Name, session.Handle, session.Token);
 
-            lock (recoverable)
-            {
-                recoverable.Remove(session.Token);
-            }
             lock (recoveryTokens)
             {
                 recoveryTokens.Remove(session.Handle);
