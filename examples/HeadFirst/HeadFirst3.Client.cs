@@ -15,11 +15,11 @@ namespace x2.Examples.HeadFirst
                 OutgoingKeepaliveEnabled = true;
                 MaxKeepaliveFailureCount = 1;
                 //SessionRecoveryEnabled = true;
-                /*
+                ///*
                 BufferTransform = new BufferTransformStack()
                     .Add(new BlockCipher())
                     .Add(new Inverse());
-                */
+                //*/
             }
 
             protected override void Setup()

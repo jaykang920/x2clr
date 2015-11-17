@@ -156,7 +156,7 @@ namespace x2
             tcpSession.BeginReceive(true);
 
             Log.Info("{0} {1} accepted from {2}",
-                Name, session.Handle, clientSocket.RemoteEndPoint);
+                Name, tcpSession.InternalHandle, clientSocket.RemoteEndPoint);
 
             return base.OnAcceptInternal(session);
         }

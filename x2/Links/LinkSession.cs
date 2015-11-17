@@ -51,9 +51,14 @@ namespace x2
         public object Context { get; set; }
 
         /// <summary>
-        /// Gets the link session handle that is unique in the current process.
+        /// Gets or sets the link session handle that is unique in the current
+        /// process.
         /// </summary>
-        public int Handle { get { return handle; } }
+        public int Handle
+        {
+            get { return handle; }
+            set { handle = value; }
+        }
 
         /// <summary>
         /// Gets the link associated with this session.
@@ -75,12 +80,13 @@ namespace x2
         /// </summary>
         public string Token { get; set; }
 
+        internal virtual int InternalHandle { get { return handle; } }
+
         /// <summary>
         /// Initializes a new instance of the LinkSession class.
         /// </summary>
         protected LinkSession(SessionBasedLink link)
         {
-            handle = HandlePool.Acquire();
             this.link = link;
 
             rxBuffer = new Buffer();
@@ -92,11 +98,6 @@ namespace x2
             buffersSending = new List<SendBuffer>();
 
             Diag = new Diagnostics(this);
-
-            if (link is ServerLink)
-            {
-                ((ServerLink.Diagnostics)link.Diag).IncrementConnectionCount();
-            }
         }
 
         ~LinkSession()
@@ -142,7 +143,7 @@ namespace x2
 
             disposed = true;
 
-            Log.Info("{0} {1} closed", link.Name, handle);
+            Log.Info("{0} closed {1}", link.Name, this);
 
             if (BufferTransform != null)
             {
@@ -158,13 +159,6 @@ namespace x2
                 buffersSending[i].Dispose();
             }
             buffersSending.Clear();
-
-            HandlePool.Release(handle);
-
-            if (link is ServerLink)
-            {
-                ((ServerLink.Diagnostics)link.Diag).DecrementConnectionCount();
-            }
         }
 
         /// <summary>
@@ -265,7 +259,7 @@ namespace x2
                 sendBuffer.ListOccupiedSegments(txBufferList);
                 lengthToSend += sendBuffer.Length;
 
-                LogEventSent(e);
+                OnEventSent(e);
             }
 
             SendInternal();
@@ -282,7 +276,7 @@ namespace x2
             Diag.AddBytesReceived(bytesTransferred);
 
             Log.Trace("{0} {1} received {2} byte(s)",
-                link.Name, Handle, bytesTransferred);
+                link.Name, InternalHandle, bytesTransferred);
 
             rxBuffer.Stretch(bytesTransferred);
 
@@ -308,7 +302,8 @@ namespace x2
             {
                 rxBuffer.MarkToRead(lengthToReceive);
 
-                Log.Trace("{0} {1} marked {2} byte(s) to read", link.Name, Handle, lengthToReceive);
+                Log.Trace("{0} {1} marked {2} byte(s) to read",
+                    link.Name, InternalHandle, lengthToReceive);
 
                 if (BufferTransform != null && rxTransformReady && rxTransformed)
                 {
@@ -318,7 +313,8 @@ namespace x2
                     }
                     catch (Exception e)
                     {
-                        Log.Error("{0} {1} buffer transform error: {2}", link.Name, Handle, e.Message);
+                        Log.Error("{0} {1} buffer transform error: {2}",
+                            link.Name, InternalHandle, e.Message);
                         goto next;
                     }
                 }
@@ -338,18 +334,19 @@ namespace x2
                     }
                     catch (Exception e)
                     {
-                        Log.Error("{0} {1} error loading event {2}: {3}", link.Name, Handle, retrieved.GetTypeId(), e.ToString());
+                        Log.Error("{0} {1} error loading event {2}: {3}",
+                            link.Name, InternalHandle, retrieved.GetTypeId(), e.ToString());
                         goto next;
                     }
 
-                    LogEventReceived(retrieved);
-
-                    retrieved._Handle = Handle;
-
-                    link.OnPreprocess(this, retrieved);
+                    OnEventReceived(retrieved);
 
                     if (!Process(retrieved))
                     {
+                        retrieved._Handle = Handle;
+
+                        link.OnPreprocess(this, retrieved);
+
                         Hub.Post(retrieved);
                     }
                 }
@@ -378,7 +375,7 @@ namespace x2
 
         protected void OnDisconnect(object context)
         {
-            Log.Debug("{0} {1} OnDisconnect {2}", link.Name, handle, context);
+            Log.Debug("{0} {1} OnDisconnect", link.Name, handle);
 
             if (link.SessionRecoveryEnabled && !closing)
             {
@@ -386,7 +383,7 @@ namespace x2
             }
             else
             {
-                link.NotifySessionDisconnected(handle, context);
+                link.OnLinkSessionDisconnectedInternal(handle, context);
             }
         }
 
@@ -395,7 +392,7 @@ namespace x2
             Diag.AddBytesSent(bytesTransferred);
 
             Log.Trace("{0} {1} sent {2}/{3} byte(s)",
-                link.Name, handle, bytesTransferred, lengthToSend);
+                link.Name, InternalHandle, bytesTransferred, lengthToSend);
 
             lock (txSync)
             {
@@ -426,7 +423,7 @@ namespace x2
                         catch (Exception ex)
                         {
                             Log.Error("{0} {1} error handshaking : {2}",
-                                link.Name, Handle, ex.ToString());
+                                link.Name, InternalHandle, ex.ToString());
                         }
                         if (response != null)
                         {
@@ -450,7 +447,7 @@ namespace x2
                         catch (Exception ex)
                         {
                             Log.Error("{0} {1} error finishing handshake : {2}",
-                                link.Name, Handle, ex.ToString());
+                                link.Name, InternalHandle, ex.ToString());
                         }
                         Send(ack);
                     }
@@ -465,7 +462,7 @@ namespace x2
                             txTransformReady = true;
                         }
 
-                        link.NotifySessionConnected(result, (result ? this : null));
+                        link.OnLinkSessionConnectedInternal(result, (result ? this : null));
                     }
                     break;
                 case (int)LinkEventType.SessionReq:
@@ -492,12 +489,12 @@ namespace x2
             return true;
         }
 
-        protected virtual void LogEventReceived(Event e)
+        protected virtual void OnEventReceived(Event e)
         {
             Diag.IncrementEventsReceived();
         }
 
-        protected virtual void LogEventSent(Event e)
+        protected virtual void OnEventSent(Event e)
         {
             Diag.IncrementEventsSent();
         }

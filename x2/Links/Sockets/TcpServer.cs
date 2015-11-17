@@ -39,7 +39,7 @@ namespace x2
 
                 if (!OnAcceptInternal(session))
                 {
-                    NotifySessionConnected(false, clientSocket.RemoteEndPoint);
+                    OnLinkSessionConnectedInternal(false, clientSocket.RemoteEndPoint);
                     session.CloseInternal();
                 }
             }

@@ -60,37 +60,61 @@ namespace x2
         }
 
         /// <summary>
-        /// Notifies the application that a session creation attempt has been
-        /// completed with the specified result.
+        /// Called internally when a new session creation attempt is completed.
         /// </summary>
-        internal virtual void NotifySessionConnected(bool result, object context)
+        internal void OnLinkSessionConnectedInternal(bool result, object context)
         {
+            if (result)
+            {
+                var session = (LinkSession)context;
+                // Assign a new link session handle.
+                session.Handle = HandlePool.Acquire();
+            }
+
+            OnSessionConnectedInternal(result, context);
+
             Hub.Post(new LinkSessionConnected {
                 LinkName = Name,
                 Result = result,
                 Context = context
             });
 
+            if (result == true && this is ServerLink)
+            {
+                ((ServerLink.Diagnostics)Diag).IncrementConnectionCount();
+            }
+
             Log.Info("{0} connected {1} {2}", Name, result, context);
         }
 
         /// <summary>
-        /// Notifies the application that the link session identified by the
-        /// specified session handle has been closed.
+        /// Called internally when an existing link session is closed.
         /// </summary>
-        internal virtual void NotifySessionDisconnected(int handle, object context)
+        internal void OnLinkSessionDisconnectedInternal(int handle, object context)
         {
+            // Release the link session handle.
+            HandlePool.Release(handle);
+
+            OnSessionDisconnectedInternal(handle, context);
+
             Hub.Post(new LinkSessionDisconnected {
                 LinkName = Name,
                 Handle = handle,
                 Context = context
             });
 
+            if (this is ServerLink)
+            {
+                ((ServerLink.Diagnostics)Diag).DecrementConnectionCount();
+            }
+
             Log.Info("{0} disconnected {1} {2}", Name, handle, context);
         }
 
-        internal virtual void NotifySessionRecovered(int handle, object context)
+        internal void OnLinkSessionRecoveredInternal(int handle, object context)
         {
+            OnSessionRecoveredInternal(handle, context);
+
             Hub.Post(new LinkSessionRecovered {
                 LinkName = Name,
                 Handle = handle,
@@ -148,10 +172,18 @@ namespace x2
         {
         }
 
+        protected abstract void OnSessionConnectedInternal(bool result, object context);
+
         /// <summary>
         /// Called when an existing link session is closed.
         /// </summary>
         protected virtual void OnSessionDisconnected(int handle, object context)
+        {
+        }
+
+        protected abstract void OnSessionDisconnectedInternal(int handle, object context);
+
+        protected virtual void OnSessionRecoveredInternal(int handle, object context)
         {
         }
 
@@ -166,7 +198,7 @@ namespace x2
             }
             else
             {
-                NotifySessionConnected(true, session);
+                OnLinkSessionConnectedInternal(true, session);
             }
         }
 

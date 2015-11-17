@@ -16,66 +16,24 @@ namespace x2
     {
         protected Socket socket;
 
+        private IPEndPoint remoteEndPoint;
+
         private int keepaliveFailureCount;
         private volatile bool hasReceived;
         private volatile bool hasSent;
 
+        /// <summary>
+        /// Gets whether this session is currently connected or not.
+        /// </summary>
         public bool Connected
         {
             get { return (socket != null && socket.Connected); }
         }
 
         /// <summary>
-        /// Gets the remote ip address string of this session, or null.
+        /// Gets the cached remote endpoint of this session, or null.
         /// </summary>
-        public string RemoteAddress
-        {
-            get
-            {
-                IPEndPoint endpoint = RemoteEndPoint;
-                if (endpoint != null)
-                {
-                    return endpoint.Address.ToString();
-                }
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Gets the remote port number of this session, or zero.
-        /// </summary>
-        public int RemotePort
-        {
-            get
-            {
-                IPEndPoint endpoint = RemoteEndPoint;
-                if (endpoint != null)
-                {
-                    return endpoint.Port;
-                }
-                return 0;
-            }
-        }
-
-        /// <summary>
-        /// Gets the remote endpoint of this session, or null.
-        /// </summary>
-        public IPEndPoint RemoteEndPoint
-        {
-            get
-            {
-                EndPoint endpoint;
-                try
-                {
-                    endpoint = socket.RemoteEndPoint;
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
-                return endpoint as IPEndPoint;
-            }
-        }
+        public IPEndPoint RemoteEndPoint { get { return remoteEndPoint; } }
 
         /// <summary>
         /// Gets the underlying Socket object.
@@ -83,6 +41,7 @@ namespace x2
         public Socket Socket { get { return socket; } }
 
         // Keepalive properties
+
         /// <summary>
         /// Gets or sets a boolean value indicating whether this link session
         /// ignores keepalive failures.
@@ -92,13 +51,23 @@ namespace x2
         internal bool HasReceived
         {
             get { return hasReceived; }
-            set { hasReceived = value; }
         }
 
         internal bool HasSent
         {
             get { return hasSent; }
-            set { hasSent = value; }
+        }
+
+        internal override int InternalHandle
+        {
+            get
+            {
+                if (handle == 0)
+                {
+                    return -(socket.Handle.ToInt32());
+                }
+                return base.InternalHandle;
+            }
         }
 
         /// <summary>
@@ -108,6 +77,7 @@ namespace x2
             : base(link)
         {
             this.socket = socket;
+            remoteEndPoint = socket.RemoteEndPoint as IPEndPoint;
         }
 
         /// <summary>
@@ -115,14 +85,23 @@ namespace x2
         /// </summary>
         public void OnDisconnect()
         {
-            OnDisconnect(RemoteEndPoint);
+            OnDisconnect(this);
 
             CloseInternal();
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        public override string ToString()
+        {
+            return String.Format("{0} {1} {2}",
+                GetType().Name, InternalHandle, remoteEndPoint);
+        }
+
         protected override void OnClose()
         {
-            OnDisconnect(RemoteEndPoint);
+            OnDisconnect(this);
         }
 
         internal int Keepalive(bool checkIncoming, bool checkOutgoing)
@@ -229,36 +208,40 @@ namespace x2
             return true;
         }
 
-        protected override void LogEventReceived(Event e)
+        protected override void OnEventReceived(Event e)
         {
             hasReceived = true;
 
             if (e.GetTypeId() != BuiltinEventType.HeartbeatEvent)
             {
-                Log.Debug("{0} {1} received event {2}", link.Name, Handle, e);
+                Log.Debug("{0} {1} received event {2}",
+                    link.Name, InternalHandle, e);
             }
             else
             {
-                Log.Trace("{0} {1} received event {2}", link.Name, Handle, e);
+                Log.Trace("{0} {1} received event {2}",
+                    link.Name, InternalHandle, e);
             }
 
-            base.LogEventReceived(e);
+            base.OnEventReceived(e);
         }
 
-        protected override void LogEventSent(Event e)
+        protected override void OnEventSent(Event e)
         {
             hasSent = true;
 
             if (e.GetTypeId() != BuiltinEventType.HeartbeatEvent)
             {
-                Log.Debug("{0} {1} sent event {2}", link.Name, Handle, e);
+                Log.Debug("{0} {1} sent event {2}",
+                    link.Name, InternalHandle, e);
             }
             else
             {
-                Log.Trace("{0} {1} sent event {2}", link.Name, Handle, e);
+                Log.Trace("{0} {1} sent event {2}",
+                    link.Name, InternalHandle, e);
             }
 
-            base.LogEventSent(e);
+            base.OnEventSent(e);
         }
     }
 }

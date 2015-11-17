@@ -184,17 +184,17 @@ namespace x2
             ConnectInternal(socket, endpoint);
         }
 
-        internal override void NotifySessionConnected(bool result, object context)
+        protected override void OnSessionConnectedInternal(bool result, object context)
         {
-            base.NotifySessionConnected(result, context);
+            base.OnSessionConnectedInternal(result, context);
 
             connecting = false;
             recovering = false;
         }
 
-        internal override void NotifySessionDisconnected(int handle, object context)
+        protected override void OnSessionDisconnectedInternal(int handle, object context)
         {
-            base.NotifySessionDisconnected(handle, context);
+            base.OnSessionDisconnectedInternal(handle, context);
 
             if (AutoReconnect)
             {
@@ -233,7 +233,7 @@ namespace x2
             tcpSession.BeginReceive(true);
 
             Log.Info("{0} {1} connected to {2}",
-                Name, session.Handle, socket.RemoteEndPoint);
+                Name, tcpSession.InternalHandle, socket.RemoteEndPoint);
             
             base.OnConnectInternal(session);
         }
@@ -270,11 +270,11 @@ namespace x2
                 {
                     recovering = false;
 
-                    NotifySessionDisconnected(Session.Handle, endpoint);
+                    OnLinkSessionDisconnectedInternal(Session.Handle, endpoint);
                 }
                 else
                 {
-                    NotifySessionConnected(false, endpoint);
+                    OnLinkSessionConnectedInternal(false, endpoint);
                 }
             }
         }

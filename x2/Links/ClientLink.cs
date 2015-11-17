@@ -59,23 +59,22 @@ namespace x2
             session.Send(e);
         }
 
-        internal override void NotifySessionConnected(bool result, object context)
+        protected override void OnSessionConnectedInternal(bool result, object context)
         {
-            if (result == true)
+            if (result)
             {
                 var session = (LinkSession)context;
                 using (new WriteLock(rwlock))
                 {
                     this.session = session;
                 }
+
                 Log.Debug("{0} set session {1} {2}",
                     Name, session.Handle, session.Token);
             }
-
-            base.NotifySessionConnected(result, context);
         }
 
-        internal override void NotifySessionDisconnected(int handle, object context)
+        protected override void OnSessionDisconnectedInternal(int handle, object context)
         {
             using (new WriteLock(rwlock))
             {
@@ -83,16 +82,14 @@ namespace x2
                 {
                     Log.Debug("{0} reset session {1} {2}",
                         Name, session.Handle, session.Token);
+
                     session = null;
                 }
             }
-
-            base.NotifySessionDisconnected(handle, context);
         }
 
-        internal override void NotifySessionRecovered(int handle, object context)
+        protected override void OnSessionRecoveredInternal(int handle, object context)
         {
-            base.NotifySessionRecovered(handle, context);
         }
 
         internal void OnSessionResp(LinkSession session, SessionResp e)
@@ -122,11 +119,11 @@ namespace x2
                     session.TakeOver(this.session);
                     this.session = session;
 
-                    NotifySessionRecovered(this.session.Handle, session);
+                    OnSessionRecoveredInternal(this.session.Handle, session);
                 }
                 else
                 {
-                    NotifySessionDisconnected(currentSession.Handle, null);
+                    OnLinkSessionDisconnectedInternal(currentSession.Handle, currentSession);
 
                     OnSessionSetup(session);
                 }

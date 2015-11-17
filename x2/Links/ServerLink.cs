@@ -76,9 +76,9 @@ namespace x2
             session.Send(e);
         }
 
-        internal override void NotifySessionConnected(bool result, object context)
+        protected override void OnSessionConnectedInternal(bool result, object context)
         {
-            if (result == true)
+            if (result)
             {
                 var session = (LinkSession)context;
                 using (new WriteLock(rwlock))
@@ -86,18 +86,14 @@ namespace x2
                     sessions.Add(session.Handle, session);
                 }
             }
-
-            base.NotifySessionConnected(result, context);
         }
 
-        internal override void NotifySessionDisconnected(int handle, object context)
+        protected override void OnSessionDisconnectedInternal(int handle, object context)
         {
             using (new WriteLock(rwlock))
             {
                 sessions.Remove(handle);
             }
-
-            base.NotifySessionDisconnected(handle, context);
         }
 
         internal override void OnInstantDisconnect(LinkSession session)
@@ -142,7 +138,7 @@ namespace x2
 
                     session.TakeOver(existing);
 
-                    NotifySessionRecovered(handle, session);
+                    OnSessionRecoveredInternal(handle, session);
 
                     recovered = true;
                 }
@@ -151,7 +147,7 @@ namespace x2
             if (!recovered)
             {
                 // Issue a new session token for the given session.
-                session.Token = Guid.NewGuid().ToString().Replace("-", "");
+                session.Token = Guid.NewGuid().ToString("N");
 
                 Log.Debug("{0} {1} issued session token {2}",
                     Name, session.Handle, session.Token);
