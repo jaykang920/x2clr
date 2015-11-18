@@ -44,16 +44,7 @@ namespace x2
         /// </summary>
         public void Broadcast(Event e)
         {
-            List<LinkSession> snapshot;
-            using (new ReadLock(rwlock))
-            {
-                snapshot = new List<LinkSession>(sessions.Count);
-                var list = sessions.Values;
-                for (int i = 0, count = list.Count; i < count; ++i)
-                {
-                    snapshot.Add(list[i]);
-                }
-            }
+            List<LinkSession> snapshot = TakeSessionsSnapshot();
             for (int i = 0, count = snapshot.Count; i < count; ++i)
             {
                 snapshot[i].Send(e);
@@ -264,9 +255,28 @@ namespace x2
         {
             if (disposed) { return; }
 
+            // Closes all the active sessions
+            List<LinkSession> snapshot = TakeSessionsSnapshot();
+            for (int i = 0, count = snapshot.Count; i < count; ++i)
+            {
+                snapshot[i].Close();
+            }
+
             using (new WriteLock(rwlock))
             {
                 sessions.Clear();
+            }
+
+            if (SessionRecoveryEnabled)
+            {
+                lock (recoverable)
+                {
+                    recoverable.Clear();
+                }
+                lock (recoveryTokens)
+                {
+                    recoveryTokens.Clear();
+                }
             }
 
             base.Dispose(disposing);
@@ -282,6 +292,20 @@ namespace x2
                 OnSessionSetup(session);
             }
             return true;
+        }
+
+        private List<LinkSession> TakeSessionsSnapshot()
+        {
+            var result = new List<LinkSession>(sessions.Count);
+            using (new ReadLock(rwlock))
+            {
+                var values = sessions.Values;
+                for (int i = 0, count = values.Count; i < count; ++i)
+                {
+                    result.Add(values[i]);
+                }
+            }
+            return result;
         }
 
         #region Diagnostics

@@ -18,6 +18,7 @@ namespace x2
         public const int LinkSessionRecovered = -15;
         public const int SessionReq = -16;
         public const int SessionResp = -17;
+        public const int SessionEnd = -18;
 
         private static ConstsInfo<int> info;
 
@@ -32,6 +33,7 @@ namespace x2
             info.Add("LinkSessionRecovered", -15);
             info.Add("SessionReq", -16);
             info.Add("SessionResp", -17);
+            info.Add("SessionEnd", -18);
         }
 
         public static string GetName(int value)
@@ -1283,6 +1285,105 @@ namespace x2
         private void Initialize()
         {
             token_ = "";
+        }
+    }
+
+    public class SessionEnd : Event
+    {
+        new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
+
+        static SessionEnd()
+        {
+            tag = new Tag(Event.tag, typeof(SessionEnd), 0,
+                    (int)LinkEventType.SessionEnd);
+        }
+
+        new public static SessionEnd New()
+        {
+            return new SessionEnd();
+        }
+
+        public SessionEnd()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected SessionEnd(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        public override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override bool IsEquivalent(Cell other)
+        {
+            if (!base.IsEquivalent(other))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+        }
+
+        public override int GetEncodedLength()
+        {
+            int length = base.GetEncodedLength();
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+        }
+
+        private void Initialize()
+        {
         }
     }
 }

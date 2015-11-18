@@ -12,6 +12,7 @@
 
         <const name="SessionReq">-16</const>
         <const name="SessionResp">-17</const>
+        <const name="SessionEnd">-18</const>
     </consts>
 
     <event name="LinkSessionConnected" id="LinkEventType.LinkSessionConnected" local="true">
@@ -46,6 +47,8 @@
     </event>
     <event name="SessionResp" id="LinkEventType.SessionResp">
         <property name="Token" type="string"/>
+    </event>
+    <event name="SessionEnd" id="LinkEventType.SessionEnd">
     </event>
 
 </x2>

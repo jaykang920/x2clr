@@ -46,6 +46,8 @@ namespace x2
             EventFactory.Register<HandshakeReq>();
             EventFactory.Register<HandshakeResp>();
             EventFactory.Register<HandshakeAck>();
+
+            EventFactory.Register<SessionEnd>();
         }
 
         /// <summary>

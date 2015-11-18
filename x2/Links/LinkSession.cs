@@ -115,6 +115,11 @@ namespace x2
         {
             closing = true;
 
+            if (link.SessionRecoveryEnabled)
+            {
+                Send(new SessionEnd());
+            }
+
             OnClose();
 
             CloseInternal();
@@ -479,21 +484,23 @@ namespace x2
                     }
                     break;
                 case (int)LinkEventType.SessionReq:
+                    if (link.SessionRecoveryEnabled && polarity == false)
                     {
-                        if (link.SessionRecoveryEnabled && polarity == false)
-                        {
-                            var server = (ServerLink)link;
-                            server.OnSessionReq(this, (SessionReq)e);
-                        }
+                        var server = (ServerLink)link;
+                        server.OnSessionReq(this, (SessionReq)e);
                     }
                     break;
                 case (int)LinkEventType.SessionResp:
+                    if (link.SessionRecoveryEnabled && polarity == true)
                     {
-                        if (link.SessionRecoveryEnabled && polarity == true)
-                        {
-                            var client = (ClientLink)link;
-                            client.OnSessionResp(this, (SessionResp)e);
-                        }
+                        var client = (ClientLink)link;
+                        client.OnSessionResp(this, (SessionResp)e);
+                    }
+                    break;
+                case (int)LinkEventType.SessionEnd:
+                    if (link.SessionRecoveryEnabled)
+                    {
+                        closing = true;
                     }
                     break;
                 default:
