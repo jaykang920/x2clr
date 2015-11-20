@@ -497,6 +497,13 @@ namespace x2
                         client.OnSessionResp(this, (SessionResp)e);
                     }
                     break;
+                case (int)LinkEventType.SessionAck:
+                    if (link.SessionRecoveryEnabled && polarity == false)
+                    {
+                        var server = (ServerLink)link;
+                        server.OnSessionAck(this, (SessionAck)e);
+                    }
+                    break;
                 case (int)LinkEventType.SessionEnd:
                     if (link.SessionRecoveryEnabled)
                     {

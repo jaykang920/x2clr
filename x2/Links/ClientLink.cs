@@ -120,6 +120,8 @@ namespace x2
                     session.TakeOver(this.session);
 
                     OnLinkSessionRecoveredInternal(session.Handle, session);
+
+                    session.Send(new SessionAck { Result = true });
                     return;
                 }
                 else
@@ -127,6 +129,8 @@ namespace x2
                     OnLinkSessionDisconnectedInternal(currentSession.Handle, currentSession);
                 }
             }
+
+            session.Send(new SessionAck());
 
             OnSessionSetup(session);
         }

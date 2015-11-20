@@ -23,6 +23,7 @@ namespace x2
         static ServerLink()
         {
             EventFactory.Register<SessionReq>();
+            EventFactory.Register<SessionAck>();
         }
 
         /// <summary>
@@ -154,21 +155,16 @@ namespace x2
 
         internal void OnSessionReq(LinkSession session, SessionReq e)
         {
-            bool recovered = false;
-
             string clientToken = e.Token;
+            bool flag = false;
             if (!String.IsNullOrEmpty(clientToken))
             {
-                bool found = false;
                 LinkSession existing;
                 lock (recoverable)
                 {
-                    if (recoverable.TryGetValue(clientToken, out existing))
-                    {
-                        found = true;
-                    }
+                    flag = recoverable.TryGetValue(clientToken, out existing);
                 }
-                if (found)
+                if (flag)
                 {
                     lock (existing.SyncRoot)
                     {
@@ -178,11 +174,10 @@ namespace x2
 
                         OnLinkSessionRecoveredInternal(handle, session);
                     }
-                    recovered = true;
                 }
             }
 
-            if (!recovered)
+            if (!flag)
             {
                 // Issue a new session token for the given session.
                 session.Token = Guid.NewGuid().ToString("N");
@@ -200,8 +195,11 @@ namespace x2
                 _Transform = false,
                 Token = session.Token
             });
+        }
 
-            if (!recovered)
+        internal void OnSessionAck(LinkSession session, SessionAck e)
+        {
+            if (!e.Result)
             {
                 OnSessionSetup(session);
             }

@@ -26,8 +26,6 @@ namespace x2
     {
         private IEnumerator routine;
         private bool running;
-        private bool started;
-
         private Coroutine parent;
 
         public object Context { get; set; }
@@ -74,11 +72,7 @@ namespace x2
 
         public bool Continue()
         {
-            if (!started)
-            {
-                started = true;
-            }
-            else if (!running)
+            if (!running)
             {
                 return false;
             }
