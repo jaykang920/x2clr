@@ -117,7 +117,7 @@ namespace x2
 
             if (link.SessionRecoveryEnabled)
             {
-                Send(new SessionEnd());
+                Send(new SessionEnd { _Transform = false });
             }
 
             OnClose();

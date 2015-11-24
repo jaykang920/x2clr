@@ -121,7 +121,10 @@ namespace x2
 
                     OnLinkSessionRecoveredInternal(session.Handle, session);
 
-                    session.Send(new SessionAck { Result = true });
+                    session.Send(new SessionAck {
+                        _Transform = false,
+                        Result = true
+                    });
                     return;
                 }
                 else
@@ -130,7 +133,7 @@ namespace x2
                 }
             }
 
-            session.Send(new SessionAck());
+            session.Send(new SessionAck { _Transform = false });
 
             OnSessionSetup(session);
         }
