@@ -213,6 +213,7 @@ namespace x2
             {
                 return;
             }
+            session.Release();
 
             Log.Debug("{0} {1} session recovery timeout {1} {2}",
                 Name, session.Handle, session.Token);

@@ -141,6 +141,15 @@ namespace x2
             GC.SuppressFinalize(this);
         }
 
+        public void Release()
+        {
+            if (!Object.ReferenceEquals(BufferTransform, null))
+            {
+                BufferTransform.Dispose();
+                BufferTransform = null;
+            }
+        }
+
         /// <summary>
         /// Frees managed or unmanaged resources.
         /// </summary>
@@ -152,9 +161,11 @@ namespace x2
 
             Log.Info("{0} closed {1}", link.Name, this);
 
-            if (BufferTransform != null)
+            if (link.SessionRecoveryEnabled == false &&
+                !Object.ReferenceEquals(BufferTransform, null))
             {
                 BufferTransform.Dispose();
+                BufferTransform = null;
             }
 
             txBufferList.Clear();
@@ -197,7 +208,10 @@ namespace x2
         {
             Handle = oldSession.Handle;
             Token = oldSession.Token;
+
             BufferTransform = oldSession.BufferTransform;
+            rxTransformReady = oldSession.rxTransformReady;
+            txTransformReady = oldSession.txTransformReady;
 
             Log.Debug("{0} {1} session takeover {2}", link.Name, handle, Token);
         }

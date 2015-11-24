@@ -214,7 +214,7 @@ namespace x2
                 return;
             }
 
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
 
             recovering = true;
 
@@ -280,7 +280,11 @@ namespace x2
                 {
                     recovering = false;
 
-                    OnLinkSessionDisconnectedInternal(Session.Handle, Session);
+                    LinkSession deadSession = Session;
+
+                    deadSession.Release();
+
+                    OnLinkSessionDisconnectedInternal(deadSession.Handle, deadSession);
                 }
                 else
                 {
