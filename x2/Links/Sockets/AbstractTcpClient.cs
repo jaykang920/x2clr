@@ -214,8 +214,6 @@ namespace x2
                 return;
             }
 
-            //Thread.Sleep(1000);
-
             recovering = true;
 
             Reconnect();

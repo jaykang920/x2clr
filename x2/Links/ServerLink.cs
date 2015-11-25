@@ -111,17 +111,23 @@ namespace x2
 
         internal override void OnInstantDisconnect(LinkSession session)
         {
+            bool flag;
             // Ensure that the specified session is recoverable.
             LinkSession existing = null;
             lock (recoverable)
             {
-                recoverable.TryGetValue(session.Token, out existing);
+                flag = recoverable.TryGetValue(session.Token, out existing);
             }
-            if (!Object.ReferenceEquals(session, existing))
+            if (!flag)
             {
                 Log.Info("{0} {1} unrecoverable session", Name, session.Handle);
 
                 OnLinkSessionDisconnectedInternal(session.Handle, session);
+                return;
+            }
+            else if (!Object.ReferenceEquals(session, existing))
+            {
+                Log.Warn("{0} {1} gave up session recovery", Name, session.Handle);
                 return;
             }
 
@@ -146,11 +152,6 @@ namespace x2
             }
 
             Log.Trace("{0} {1} started recovery timer", Name, session.Handle);
-
-            using (new WriteLock(rwlock))
-            {
-                sessions.Remove(session.Handle);
-            }
         }
 
         internal void OnSessionReq(LinkSession session, SessionReq e)

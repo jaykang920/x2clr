@@ -116,24 +116,22 @@ namespace x2
             {
                 e.BufferList = null;
 
-                if (e.SocketError == SocketError.Success)
+                switch (e.SocketError)
                 {
-                    if (e.BytesTransferred > 0)
-                    {
-                        OnReceiveInternal(e.BytesTransferred);
+                    case SocketError.Success:
+                        if (e.BytesTransferred > 0)
+                        {
+                            OnReceiveInternal(e.BytesTransferred);
+                            return;
+                        }
+                        // (e.BytesTransferred == 0) implies a graceful shutdown
+                        Log.Info("{0} {1} disconnected", link.Name, handle);
+                        break;
+                    case SocketError.OperationAborted:
                         return;
-                    }
-
-                    // (e.BytesTransferred == 0) implies a graceful shutdown
-                    Log.Info("{0} {1} disconnected", link.Name, handle);
-                }
-                else
-                {
-                    if (e.SocketError == SocketError.OperationAborted)
-                    {
-                        return;
-                    }
-                    Log.Warn("{0} {1} recv error {2}", link.Name, handle, e.SocketError);
+                    default:
+                        Log.Warn("{0} {1} recv error {2}", link.Name, handle, e.SocketError);
+                        break;
                 }
             }
             catch (ObjectDisposedException)
@@ -154,18 +152,16 @@ namespace x2
             {
                 e.BufferList = null;
 
-                if (e.SocketError == SocketError.Success)
+                switch (e.SocketError)
                 {
-                    OnSendInternal(e.BytesTransferred);
-                    return;
-                }
-                else
-                {
-                    if (e.SocketError == SocketError.OperationAborted)
-                    {
+                    case SocketError.Success:
+                        OnSendInternal(e.BytesTransferred);
                         return;
-                    }
-                    Log.Warn("{0} {1} send error {2}", link.Name, handle, e.SocketError);
+                    case SocketError.OperationAborted:
+                        return;
+                    default:
+                        Log.Warn("{0} {1} send error {2}", link.Name, handle, e.SocketError);
+                        break;
                 }
             }
             catch (ObjectDisposedException)

@@ -40,6 +40,9 @@ namespace x2
         protected volatile bool closing;
         protected volatile bool disposed;
 
+        protected int rxCounter;
+        protected int txCounter;
+
         /// <summary>
         /// Gets or sets the BufferTransform for this link session.
         /// </summary>
@@ -137,7 +140,10 @@ namespace x2
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            lock (syncRoot)
+            {
+                Dispose(true);
+            }
             GC.SuppressFinalize(this);
         }
 
@@ -184,7 +190,7 @@ namespace x2
         /// </summary>
         public void Send(Event e)
         {
-            if (link == null)
+            if (disposed && !link.SessionRecoveryEnabled)
             {
                 return;
             }
@@ -193,7 +199,7 @@ namespace x2
             {
                 eventsToSend.Add(e);
 
-                if (txFlag)
+                if (disposed || txFlag)
                 {
                     return;
                 }
@@ -204,16 +210,30 @@ namespace x2
             BeginSend();
         }
 
+        internal void Resend()
+        {
+            if (eventsToSend.Count != 0)
+            {
+                txFlag = true;
+                BeginSend();
+            }
+        }
+
         public void TakeOver(LinkSession oldSession)
         {
-            Handle = oldSession.Handle;
-            Token = oldSession.Token;
+            lock (syncRoot)
+            {
+                handle = oldSession.Handle;
+                Token = oldSession.Token;
 
-            BufferTransform = oldSession.BufferTransform;
-            rxTransformReady = oldSession.rxTransformReady;
-            txTransformReady = oldSession.txTransformReady;
+                Log.Debug("{0} {1} session takeover {2}", link.Name, handle, Token);
 
-            Log.Debug("{0} {1} session takeover {2}", link.Name, handle, Token);
+                BufferTransform = oldSession.BufferTransform;
+                rxTransformReady = oldSession.rxTransformReady;
+                txTransformReady = oldSession.txTransformReady;
+
+                eventsToSend = oldSession.eventsToSend;
+            }
         }
 
         internal void BeginReceive(bool beginning)
@@ -278,6 +298,8 @@ namespace x2
                     transformed = true;
                 }
 
+                Interlocked.Increment(ref txCounter);
+
                 BuildHeader(sendBuffer, transformed);
 
                 sendBuffer.ListOccupiedSegments(txBufferList);
@@ -339,10 +361,13 @@ namespace x2
                     {
                         Log.Error("{0} {1} buffer transform error: {2}",
                             link.Name, InternalHandle, e.Message);
-                        goto next;
+                        Close();
+                        return;
                     }
                 }
                 rxBuffer.Rewind();
+
+                Interlocked.Increment(ref rxCounter);
 
                 var deserializer = new Deserializer(rxBuffer);
                 Event retrieved = EventFactory.Create(deserializer);
