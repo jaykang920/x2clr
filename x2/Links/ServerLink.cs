@@ -20,6 +20,17 @@ namespace x2
         protected Dictionary<string, LinkSession> recoverable;
         protected Dictionary<int, Binder.Token> recoveryTokens;
 
+        public int SessionCount
+        {
+            get
+            {
+                using (new ReadLock(rwlock))
+                {
+                    return sessions.Count;
+                }
+            }
+        }
+
         static ServerLink()
         {
             EventFactory.Register<SessionReq>();
@@ -307,32 +318,5 @@ namespace x2
             }
             return result;
         }
-
-        #region Diagnostics
-
-        /// <summary>
-        /// Internal diagnostics helper class.
-        /// </summary>
-        public new class Diagnostics : Link.Diagnostics
-        {
-            protected int connectionCount;
-
-            public int ConnectionCount
-            {
-                get { return connectionCount; }
-            }
-
-            internal void IncrementConnectionCount()
-            {
-                Interlocked.Increment(ref connectionCount);
-            }
-
-            internal void DecrementConnectionCount()
-            {
-                Interlocked.Decrement(ref connectionCount);
-            }
-        }
-
-        #endregion  // Diagnostics
     }
 }

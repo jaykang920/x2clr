@@ -223,4 +223,47 @@ namespace x2
             pool.Release(handle);
         }
     }
+
+    internal static class LinkWaitHandlePool
+    {
+        private static Dictionary<int, ManualResetEvent> activated;
+        private static Pool<ManualResetEvent> pool;
+
+        static LinkWaitHandlePool()
+        {
+            pool = new Pool<ManualResetEvent>();
+        }
+
+        public static ManualResetEvent Acquire(int key)
+        {
+            ManualResetEvent waitHandle;
+            lock (activated)
+            {
+                if (!activated.TryGetValue(key, out waitHandle))
+                {
+                    waitHandle = pool.Pop();
+                    if ((object)waitHandle == null)
+                    {
+                        waitHandle = new ManualResetEvent(false);
+                    }
+                    activated.Add(key, waitHandle);
+                }
+            }
+            return waitHandle;
+        }
+
+        public static void Release(int key)
+        {
+            lock (activated)
+            {
+                ManualResetEvent waitHandle;
+                if (activated.TryGetValue(key, out waitHandle))
+                {
+                    activated.Remove(key);
+                    waitHandle.Reset();
+                    pool.Push(waitHandle);
+                }
+            }
+        }
+    }
 }

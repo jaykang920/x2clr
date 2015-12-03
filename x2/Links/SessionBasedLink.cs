@@ -81,11 +81,6 @@ namespace x2
                 Context = context
             });
 
-            if (result == true && this is ServerLink)
-            {
-                ((ServerLink.Diagnostics)Diag).IncrementConnectionCount();
-            }
-
             Log.Info("{0} connected {1} {2}", Name, result, context);
         }
 
@@ -104,11 +99,6 @@ namespace x2
                 Handle = handle,
                 Context = context
             });
-
-            if (this is ServerLink)
-            {
-                ((ServerLink.Diagnostics)Diag).DecrementConnectionCount();
-            }
 
             Log.Info("{0} disconnected {1} {2}", Name, handle, context);
         }
@@ -163,6 +153,7 @@ namespace x2
 
             var bufferTransform = (IBufferTransform)BufferTransform.Clone();
             session.BufferTransform = bufferTransform;
+            LinkWaitHandlePool.Acquire(session.InternalHandle).Set();
 
             session.Send(new HandshakeReq {
                 _Transform = false,

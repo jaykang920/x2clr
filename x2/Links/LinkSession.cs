@@ -475,6 +475,10 @@ namespace x2
                         byte[] response = null;
                         try
                         {
+                            ManualResetEvent waitHandle =
+                                LinkWaitHandlePool.Acquire(InternalHandle);
+                            waitHandle.WaitOne(new TimeSpan(0, 0, 30));
+                            LinkWaitHandlePool.Release(InternalHandle);
                             response = BufferTransform.Handshake(req.Data);
                         }
                         catch (Exception ex)
