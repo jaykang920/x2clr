@@ -226,27 +226,28 @@ namespace x2
 
     internal static class LinkWaitHandlePool
     {
-        private static Dictionary<int, ManualResetEvent> activated;
-        private static Pool<ManualResetEvent> pool;
+        private static Pool<ManualResetEvent> pooled;
+        private static Dictionary<int, ManualResetEvent> active;
 
         static LinkWaitHandlePool()
         {
-            pool = new Pool<ManualResetEvent>();
+            pooled = new Pool<ManualResetEvent>();
+            active = new Dictionary<int, ManualResetEvent>();
         }
 
         public static ManualResetEvent Acquire(int key)
         {
             ManualResetEvent waitHandle;
-            lock (activated)
+            lock (active)
             {
-                if (!activated.TryGetValue(key, out waitHandle))
+                if (!active.TryGetValue(key, out waitHandle))
                 {
-                    waitHandle = pool.Pop();
+                    waitHandle = pooled.Pop();
                     if ((object)waitHandle == null)
                     {
                         waitHandle = new ManualResetEvent(false);
                     }
-                    activated.Add(key, waitHandle);
+                    active.Add(key, waitHandle);
                 }
             }
             return waitHandle;
@@ -254,14 +255,14 @@ namespace x2
 
         public static void Release(int key)
         {
-            lock (activated)
+            lock (active)
             {
                 ManualResetEvent waitHandle;
-                if (activated.TryGetValue(key, out waitHandle))
+                if (active.TryGetValue(key, out waitHandle))
                 {
-                    activated.Remove(key);
+                    active.Remove(key);
                     waitHandle.Reset();
-                    pool.Push(waitHandle);
+                    pooled.Push(waitHandle);
                 }
             }
         }
