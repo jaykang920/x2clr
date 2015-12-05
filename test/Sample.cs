@@ -110,10 +110,12 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
+                hash.Update(tag.Offset + 0);
                 hash.Update(foo_);
             }
             if (touched[1])
             {
+                hash.Update(tag.Offset + 1);
                 hash.Update(bar_);
             }
             return hash.Code;
@@ -124,9 +126,9 @@ namespace x2.Tests
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other)
+        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
-            if (!base.IsEquivalent(other))
+            if (!base.IsEquivalent(other, fingerprint))
             {
                 return false;
             }
@@ -277,6 +279,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
+                hash.Update(tag.Offset + 0);
                 hash.Update(baz_);
             }
             return hash.Code;
@@ -287,9 +290,9 @@ namespace x2.Tests
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other)
+        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
-            if (!base.IsEquivalent(other))
+            if (!base.IsEquivalent(other, fingerprint))
             {
                 return false;
             }
@@ -417,6 +420,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
+                hash.Update(tag.Offset + 0);
                 hash.Update(qux_);
             }
             return hash.Code;
@@ -427,9 +431,9 @@ namespace x2.Tests
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other)
+        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
-            if (!base.IsEquivalent(other))
+            if (!base.IsEquivalent(other, fingerprint))
             {
                 return false;
             }
@@ -557,6 +561,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
+                hash.Update(tag.Offset + 0);
                 hash.Update(quux_);
             }
             return hash.Code;
@@ -567,9 +572,9 @@ namespace x2.Tests
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other)
+        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
-            if (!base.IsEquivalent(other))
+            if (!base.IsEquivalent(other, fingerprint))
             {
                 return false;
             }
@@ -720,10 +725,12 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
+                hash.Update(tag.Offset + 0);
                 hash.Update(foo_);
             }
             if (touched[1])
             {
+                hash.Update(tag.Offset + 1);
                 hash.Update(bar_);
             }
             return hash.Code;
@@ -739,9 +746,9 @@ namespace x2.Tests
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other)
+        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
-            if (!base.IsEquivalent(other))
+            if (!base.IsEquivalent(other, fingerprint))
             {
                 return false;
             }
@@ -900,6 +907,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
+                hash.Update(tag.Offset + 0);
                 hash.Update(baz_);
             }
             return hash.Code;
@@ -915,9 +923,9 @@ namespace x2.Tests
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other)
+        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
-            if (!base.IsEquivalent(other))
+            if (!base.IsEquivalent(other, fingerprint))
             {
                 return false;
             }
@@ -1053,6 +1061,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
+                hash.Update(tag.Offset + 0);
                 hash.Update(qux_);
             }
             return hash.Code;
@@ -1068,9 +1077,9 @@ namespace x2.Tests
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other)
+        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
-            if (!base.IsEquivalent(other))
+            if (!base.IsEquivalent(other, fingerprint))
             {
                 return false;
             }
@@ -1206,6 +1215,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
+                hash.Update(tag.Offset + 0);
                 hash.Update(quux_);
             }
             return hash.Code;
@@ -1221,9 +1231,9 @@ namespace x2.Tests
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other)
+        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
-            if (!base.IsEquivalent(other))
+            if (!base.IsEquivalent(other, fingerprint))
             {
                 return false;
             }
