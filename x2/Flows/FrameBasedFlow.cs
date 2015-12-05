@@ -112,7 +112,7 @@ namespace x2
         {
             lock (syncRoot)
             {
-                if (thread == null)
+                if ((object)thread == null)
                 {
                     Setup();
                     caseStack.Setup(this);
@@ -132,7 +132,7 @@ namespace x2
         {
             lock (syncRoot)
             {
-                if (thread == null)
+                if ((object)thread == null)
                 {
                     return;
                 }
@@ -154,7 +154,7 @@ namespace x2
 
         protected override void OnHeartbeat()
         {
-            if (queue == null)
+            if ((object)queue == null)
             {
                 return;
             }
@@ -168,7 +168,7 @@ namespace x2
         private void Run()
         {
             currentFlow = this;
-            if (queue != null)
+            if ((object)queue != null)
             {
                 equivalent = new EventEquivalent();
                 events = new List<Event>();

@@ -136,7 +136,7 @@ namespace x2
                 return true;
             }
             var other = obj as Fingerprint;
-            if (other == null || length != other.length)
+            if ((object)other == null || length != other.length)
             {
                 return false;
             }

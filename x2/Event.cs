@@ -163,6 +163,7 @@ namespace x2
         public int GetHashCode(Fingerprint fingerprint, int typeId)
         {
             Hash hash = new Hash(GetHashCode(fingerprint));
+            hash.Update(-1);
             hash.Update(typeId);
             return hash.Code;
         }
@@ -173,10 +174,12 @@ namespace x2
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
+                hash.Update(tag.Offset + 0);
                 hash.Update(_handle);
             }
             if (touched[1])
             {
+                hash.Update(tag.Offset + 1);
                 hash.Update(_waitHandle);
             }
             return hash.Code;
@@ -192,9 +195,9 @@ namespace x2
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other)
+        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
-            if (!base.IsEquivalent(other))
+            if (!base.IsEquivalent(other, fingerprint))
             {
                 return false;
             }
@@ -312,7 +315,7 @@ namespace x2
 
         public override bool EqualsTo(Cell other)
         {
-            return other.IsEquivalent(InnerEvent);
+            return other.IsEquivalent(InnerEvent, fingerprint);
         }
 
         public override int GetHashCode()

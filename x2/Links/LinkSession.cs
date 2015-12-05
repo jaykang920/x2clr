@@ -371,7 +371,7 @@ namespace x2
 
                 var deserializer = new Deserializer(rxBuffer);
                 Event retrieved = EventFactory.Create(deserializer);
-                if (retrieved == null)
+                if ((object)retrieved == null)
                 {
                     goto next;
                 }

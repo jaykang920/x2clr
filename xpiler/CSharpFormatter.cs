@@ -405,6 +405,7 @@ namespace xpiler
                 {
                     Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
                     Indent(2); Out.WriteLine("{");
+                    Indent(3); Out.WriteLine("hash.Update(tag.Offset + {0});", property.Index);
                     Indent(3); Out.WriteLine("hash.Update({0});", property.NativeName);
                     Indent(2); Out.WriteLine("}");
                 }
@@ -431,9 +432,9 @@ namespace xpiler
 
         private void FormatIsEquivalent(CellDef def)
         {
-            Indent(1); Out.WriteLine("public override bool IsEquivalent(Cell other)");
+            Indent(1); Out.WriteLine("public override bool IsEquivalent(Cell other, Fingerprint fingerprint)");
             Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("if (!base.IsEquivalent(other))");
+            Indent(2); Out.WriteLine("if (!base.IsEquivalent(other, fingerprint))");
             Indent(2); Out.WriteLine("{");
             Indent(3); Out.WriteLine("return false;");
             Indent(2); Out.WriteLine("}");

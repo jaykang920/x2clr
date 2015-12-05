@@ -26,6 +26,7 @@ namespace x2
         // Name-value pair writers for composite types
         void Write(string name, byte[] value);
         void Write(string name, List<int> value);
+        void Write(string name, List<long> value);
         void Write(string name, List<float> value);
         void Write(string name, List<DateTime> value);
         void Write(string name, List<List<int>> value);
@@ -47,6 +48,7 @@ namespace x2
         // Value writers for composite types
         void Write(byte[] value);
         void Write(List<int> value);
+        void Write(List<long> value);
         void Write(List<float> value);
         void Write(List<DateTime> value);
         void Write(List<List<int>> value);

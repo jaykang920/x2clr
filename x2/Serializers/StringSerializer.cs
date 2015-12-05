@@ -96,6 +96,11 @@ namespace x2
             WriteName(name);
             Write(value);
         }
+        public void Write(string name, List<long> value)
+        {
+            WriteName(name);
+            Write(value);
+        }
         public void Write(string name, List<float> value)
         {
             WriteName(name);
@@ -177,6 +182,21 @@ namespace x2
 
         }
         public void Write(List<int> value)
+        {
+            if (Object.ReferenceEquals(value, null))
+            {
+                stringBuilder.Append("null");
+                return;
+            }
+            stringBuilder.Append('[');
+            for (int i = 0, count = value.Count; i < count; ++i)
+            {
+                if (i != 0) { stringBuilder.Append(','); }
+                Write(value[i]);
+            }
+            stringBuilder.Append(']');
+        }
+        public void Write(List<long> value)
         {
             if (Object.ReferenceEquals(value, null))
             {

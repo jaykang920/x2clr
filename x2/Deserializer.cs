@@ -224,6 +224,22 @@ namespace x2
         }
 
         /// <summary>
+        /// Decodes an ordered list of Int64 values out of the underlying stream.
+        /// </summary>
+        public void Read(out List<long> value)
+        {
+            int count;
+            ReadVariableNonnegative(out count);
+            value = new List<long>();
+            for (int i = 0; i < count; ++i)
+            {
+                long element;
+                Read(out element);
+                value.Add(element);
+            }
+        }
+
+        /// <summary>
         /// Decodes an ordered list of 32-bit floating-point values out of the
         /// underlying stream.
         /// </summary>

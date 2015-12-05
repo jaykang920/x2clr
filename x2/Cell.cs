@@ -57,7 +57,7 @@ namespace x2
             // Any comparison except the reference equality is delegated to the
             // EqualsTo() method chain.
             Cell other = obj as Cell;
-            if (other == null)
+            if ((object)other == null)
             {
                 return false;
             }
@@ -129,12 +129,17 @@ namespace x2
         ///     in y.</item>
         ///   </list>
         /// </remarks>
-        public virtual bool IsEquivalent(Cell other)
+        public bool IsEquivalent(Cell other)
         {
             if (!other.IsKindOf(this))
             {
                 return false;
             }
+            return IsEquivalent(other, fingerprint);
+        }
+
+        public virtual bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
             if (!fingerprint.IsEquivalent(other.fingerprint))
             {
                 return false;

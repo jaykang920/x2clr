@@ -15,8 +15,8 @@ namespace x2
         /// </summary>
         public static byte[] Concat(this byte[] self, byte[] other)
         {
-            if (self == null) { return other; }
-            if (other == null) { return self; }
+            if ((object)self == null) { return other; }
+            if ((object)other == null) { return self; }
             byte[] result = new byte[self.Length + other.Length];
             System.Buffer.BlockCopy(self, 0, result, 0, self.Length);
             System.Buffer.BlockCopy(other, 0, result, self.Length, other.Length);
@@ -28,8 +28,8 @@ namespace x2
         /// </summary>
         public static bool EqualsExtended(this byte[] self, byte[] other)
         {
-            if (self == null && other == null) { return true; }
-            if (self == null || other == null) { return false; }
+            if ((object)self == null && (object)other == null) { return true; }
+            if ((object)self == null || (object)other == null) { return false; }
             if (self.Length != other.Length) { return false; }
             for (int i = 0, length = self.Length; i < length; ++i)
             {
@@ -43,7 +43,7 @@ namespace x2
         /// </summary>
         public static byte[] SubArray(this byte[] self, int offset, int count)
         {
-            if (self == null) { return null; }
+            if ((object)self == null) { return null; }
             byte[] result = new byte[count];
             System.Buffer.BlockCopy(self, offset, result, 0, count);
             return result;
@@ -55,7 +55,7 @@ namespace x2
         /// </summary>
         public static T[] SubArray<T>(this T[] self, int offset, int count)
         {
-            if (self == null) { return null; }
+            if ((object)self == null) { return null; }
             T[] result = new T[count];
             Array.Copy(self, offset, result, 0, count);
             return result;
@@ -63,7 +63,7 @@ namespace x2
 
         public static string ToStringExtended(this byte[] self)
         {
-            if (self == null) { return "null"; }
+            if ((object)self == null) { return "null"; }
             return BitConverter.ToString(self);
         }
     }

@@ -86,7 +86,7 @@ namespace x2
             try
             {
                 var flow = Flow;
-                if (flow == null) { return; }
+                if ((object)flow == null) { return; }
 
                 lock (bindings)
                 {

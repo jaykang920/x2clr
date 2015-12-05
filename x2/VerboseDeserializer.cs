@@ -26,6 +26,7 @@ namespace x2
         // Name-value pair readers for composite types
         void Read(string name, out byte[] value);
         void Read(string name, out List<int> value);
+        void Read(string name, out List<long> value);
         void Read(string name, out List<float> value);
         void Read(string name, out List<DateTime> value);
         void Read(string name, out List<List<int>> value);
@@ -47,6 +48,7 @@ namespace x2
         // Value readers for composite types
         void Read(out byte[] value);
         void Read(out List<int> value);
+        void Read(out List<long> value);
         void Read(out List<float> value);
         void Read(out List<DateTime> value);
         void Read(out List<List<int>> value);

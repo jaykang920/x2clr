@@ -66,6 +66,15 @@ namespace x2
         public virtual int BuildHandlerChain(Event e,
             EventEquivalent equivalent, List<Handler> handlerChain)
         {
+            // !!!
+            if (e.GetTypeId() == 10003)
+            {
+                int x = 0;
+                x = x + 1;
+            }
+
+
+
             rwlock.EnterReadLock();
             try
             {
