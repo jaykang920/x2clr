@@ -4,8 +4,13 @@ Features:
 
 Bugfixes:
 
+- fixed the incorrect event equivalence test problem in handler chain building
 - fixed the bug that do-nothing nested coroutines never return
 - added additional safeguard for handler exception
+
+Improvements:
+
+- reduced hash conflict rate in the event handler map
 
 ## 0.7.2 (2015-11-03)
 
