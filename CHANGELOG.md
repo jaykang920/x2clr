@@ -1,3 +1,5 @@
+## 0.7.3 (2015-12-05)
+
 Features:
 
 - LinkSession: added support for instant disconnection recovery
