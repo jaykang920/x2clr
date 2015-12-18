@@ -1,3 +1,7 @@
+Bugfixes:
+
+- fixed the problem that equivalence test doesn't include type check in handler chain building
+
 ## 0.7.3 (2015-12-05)
 
 Features:
