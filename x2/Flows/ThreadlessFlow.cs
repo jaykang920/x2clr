@@ -136,7 +136,7 @@ namespace x2
                 {
                     Dispatch(dequeued);
 
-                    if (expected.IsEquivalent(dequeued))
+                    if (expected.Equivalent(dequeued))
                     {
                         actual = (T)dequeued;
                         return true;
@@ -174,7 +174,7 @@ namespace x2
 
                     for (int i = 0; i < expected.Length; ++i)
                     {
-                        if (actual[i] == null && expected[i].IsEquivalent(dequeued))
+                        if (actual[i] == null && expected[i].Equivalent(dequeued))
                         {
                             actual[i] = dequeued;
                             if (++count >= expected.Length)

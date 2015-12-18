@@ -182,14 +182,14 @@ namespace x2
         /// A Fingerprint is said to be equivalent to the other if it covers all
         /// the bits set in the other.
         /// <remarks>
-        /// Given two Fingerprint objects x and y, x.IsEquivalent(y) returns
+        /// Given two Fingerprint objects x and y, x.Equivalent(y) returns
         /// true if:
         ///   <list type="bullet">
         ///     <item>y.Length is greater than or equal to x.Length</item>
         ///     <item>All the bits set in x are also set in y</item>
         ///   </list>
         /// </remarks>
-        public bool IsEquivalent(Fingerprint other)
+        public bool Equivalent(Fingerprint other)
         {
             if (Object.ReferenceEquals(this, other))
             {

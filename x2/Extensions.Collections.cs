@@ -51,7 +51,7 @@ namespace x2
             return true;
         }
 
-        public static bool IsEquivalent<T>(this IList<T> self, IList<T> other)
+        public static bool Equivalent<T>(this IList<T> self, IList<T> other)
         {
             return self.EqualsExtended(other);
         }

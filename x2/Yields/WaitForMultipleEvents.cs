@@ -70,7 +70,7 @@ namespace x2
         {
             for (int i = 0; i < expected.Length; ++i)
             {
-                if (actual[i] == null && expected[i].IsEquivalent(e))
+                if (actual[i] == null && expected[i].Equivalent(e))
                 {
                     Flow.Unbind(handlerTokens[i]);
                     handlerTokens[i] = new Binder.Token();

@@ -315,7 +315,7 @@ namespace x2
 
         public override bool EqualsTo(Cell other)
         {
-            return other.IsEquivalent(InnerEvent, fingerprint);
+            return other.Equivalent(InnerEvent, fingerprint);
         }
 
         public override int GetHashCode()

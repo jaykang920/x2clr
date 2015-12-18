@@ -80,7 +80,7 @@ namespace x2
                         for (int i = 0, count = slots.Count; i < count; ++i)
                         {
                             var slot = slots[i];
-                            if (slot.IsEquivalent(fingerprint))
+                            if (slot.Equivalent(fingerprint))
                             {
                                 equivalent.InnerEvent = e;
                                 equivalent.SetFingerprint(slot);

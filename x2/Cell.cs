@@ -121,17 +121,26 @@ namespace x2
         /// equivalent to the other's, and all the fingerprinted properties of
         /// the other exactly matches with their counterparts.
         /// <remarks>
-        /// Given two Cell objects x and y, x.IsEquivalent(y) returns true if:
+        /// Given two Cell objects x and y, x.Equivalent(y) returns true if:
         ///   <list type="bullet">
-        ///     <item>x.fingerprint.IsEquivalent(y.fingerprint) returns true.
+        ///     <item>x.fingerprint.Equivalent(y.fingerprint) returns true.
         ///     </item>
         ///     <item>All the fingerprinted properties in x are equal to those
         ///     in y.</item>
         ///   </list>
         /// </remarks>
-        public bool IsEquivalent(Cell other)
+        public bool Equivalent(Cell other)
+        {
+            return Equivalent(other, fingerprint);
+        }
+
+        public bool Equivalent(Cell other, Fingerprint fingerprint)
         {
             if (!other.IsKindOf(this))
+            {
+                return false;
+            }
+            if (!fingerprint.Equivalent(other.fingerprint))
             {
                 return false;
             }
@@ -140,10 +149,6 @@ namespace x2
 
         public virtual bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
-            if (!fingerprint.IsEquivalent(other.fingerprint))
-            {
-                return false;
-            }
             return true;
         }
 
