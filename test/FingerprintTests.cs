@@ -218,41 +218,41 @@ namespace x2.Tests
             Fingerprint fp4 = new Fingerprint(66);
 
             // Reference first
-            Assert.True(fp1.IsEquivalent(fp1));
-            Assert.True(fp2.IsEquivalent(fp2));
-            Assert.True(fp3.IsEquivalent(fp3));
-            Assert.True(fp4.IsEquivalent(fp4));
+            Assert.True(fp1.Equivalent(fp1));
+            Assert.True(fp2.Equivalent(fp2));
+            Assert.True(fp3.Equivalent(fp3));
+            Assert.True(fp4.Equivalent(fp4));
 
             // Length second
 
-            Assert.True(fp3.IsEquivalent(fp1));
-            Assert.False(fp1.IsEquivalent(fp3));
+            Assert.True(fp3.Equivalent(fp1));
+            Assert.False(fp1.Equivalent(fp3));
 
-            Assert.False(fp4.IsEquivalent(fp2));
-            Assert.True(fp2.IsEquivalent(fp4));
+            Assert.False(fp4.Equivalent(fp2));
+            Assert.True(fp2.Equivalent(fp4));
 
             // Bits third
 
-            Assert.True(fp1.IsEquivalent(fp2));
-            Assert.True(fp2.IsEquivalent(fp1));
+            Assert.True(fp1.Equivalent(fp2));
+            Assert.True(fp2.Equivalent(fp1));
 
             fp1.Touch(32);
-            Assert.False(fp1.IsEquivalent(fp2));
-            Assert.True(fp2.IsEquivalent(fp1));
+            Assert.False(fp1.Equivalent(fp2));
+            Assert.True(fp2.Equivalent(fp1));
 
             fp2.Touch(32);
-            Assert.True(fp1.IsEquivalent(fp2));
-            Assert.True(fp2.IsEquivalent(fp1));
+            Assert.True(fp1.Equivalent(fp2));
+            Assert.True(fp2.Equivalent(fp1));
 
             fp2.Touch(31);
-            Assert.True(fp1.IsEquivalent(fp2));
-            Assert.False(fp2.IsEquivalent(fp1));
+            Assert.True(fp1.Equivalent(fp2));
+            Assert.False(fp2.Equivalent(fp1));
 
             fp4.Touch(31);
             fp4.Touch(32);
             fp4.Touch(33);
-            Assert.True(fp2.IsEquivalent(fp4));
-            Assert.False(fp4.IsEquivalent(fp2));
+            Assert.True(fp2.Equivalent(fp4));
+            Assert.False(fp4.Equivalent(fp2));
         }
 
         [Test]

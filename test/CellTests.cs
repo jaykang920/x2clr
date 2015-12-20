@@ -113,34 +113,34 @@ namespace x2.Tests
             var cell7 = new SampleCell4 { Foo = 1, Bar = "bar" };
 
             // Reference first
-            Assert.True(cell1.IsEquivalent(cell1));
-            Assert.True(cell2.IsEquivalent(cell2));
-            Assert.True(cell3.IsEquivalent(cell3));
-            Assert.True(cell4.IsEquivalent(cell4));
+            Assert.True(cell1.Equivalent(cell1));
+            Assert.True(cell2.Equivalent(cell2));
+            Assert.True(cell3.Equivalent(cell3));
+            Assert.True(cell4.Equivalent(cell4));
 
             // Fingerprint second
 
-            Assert.True(cell1.IsEquivalent(cell4));
-            Assert.False(cell4.IsEquivalent(cell1));
+            Assert.True(cell1.Equivalent(cell4));
+            Assert.False(cell4.Equivalent(cell1));
 
-            Assert.True(cell6.IsEquivalent(cell7));
-            Assert.True(cell7.IsEquivalent(cell6));
+            Assert.True(cell6.Equivalent(cell7));
+            Assert.True(cell7.Equivalent(cell6));
             cell7.Quux = true;
-            Assert.True(cell6.IsEquivalent(cell7));
-            Assert.False(cell7.IsEquivalent(cell6));
+            Assert.True(cell6.Equivalent(cell7));
+            Assert.False(cell7.Equivalent(cell6));
 
             // Contents third
 
             cell4.Bar = "foo";
-            Assert.False(cell1.IsEquivalent(cell4));
-            Assert.False(cell4.IsEquivalent(cell1));
+            Assert.False(cell1.Equivalent(cell4));
+            Assert.False(cell4.Equivalent(cell1));
 
             cell6.Quux = false;
-            Assert.False(cell6.IsEquivalent(cell7));
-            Assert.False(cell7.IsEquivalent(cell6));
+            Assert.False(cell6.Equivalent(cell7));
+            Assert.False(cell7.Equivalent(cell6));
             cell6.Quux = true;
-            Assert.True(cell6.IsEquivalent(cell7));
-            Assert.True(cell7.IsEquivalent(cell6));
+            Assert.True(cell6.Equivalent(cell7));
+            Assert.True(cell7.Equivalent(cell6));
         }
     }
 }
