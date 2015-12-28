@@ -31,7 +31,7 @@ namespace xpiler
             doc = new Document();
             doc.Namespace = rootElem.GetAttribute("namespace");
 
-            string comments = null;
+            string comment = null;
             var node = rootElem.FirstChild;
             for ( ; node != null; node = node.NextSibling)
             {
@@ -39,11 +39,11 @@ namespace xpiler
                 {
                     if (node.NodeType == XmlNodeType.Comment)
                     {
-                        comments = node.Value.Trim();
+                        comment = node.Value.Trim();
                     }
                     else
                     {
-                        comments = null;
+                        comment = null;
                     }
                     continue;
                 }
@@ -57,14 +57,14 @@ namespace xpiler
                         }
                         break;
                     case "consts":
-                        if (ParseConsts(doc, elem, comments) == false)
+                        if (ParseConsts(doc, elem, comment) == false)
                         {
                             return false;
                         }
                         break;
                     case "cell":
                     case "event":
-                        if (ParseCell(doc, elem, comments) == false)
+                        if (ParseCell(doc, elem, comment) == false)
                         {
                             return false;
                         }
@@ -72,7 +72,7 @@ namespace xpiler
                     default:
                         break;
                 }
-                comments = null;
+                comment = null;
             }
             return true;
         }
@@ -90,7 +90,7 @@ namespace xpiler
             return true;
         }
 
-        private bool ParseConsts(Document doc, XmlElement elem, string comments)
+        private bool ParseConsts(Document doc, XmlElement elem, string comment)
         {
             var name = elem.GetAttribute("name");
             var type = elem.GetAttribute("type");
@@ -105,9 +105,9 @@ namespace xpiler
             var def = new ConstsDef();
             def.Name = name;
             def.Type = type;
-            def.Comments = comments;
+            def.Comment = comment;
 
-            string subComments = null;
+            string subComment = null;
             var node = elem.FirstChild;
             for ( ; node != null; node = node.NextSibling)
             {
@@ -115,11 +115,11 @@ namespace xpiler
                 {
                     if (node.NodeType == XmlNodeType.Comment)
                     {
-                        subComments = node.Value.Trim();
+                        subComment = node.Value.Trim();
                     }
                     else
                     {
-                        subComments = null;
+                        subComment = null;
                     }
                     continue;
                 }
@@ -131,7 +131,7 @@ namespace xpiler
                 switch (child.Name)
                 {
                     case "const":
-                        if (ParseConstant(def, child, subComments) == false)
+                        if (ParseConstant(def, child, subComment) == false)
                         {
                             return false;
                         }
@@ -139,13 +139,13 @@ namespace xpiler
                     default:
                         break;
                 }
-                subComments = null;
+                subComment = null;
             }
             doc.Definitions.Add(def);
             return true;
         }
 
-        private bool ParseConstant(ConstsDef def, XmlElement elem, string comments)
+        private bool ParseConstant(ConstsDef def, XmlElement elem, string comment)
         {
             var name = elem.GetAttribute("name");
             if (String.IsNullOrEmpty(name))
@@ -155,12 +155,12 @@ namespace xpiler
             var element = new ConstsDef.Constant();
             element.Name = name;
             element.Value = elem.InnerText.Trim();
-            element.Comments = comments;
+            element.Comment = comment;
             def.Constants.Add(element);
             return true;
         }
 
-        private bool ParseCell(Document doc, XmlElement elem, string comments)
+        private bool ParseCell(Document doc, XmlElement elem, string comment)
         {
             var name = elem.GetAttribute("name");
             if (String.IsNullOrEmpty(name))
@@ -185,9 +185,9 @@ namespace xpiler
             {
                 def.IsLocal = true;
             }
-            def.Comments = comments;
+            def.Comment = comment;
 
-            string subComments = null;
+            string subComment = null;
             var node = elem.FirstChild;
             for ( ; node != null; node = node.NextSibling)
             {
@@ -195,11 +195,11 @@ namespace xpiler
                 {
                     if (node.NodeType == XmlNodeType.Comment)
                     {
-                        subComments = node.Value.Trim();
+                        subComment = node.Value.Trim();
                     }
                     else
                     {
-                        subComments = null;
+                        subComment = null;
                     }
                     continue;
                 }
@@ -207,7 +207,7 @@ namespace xpiler
                 switch (child.Name)
                 {
                     case "property":
-                        if (ParseCellProperty(def, child, subComments) == false)
+                        if (ParseCellProperty(def, child, subComment) == false)
                         {
                             return false;
                         }
@@ -215,13 +215,13 @@ namespace xpiler
                     default:
                         break;
                 }
-                subComments = null;
+                subComment = null;
             }
             doc.Definitions.Add(def);
             return true;
         }
 
-        private bool ParseCellProperty(CellDef def, XmlElement elem, string comments)
+        private bool ParseCellProperty(CellDef def, XmlElement elem, string comment)
         {
             var name = elem.GetAttribute("name");
             var type = elem.GetAttribute("type");
@@ -236,7 +236,7 @@ namespace xpiler
             var property = new CellDef.Property();
             property.Name = name;
             property.DefaultValue = elem.InnerText.Trim();
-            property.Comments = comments;
+            property.Comment = comment;
             def.Properties.Add(property);
 
             property.TypeSpec = Types.Parse(type);

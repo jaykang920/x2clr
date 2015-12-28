@@ -155,12 +155,12 @@ namespace xpiler
 
             PreprocessConsts(def);
 
-            FormatComments(0, def.Comments);
+            FormatComment(0, def.Comment);
             Indent(0); Out.WriteLine("public static class {0}", def.Name);
             Indent(0); Out.WriteLine("{");
             foreach (var constant in def.Constants)
             {
-                FormatComments(1, constant.Comments);
+                FormatComment(1, constant.Comment);
                 Indent(1);
                 Out.Write("public const {0} {1}", def.NativeType, constant.Name);
                 if (!String.IsNullOrEmpty(constant.Value))
@@ -208,7 +208,7 @@ namespace xpiler
             }
             PreprocessProperties(def);
 
-            FormatComments(0, def.Comments);
+            FormatComment(0, def.Comment);
             Indent(0); Out.WriteLine("public class {0} : {1}", def.Name, def.BaseClass);
             Indent(0); Out.WriteLine("{");
             Indent(1); Out.WriteLine("new protected static readonly Tag tag;");
@@ -254,7 +254,7 @@ namespace xpiler
                 {
                     Out.WriteLine();
                 }
-                FormatComments(1, property.Comments);
+                FormatComment(1, property.Comment);
                 Indent(1); Out.WriteLine("public {0} {1}", property.NativeType, property.Name);
                 Indent(1); Out.WriteLine("{");
                 Indent(2); Out.WriteLine("get {{ return {0}; }}", property.NativeName);
@@ -587,7 +587,7 @@ namespace xpiler
             Indent(1); Out.WriteLine("}");
         }
 
-        private void FormatComments(int indent, string text)
+        private void FormatComment(int indent, string text)
         {
             if (String.IsNullOrEmpty(text)) { return; }
             string[] lines = text.Split(new char[] { '\n', '\r' },

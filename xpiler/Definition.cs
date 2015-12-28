@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 namespace xpiler
 {
+    /// <summary>
+    /// Represents an abstract definition.
+    /// </summary>
     abstract class Definition
     {
         public string Name { get; set; }
@@ -13,21 +16,27 @@ namespace xpiler
         public abstract void Format(FormatterContext context);
     }
 
+    /// <summary>
+    /// Represents a set of constants.
+    /// </summary>
     class ConstsDef : Definition
     {
+        /// <summary>
+        /// Represents a constant definition.
+        /// </summary>
         public class Constant
         {
             public string Name { get; set; }
             public string Value { get; set; }
 
-            public string Comments { get; set; }
+            public string Comment { get; set; }
         }
 
         public string Type { get; set; }
         public string NativeType { get; set; }
         public List<Constant> Constants { get { return constants; } }
 
-        public string Comments { get; set; }
+        public string Comment { get; set; }
 
         private List<Constant> constants = new List<Constant>();
 
@@ -37,8 +46,14 @@ namespace xpiler
         }
     }
 
+    /// <summary>
+    /// Represents a cell definition.
+    /// </summary>
     class CellDef : Definition
     {
+        /// <summary>
+        /// Represents a cell property.
+        /// </summary>
         public class Property
         {
             public int Index { get; set; }
@@ -48,7 +63,7 @@ namespace xpiler
             public string NativeName { get; set; }
             public string NativeType { get; set; }
 
-            public string Comments { get; set; }
+            public string Comment { get; set; }
         }
 
         public string Base { get; set; }
@@ -58,7 +73,7 @@ namespace xpiler
         public List<Property> Properties { get { return properties; } }
         public bool HasProperties { get { return (properties.Count != 0); } }
 
-        public string Comments { get; set; }
+        public string Comment { get; set; }
 
         private List<Property> properties = new List<Property>();
 
@@ -68,6 +83,9 @@ namespace xpiler
         }
     }
 
+    /// <summary>
+    /// Represents an event definition.
+    /// </summary>
     class EventDef : CellDef
     {
         public string Id { get; set; }
@@ -75,6 +93,9 @@ namespace xpiler
         public override bool IsEvent { get { return true; } }
     }
 
+    /// <summary>
+    /// Represents a reference definition.
+    /// </summary>
     class Reference
     {
         public string Target { get; set; }
