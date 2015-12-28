@@ -87,11 +87,15 @@ namespace x2
 
         protected override void OnSessionRecoveredInternal(int handle, object context)
         {
+            LinkSession oldSession;
             var session = (LinkSession)context;
             using (new WriteLock(rwlock))
             {
+                oldSession = this.session;
                 this.session = session;
             }
+
+            session.TakeOver(oldSession);
 
             Log.Debug("{0} {1} reset session {2}",
                 Name, session.Handle, session.Token);
@@ -117,7 +121,7 @@ namespace x2
                 if (sessionToken.Equals(e.Token))
                 {
                     // Recovered from instant disconnection.
-                    session.TakeOver(this.session);
+                    session.InheritFrom(this.session);
 
                     OnLinkSessionRecoveredInternal(session.Handle, session);
 

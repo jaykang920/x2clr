@@ -114,9 +114,6 @@ namespace x2
             });
 
             Log.Info("{0} recovered {1} {2}", Name, handle, context);
-
-            var session = (LinkSession)context;
-            session.Resend();
         }
 
         internal abstract void OnInstantDisconnect(LinkSession session);

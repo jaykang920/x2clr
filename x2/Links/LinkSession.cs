@@ -210,12 +210,27 @@ namespace x2
             BeginSend();
         }
 
-        internal void Resend()
+        internal void InheritFrom(LinkSession oldSession)
         {
-            if (eventsToSend.Count != 0)
+            lock (syncRoot)
             {
-                txFlag = true;
-                BeginSend();
+                handle = oldSession.Handle;
+                Token = oldSession.Token;
+
+                Log.Debug("{0} {1} session inheritance {2}", link.Name, handle, Token);
+
+                BufferTransform = oldSession.BufferTransform;
+                rxTransformReady = oldSession.rxTransformReady;
+                txTransformReady = oldSession.txTransformReady;
+
+                lock (oldSession.syncRoot)
+                {
+                    if (oldSession.eventsToSend.Count != 0)
+                    {
+                        eventsToSend.AddRange(oldSession.eventsToSend);
+                        oldSession.eventsToSend.Clear();
+                    }
+                }
             }
         }
 
@@ -223,16 +238,19 @@ namespace x2
         {
             lock (syncRoot)
             {
-                handle = oldSession.Handle;
-                Token = oldSession.Token;
-
-                Log.Debug("{0} {1} session takeover {2}", link.Name, handle, Token);
-
-                BufferTransform = oldSession.BufferTransform;
-                rxTransformReady = oldSession.rxTransformReady;
-                txTransformReady = oldSession.txTransformReady;
-
-                eventsToSend = oldSession.eventsToSend;
+                lock (oldSession.syncRoot)
+                {
+                    if (oldSession.eventsToSend.Count != 0)
+                    {
+                        eventsToSend.AddRange(oldSession.eventsToSend);
+                        oldSession.eventsToSend.Clear();
+                    }
+                }
+                if (eventsToSend.Count != 0)
+                {
+                    txFlag = true;
+                    BeginSend();
+                }
             }
         }
 

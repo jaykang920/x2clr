@@ -109,15 +109,19 @@ namespace x2
 
         protected override void OnSessionRecoveredInternal(int handle, object context)
         {
+            LinkSession oldSession;
             var session = (LinkSession)context;
             using (new WriteLock(rwlock))
             {
+                oldSession = sessions[handle];
                 sessions[handle] = session;
             }
             lock (recoverable)
             {
                 recoverable[session.Token] = session;
             }
+
+            session.TakeOver(oldSession);
         }
 
         internal override void OnInstantDisconnect(LinkSession session)
@@ -182,7 +186,7 @@ namespace x2
                     {
                         int handle = existing.Handle;
                         CancelRecoveryTimer(handle);
-                        session.TakeOver(existing);
+                        session.InheritFrom(existing);
 
                         OnLinkSessionRecoveredInternal(handle, session);
                     }
