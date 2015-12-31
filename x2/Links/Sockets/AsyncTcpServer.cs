@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2015 Jae-jun Kang
+﻿// Copyright (c) 2013-2016 Jae-jun Kang
 // See the file LICENSE for details.
 
 using System;

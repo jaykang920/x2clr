@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <x2 namespace="x2.Tests">
 
     <consts name="SampleConsts" type="int32">
