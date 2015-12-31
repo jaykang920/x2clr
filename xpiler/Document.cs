@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 namespace xpiler
 {
+    /// <summary>
+    /// Represents a single definition document.
+    /// </summary>
     class Document
     {
         public string BaseName { get; set; }

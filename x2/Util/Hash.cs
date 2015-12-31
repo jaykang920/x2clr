@@ -11,10 +11,20 @@ namespace x2
     /// Be aware that this struct is mutable.
     public partial struct Hash
     {
+        /// <summary>
+        /// Default hash seed value.
+        /// </summary>
         public const int Seed = 17;
 
+        /// <summary>
+        /// The hash code value in this instance.
+        /// </summary>
         public int Code;
 
+        /// <summary>
+        /// Initializes a new instance of the Hash structure with the specified
+        /// seed value.
+        /// </summary>
         public Hash(int seed)
         {
             Code = seed;

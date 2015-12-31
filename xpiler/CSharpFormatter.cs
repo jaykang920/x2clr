@@ -118,7 +118,7 @@ namespace xpiler
             nativeTypes.Add("string", "string");
             nativeTypes.Add("datetime", "DateTime");
             nativeTypes.Add("list", "List");
-            //nativeTypes.Add("map", "Dictionary");
+            nativeTypes.Add("map", "Dictionary");
 
             defaultValues = new Dictionary<string, string>();
             defaultValues.Add("bool", "false");
@@ -165,8 +165,9 @@ namespace xpiler
                 Out.Write("public const {0} {1}", def.NativeType, constant.Name);
                 if (!String.IsNullOrEmpty(constant.Value))
                 {
-                    Out.Write(" = {0};", constant.Value);
+                    Out.Write(" = {0}", constant.Value);
                 }
+                Out.Write(';');
                 Out.WriteLine();
             }
             Out.WriteLine();

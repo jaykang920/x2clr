@@ -6,6 +6,9 @@ using System.IO;
 
 namespace xpiler
 {
+    /// <summary>
+    /// Abstract base class for static output file formatters.
+    /// </summary>
     abstract class Formatter
     {
         public abstract string Description { get; }
@@ -15,6 +18,9 @@ namespace xpiler
         public abstract bool IsUpToDate(string path, string outDir);
     }
 
+    /// <summary>
+    /// Abstract base class for concrete formatter contexts.
+    /// </summary>
     abstract class FormatterContext
     {
         public Document Doc { get; set; }

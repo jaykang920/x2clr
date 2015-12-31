@@ -5,6 +5,9 @@ using System;
 
 namespace xpiler
 {
+    /// <summary>
+    /// Document file handler interface.
+    /// </summary>
     interface Handler
     {
         bool Handle(string path, out Document doc);

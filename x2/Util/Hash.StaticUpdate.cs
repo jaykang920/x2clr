@@ -11,7 +11,7 @@ namespace x2
     {
         public static int Update(int seed, bool value)
         {
-            return ((seed << 5) + seed) ^ (value ? 2 : 1);
+            return ((seed << 5) + seed) ^ (value ? 1 : 0);
         }
 
         public static int Update(int seed, sbyte value)
