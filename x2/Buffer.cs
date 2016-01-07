@@ -101,7 +101,7 @@ namespace x2
             {
                 if (blocks.Count < 1)
                 {
-                    return new Segment();
+                    blocks.Add(SegmentPool.Acquire());
                 }
                 return blocks[0];
             }

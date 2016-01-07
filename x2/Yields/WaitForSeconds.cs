@@ -28,7 +28,34 @@ namespace x2
 
             coroutine.Context = e;
             coroutine.Continue();
-            coroutine.Context = null;
+        }
+    }
+
+    public class WaitForNothing : YieldInstruction
+    {
+        private readonly Coroutine coroutine;
+        private readonly object context;
+        private readonly Binder.Token token;
+
+        public WaitForNothing(Coroutine coroutine) : this(coroutine, null)
+        {
+        }
+
+        public WaitForNothing(Coroutine coroutine, object context)
+        {
+            this.coroutine = coroutine;
+            this.context = context;
+            TimeoutEvent e = new TimeoutEvent { Key = this };
+            token = Flow.Bind(e, OnTimeout);
+            TimeFlow.Default.Reserve(e, 0);
+        }
+
+        void OnTimeout(TimeoutEvent e)
+        {
+            Flow.Unbind(token);
+
+            coroutine.Context = context;
+            coroutine.Continue();
         }
     }
 }

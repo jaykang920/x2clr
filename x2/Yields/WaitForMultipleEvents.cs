@@ -95,7 +95,6 @@ namespace x2
 
                 coroutine.Context = actual;
                 coroutine.Continue();
-                coroutine.Context = null;
             }
         }
 

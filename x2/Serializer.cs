@@ -9,7 +9,7 @@ using System.Text;
 namespace x2
 {
     /// <summary>
-    /// Binary wire foramt serializer.
+    /// Binary wire format serializer.
     /// </summary>
     public sealed partial class Serializer
     {

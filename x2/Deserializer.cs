@@ -9,7 +9,7 @@ using System.Text;
 namespace x2
 {
     /// <summary>
-    /// Binary wire foramt deserializer.
+    /// Binary wire format deserializer.
     /// </summary>
     public sealed class Deserializer
     {

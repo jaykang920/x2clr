@@ -19,13 +19,17 @@ namespace x2
         // IEnumerator interface implementation
         public virtual object Current { get { return null; } }
         public virtual bool MoveNext() { return false; }
-        public void Reset() { }  // not supported
+        public void Reset()
+        {
+            throw new NotSupportedException();  // not supported
+        }
     }
 
     public class Coroutine
     {
         private IEnumerator routine;
         private bool running;
+        private bool started;
         private Coroutine parent;
 
         public object Context { get; set; }
@@ -67,7 +71,14 @@ namespace x2
         {
             this.routine = routine;
             running = (routine != null);
-            Continue();
+            if (!Continue())
+            {
+                if (parent != null)
+                {
+                    // Indirectly chain into the parent coroutine.
+                    new WaitForNothing(parent, Context);
+                }
+            }
         }
 
         public bool Continue()
@@ -79,13 +90,16 @@ namespace x2
 
             if (routine.MoveNext())
             {
+                started = true;
                 return true;
             }
 
             running = false;
 
-            if (parent != null)
+            if (started && parent != null)
             {
+                // Chain into the parent coroutine.
+                parent.Context = Context;
                 parent.Continue();
             }
 

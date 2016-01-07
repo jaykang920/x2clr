@@ -12,7 +12,7 @@ namespace x2
     /// </summary>
     public class Fingerprint : IComparable<Fingerprint>, IIndexable<bool>
     {
-        private int block;              // primary(default) bit block
+        private int block;     // primary(default) bit block
         private int[] blocks;  // additional bit blocks
         private readonly int length;
 
@@ -34,8 +34,9 @@ namespace x2
         }
 
         /// <summary>
-        /// Initializes a new Fingerprint object that can hold the specified
-        /// number of bit values, which are initially set to <b>false</b>.
+        /// Initializes a new instance of the Fingerprint class that can hold
+        /// the specified number of bit values, which are initially set to
+        /// <b>false</b>.
         /// </summary>
         public Fingerprint(int length)
         {
@@ -52,8 +53,8 @@ namespace x2
         }
 
         /// <summary>
-        /// Initializes a new Fingerprint object that contains bit values
-        /// copied from the specified Fingerprint.
+        /// Initializes a new instance of the Fingerprint class that contains
+        /// bit values copied from the specified Fingerprint.
         /// </summary>
         public Fingerprint(Fingerprint other)
         {
@@ -179,11 +180,11 @@ namespace x2
         /// Determines whether the specified Fingerprint object is equivalent to 
         /// this one.
         /// </summary>
-        /// A Fingerprint is said to be equivalent to the other if it covers all
-        /// the bits set in the other.
+        /// A Fingerprint is said to be equivalent to the other when it covers
+        /// all the bits set in the other.
         /// <remarks>
         /// Given two Fingerprint objects x and y, x.Equivalent(y) returns
-        /// true if:
+        /// <b>true</b> if:
         ///   <list type="bullet">
         ///     <item>y.Length is greater than or equal to x.Length</item>
         ///     <item>All the bits set in x are also set in y</item>

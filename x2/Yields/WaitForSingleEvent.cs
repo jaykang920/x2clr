@@ -64,7 +64,6 @@ namespace x2
 
             coroutine.Context = e;
             coroutine.Continue();
-            coroutine.Context = null;
         }
 
         void OnTimeout(TimeoutEvent e)
