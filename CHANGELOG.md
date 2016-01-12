@@ -1,3 +1,7 @@
+Features:
+
+- added ContainsName/ContainsValue to ConstsInfo, to support validity check
+
 Bugfixes:
 
 - fixed the problem in continuing no-yield coroutines
