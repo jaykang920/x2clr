@@ -23,6 +23,16 @@ namespace x2
             map.Add(name, value);
         }
 
+        public bool ContainsName(string name)
+        {
+            return map.ContainsKey(name);
+        }
+
+        public bool ContainsValue(T value)
+        {
+            return map.ContainsValue(value);
+        }
+
         public string GetName(T value)
         {
             IList<T> values = map.Values;

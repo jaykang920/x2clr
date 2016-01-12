@@ -183,6 +183,16 @@ namespace xpiler
             }
             Indent(1); Out.WriteLine("}");
             Out.WriteLine();
+            Indent(1); Out.WriteLine("public static bool ContainsName(string name)", def.NativeType);
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("return info.ContainsName(name);");
+            Indent(1); Out.WriteLine("}");
+            Out.WriteLine();
+            Indent(1); Out.WriteLine("public static bool ContainsValue({0} value)", def.NativeType);
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("return info.ContainsValue(value);");
+            Indent(1); Out.WriteLine("}");
+            Out.WriteLine();
             Indent(1); Out.WriteLine("public static string GetName({0} value)", def.NativeType);
             Indent(1); Out.WriteLine("{");
             Indent(2); Out.WriteLine("return info.GetName(value);");
