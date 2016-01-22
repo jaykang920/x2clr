@@ -47,7 +47,7 @@ namespace x2
             this.context = context;
             TimeoutEvent e = new TimeoutEvent { Key = this };
             token = Flow.Bind(e, OnTimeout);
-            TimeFlow.Default.Reserve(e, 0);
+            Hub.Post(e);
         }
 
         void OnTimeout(TimeoutEvent e)
