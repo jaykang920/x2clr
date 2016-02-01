@@ -1,3 +1,5 @@
+## 0.7.5 (2016-02-02)
+
 Features:
 
 - added ContainsName/ContainsValue to ConstsInfo, to support validity check
