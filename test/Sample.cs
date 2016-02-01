@@ -22,6 +22,16 @@ namespace x2.Tests
             info.Add("Const2", 2);
         }
 
+        public static bool ContainsName(string name)
+        {
+            return info.ContainsName(name);
+        }
+
+        public static bool ContainsValue(int value)
+        {
+            return info.ContainsValue(value);
+        }
+
         public static string GetName(int value)
         {
             return info.GetName(value);
