@@ -158,13 +158,20 @@ namespace x2
                         return result;
                     }
                 }
-                pool = new SegmentedBuffer();
                 using (new WriteLock(rwlock))
                 {
+                    for (int i = 0, count = pools.Count; i < count; ++i)
+                    {
+                        if (pools[i].Acquire(ref result))
+                        {
+                            return result;
+                        }
+                    }
+                    pool = new SegmentedBuffer();
                     pools.Add(pool);
+                    pool.Acquire(ref result);
                 }
             }
-            pool.Acquire(ref result);
             return result;
         }
 
