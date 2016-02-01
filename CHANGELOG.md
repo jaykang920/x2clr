@@ -5,6 +5,7 @@ Features:
 Bugfixes:
 
 - fixed the problem in continuing no-yield coroutines
+- SegmentPool: fixed synchronization issue
 
 ## 0.7.4 (2015-12-20)
 
