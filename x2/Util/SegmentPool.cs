@@ -148,7 +148,6 @@ namespace x2
         public static Segment Acquire()
         {
             Segment result = new Segment();
-            SegmentedBuffer pool;
             using (new UpgradeableReadLock(rwlock))
             {
                 for (int i = 0, count = pools.Count; i < count; ++i)
@@ -167,7 +166,7 @@ namespace x2
                             return result;
                         }
                     }
-                    pool = new SegmentedBuffer();
+                    var pool = new SegmentedBuffer();
                     pools.Add(pool);
                     pool.Acquire(ref result);
                 }
