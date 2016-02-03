@@ -190,9 +190,17 @@ namespace x2
         /// </summary>
         public void Send(Event e)
         {
-            if (disposed && !link.SessionRecoveryEnabled)
+            if (disposed)
             {
-                return;
+                if (link.SessionRecoveryEnabled)
+                {
+                    Log.Debug("{0} {1} buffered {2}", link.Name, handle, e);
+                }
+                else
+                {
+                    Log.Warn("{0} {1} dropped {2}", link.Name, handle, e);
+                    return;
+                }
             }
 
             lock (syncRoot)

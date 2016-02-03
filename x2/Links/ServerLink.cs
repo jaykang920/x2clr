@@ -163,7 +163,7 @@ namespace x2
             TimeFlow.Default.Reserve(e, SessionRecoveryTimeout);
             lock (recoveryTokens)
             {
-                recoveryTokens.Add(session.Handle, binderToken);
+                recoveryTokens[session.Handle] = binderToken;
             }
 
             Log.Trace("{0} {1} started recovery timer", Name, session.Handle);

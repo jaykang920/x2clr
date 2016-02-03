@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<x2 namespace="x2/Examples/SessionRecovery">
+    <event name="TestReq" id="1">
+        <property name="Serial" type="int64"/>
+    </event>
+    <event name="TestResp" id="2">
+        <property name="Serial" type="int64"/>
+    </event>
+</x2>
