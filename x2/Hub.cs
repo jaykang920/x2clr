@@ -180,9 +180,13 @@ namespace x2
         /// </summary>
         public static void Shutdown()
         {
-            TimeFlow.Default.CancelRepetition(HeartbeatEvent);
+            try
+            {
+                TimeFlow.Default.CancelRepetition(HeartbeatEvent);
 
-            Instance.StopAttachedFlows();
+                Instance.StopAttachedFlows();
+            }
+            catch (Exception e) {}
         }
 
         /// <summary>

@@ -350,6 +350,11 @@ namespace x2
             Log.Trace("{0} {1} received {2} byte(s)",
                 link.Name, InternalHandle, bytesTransferred);
 
+            if (disposed)
+            {
+                return;
+            }
+
             rxBuffer.Stretch(bytesTransferred);
 
             if (rxBeginning)
@@ -479,6 +484,11 @@ namespace x2
 
             lock (syncRoot)
             {
+                if (disposed)
+                {
+                    txFlag = false;
+                    return;
+                }
                 if (eventsToSend.Count == 0)
                 {
                     eventsSending.Clear();

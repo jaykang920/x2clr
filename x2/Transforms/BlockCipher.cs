@@ -185,33 +185,32 @@ namespace x2
             using (var ms = new MemoryStream(length))
             using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
             {
+                byte[] nextIV = new byte[BlockSizeInBytes];
 #if UNITY_WORKAROUND
                 // Workaround for ancient mono 2.0 of Unity3D
                 // Multiple Write() calls are not properly handled there.
 
                 byte[] ciphertext = buffer.ToArray();
+                System.Buffer.BlockCopy(ciphertext, length - BlockSizeInBytes,
+                    nextIV, 0, BlockSizeInBytes);
                 if (Config.LogLevel <= LogLevel.Trace)
                 {
                     Log.Trace("BlockCipher.InverseTransform: input {0}",
                         BitConverter.ToString(ciphertext, 0, length));
                 }
-                System.Buffer.BlockCopy(ciphertext, length - BlockSizeInBytes,
-                    decryptionIV, 0, BlockSizeInBytes);
                 cs.Write(ciphertext, 0, length);
-
 #else
                 var buffers = new List<ArraySegment<byte>>();
                 buffer.ListStartingSegments(buffers, length);
 
-                // Store the last ciphertext block as a next decryption IV.
-                byte[] nextIV = new byte[BlockSizeInBytes];
+                // Capture the last ciphertext block.
                 int bytesCopied = 0;
                 for (var i = buffers.Count - 1; bytesCopied < BlockSizeInBytes && i >= 0; --i)
                 {
                     var segment = buffers[i];
                     int bytesToCopy = Math.Min(segment.Count, BlockSizeInBytes);
                     System.Buffer.BlockCopy(segment.Array, segment.Offset + segment.Count - bytesToCopy,
-                        decryptionIV, BlockSizeInBytes - bytesCopied - bytesToCopy, bytesToCopy);
+                        nextIV, BlockSizeInBytes - bytesCopied - bytesToCopy, bytesToCopy);
                     bytesCopied += bytesToCopy;
                 }
 
@@ -242,6 +241,9 @@ namespace x2
 
                 buffer.Rewind();
                 buffer.CopyFrom(streamBuffer, 0, result);
+
+                // Store the last ciphertext block as a next decryption IV.
+                System.Buffer.BlockCopy(nextIV, 0, decryptionIV, 0, BlockSizeInBytes);
 
                 return result;
             }

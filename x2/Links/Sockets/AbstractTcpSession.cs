@@ -85,6 +85,11 @@ namespace x2
         /// </summary>
         public void OnDisconnect()
         {
+            if (disposed)
+            {
+                return;
+            }
+
             CloseInternal();
 
             OnDisconnect(this);
