@@ -390,10 +390,9 @@ namespace x2
                     }
                     catch (Exception e)
                     {
-                        Log.Error("{0} {1} buffer transform error: {2}",
+                        Log.Error("{0} {1} buffer inv transform error: {2}",
                             link.Name, InternalHandle, e.Message);
-                        Close();
-                        return;
+                        goto next;
                     }
                 }
                 rxBuffer.Rewind();

@@ -323,7 +323,7 @@ namespace x2
                 }
                 catch (Exception e)
                 {
-                    Log.Error("{0} {1} buffer transform error: {2}", Name, handle, e.Message);
+                    Log.Error("{0} {1} buffer inv transform error: {2}", Name, handle, e.Message);
                     return;
                 }
             }
