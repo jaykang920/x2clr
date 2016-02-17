@@ -46,12 +46,14 @@
 
     <event name="SessionReq" id="LinkEventType.SessionReq">
         <property name="Token" type="string"/>
+        <property name="RxCounter" type="int64"/>
+        <property name="TxCounter" type="int64"/>
     </event>
     <event name="SessionResp" id="LinkEventType.SessionResp">
         <property name="Token" type="string"/>
     </event>
     <event name="SessionAck" id="LinkEventType.SessionAck">
-        <property name="Result" type="bool"/>
+        <property name="Recovered" type="bool"/>
     </event>
     <event name="SessionEnd" id="LinkEventType.SessionEnd">
     </event>

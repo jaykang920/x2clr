@@ -40,8 +40,10 @@ namespace x2
         protected volatile bool closing;
         protected volatile bool disposed;
 
-        protected int rxCounter;
-        protected int txCounter;
+        protected long rxCounter;
+        protected long txCounter;
+
+        protected volatile bool connected;
 
         /// <summary>
         /// Gets or sets the BufferTransform for this link session.
@@ -82,6 +84,24 @@ namespace x2
         /// Gets or sets the session token for this session.
         /// </summary>
         public string Token { get; set; }
+
+        public long RxCounter
+        {
+            get { return Interlocked.Read(ref rxCounter); }
+        }
+
+        public long TxCounter
+        {
+            get { return Interlocked.Read(ref txCounter); }
+        }
+
+        /// <summary>
+        /// Gets or sets whether this link session is in connected state or not.
+        /// </summary>
+        public bool Connected {
+            get { return connected; }
+            set { connected = value; }
+        }
 
         internal virtual int InternalHandle { get { return handle; } }
 
@@ -164,6 +184,7 @@ namespace x2
             if (disposed) { return; }
 
             disposed = true;
+            connected = false;
 
             Log.Info("{0} closed {1}", link.Name, this);
 
@@ -190,25 +211,22 @@ namespace x2
         /// </summary>
         public void Send(Event e)
         {
-            if (disposed)
+            bool isBuiltInEvent = (e.GetTypeId() < 0);
+
+            if (disposed && !link.SessionRecoveryEnabled)
             {
-                if (link.SessionRecoveryEnabled)
-                {
-                    Log.Debug("{0} {1} buffered {2}", link.Name, handle, e);
-                }
-                else
-                {
-                    Log.Warn("{0} {1} dropped {2}", link.Name, handle, e);
-                    return;
-                }
+                Log.Warn("{0} {1} dropped {2}", link.Name, handle, e);
+                return;
             }
 
             lock (syncRoot)
             {
                 eventsToSend.Add(e);
 
-                if (disposed || txFlag)
+                if (txFlag || disposed ||
+                    (e.GetTypeId() > 0 && !connected))  // not builtin events
                 {
+                    //Log.Debug("{0} {1} buffered {2}", link.Name, handle, e);
                     return;
                 }
 
@@ -230,15 +248,6 @@ namespace x2
                 BufferTransform = oldSession.BufferTransform;
                 rxTransformReady = oldSession.rxTransformReady;
                 txTransformReady = oldSession.txTransformReady;
-
-                lock (oldSession.syncRoot)
-                {
-                    if (oldSession.eventsToSend.Count != 0)
-                    {
-                        eventsToSend.AddRange(oldSession.eventsToSend);
-                        oldSession.eventsToSend.Clear();
-                    }
-                }
             }
         }
 
@@ -250,16 +259,22 @@ namespace x2
                 {
                     if (oldSession.eventsToSend.Count != 0)
                     {
-                        eventsToSend.AddRange(oldSession.eventsToSend);
+                        eventsToSend.InsertRange(0, oldSession.eventsToSend);
                         oldSession.eventsToSend.Clear();
                     }
                 }
-                if (eventsToSend.Count != 0)
+
+                connected = true;
+
+                if (txFlag || eventsToSend.Count == 0)
                 {
-                    txFlag = true;
-                    BeginSend();
+                    return;
                 }
+
+                txFlag = true;
             }
+
+            BeginSend();
         }
 
         internal void BeginReceive(bool beginning)
@@ -277,7 +292,7 @@ namespace x2
                 {
                     return;
                 }
-                // swap buffer
+                // Swap the event buffers.
                 if (eventsSending.Count != 0)
                 {
                     eventsSending.Clear();
@@ -288,7 +303,7 @@ namespace x2
                 temp = null;
             }
 
-            // capture send buffer
+            // Capture send buffers.
             txBufferList.Clear();
             lengthToSend = 0;
             int count = eventsSending.Count;
@@ -323,8 +338,6 @@ namespace x2
                     BufferTransform.Transform(sendBuffer.Buffer, (int)sendBuffer.Buffer.Length);
                     transformed = true;
                 }
-
-                Interlocked.Increment(ref txCounter);
 
                 BuildHeader(sendBuffer, transformed);
 
@@ -397,8 +410,6 @@ namespace x2
                 }
                 rxBuffer.Rewind();
 
-                Interlocked.Increment(ref rxCounter);
-
                 var deserializer = new Deserializer(rxBuffer);
                 Event retrieved = EventFactory.Create(deserializer);
                 if ((object)retrieved == null)
@@ -417,6 +428,8 @@ namespace x2
                             link.Name, InternalHandle, retrieved.GetTypeId(), e.ToString());
                         goto next;
                     }
+
+                    Interlocked.Increment(ref rxCounter);
 
                     OnEventReceived(retrieved);
 
@@ -480,6 +493,8 @@ namespace x2
 
             Log.Trace("{0} {1} sent {2}/{3} byte(s)",
                 link.Name, InternalHandle, bytesTransferred, lengthToSend);
+
+            Interlocked.Add(ref txCounter, buffersSending.Count);
 
             lock (syncRoot)
             {

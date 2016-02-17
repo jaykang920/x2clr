@@ -71,6 +71,7 @@ namespace x2
                 var session = (LinkSession)context;
                 // Assign a new link session handle.
                 session.Handle = HandlePool.Acquire();
+                session.Connected = true;
             }
 
             OnSessionConnectedInternal(result, context);

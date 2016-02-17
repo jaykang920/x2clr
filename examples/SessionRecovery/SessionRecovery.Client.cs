@@ -32,7 +32,10 @@ namespace x2.Examples.SessionRecovery
                     else
                     {
                         var tcpSession = (AbstractTcpSession)client.Session;
-                        tcpSession.OnDisconnect();
+                        if ((object)tcpSession != null)
+                        {
+                            tcpSession.OnDisconnect();
+                        }
                     }
                 }
             }
@@ -93,7 +96,7 @@ namespace x2.Examples.SessionRecovery
         {
             if (e.Serial != ++txSerial)
             {
-                Console.WriteLine("ERROR tx exptected {0} but {1}",
+                Console.WriteLine("ERROR tx expected {0} but {1}",
                     txSerial, e.Serial);
                 Environment.Exit(1);
             }
@@ -104,7 +107,7 @@ namespace x2.Examples.SessionRecovery
             //Console.WriteLine("rs {0}", e.Serial);
             if (e.Serial != ++rxSerial)
             {
-                Console.WriteLine("ERROR rx exptected {0} but {1}",
+                Console.WriteLine("ERROR rx expected {0} but {1}",
                     rxSerial, e.Serial);
                 Environment.Exit(1);
             }

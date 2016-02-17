@@ -43,7 +43,11 @@ namespace x2
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
-            buffer.Dispose();
+            try
+            {
+                buffer.Dispose();
+            }
+            catch (Exception) { }
         }
 
         public void ListOccupiedSegments(IList<ArraySegment<byte>> blockList)

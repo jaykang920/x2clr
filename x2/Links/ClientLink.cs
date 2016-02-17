@@ -123,18 +123,16 @@ namespace x2
                     // Recovered from instant disconnection.
                     session.InheritFrom(this.session);
 
-                    OnLinkSessionRecoveredInternal(session.Handle, session);
-
                     session.Send(new SessionAck {
                         _Transform = false,
-                        Result = true
+                        Recovered = true
                     });
+
+                    OnLinkSessionRecoveredInternal(session.Handle, session);
                     return;
                 }
-                else
-                {
-                    OnLinkSessionDisconnectedInternal(currentSession.Handle, currentSession);
-                }
+
+                OnLinkSessionDisconnectedInternal(currentSession.Handle, currentSession);
             }
 
             session.Send(new SessionAck { _Transform = false });
@@ -192,6 +190,8 @@ namespace x2
                 !String.IsNullOrEmpty(currentSession.Token))
             {
                 req.Token = currentSession.Token;
+                req.RxCounter = currentSession.RxCounter;
+                req.TxCounter = currentSession.TxCounter;
             }
 
             session.Send(req);

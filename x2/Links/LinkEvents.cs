@@ -38,6 +38,16 @@ namespace x2
             info.Add("SessionEnd", -19);
         }
 
+        public static bool ContainsName(string name)
+        {
+            return info.ContainsName(name);
+        }
+
+        public static bool ContainsValue(int value)
+        {
+            return info.ContainsValue(value);
+        }
+
         public static string GetName(int value)
         {
             return info.GetName(value);
@@ -1003,6 +1013,8 @@ namespace x2
         new public static int TypeId { get { return tag.TypeId; } }
 
         private string token_;
+        private long rxCounter_;
+        private long txCounter_;
 
         public string Token
         {
@@ -1014,9 +1026,29 @@ namespace x2
             }
         }
 
+        public long RxCounter
+        {
+            get { return rxCounter_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                rxCounter_ = value;
+            }
+        }
+
+        public long TxCounter
+        {
+            get { return txCounter_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 2);
+                txCounter_ = value;
+            }
+        }
+
         static SessionReq()
         {
-            tag = new Tag(Event.tag, typeof(SessionReq), 1,
+            tag = new Tag(Event.tag, typeof(SessionReq), 3,
                     (int)LinkEventType.SessionReq);
         }
 
@@ -1048,6 +1080,14 @@ namespace x2
             {
                 return false;
             }
+            if (rxCounter_ != o.rxCounter_)
+            {
+                return false;
+            }
+            if (txCounter_ != o.txCounter_)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -1063,6 +1103,16 @@ namespace x2
             {
                 hash.Update(tag.Offset + 0);
                 hash.Update(token_);
+            }
+            if (touched[1])
+            {
+                hash.Update(tag.Offset + 1);
+                hash.Update(rxCounter_);
+            }
+            if (touched[2])
+            {
+                hash.Update(tag.Offset + 2);
+                hash.Update(txCounter_);
             }
             return hash.Code;
         }
@@ -1092,6 +1142,20 @@ namespace x2
                     return false;
                 }
             }
+            if (touched[1])
+            {
+                if (rxCounter_ != o.rxCounter_)
+                {
+                    return false;
+                }
+            }
+            if (touched[2])
+            {
+                if (txCounter_ != o.txCounter_)
+                {
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -1103,12 +1167,22 @@ namespace x2
             {
                 deserializer.Read(out token_);
             }
+            if (touched[1])
+            {
+                deserializer.Read(out rxCounter_);
+            }
+            if (touched[2])
+            {
+                deserializer.Read(out txCounter_);
+            }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             deserializer.Read("Token", out token_);
+            deserializer.Read("RxCounter", out rxCounter_);
+            deserializer.Read("TxCounter", out txCounter_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -1119,12 +1193,22 @@ namespace x2
             {
                 serializer.Write(token_);
             }
+            if (touched[1])
+            {
+                serializer.Write(rxCounter_);
+            }
+            if (touched[2])
+            {
+                serializer.Write(txCounter_);
+            }
         }
 
         public override void Serialize(VerboseSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write("Token", token_);
+            serializer.Write("RxCounter", rxCounter_);
+            serializer.Write("TxCounter", txCounter_);
         }
 
         public override int GetEncodedLength()
@@ -1135,6 +1219,14 @@ namespace x2
             {
                 length += Serializer.GetEncodedLength(token_);
             }
+            if (touched[1])
+            {
+                length += Serializer.GetEncodedLength(rxCounter_);
+            }
+            if (touched[2])
+            {
+                length += Serializer.GetEncodedLength(txCounter_);
+            }
             return length;
         }
 
@@ -1142,11 +1234,15 @@ namespace x2
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Token=\"{0}\"", token_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" RxCounter={0}", rxCounter_);
+            stringBuilder.AppendFormat(" TxCounter={0}", txCounter_);
         }
 
         private void Initialize()
         {
             token_ = "";
+            rxCounter_ = 0;
+            txCounter_ = 0;
         }
     }
 
@@ -1310,15 +1406,15 @@ namespace x2
 
         new public static int TypeId { get { return tag.TypeId; } }
 
-        private bool result_;
+        private bool recovered_;
 
-        public bool Result
+        public bool Recovered
         {
-            get { return result_; }
+            get { return recovered_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                result_ = value;
+                recovered_ = value;
             }
         }
 
@@ -1352,7 +1448,7 @@ namespace x2
                 return false;
             }
             SessionAck o = (SessionAck)other;
-            if (result_ != o.result_)
+            if (recovered_ != o.recovered_)
             {
                 return false;
             }
@@ -1370,7 +1466,7 @@ namespace x2
             if (touched[0])
             {
                 hash.Update(tag.Offset + 0);
-                hash.Update(result_);
+                hash.Update(recovered_);
             }
             return hash.Code;
         }
@@ -1395,7 +1491,7 @@ namespace x2
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (result_ != o.result_)
+                if (recovered_ != o.recovered_)
                 {
                     return false;
                 }
@@ -1409,14 +1505,14 @@ namespace x2
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                deserializer.Read(out result_);
+                deserializer.Read(out recovered_);
             }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
         {
             base.Deserialize(deserializer);
-            deserializer.Read("Result", out result_);
+            deserializer.Read("Recovered", out recovered_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -1425,14 +1521,14 @@ namespace x2
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                serializer.Write(result_);
+                serializer.Write(recovered_);
             }
         }
 
         public override void Serialize(VerboseSerializer serializer)
         {
             base.Serialize(serializer);
-            serializer.Write("Result", result_);
+            serializer.Write("Recovered", recovered_);
         }
 
         public override int GetEncodedLength()
@@ -1441,7 +1537,7 @@ namespace x2
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(result_);
+                length += Serializer.GetEncodedLength(recovered_);
             }
             return length;
         }
@@ -1449,12 +1545,12 @@ namespace x2
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Result={0}", result_);
+            stringBuilder.AppendFormat(" Recovered={0}", recovered_);
         }
 
         private void Initialize()
         {
-            result_ = false;
+            recovered_ = false;
         }
     }
 

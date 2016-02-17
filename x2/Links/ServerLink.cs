@@ -182,29 +182,45 @@ namespace x2
                 }
                 if (flag)
                 {
+                    if (e.RxCounter != existing.TxCounter ||
+                        e.TxCounter != existing.RxCounter)
+                    {
+                        Log.Warn("{0} {1} gave up session recovery",
+                            Name, existing.Handle);
+                        
+                        flag = false;
+
+                        OnLinkSessionDisconnectedInternal(existing.Handle, existing);
+                    }
+                }
+                if (flag)
+                {
                     lock (existing.SyncRoot)
                     {
                         int handle = existing.Handle;
                         CancelRecoveryTimer(handle);
                         session.InheritFrom(existing);
 
+                        session.Send(new SessionResp {
+                            _Transform = false,
+                            Token = session.Token
+                        });
+
                         OnLinkSessionRecoveredInternal(handle, session);
+                        return;
                     }
                 }
             }
 
-            if (!flag)
+            // Issue a new session token for the given session.
+            session.Token = Guid.NewGuid().ToString("N");
+
+            Log.Debug("{0} {1} issued session token {2}",
+                Name, session.InternalHandle, session.Token);
+
+            lock (recoverable)
             {
-                // Issue a new session token for the given session.
-                session.Token = Guid.NewGuid().ToString("N");
-
-                Log.Debug("{0} {1} issued session token {2}",
-                    Name, session.InternalHandle, session.Token);
-
-                lock (recoverable)
-                {
-                    recoverable.Add(session.Token, session);
-                }
+                recoverable[session.Token] = session;
             }
 
             session.Send(new SessionResp {
@@ -215,7 +231,7 @@ namespace x2
 
         internal void OnSessionAck(LinkSession session, SessionAck e)
         {
-            if (!e.Result)
+            if (!e.Recovered)
             {
                 OnSessionSetup(session);
             }

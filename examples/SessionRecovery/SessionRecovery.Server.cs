@@ -18,7 +18,6 @@ namespace x2.Examples.SessionRecovery
                 .Attach(new SingleThreadFlow()
                     .Add(server))
                 .Attach(new SingleThreadFlow()
-                    .Add(new WatchDogCase())
                     .Add(new EchoCase()));
 
             using (new Hub.Flows().Startup())
@@ -35,12 +34,14 @@ namespace x2.Examples.SessionRecovery
         }
     }
 
-
     /// <summary>
     /// SessionServer 사용자 세션
     /// </summary>
     class Session : EventSink
     {
+        private long rxSerial = -1;
+        private long txSerial = -1;
+
         public int Id { get; private set; }
         public LinkSession LinkSession { get; set; }
 
@@ -48,7 +49,8 @@ namespace x2.Examples.SessionRecovery
         {
             Id = id;
 
-            Bind(new TestResp { _Handle = Id }, Send);
+            Bind(new TestReq(), OnTestReq);
+            Bind(new TestResp { _Handle = Id }, OnTestResp);
         }
 
         public void Close(bool disconnect)
@@ -66,6 +68,27 @@ namespace x2.Examples.SessionRecovery
                     LinkSession = null;
                 }
             }
+        }
+
+        void OnTestReq(TestReq e)
+        {
+            if (e.Serial != ++txSerial)
+            {
+                Console.WriteLine("ERROR tx expected {0} but {1}",
+                    txSerial, e.Serial);
+                Environment.Exit(1);
+            }
+        }
+
+        void OnTestResp(TestResp e)
+        {
+            if (e.Serial != ++rxSerial)
+            {
+                Console.WriteLine("ERROR rx expected {0} but {1}",
+                    rxSerial, e.Serial);
+                Environment.Exit(1);
+            }
+            Send(e);
         }
 
         void Send(Event e)
@@ -126,39 +149,6 @@ namespace x2.Examples.SessionRecovery
             base.OnSessionRecovered(handle, context);
 
             clientSessions[handle].LinkSession = (LinkSession)context;
-        }
-    }
-
-    class WatchDogCase : Case
-    {
-        private long rxSerial = -1;
-        private long txSerial = -1;
-
-        protected override void Setup()
-        {
-            base.Setup();
-            Bind(new TestReq(), OnTestReq);
-            Bind(new TestResp(), OnTestResp);
-        }
-
-        void OnTestReq(TestReq e)
-        {
-            if (e.Serial != ++txSerial)
-            {
-                Console.WriteLine("ERROR tx exptected {0} but {1}",
-                    txSerial, e.Serial);
-                Environment.Exit(1);
-            }
-        }
-
-        void OnTestResp(TestResp e)
-        {
-            if (e.Serial != ++rxSerial)
-            {
-                Console.WriteLine("ERROR rx exptected {0} but {1}",
-                    rxSerial, e.Serial);
-                Environment.Exit(1);
-            }
         }
     }
 

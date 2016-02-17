@@ -186,7 +186,7 @@ namespace x2
 
                 Instance.StopAttachedFlows();
             }
-            catch (Exception e) {}
+            catch (Exception) {}
         }
 
         /// <summary>
