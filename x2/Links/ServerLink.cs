@@ -107,7 +107,8 @@ namespace x2
             }
         }
 
-        protected override void OnSessionRecoveredInternal(int handle, object context)
+        protected override void OnSessionRecoveredInternal(
+            int handle, object context, int retransmission)
         {
             LinkSession oldSession;
             var session = (LinkSession)context;
@@ -121,7 +122,7 @@ namespace x2
                 recoverable[session.Token] = session;
             }
 
-            session.TakeOver(oldSession);
+            session.TakeOver(oldSession, retransmission);
         }
 
         internal override void OnInstantDisconnect(LinkSession session)
@@ -175,6 +176,8 @@ namespace x2
             bool flag = false;
             if (!String.IsNullOrEmpty(clientToken))
             {
+                int incomingRetransmission = 0;
+                int outgoingRetransmission = 0;
                 LinkSession existing;
                 lock (recoverable)
                 {
@@ -182,33 +185,52 @@ namespace x2
                 }
                 if (flag)
                 {
-                    if (e.RxCounter != existing.TxCounter ||
-                        e.TxCounter != existing.RxCounter)
+                    Log.Debug("{0} {1} rxC={2} txC={3} rxS={4} txS={5} txSc={6}",
+                        Name, existing.Handle, e.RxCounter, e.TxCounter,
+                        existing.RxCounter, existing.TxCounter, existing.TxCompleted);
+
+                    if (e.RxCounter < existing.TxCounter)
+                    {
+                        outgoingRetransmission = (int)(existing.TxCounter - e.RxCounter);
+                        if (outgoingRetransmission > existing.TxBuffered)
+                        {
+                            flag = false;
+                        }
+                    }
+                    if (e.TxCounter > existing.RxCounter)
+                    {
+                        incomingRetransmission = (int)(e.TxCounter - existing.RxCounter);
+                        if (incomingRetransmission > e.TxBuffered)
+                        {
+                            flag = false;
+                        }
+                    }
+                    if (!flag)
                     {
                         Log.Warn("{0} {1} gave up session recovery",
                             Name, existing.Handle);
-                        
-                        flag = false;
 
                         OnLinkSessionDisconnectedInternal(existing.Handle, existing);
                     }
                 }
                 if (flag)
                 {
+                    int handle;
                     lock (existing.SyncRoot)
                     {
-                        int handle = existing.Handle;
+                        handle = existing.Handle;
                         CancelRecoveryTimer(handle);
                         session.InheritFrom(existing);
-
-                        session.Send(new SessionResp {
-                            _Transform = false,
-                            Token = session.Token
-                        });
-
-                        OnLinkSessionRecoveredInternal(handle, session);
-                        return;
                     }
+
+                    session.Send(new SessionResp {
+                        _Transform = false,
+                        Token = session.Token,
+                        Retransmission = incomingRetransmission
+                    });
+
+                    OnLinkSessionRecoveredInternal(handle, session, outgoingRetransmission);
+                    return;
                 }
             }
 

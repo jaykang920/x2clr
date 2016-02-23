@@ -28,7 +28,7 @@ namespace x2
         /// </summary>
         public bool Connected
         {
-            get { return (session != null && ((AbstractTcpSession)session).Connected); }
+            get { return (session != null && ((AbstractTcpSession)session).SocketConnected); }
         }
 
         // Socket option properties
@@ -148,7 +148,7 @@ namespace x2
             using (new ReadLock(rwlock))
             {
                 if (session != null &&
-                    ((AbstractTcpSession)session).Connected)
+                    ((AbstractTcpSession)session).SocketConnected)
                 {
                     throw new InvalidOperationException();
                 }
@@ -316,7 +316,7 @@ namespace x2
             }
 
             var tcpSession = (AbstractTcpSession)Session;
-            if (tcpSession == null || !tcpSession.Connected)
+            if (tcpSession == null || !tcpSession.SocketConnected)
             {
                 return;
             }

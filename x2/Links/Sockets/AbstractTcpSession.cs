@@ -25,7 +25,7 @@ namespace x2
         /// <summary>
         /// Gets whether this session is currently connected or not.
         /// </summary>
-        public bool Connected
+        public bool SocketConnected
         {
             get { return (socket != null && socket.Connected); }
         }

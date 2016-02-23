@@ -85,7 +85,8 @@ namespace x2
             }
         }
 
-        protected override void OnSessionRecoveredInternal(int handle, object context)
+        protected override void OnSessionRecoveredInternal(
+            int handle, object context, int retransmission)
         {
             LinkSession oldSession;
             var session = (LinkSession)context;
@@ -95,7 +96,7 @@ namespace x2
                 this.session = session;
             }
 
-            session.TakeOver(oldSession);
+            session.TakeOver(oldSession, retransmission);
 
             Log.Debug("{0} {1} reset session {2}",
                 Name, session.Handle, session.Token);
@@ -128,7 +129,7 @@ namespace x2
                         Recovered = true
                     });
 
-                    OnLinkSessionRecoveredInternal(session.Handle, session);
+                    OnLinkSessionRecoveredInternal(session.Handle, session, e.Retransmission);
                     return;
                 }
 
@@ -192,6 +193,7 @@ namespace x2
                 req.Token = currentSession.Token;
                 req.RxCounter = currentSession.RxCounter;
                 req.TxCounter = currentSession.TxCounter;
+                req.TxBuffered = currentSession.TxBuffered;
             }
 
             session.Send(req);

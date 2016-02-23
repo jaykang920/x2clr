@@ -104,9 +104,10 @@ namespace x2
             Log.Info("{0} disconnected {1} {2}", Name, handle, context);
         }
 
-        internal void OnLinkSessionRecoveredInternal(int handle, object context)
+        internal void OnLinkSessionRecoveredInternal(
+            int handle, object context, int retransmission)
         {
-            OnSessionRecoveredInternal(handle, context);
+            OnSessionRecoveredInternal(handle, context, retransmission);
 
             Hub.Post(new LinkSessionRecovered {
                 LinkName = Name,
@@ -177,7 +178,8 @@ namespace x2
 
         protected abstract void OnSessionDisconnectedInternal(int handle, object context);
 
-        protected virtual void OnSessionRecoveredInternal(int handle, object context)
+        protected virtual void OnSessionRecoveredInternal(
+            int handle, object context, int retransmission)
         {
         }
 

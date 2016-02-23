@@ -198,7 +198,7 @@ namespace x2
             for (int i = 0, count = snapshot.Count; i < count; ++i)
             {
                 var tcpSession = (AbstractTcpSession)snapshot[i];
-                if (tcpSession.Connected)
+                if (tcpSession.SocketConnected)
                 {
                     int failureCount = tcpSession.Keepalive(
                         incomingKeepaliveEnabled, outgoingKeepaliveEnabled);

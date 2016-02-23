@@ -9,7 +9,7 @@ namespace x2.Examples.SessionRecovery
     {
         public static void Main()
         {
-            Config.LogLevel = LogLevel.Info;
+            Config.LogLevel = LogLevel.Debug;
             Log.Handler = (level, message) => Console.WriteLine(message);
 
             var server = new Server();
@@ -112,8 +112,10 @@ namespace x2.Examples.SessionRecovery
 
             SessionRecoveryEnabled = true;
 
+            /*
             BufferTransform = new BufferTransformStack()
                 .Add(new BlockCipher());
+            */
         }
 
         protected override void Setup()

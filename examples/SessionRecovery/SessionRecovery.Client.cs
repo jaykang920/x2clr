@@ -8,7 +8,7 @@ namespace x2.Examples.SessionRecovery
     {
         public static void Main()
         {
-            Config.LogLevel = LogLevel.Info;
+            Config.LogLevel = LogLevel.Debug;
             Log.Handler = (level, message) => Console.WriteLine(message);
 
             var client = new Client();
@@ -49,8 +49,10 @@ namespace x2.Examples.SessionRecovery
         {
             SessionRecoveryEnabled = true;
 
+            /*
             BufferTransform = new BufferTransformStack()
                 .Add(new BlockCipher());
+            */
         }
 
         protected override void Setup()
@@ -68,7 +70,7 @@ namespace x2.Examples.SessionRecovery
             if (result)
             {
                 TimeFlow.Default.ReserveRepetition(new TimeoutEvent(),
-                    new TimeSpan(0, 0, 0, 0, 1));
+                    new TimeSpan(0, 0, 0, 0, 2));
             }
         }
 

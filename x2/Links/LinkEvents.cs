@@ -1015,6 +1015,7 @@ namespace x2
         private string token_;
         private long rxCounter_;
         private long txCounter_;
+        private int txBuffered_;
 
         public string Token
         {
@@ -1046,9 +1047,19 @@ namespace x2
             }
         }
 
+        public int TxBuffered
+        {
+            get { return txBuffered_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 3);
+                txBuffered_ = value;
+            }
+        }
+
         static SessionReq()
         {
-            tag = new Tag(Event.tag, typeof(SessionReq), 3,
+            tag = new Tag(Event.tag, typeof(SessionReq), 4,
                     (int)LinkEventType.SessionReq);
         }
 
@@ -1088,6 +1099,10 @@ namespace x2
             {
                 return false;
             }
+            if (txBuffered_ != o.txBuffered_)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -1113,6 +1128,11 @@ namespace x2
             {
                 hash.Update(tag.Offset + 2);
                 hash.Update(txCounter_);
+            }
+            if (touched[3])
+            {
+                hash.Update(tag.Offset + 3);
+                hash.Update(txBuffered_);
             }
             return hash.Code;
         }
@@ -1156,6 +1176,13 @@ namespace x2
                     return false;
                 }
             }
+            if (touched[3])
+            {
+                if (txBuffered_ != o.txBuffered_)
+                {
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -1175,6 +1202,10 @@ namespace x2
             {
                 deserializer.Read(out txCounter_);
             }
+            if (touched[3])
+            {
+                deserializer.Read(out txBuffered_);
+            }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
@@ -1183,6 +1214,7 @@ namespace x2
             deserializer.Read("Token", out token_);
             deserializer.Read("RxCounter", out rxCounter_);
             deserializer.Read("TxCounter", out txCounter_);
+            deserializer.Read("TxBuffered", out txBuffered_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -1201,6 +1233,10 @@ namespace x2
             {
                 serializer.Write(txCounter_);
             }
+            if (touched[3])
+            {
+                serializer.Write(txBuffered_);
+            }
         }
 
         public override void Serialize(VerboseSerializer serializer)
@@ -1209,6 +1245,7 @@ namespace x2
             serializer.Write("Token", token_);
             serializer.Write("RxCounter", rxCounter_);
             serializer.Write("TxCounter", txCounter_);
+            serializer.Write("TxBuffered", txBuffered_);
         }
 
         public override int GetEncodedLength()
@@ -1227,6 +1264,10 @@ namespace x2
             {
                 length += Serializer.GetEncodedLength(txCounter_);
             }
+            if (touched[3])
+            {
+                length += Serializer.GetEncodedLength(txBuffered_);
+            }
             return length;
         }
 
@@ -1236,6 +1277,7 @@ namespace x2
             stringBuilder.AppendFormat(" Token=\"{0}\"", token_.Replace("\"", "\\\""));
             stringBuilder.AppendFormat(" RxCounter={0}", rxCounter_);
             stringBuilder.AppendFormat(" TxCounter={0}", txCounter_);
+            stringBuilder.AppendFormat(" TxBuffered={0}", txBuffered_);
         }
 
         private void Initialize()
@@ -1243,6 +1285,7 @@ namespace x2
             token_ = "";
             rxCounter_ = 0;
             txCounter_ = 0;
+            txBuffered_ = 0;
         }
     }
 
@@ -1253,6 +1296,7 @@ namespace x2
         new public static int TypeId { get { return tag.TypeId; } }
 
         private string token_;
+        private int retransmission_;
 
         public string Token
         {
@@ -1264,9 +1308,19 @@ namespace x2
             }
         }
 
+        public int Retransmission
+        {
+            get { return retransmission_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                retransmission_ = value;
+            }
+        }
+
         static SessionResp()
         {
-            tag = new Tag(Event.tag, typeof(SessionResp), 1,
+            tag = new Tag(Event.tag, typeof(SessionResp), 2,
                     (int)LinkEventType.SessionResp);
         }
 
@@ -1298,6 +1352,10 @@ namespace x2
             {
                 return false;
             }
+            if (retransmission_ != o.retransmission_)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -1313,6 +1371,11 @@ namespace x2
             {
                 hash.Update(tag.Offset + 0);
                 hash.Update(token_);
+            }
+            if (touched[1])
+            {
+                hash.Update(tag.Offset + 1);
+                hash.Update(retransmission_);
             }
             return hash.Code;
         }
@@ -1342,6 +1405,13 @@ namespace x2
                     return false;
                 }
             }
+            if (touched[1])
+            {
+                if (retransmission_ != o.retransmission_)
+                {
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -1353,12 +1423,17 @@ namespace x2
             {
                 deserializer.Read(out token_);
             }
+            if (touched[1])
+            {
+                deserializer.Read(out retransmission_);
+            }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             deserializer.Read("Token", out token_);
+            deserializer.Read("Retransmission", out retransmission_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -1369,12 +1444,17 @@ namespace x2
             {
                 serializer.Write(token_);
             }
+            if (touched[1])
+            {
+                serializer.Write(retransmission_);
+            }
         }
 
         public override void Serialize(VerboseSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write("Token", token_);
+            serializer.Write("Retransmission", retransmission_);
         }
 
         public override int GetEncodedLength()
@@ -1385,6 +1465,10 @@ namespace x2
             {
                 length += Serializer.GetEncodedLength(token_);
             }
+            if (touched[1])
+            {
+                length += Serializer.GetEncodedLength(retransmission_);
+            }
             return length;
         }
 
@@ -1392,11 +1476,13 @@ namespace x2
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Token=\"{0}\"", token_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Retransmission={0}", retransmission_);
         }
 
         private void Initialize()
         {
             token_ = "";
+            retransmission_ = 0;
         }
     }
 
