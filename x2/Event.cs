@@ -251,7 +251,7 @@ namespace x2
         public override void Deserialize(VerboseDeserializer deserializer)
         {
             base.Deserialize(deserializer);
-            deserializer.Read("WaitHandle", out _waitHandle);
+            deserializer.Read("_WaitHandle", out _waitHandle);
         }
         
         public override int GetEncodedLength()
@@ -279,7 +279,7 @@ namespace x2
         public override void Serialize(VerboseSerializer serializer)
         {
             base.Serialize(serializer);
-            serializer.Write("WaitHandle", _waitHandle);
+            serializer.Write("_WaitHandle", _waitHandle);
         }
 
         /// <summary>

@@ -28,8 +28,24 @@ namespace x2
         /// </summary>
         public bool Connected
         {
-            get { return (session != null && ((AbstractTcpSession)session).SocketConnected); }
+            get
+            {
+                using (new ReadLock(rwlock))
+                {
+                    return (session != null &&
+                        ((AbstractTcpSession)session).SocketConnected);
+                }
+            }
         }
+
+        /// <summary>
+        /// Gets or sets the remote host address string to connect to.
+        /// </summary>
+        public string RemoteHost { get; set; }
+        /// <summary>
+        /// Gets or sets the remote port number to connect to.
+        /// </summary>
+        public int RemotePort { get; set; }
 
         // Socket option properties
 
@@ -114,24 +130,37 @@ namespace x2
             NoDelay = true;
         }
 
+        public void Connect()
+        {
+            if (String.IsNullOrEmpty(RemoteHost))
+            {
+                Log.Error("{0} Connect: remote host is not specified", Name);
+                return;
+            }
+            Connect(RemoteHost, RemotePort);
+        }
+
         /// <summary>
         /// Connects to the specified host and port.
         /// </summary>
-        public void Connect(string host, int port)
+        public void Connect(string remoteHost, int remotePort)
         {
-            IPAddress ip = null;
+            RemoteHost = remoteHost;
+            RemotePort = remotePort;
+
+            IPAddress ipAddress = null;
             try
             {
-                ip = Dns.GetHostAddresses(host)[0];
+                ipAddress = Dns.GetHostAddresses(remoteHost)[0];
             }
             catch (Exception e)
             {
                 Log.Error("{0} error resolving target host {1} : {2}",
-                    Name, host, e.Message);
+                    Name, remoteHost, e.Message);
                 throw;
             }
 
-            Connect(ip, port);
+            Connect(ipAddress, remotePort);
         }
 
         /// <summary>
@@ -145,16 +174,22 @@ namespace x2
             }
             connecting = true;
 
-            using (new ReadLock(rwlock))
+            if (Connected)
             {
-                if (session != null &&
-                    ((AbstractTcpSession)session).SocketConnected)
-                {
-                    throw new InvalidOperationException();
-                }
+                throw new InvalidOperationException();
             }
 
             Connect(null, new IPEndPoint(ip, port));
+        }
+
+        public void Disconnect()
+        {
+            LinkSession currentSession = Session;
+            if (Object.ReferenceEquals(currentSession, null))
+            {
+                return;
+            }
+            currentSession.Close();
         }
 
         /// <summary>

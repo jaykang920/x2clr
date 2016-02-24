@@ -92,7 +92,7 @@ namespace x2
 
             LogLevel = LogLevel.Info;
 
-            // chunkSizeExp >= segmentSizeExp
+            // SizeExponent.Chunk >= SizeExponent.Segment
             Buffer.SizeExponent.Chunk = 24;  // 16MB
             Buffer.SizeExponent.Segment = 12;  // 4KB
             Buffer.RoomFactor.MinLevel = 0;  // x1
