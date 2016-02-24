@@ -49,10 +49,8 @@ namespace x2.Examples.SessionRecovery
         {
             SessionRecoveryEnabled = true;
 
-            /*
             BufferTransform = new BufferTransformStack()
                 .Add(new BlockCipher());
-            */
         }
 
         protected override void Setup()

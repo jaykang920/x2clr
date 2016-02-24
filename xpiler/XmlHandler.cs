@@ -179,7 +179,7 @@ namespace xpiler
             {
                 ((EventDef)def).Id = id;
             }
-            def.Base = elem.GetAttribute("extends");
+            def.Base = elem.GetAttribute("base");
             var local = elem.GetAttribute("local");
             if (!String.IsNullOrEmpty(local) && local.EndsWith("rue"))
             {
