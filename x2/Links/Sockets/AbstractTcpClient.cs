@@ -248,7 +248,7 @@ namespace x2
                 ++pendingRecord.Count;
             }
 
-            AddSessionRef();
+            Interlocked.Increment(ref sessionRefCount);
             
             ConnectAndSend(req);
         }
@@ -469,21 +469,6 @@ namespace x2
             base.Teardown();
         }
 
-        internal int AddSessionRef()
-        {
-            return Interlocked.Increment(ref sessionRefCount);
-        }
-
-        internal int RemoveSessionRef()
-        {
-            return Interlocked.Decrement(ref sessionRefCount);
-        }
-
-        internal int ResetSessionRef()
-        {
-            return Interlocked.Exchange(ref sessionRefCount, 0);
-        }
-
         private void OnHeartbeatEvent(HeartbeatEvent e)
         {
             if (!IncomingKeepaliveEnabled && !OutgoingKeepaliveEnabled)
@@ -520,8 +505,6 @@ namespace x2
 
         private void OnEvent(Event e)
         {
-            Log.Debug("{0} OnEvent {1}", Name, e);
-
             int waitHandle = e._WaitHandle;
 
             PendingRecord pendingRecord;
@@ -549,7 +532,7 @@ namespace x2
                 Unbind((TimeoutEvent)pendingRecord.TimeoutToken.value, OnTimeout);
             }
 
-            RemoveSessionRef();
+            Interlocked.Decrement(ref sessionRefCount);
         }
 
         private void OnTimeout(TimeoutEvent e)
