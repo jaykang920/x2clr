@@ -4,6 +4,7 @@ using x2;
 
 namespace x2.Examples.HeadFirst
 {
+    // Multithreaded
     class HeadFirst2
     {
         public static void Main()

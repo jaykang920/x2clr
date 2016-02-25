@@ -4,14 +4,16 @@ using x2;
 
 namespace x2.Examples.HeadFirst
 {
-    // Unreliable UDP server
-    class HeadFirst4Server
+    // Connect-on-demaind server
+    class HeadFirst5Server
     {
-        class CapitalizerServer : AsyncUdpLink
+        class CapitalizerServer : AsyncTcpServer
         {
             public CapitalizerServer()
                 : base("CapitalizerServer")
             {
+                BufferTransform = new BufferTransformStack()
+                    .Add(new BlockCipher());
             }
 
             protected override void Setup()
@@ -19,9 +21,7 @@ namespace x2.Examples.HeadFirst
                 base.Setup();
                 EventFactory.Register<CapitalizeReq>();
                 new CapitalizeResp().Bind(Send);
-                Bind(6789).Listen();
-                AddEndPoint(new System.Net.IPEndPoint(
-                    System.Net.IPAddress.Parse("127.0.0.1"), 6788));
+                Listen(6789);
             }
         }
 

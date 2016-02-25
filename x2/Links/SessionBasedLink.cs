@@ -66,6 +66,8 @@ namespace x2
         /// </summary>
         internal void OnLinkSessionConnectedInternal(bool result, object context)
         {
+            Log.Info("{0} connected {1} {2}", Name, result, context);
+
             if (result)
             {
                 var session = (LinkSession)context;
@@ -81,8 +83,6 @@ namespace x2
                 Result = result,
                 Context = context
             });
-
-            Log.Info("{0} connected {1} {2}", Name, result, context);
         }
 
         /// <summary>
@@ -90,6 +90,8 @@ namespace x2
         /// </summary>
         internal void OnLinkSessionDisconnectedInternal(int handle, object context)
         {
+            Log.Info("{0} disconnected {1} {2}", Name, handle, context);
+
             // Release the link session handle.
             HandlePool.Release(handle);
 
@@ -100,8 +102,6 @@ namespace x2
                 Handle = handle,
                 Context = context
             });
-
-            Log.Info("{0} disconnected {1} {2}", Name, handle, context);
         }
 
         internal void OnLinkSessionRecoveredInternal(
@@ -178,6 +178,13 @@ namespace x2
 
         protected abstract void OnSessionDisconnectedInternal(int handle, object context);
 
+        /// <summary>
+        /// Called when an existing link session is recovered.
+        /// </summary>
+        protected virtual void OnSessionRecovered(int handle, object context)
+        {
+        }
+
         protected virtual void OnSessionRecoveredInternal(
             int handle, object context, int retransmission)
         {
@@ -207,6 +214,8 @@ namespace x2
                 OnLinkSessionConnected);
             Bind(new LinkSessionDisconnected { LinkName = Name },
                 OnLinkSessionDisconnected);
+            Bind(new LinkSessionRecovered { LinkName = Name },
+                OnLinkSessionRecovered);
         }
 
         // LinkSessionConnected event handler
@@ -219,6 +228,12 @@ namespace x2
         private void OnLinkSessionDisconnected(LinkSessionDisconnected e)
         {
             OnSessionDisconnected(e.Handle, e.Context);
+        }
+
+        // LinkSessionRecovered event handler
+        private void OnLinkSessionRecovered(LinkSessionRecovered e)
+        {
+            OnSessionRecovered(e.Handle, e.Context);
         }
     }
 }

@@ -2,6 +2,7 @@
 // See the file LICENSE for details.
 
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -13,6 +14,13 @@ namespace x2
     /// </summary>
     public abstract class AbstractTcpClient : ClientLink
     {
+        private class PendingRecord
+        {
+            public bool HandleAllocated { get; set; }
+            public int Count { get; set; }
+            public Timer.Token TimeoutToken { get; set; }
+        }
+
         private int retryCount;
         private DateTime startTime;
         private EndPoint remoteEndPoint;
@@ -22,6 +30,13 @@ namespace x2
 
         private volatile bool connecting;
         private volatile bool recovering;
+
+        private List<Event> eventQueue;
+        private bool connected;
+        private int sessionRefCount;
+        private Dictionary<int, PendingRecord> pendingRecords;
+
+        // Connection properties
 
         /// <summary>
         /// Gets whether this client link is currently connected or not.
@@ -37,7 +52,6 @@ namespace x2
                 }
             }
         }
-
         /// <summary>
         /// Gets or sets the remote host address string to connect to.
         /// </summary>
@@ -115,6 +129,20 @@ namespace x2
         /// </summary>
         public bool IgnoreKeepaliveFailure { get; set; }
 
+        // Connect-on-Demand properties
+
+        /// <summary>
+        /// Gets or sets a boolean value indicating whether the connection is to
+        /// be closed on completion of requested tasks.
+        /// </summary>
+        public bool DisconnectOnComplete { get; set; }
+        /// <summary>
+        /// Gets or sets a length of time, in milliseconds, after which a
+        /// disconnection is considered when the DisconnectOnComplete is set.
+        /// </summary>
+        public int DisconnectDelay { get; set; }
+        public int ResponseTimeout { get; set; }
+
         static AbstractTcpClient()
         {
             EventFactory.Register<HeartbeatEvent>();
@@ -128,6 +156,12 @@ namespace x2
         {
             // Default socket options
             NoDelay = true;
+
+            DisconnectDelay = 200;  // 200ms by default
+            ResponseTimeout = 30;  // 30 seconds by default
+
+            eventQueue = new List<Event>();
+            pendingRecords = new Dictionary<int, PendingRecord>();
         }
 
         public void Connect()
@@ -163,6 +197,62 @@ namespace x2
             Connect(ipAddress, remotePort);
         }
 
+        public void ConnectAndSend(Event e)
+        {
+            using (new UpgradeableReadLock(rwlock))
+            {
+                if (connected)
+                {
+                    session.Send(e);
+                }
+                else
+                {
+                    using (new WriteLock(rwlock))
+                    {
+                        eventQueue.Add(e);
+                        Connect();
+                    }
+                }
+            }
+        }
+
+        public void ConnectAndRequest(Event req)
+        {
+            int waitHandle = req._WaitHandle;
+
+            bool handleAllocated = false;
+            if (waitHandle == 0)
+            {
+                waitHandle = WaitHandlePool.Acquire();
+                req._WaitHandle = waitHandle;
+                handleAllocated = true;
+            }
+
+            lock (pendingRecords)
+            {
+                PendingRecord pendingRecord;
+                if (!pendingRecords.TryGetValue(waitHandle, out pendingRecord))
+                {
+                    TimeoutEvent timeoutEvent = new TimeoutEvent { Key = waitHandle };
+
+                    Bind(new Event { _WaitHandle = waitHandle }, OnEvent);
+                    Bind(timeoutEvent, OnTimeout);
+
+                    pendingRecord = new PendingRecord {
+                        HandleAllocated = handleAllocated,
+                        TimeoutToken = 
+                            TimeFlow.Default.Reserve(timeoutEvent, ResponseTimeout)
+                    };
+                    pendingRecords.Add(waitHandle, pendingRecord);
+                }
+                ++pendingRecord.Count;
+            }
+
+            AddSessionRef();
+            
+            ConnectAndSend(req);
+        }
+
         /// <summary>
         /// Connects to the specified IP address and port.
         /// </summary>
@@ -174,7 +264,8 @@ namespace x2
             }
             connecting = true;
 
-            if (Connected)
+            if (session != null &&
+                ((AbstractTcpSession)session).SocketConnected)
             {
                 throw new InvalidOperationException();
             }
@@ -226,13 +317,48 @@ namespace x2
 
             connecting = false;
             recovering = false;
+
+            if (result)
+            {
+                using (new WriteLock(rwlock))
+                {
+                    connected = true;
+
+                    for (int i = 0, count = eventQueue.Count; i < count; ++i)
+                    {
+                        ((LinkSession)context).Send(eventQueue[i]);
+                    }
+                    eventQueue.Clear();
+
+                    if (DisconnectOnComplete)
+                    {
+                        TimeFlow.Default.ReserveRepetition(new TimeoutEvent {
+                            _Channel = Name,
+                            Key = this
+                        }, new TimeSpan(0, 0, 0, 0, DisconnectDelay));
+                    }
+                }
+            }
         }
 
         protected override void OnSessionDisconnectedInternal(int handle, object context)
         {
             base.OnSessionDisconnectedInternal(handle, context);
 
-            if (AutoReconnect)
+            using (new WriteLock(rwlock))
+            {
+                connected = false;
+
+                if (DisconnectOnComplete)
+                {
+                    TimeFlow.Default.CancelRepetition(new TimeoutEvent {
+                        _Channel = Name,
+                        Key = this
+                    });
+                }
+            }
+
+            if (AutoReconnect && !DisconnectOnComplete)
             {
                 Thread.Sleep(ReconnectDelay);
 
@@ -326,21 +452,36 @@ namespace x2
             }
         }
 
-        /// <summary>
-        /// Called when an existing link session is recovered.
-        /// </summary>
-        protected virtual void OnSessionRecovered(int handle, object context)
-        {
-        }
-
         protected override void Setup()
         {
             base.Setup();
 
-            Bind(new LinkSessionRecovered { LinkName = Name },
-                OnLinkSessionRecovered);
+            Flow.SubscribeTo(Name);
 
             Bind(Hub.HeartbeatEvent, OnHeartbeatEvent);
+            Bind(new TimeoutEvent { Key = this }, OnTimer);
+        }
+
+        protected override void Teardown()
+        {
+            Flow.UnsubscribeFrom(Name);
+
+            base.Teardown();
+        }
+
+        internal int AddSessionRef()
+        {
+            return Interlocked.Increment(ref sessionRefCount);
+        }
+
+        internal int RemoveSessionRef()
+        {
+            return Interlocked.Decrement(ref sessionRefCount);
+        }
+
+        internal int ResetSessionRef()
+        {
+            return Interlocked.Exchange(ref sessionRefCount, 0);
         }
 
         private void OnHeartbeatEvent(HeartbeatEvent e)
@@ -369,10 +510,75 @@ namespace x2
             }
         }
 
-        // LinkSessionRecovered event handler
-        private void OnLinkSessionRecovered(LinkSessionRecovered e)
+        private void OnTimer(TimeoutEvent e)
         {
-            OnSessionRecovered(e.Handle, e.Context);
+            if (!session.IsBusy && sessionRefCount == 0)
+            {
+                Disconnect();
+            }
+        }
+
+        private void OnEvent(Event e)
+        {
+            Log.Debug("{0} OnEvent {1}", Name, e);
+
+            int waitHandle = e._WaitHandle;
+
+            PendingRecord pendingRecord;
+            lock (pendingRecords)
+            {
+                if (!pendingRecords.TryGetValue(waitHandle, out pendingRecord))
+                {
+                    return;
+                }
+                if (--pendingRecord.Count == 0)
+                {
+                    pendingRecords.Remove(waitHandle);
+                }
+            }
+
+            if (pendingRecord.Count == 0)
+            {
+                if (pendingRecord.HandleAllocated)
+                {
+                    WaitHandlePool.Release(waitHandle);
+                }
+
+                TimeFlow.Default.Cancel(pendingRecord.TimeoutToken);
+                Unbind(new Event { _WaitHandle = waitHandle }, OnEvent);
+                Unbind((TimeoutEvent)pendingRecord.TimeoutToken.value, OnTimeout);
+            }
+
+            RemoveSessionRef();
+        }
+
+        private void OnTimeout(TimeoutEvent e)
+        {
+            Log.Debug("{0} response timeout {1}", Name, e.Key);
+
+            int waitHandle = (int)e.Key;
+
+            int count = 0;
+            PendingRecord pendingRecord;
+            lock (pendingRecords)
+            {
+                if (!pendingRecords.TryGetValue(waitHandle, out pendingRecord))
+                {
+                    return;
+                }
+                count = pendingRecord.Count;
+                pendingRecords.Remove(waitHandle);
+            }
+
+            if (pendingRecord.HandleAllocated)
+            {
+                WaitHandlePool.Release(waitHandle);
+            }
+
+            Unbind(new Event { _WaitHandle = waitHandle }, OnEvent);
+            Unbind((TimeoutEvent)pendingRecord.TimeoutToken.value, OnTimeout);
+
+            Interlocked.Add(ref sessionRefCount, -count);
         }
     }
 }

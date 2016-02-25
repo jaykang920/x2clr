@@ -4,24 +4,42 @@ using x2;
 
 namespace x2.Examples.HeadFirst
 {
-    // Unreliable UDP client
-    class HeadFirst4Client
+    // Connect-on-demand client
+    class HeadFirst5Client
     {
-        class CapitalizerClient : UdpLink
+        class CapitalizerClient : TcpClient
         {
             public CapitalizerClient()
                 : base("CapitalizerClient")
             {
+                DisconnectOnComplete = true;
+
+                BufferTransform = new BufferTransformStack()
+                    .Add(new BlockCipher());
             }
 
             protected override void Setup()
             {
                 base.Setup();
                 EventFactory.Register<CapitalizeResp>();
-                new CapitalizeReq().Bind(Send);
-                Bind(6788).Listen();
-                AddEndPoint(new System.Net.IPEndPoint(
-                    System.Net.IPAddress.Parse("127.0.0.1"), 6789));
+                new CapitalizeReq().Bind(ConnectAndRequest);
+
+                RemoteHost = "127.0.0.1";
+                RemotePort = 6789;
+            }
+        }
+
+        class DebugCase : Case
+        {
+            protected override void Setup()
+            {
+                base.Setup();
+                Bind(new Event(), OnEvent);
+            }
+
+            void OnEvent(Event e)
+            {
+                Console.WriteLine(e);
             }
         }
 
@@ -33,6 +51,7 @@ namespace x2.Examples.HeadFirst
             Hub.Instance
                 .Attach(new SingleThreadFlow()
                     .Add(new OutputCase())
+                    //.Add(new DebugCase())
                     .Add(new CapitalizerClient()));
 
             using (new Hub.Flows().Startup())

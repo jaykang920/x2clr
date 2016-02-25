@@ -4,6 +4,7 @@ using x2;
 
 namespace x2.Examples.HeadFirst
 {
+    // TCP client
     class HeadFirst3Client
     {
         class CapitalizerClient : TcpClient

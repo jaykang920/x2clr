@@ -124,7 +124,15 @@ namespace x2
             }
             for (int i = snapshot.Count - 1; i >= 0; --i)
             {
-                snapshot[i].Teardown(holder);
+                try
+                {
+                    snapshot[i].Teardown(holder);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("{0} {1} Teardown: {2}",
+                        holder.Name, snapshot[i].GetType().Name, e);
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ using x2;
 
 namespace x2.Examples.HeadFirst
 {
+    // TCP server
     class HeadFirst3Server
     {
         class CapitalizerServer : AsyncTcpServer

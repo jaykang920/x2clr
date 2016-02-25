@@ -171,7 +171,14 @@ namespace x2
             }
             for (int i = 0, count = snapshot.Count; i < count; ++i)
             {
-                snapshot[i].Shutdown();
+                try
+                {
+                    snapshot[i].Shutdown();
+                }
+                catch (Exception e)
+                {
+                    Log.Error("{0} Shutdown: {2}", snapshot[i].Name, e);
+                }
             }
         }
 
@@ -180,13 +187,9 @@ namespace x2
         /// </summary>
         public static void Shutdown()
         {
-            try
-            {
-                TimeFlow.Default.CancelRepetition(HeartbeatEvent);
+            TimeFlow.Default.CancelRepetition(HeartbeatEvent);
 
-                Instance.StopAttachedFlows();
-            }
-            catch (Exception) {}
+            Instance.StopAttachedFlows();
         }
 
         /// <summary>

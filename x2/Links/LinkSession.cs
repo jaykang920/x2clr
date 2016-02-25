@@ -69,6 +69,17 @@ namespace x2
             set { handle = value; }
         }
 
+        public bool IsBusy
+        {
+            get
+            {
+                lock (syncRoot)
+                {
+                    return (txFlag || eventsToSend.Count != 0);
+                }
+            }
+        }
+
         /// <summary>
         /// Gets the link associated with this session.
         /// </summary>

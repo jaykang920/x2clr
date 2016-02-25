@@ -161,19 +161,9 @@ namespace x2
             return base.OnAcceptInternal(session);
         }
 
-        /// <summary>
-        /// Called when an existing link session is recovered.
-        /// </summary>
-        protected virtual void OnSessionRecovered(int handle, object context)
-        {
-        }
-
         protected override void Setup()
         {
             base.Setup();
-
-            Bind(new LinkSessionRecovered { LinkName = Name },
-                OnLinkSessionRecovered);
 
             Bind(Hub.HeartbeatEvent, OnHeartbeatEvent);
         }
@@ -213,12 +203,6 @@ namespace x2
                     }
                 }
             }
-        }
-
-        // LinkSessionRecovered event handler
-        private void OnLinkSessionRecovered(LinkSessionRecovered e)
-        {
-            OnSessionRecovered(e.Handle, e.Context);
         }
     }
 }
