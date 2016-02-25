@@ -1,3 +1,9 @@
+Features:
+
+- enhanced the TCP session recovery from instant disconnection
+- added connect-on-demand support for TCP clients.
+- changed the XML attribute name for super class: from "extends" to "base"
+
 ## 0.7.5 (2016-02-02)
 
 Features:
