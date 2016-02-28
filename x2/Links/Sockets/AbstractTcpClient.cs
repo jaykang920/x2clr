@@ -283,26 +283,10 @@ namespace x2
             currentSession.Close();
         }
 
-        /// <summary>
-        /// Reconnects to the last successful remote address.
-        /// </summary>
-        public void Reconnect()
-        {
-            if (remoteEndPoint == null)
-            {
-                Log.Error("{0} no reconnect target", Name);
-                return;
-            }
-
-            connecting = true;
-
-            Connect(null, remoteEndPoint);
-        }
-
         public void TrySessionRecovery()
         {
             var tcpSession = (AbstractTcpSession)Session;
-            if (tcpSession == null)
+            if (tcpSession == null || !tcpSession.SocketConnected)
             {
                 return;
             }
@@ -319,6 +303,20 @@ namespace x2
             startTime = DateTime.UtcNow;
 
             ConnectInternal(socket, endpoint);
+        }
+
+        // Reconnects to the last successful remote address.
+        private void Reconnect()
+        {
+            if (remoteEndPoint == null)
+            {
+                Log.Error("{0} no reconnect target", Name);
+                return;
+            }
+
+            connecting = true;
+
+            Connect(null, remoteEndPoint);
         }
 
         protected override void OnSessionConnectedInternal(bool result, object context)
