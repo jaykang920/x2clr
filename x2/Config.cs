@@ -16,6 +16,32 @@ namespace x2
         /// </summary>
         public static LogLevel LogLevel { get; set;}
 
+        /// <summary>
+        /// Gets or sets the time interval, in seconds, of built-in heartbeat
+        /// events.
+        /// </summary>
+        public static int HeartbeatInterval { get; set; }
+
+        public static class Flow
+        {
+            public static class Logging
+            {
+                public static class SlowHandler
+                {
+                    public static LogLevel LogLevel { get; set; }
+                    public static int Threshold { get; set; }
+                }
+
+                public static class LongQueue
+                {
+                    public static LogLevel LogLevel { get; set; }
+                    public static int Threshold { get; set; }
+                }
+            }
+        }
+
+        public static int MaxLinkHandles { get; set; }
+
         public static class Buffer
         {
             public static class SizeExponent
@@ -64,33 +90,19 @@ namespace x2
             public static double DefaultTimeout { get; set; }
         }
 
-        public static class Flow
-        {
-            public static class Logging
-            {
-                public static class SlowHandler
-                {
-                    public static LogLevel LogLevel { get; set; }
-                    public static int Threshold { get; set; }
-                }
-
-                public static class LongQueue
-                {
-                    public static LogLevel LogLevel { get; set; }
-                    public static int Threshold { get; set; }
-                }
-            }
-        }
-
-        public static int HeartbeatInterval { get; set; }
-
-        public static int MaxLinkHandles { get; set; }
-
         static Config()
         {
             // Default values
 
             LogLevel = LogLevel.Info;
+            HeartbeatInterval = 5;  // in seconds
+
+            Flow.Logging.SlowHandler.LogLevel = LogLevel.Warning;
+            Flow.Logging.SlowHandler.Threshold = 100;  // in milliseconds
+            Flow.Logging.LongQueue.LogLevel = LogLevel.Error;
+            Flow.Logging.LongQueue.Threshold = 1000;
+
+            MaxLinkHandles = 65536;
 
             // SizeExponent.Chunk >= SizeExponent.Segment
             Buffer.SizeExponent.Chunk = 24;  // 16MB
@@ -100,15 +112,6 @@ namespace x2
 
             Coroutine.MaxWaitHandles = 1024;
             Coroutine.DefaultTimeout = 30.0;  // in seconds
-
-            Flow.Logging.SlowHandler.LogLevel = LogLevel.Warning;
-            Flow.Logging.SlowHandler.Threshold = 100;  // in milliseconds
-            Flow.Logging.LongQueue.LogLevel = LogLevel.Error;
-            Flow.Logging.LongQueue.Threshold = 1000;
-
-            HeartbeatInterval = 5;  // in seconds
-
-            MaxLinkHandles = 65536;
         }
 
         /// <summary>
@@ -121,6 +124,15 @@ namespace x2
                 ConfigurationManager.GetSection("x2clr");
 
             LogLevel = section.Log.Level;
+            HeartbeatInterval = section.Heartbeat.Interval;
+
+            FlowLoggingElement logging = section.Flow.Logging;
+            Flow.Logging.SlowHandler.LogLevel = logging.SlowHandler.LogLevel;
+            Flow.Logging.SlowHandler.Threshold = logging.SlowHandler.Threshold;
+            Flow.Logging.LongQueue.LogLevel = logging.LongQueue.LogLevel;
+            Flow.Logging.LongQueue.Threshold = logging.LongQueue.Threshold;
+
+            MaxLinkHandles = section.Link.MaxHandles;
 
             BufferElement buffer = section.Buffer;
             Buffer.SizeExponent.Chunk = buffer.SizeExponent.Chunk;
@@ -130,16 +142,6 @@ namespace x2
 
             Coroutine.MaxWaitHandles = section.Coroutine.MaxWaitHandles;
             Coroutine.DefaultTimeout = section.Coroutine.DefaultTimeout;
-
-            FlowLoggingElement logging = section.Flow.Logging;
-            Flow.Logging.SlowHandler.LogLevel = logging.SlowHandler.LogLevel;
-            Flow.Logging.SlowHandler.Threshold = logging.SlowHandler.Threshold;
-            Flow.Logging.LongQueue.LogLevel = logging.LongQueue.LogLevel;
-            Flow.Logging.LongQueue.Threshold = logging.LongQueue.Threshold;
-
-            HeartbeatInterval = section.Heartbeat.Interval;
-
-            MaxLinkHandles = section.Link.MaxHandles;
         }
     }
 }

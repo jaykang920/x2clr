@@ -16,6 +16,27 @@ namespace x2
             set { this["log"] = value; }
         }
 
+        [ConfigurationProperty("heartbeat")]
+        public HeartbeatElement Heartbeat
+        {
+            get { return (HeartbeatElement)this["heartbeat"]; }
+            set { this["heartbeat"] = value; }
+        }
+
+        [ConfigurationProperty("flow")]
+        public FlowElement Flow
+        {
+            get { return (FlowElement)this["flow"]; }
+            set { this["flow"] = value; }
+        }
+
+        [ConfigurationProperty("link")]
+        public LinkElement Link
+        {
+            get { return (LinkElement)this["link"]; }
+            set { this["link"] = value; }
+        }
+
         [ConfigurationProperty("buffer")]
         public BufferElement Buffer
         {
@@ -29,27 +50,6 @@ namespace x2
             get { return (CoroutineElement)this["coroutine"]; }
             set { this["coroutine"] = value; }
         }
-
-        [ConfigurationProperty("flow")]
-        public FlowElement Flow
-        {
-            get { return (FlowElement)this["flow"]; }
-            set { this["flow"] = value; }
-        }
-
-        [ConfigurationProperty("heartbeat")]
-        public HeartbeatElement Heartbeat
-        {
-            get { return (HeartbeatElement)this["heartbeat"]; }
-            set { this["heartbeat"] = value; }
-        }
-
-        [ConfigurationProperty("link")]
-        public LinkElement Link
-        {
-            get { return (LinkElement)this["link"]; }
-            set { this["link"] = value; }
-        }
     }
 
     // x2clr/log configuration element handler
@@ -60,6 +60,93 @@ namespace x2
         {
             get { return (LogLevel)this["level"]; }
             set { this["level"] = value; }
+        }
+    }
+
+    // x2clr/heartbeat configuration element handler
+    public class HeartbeatElement : ConfigurationElement
+    {
+        [ConfigurationProperty("interval")]
+        public int Interval
+        {
+            get { return (int)this["interval"]; }
+            set { this["interval"] = value; }
+        }
+    }
+
+    // x2clr/flow configuration element handler
+    public class FlowElement : ConfigurationElement
+    {
+        [ConfigurationProperty("logging")]
+        public FlowLoggingElement Logging
+        {
+            get { return (FlowLoggingElement)this["logging"]; }
+            set { this["logging"] = value; }
+        }
+    }
+
+    // x2clr/flow/logging configuration element handler
+    public class FlowLoggingElement : ConfigurationElement
+    {
+        [ConfigurationProperty("slowHandler")]
+        public SlowHandlerElement SlowHandler
+        {
+            get { return (SlowHandlerElement)this["slowHandler"]; }
+            set { this["slowHandler"] = value; }
+        }
+
+        [ConfigurationProperty("longQueue")]
+        public LongQueueElement LongQueue
+        {
+            get { return (LongQueueElement)this["longQueue"]; }
+            set { this["longQueue"] = value; }
+        }
+    }
+
+    // x2clr/flow/logging/slowHandler configuration element handler
+    public class SlowHandlerElement : ConfigurationElement
+    {
+        [ConfigurationProperty("logLevel")]
+        public LogLevel LogLevel
+        {
+            get { return (LogLevel)this["logLevel"]; }
+            set { this["logLevel"] = value; }
+        }
+
+        [ConfigurationProperty("threshold")]
+        public int Threshold
+        {
+            get { return (int)this["threshold"]; }
+            set { this["threshold"] = value; }
+        }
+    }
+
+    // x2clr/flow/logging/longQueue configuration element handler
+    public class LongQueueElement : ConfigurationElement
+    {
+        [ConfigurationProperty("logLevel")]
+        public LogLevel LogLevel
+        {
+            get { return (LogLevel)this["logLevel"]; }
+            set { this["logLevel"] = value; }
+        }
+
+        [ConfigurationProperty("threshold")]
+        public int Threshold
+        {
+            get { return (int)this["threshold"]; }
+            set { this["threshold"] = value; }
+        }
+    }
+
+    // x2clr/link configuration element handler
+    public class LinkElement : ConfigurationElement
+    {
+        [ConfigurationProperty("maxHandles")]
+        public int MaxHandles
+        {
+            get { return (int)this["maxHandles"]; }
+            set { this["maxHandles"] = value; }
         }
     }
 
@@ -132,93 +219,6 @@ namespace x2
         {
             get { return (double)this["defaultTimeout"]; }
             set { this["defaultTimeout"] = value; }
-        }
-    }
-
-    // x2clr/flow configuration element handler
-    public class FlowElement : ConfigurationElement
-    {
-        [ConfigurationProperty("logging")]
-        public FlowLoggingElement Logging
-        {
-            get { return (FlowLoggingElement)this["logging"]; }
-            set { this["logging"] = value; }
-        }
-    }
-
-    // x2clr/flow/logging configuration element handler
-    public class FlowLoggingElement : ConfigurationElement
-    {
-        [ConfigurationProperty("slowHandler")]
-        public SlowHandlerElement SlowHandler
-        {
-            get { return (SlowHandlerElement)this["slowHandler"]; }
-            set { this["slowHandler"] = value; }
-        }
-
-        [ConfigurationProperty("longQueue")]
-        public LongQueueElement LongQueue
-        {
-            get { return (LongQueueElement)this["longQueue"]; }
-            set { this["longQueue"] = value; }
-        }
-    }
-
-    // x2clr/flow/logging/slowHandler configuration element handler
-    public class SlowHandlerElement : ConfigurationElement
-    {
-        [ConfigurationProperty("logLevel")]
-        public LogLevel LogLevel
-        {
-            get { return (LogLevel)this["logLevel"]; }
-            set { this["logLevel"] = value; }
-        }
-
-        [ConfigurationProperty("threshold")]
-        public int Threshold
-        {
-            get { return (int)this["threshold"]; }
-            set { this["threshold"] = value; }
-        }
-    }
-
-    // x2clr/flow/logging/longQueue configuration element handler
-    public class LongQueueElement : ConfigurationElement
-    {
-        [ConfigurationProperty("logLevel")]
-        public LogLevel LogLevel
-        {
-            get { return (LogLevel)this["logLevel"]; }
-            set { this["logLevel"] = value; }
-        }
-
-        [ConfigurationProperty("threshold")]
-        public int Threshold
-        {
-            get { return (int)this["threshold"]; }
-            set { this["threshold"] = value; }
-        }
-    }
-
-    // x2clr/heartbeat configuration element handler
-    public class HeartbeatElement : ConfigurationElement
-    {
-        [ConfigurationProperty("interval")]
-        public int Interval
-        {
-            get { return (int)this["interval"]; }
-            set { this["interval"] = value; }
-        }
-    }
-
-    // x2clr/link configuration element handler
-    public class LinkElement : ConfigurationElement
-    {
-        [ConfigurationProperty("maxHandles")]
-        public int MaxHandles
-        {
-            get { return (int)this["maxHandles"]; }
-            set { this["maxHandles"] = value; }
         }
     }
 }
