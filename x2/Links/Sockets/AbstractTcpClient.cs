@@ -299,6 +299,16 @@ namespace x2
             Connect(null, remoteEndPoint);
         }
 
+        public void TrySessionRecovery()
+        {
+            var tcpSession = (AbstractTcpSession)Session;
+            if (tcpSession == null)
+            {
+                return;
+            }
+            tcpSession.OnDisconnect();
+        }
+
         private void Connect(Socket socket, EndPoint endpoint)
         {
             Log.Info("{0} connecting to {1}", Name, endpoint);

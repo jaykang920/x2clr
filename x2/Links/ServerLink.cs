@@ -185,7 +185,7 @@ namespace x2
                 }
                 if (flag)
                 {
-                    Log.Debug("{0} {1} rxC={2} txC={3} rxS={4} txS={5} txSc={6}",
+                    Log.Trace("{0} {1} rxC={2} txC={3} rxS={4} txS={5} txSc={6}",
                         Name, existing.Handle, e.RxCounter, e.TxCounter,
                         existing.RxCounter, existing.TxCounter, existing.TxCompleted);
 
