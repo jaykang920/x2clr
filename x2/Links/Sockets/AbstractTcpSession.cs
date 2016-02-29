@@ -128,7 +128,7 @@ namespace x2
 
                         if (result > 1)
                         {
-                            Log.Warn("{0} {1} keepalive failure count {2}",
+                            Log.Info("{0} {1} keepalive failure count {2}",
                                 link.Name, InternalHandle, result);
                         }
                     }

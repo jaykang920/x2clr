@@ -196,7 +196,7 @@ namespace x2
                     if (MaxKeepaliveFailureCount > 0 &&
                         failureCount > MaxKeepaliveFailureCount)
                     {
-                        Log.Error("{0} {1} closed due to the keepalive failure",
+                        Log.Warn("{0} {1} closed due to the keepalive failure",
                             Name, tcpSession.Handle);
 
                         tcpSession.OnDisconnect();
