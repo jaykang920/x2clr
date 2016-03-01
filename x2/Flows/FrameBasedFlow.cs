@@ -83,6 +83,10 @@ namespace x2
 
         public Time Time { get; private set; }
 
+        protected FrameBasedFlow() : this(false)
+        {
+        }
+
         protected FrameBasedFlow(bool queueing)
         {
             if (queueing)

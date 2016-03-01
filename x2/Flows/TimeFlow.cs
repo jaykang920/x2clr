@@ -350,7 +350,6 @@ namespace x2
         }
 
         private TimeFlow(string name)
-            : base(false)
         {
             timer = new Timer(OnTimer);
             this.name = name;
