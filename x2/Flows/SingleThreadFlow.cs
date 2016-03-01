@@ -12,23 +12,12 @@ namespace x2
         protected Thread thread;
 
         public SingleThreadFlow()
-            : this(new UnboundedQueue<Event>())
-        {
-        }
-        
-        public SingleThreadFlow(IQueue<Event> queue)
-            : base(queue)
         {
             thread = null;
         }
 
         public SingleThreadFlow(string name)
-            : this(name, new UnboundedQueue<Event>())
-        {
-        }
-
-        public SingleThreadFlow(string name, IQueue<Event> queue)
-            : this(queue)
+            : this()
         {
             this.name = name;
         }

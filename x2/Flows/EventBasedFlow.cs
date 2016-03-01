@@ -13,12 +13,12 @@ namespace x2
     /// </summary>
     public abstract class EventBasedFlow : Flow
     {
-        protected IQueue<Event> queue;
+        protected BlockingQueue<Event> queue;
         protected readonly object syncRoot;
 
-        protected EventBasedFlow(IQueue<Event> queue)
+        protected EventBasedFlow()
         {
-            this.queue = queue;
+            queue = new BlockingQueue<Event>();
             syncRoot = new Object();
         }
 

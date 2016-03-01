@@ -67,6 +67,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="BlockingQueue.cs" />
     <Compile Include="BuiltinEvents.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ConfigSection.cs" />
@@ -138,8 +139,6 @@
     <Compile Include="Flows\ThreadlessFlow.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="Hub.cs" />
-    <Compile Include="Queue.cs" />
-    <Compile Include="Queues\UnboundedQueue.cs" />
     <Compile Include="Yields\WaitForSingleEvent.cs" />
   </ItemGroup>
   <ItemGroup>

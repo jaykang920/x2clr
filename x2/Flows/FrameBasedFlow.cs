@@ -73,7 +73,7 @@ namespace x2
     /// </summary>
     public abstract class FrameBasedFlow : Flow
     {
-        protected IQueue<Event> queue;
+        protected BlockingQueue<Event> queue;
         protected readonly object syncRoot;
         protected Thread thread;
 
@@ -83,14 +83,12 @@ namespace x2
 
         public Time Time { get; private set; }
 
-        protected FrameBasedFlow()
-            : this(new UnboundedQueue<Event>())
+        protected FrameBasedFlow(bool queueing)
         {
-        }
-        
-        protected FrameBasedFlow(IQueue<Event> queue)
-        {
-            this.queue = queue;
+            if (queueing)
+            {
+                queue = new BlockingQueue<Event>();
+            }
             syncRoot = new Object();
             thread = null;
 
@@ -98,7 +96,7 @@ namespace x2
 
             Time = new Time();
         }
-
+        
         public override void Feed(Event e)
         {
             if (Object.ReferenceEquals(queue, null))

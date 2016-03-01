@@ -13,14 +13,7 @@ namespace x2
         protected bool running;
 
         public ThreadlessFlow()
-            : this(new UnboundedQueue<Event>())
         {
-        }
-
-        public ThreadlessFlow(IQueue<Event> queue)
-            : base(queue)
-        {
-            running = false;
         }
 
         public override Flow Startup()

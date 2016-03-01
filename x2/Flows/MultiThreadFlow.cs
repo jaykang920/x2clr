@@ -13,24 +13,13 @@ namespace x2
         protected int numThreads;
 
         public MultiThreadFlow(int numThreads)
-            : this(new UnboundedQueue<Event>(), numThreads)
-        {
-        }
-
-        public MultiThreadFlow(IQueue<Event> queue, int numThreads)
-            : base(queue)
         {
             threads = new List<Thread>();
             this.numThreads = numThreads;
         }
 
         public MultiThreadFlow(string name, int numThreads)
-            : this(name, new UnboundedQueue<Event>(), numThreads)
-        {
-        }
-
-        public MultiThreadFlow(string name, IQueue<Event> queue, int numThreads)
-            : this(queue, numThreads)
+            : this(numThreads)
         {
             this.name = name;
         }
