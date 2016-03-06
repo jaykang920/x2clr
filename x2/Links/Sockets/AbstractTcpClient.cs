@@ -258,6 +258,12 @@ namespace x2
         /// </summary>
         public void Connect(IPAddress ip, int port)
         {
+            if (connecting)
+            {
+                throw new InvalidOperationException();
+            }
+            connecting = true;
+
             if (session != null &&
                 ((AbstractTcpSession)session).SocketConnected)
             {
@@ -289,12 +295,6 @@ namespace x2
 
         private void Connect(Socket socket, EndPoint endpoint)
         {
-            if (connecting)
-            {
-                throw new InvalidOperationException();
-            }
-            connecting = true;
-
             Log.Info("{0} connecting to {1}", Name, endpoint);
 
             // Reset the retry counter.
