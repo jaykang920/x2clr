@@ -9,22 +9,21 @@ using System.Text;
 namespace x2
 {
     /// <summary>
-    /// Helps request handler method with response posting and temporary handler.
+    /// Request handler method helper class.
     /// </summary>
     public class Scope : IDisposable
     {
-        private Event response;
+        private Event e;
         private Binder.Token? binderToken;
 
-        public Event Response { get { return response; } }
+        public Event Event { get { return e; } }
 
         /// <summary>
-        /// Initializes a new Scope object associated with the specified
-        /// response event.
+        /// Initializes a new Scope object associated with the specified event.
         /// </summary>
-        public Scope(Event response)
+        public Scope(Event e)
         {
-            this.response = response;
+            this.e = e;
         }
 
         /// <summary>
@@ -37,7 +36,7 @@ namespace x2
             {
                 Flow.Bind(binderToken.Value);
             }
-            Hub.Post(response);
+            Hub.Post(e);
         }
 
         /// <summary>
