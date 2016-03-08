@@ -3,6 +3,7 @@ Features:
 - enhanced the TCP session recovery from instant disconnection
 - added connect-on-demand support for TCP clients.
 - changed the XML attribute name for super class: from "extends" to "base"
+- added handler routine helper class, Scope, to support guarded response posting and handler rebinding
 
 ## 0.7.5 (2016-02-02)
 
