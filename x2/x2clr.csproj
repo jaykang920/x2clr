@@ -99,6 +99,7 @@
     <Compile Include="Links\Sockets\AbstractUdpLink.cs" />
     <Compile Include="Links\Sockets\AsyncUdpLink.cs" />
     <Compile Include="Links\Sockets\UdpLink.cs" />
+    <Compile Include="Scope.cs" />
     <Compile Include="Serializer.Write.cs" />
     <Compile Include="Serializer.GetEncodedLength.cs" />
     <Compile Include="Serializer.cs" />

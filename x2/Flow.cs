@@ -101,30 +101,35 @@ namespace x2
             return currentFlow.Subscribe(e, routine, predicate);
         }
 
-        public static void Unbind<T>(T e, Action<T> action)
-            where T : Event
+        public static void Bind(Binder.Token binderToken)
         {
-            currentFlow.Unsubscribe(e, action);
+            currentFlow.Subscribe(binderToken);
         }
 
-        public static void Unbind<T>(
+        public static Binder.Token Unbind<T>(T e, Action<T> action)
+            where T : Event
+        {
+            return currentFlow.Unsubscribe(e, action);
+        }
+
+        public static Binder.Token Unbind<T>(
             T e, Action<T> action, Predicate<T> predicate)
             where T : Event
         {
-            currentFlow.Unsubscribe(e, action, predicate);
+            return currentFlow.Unsubscribe(e, action, predicate);
         }
 
-        public static void Unbind<T>(T e, Func<Coroutine, T, IEnumerator> routine)
+        public static Binder.Token Unbind<T>(T e, Func<Coroutine, T, IEnumerator> routine)
             where T : Event
         {
-            currentFlow.Unsubscribe(e, routine);
+            return currentFlow.Unsubscribe(e, routine);
         }
 
-        public static void Unbind<T>(
+        public static Binder.Token Unbind<T>(
             T e, Func<Coroutine, T, IEnumerator> routine, Predicate<T> predicate)
             where T : Event
         {
-            currentFlow.Unsubscribe(e, routine, predicate);
+            return currentFlow.Unsubscribe(e, routine, predicate);
         }
 
         public static void Unbind(Binder.Token binderToken)
@@ -173,30 +178,35 @@ namespace x2
                 new ConditionalCoroutineHandler<T>(routine, predicate));
         }
 
-        public void Unsubscribe<T>(T e, Action<T> handler)
-            where T : Event
+        public void Subscribe(Binder.Token token)
         {
-            binder.Unbind(e, new MethodHandler<T>(handler));
+            binder.Bind(token);
         }
 
-        public void Unsubscribe<T>(T e, Action<T> handler, Predicate<T> predicate)
+        public Binder.Token Unsubscribe<T>(T e, Action<T> handler)
             where T : Event
         {
-            binder.Unbind(e,
+            return binder.Unbind(e, new MethodHandler<T>(handler));
+        }
+
+        public Binder.Token Unsubscribe<T>(T e, Action<T> handler, Predicate<T> predicate)
+            where T : Event
+        {
+            return binder.Unbind(e,
                 new ConditionalMethodHandler<T>(handler, predicate));
         }
 
-        public void Unsubscribe<T>(T e, Func<Coroutine, T, IEnumerator> handler)
+        public Binder.Token Unsubscribe<T>(T e, Func<Coroutine, T, IEnumerator> handler)
             where T : Event
         {
-            binder.Unbind(e, new CoroutineHandler<T>(handler));
+            return binder.Unbind(e, new CoroutineHandler<T>(handler));
         }
 
-        public void Unsubscribe<T>(
+        public Binder.Token Unsubscribe<T>(
             T e, Func<Coroutine, T, IEnumerator> handler, Predicate<T> predicate)
             where T : Event
         {
-            binder.Unbind(e,
+            return binder.Unbind(e,
                 new ConditionalCoroutineHandler<T>(handler, predicate));
         }
 

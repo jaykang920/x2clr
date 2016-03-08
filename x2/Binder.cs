@@ -32,6 +32,11 @@ namespace x2
             rwlock.Dispose();
         }
 
+        public virtual void Bind(Token token)
+        {
+            Bind(token.Key, token.Value);
+        }
+
         public virtual Token Bind(Event e, Handler handler)
         {
             rwlock.EnterWriteLock();
@@ -109,60 +114,43 @@ namespace x2
             }
         }
 
-        public virtual void Unbind(Event e, Handler handler)
+        public void Unbind(Token token)
+        {
+            Unbind(token.Key, token.Value);
+        }
+
+        public virtual Binder.Token Unbind(Event e, Handler handler)
         {
             rwlock.EnterWriteLock();
             try
             {
-                if (!UnbindInternal(e, handler))
+                HandlerSet handlers;
+                if (!handlerMap.TryGetValue(e, out handlers))
                 {
-                    return;
+                    return new Binder.Token();
                 }
+                if (!handlers.Remove(handler))
+                {
+                    return new Binder.Token();
+                }
+                if (handlers.Count == 0)
+                {
+                    handlerMap.Remove(e);
+                }
+                filter.Remove(e.GetTypeId(), e.GetFingerprint());
 
                 var token = new Token(e, handler);
-
                 var eventSink = handler.Action.Target as EventSink;
                 if (!Object.ReferenceEquals(eventSink, null))
                 {
-                    eventSink.RemoveBinding(token);
+                    eventSink.RemoveBinding(new Token(e, handler));
                 }
+                return token;
             }
             finally
             {
                 rwlock.ExitWriteLock();
             }
-        }
-
-        public void Unbind(Token token)
-        {
-            rwlock.EnterWriteLock();
-            try
-            {
-                UnbindInternal(token.Key, token.Value);
-            }
-            finally
-            {
-                rwlock.ExitWriteLock();
-            }
-        }
-
-        private bool UnbindInternal(Event e, Handler handler)
-        {
-            HandlerSet handlers;
-            if (!handlerMap.TryGetValue(e, out handlers))
-            {
-                return false;
-            }
-            if (!handlers.Remove(handler))
-            {
-                return false;
-            }
-            if (handlers.Count == 0)
-            {
-                handlerMap.Remove(e);
-            }
-            filter.Remove(e.GetTypeId(), e.GetFingerprint());
-            return true;
         }
 
         public struct Token
