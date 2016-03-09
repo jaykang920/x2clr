@@ -11,7 +11,7 @@ namespace x2
     /// <summary>
     /// Common base class for all events.
     /// </summary>
-    public class Event : Cell, IDisposable
+    public class Event : Cell
     {
         /// <summary>
         /// Per-class type tag to support custom type hierarchy.
@@ -100,14 +100,6 @@ namespace x2
         public static Event New()
         {
             return new Event();
-        }
-
-        /// <summary>
-        /// Implements IDisposable interface only to support guarded posting.
-        /// </summary>
-        public void Dispose()
-        {
-            Hub.Post(this);
         }
 
         /// <summary>

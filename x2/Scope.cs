@@ -9,17 +9,36 @@ using System.Text;
 namespace x2
 {
     /// <summary>
-    /// Request handler method helper class.
+    /// Helps code block scope based cleanup.
     /// </summary>
     public class Scope : IDisposable
     {
-        private Event e;
         private Binder.Token? binderToken;
+        private Event e;
 
+        /// <summary>
+        /// Gets or sets the binder token to be recovered on disposal.
+        /// </summary>
+        public Binder.Token? BinderToken
+        {
+            get { return binderToken; }
+            set { binderToken = value; }
+        }
+
+        /// <summary>
+        /// Gets the event to be posted on disposal.
+        /// </summary>
         public Event Event { get { return e; } }
 
         /// <summary>
-        /// Initializes a new Scope object associated with the specified event.
+        /// Initializes a new Scope object.
+        /// </summary>
+        public Scope()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new Scope object with the specified event.
         /// </summary>
         public Scope(Event e)
         {
@@ -27,7 +46,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Implements IDisposable interface only to support guarded posting.
+        /// Implements IDisposable interface.
         /// </summary>
         public void Dispose()
         {
@@ -36,23 +55,10 @@ namespace x2
             {
                 Flow.Bind(binderToken.Value);
             }
-            Hub.Post(e);
-        }
-
-        /// <summary>
-        /// Saves the specified binder token for on-exit rebinding.
-        /// </summary>
-        public void RebindOnExit(Binder.Token binderToken)
-        {
-            this.binderToken = binderToken;
-        }
-
-        /// <summary>
-        /// Clears the reserved rebinding.
-        /// </summary>
-        public void CancelRebinding()
-        {
-            binderToken = null;
+            if (!Object.ReferenceEquals(e, null))
+            {
+                Hub.Post(e);
+            }
         }
     }
 }
