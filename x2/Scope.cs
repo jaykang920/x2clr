@@ -31,6 +31,17 @@ namespace x2
         public Event Event { get { return e; } }
 
         /// <summary>
+        /// A delegate type for hooking up Dispose notifications.
+        /// </summary>
+        public delegate void CleanupHandler(Event e);
+
+        /// <summary>
+        /// An event that clients can bind custom actions to be executed when
+        /// this Scope object is disposed.
+        /// </summary>
+        public event CleanupHandler Cleanup;
+
+        /// <summary>
         /// Initializes a new Scope object.
         /// </summary>
         public Scope()
@@ -50,11 +61,17 @@ namespace x2
         /// </summary>
         public void Dispose()
         {
+            if (Cleanup != null)
+            {
+                Cleanup(e);
+            }
+
             if (binderToken.HasValue &&
                 !Object.ReferenceEquals(binderToken.Value.Key, null))
             {
                 Flow.Bind(binderToken.Value);
             }
+
             if (!Object.ReferenceEquals(e, null))
             {
                 Hub.Post(e);
