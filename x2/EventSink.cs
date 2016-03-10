@@ -92,7 +92,7 @@ namespace x2
                 {
                     for (int i = 0, count = bindings.Count; i < count; ++i)
                     {
-                        flow.Unsubscribe(bindings[i]);
+                        flow.UnsubscribeInternal(bindings[i]);
                     }
 
                     bindings.Clear();

@@ -220,6 +220,11 @@ namespace x2
             binder.Unbind(token);
         }
 
+        internal void UnsubscribeInternal(Binder.Token token)
+        {
+            binder.UnbindInternal(token);
+        }
+
         public abstract Flow Startup();
         public abstract void Shutdown();
 
