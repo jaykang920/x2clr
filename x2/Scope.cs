@@ -14,6 +14,7 @@ namespace x2
     public class Scope : IDisposable
     {
         private Binder.Token? binderToken;
+        private DateTime startTime;
         private Event e;
 
         /// <summary>
@@ -46,6 +47,7 @@ namespace x2
         /// </summary>
         public Scope()
         {
+            startTime = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -53,6 +55,7 @@ namespace x2
         /// </summary>
         public Scope(Event e)
         {
+            startTime = DateTime.UtcNow;
             this.e = e;
         }
 
@@ -75,6 +78,15 @@ namespace x2
             if (!Object.ReferenceEquals(e, null))
             {
                 Hub.Post(e);
+            }
+
+            DateTime endTime = DateTime.UtcNow;
+            long totalMillis = (long)(endTime - startTime).TotalMilliseconds;
+            if (totalMillis >= Config.Flow.Logging.SlowScope.Threshold)
+            {
+                Log.Emit(Config.Flow.Logging.SlowScope.LogLevel,
+                    "{0} slow scope {1:#,0}ms on {2}",
+                    Flow.CurrentFlow.Name, totalMillis, e);
             }
         }
     }

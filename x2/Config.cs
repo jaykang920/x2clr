@@ -32,6 +32,12 @@ namespace x2
                     public static int Threshold { get; set; }
                 }
 
+                public static class SlowScope
+                {
+                    public static LogLevel LogLevel { get; set; }
+                    public static int Threshold { get; set; }
+                }
+
                 public static class LongQueue
                 {
                     public static LogLevel LogLevel { get; set; }
@@ -99,6 +105,8 @@ namespace x2
 
             Flow.Logging.SlowHandler.LogLevel = LogLevel.Warning;
             Flow.Logging.SlowHandler.Threshold = 100;  // in milliseconds
+            Flow.Logging.SlowScope.LogLevel = LogLevel.Warning;
+            Flow.Logging.SlowScope.Threshold = 200;  // in milliseconds
             Flow.Logging.LongQueue.LogLevel = LogLevel.Error;
             Flow.Logging.LongQueue.Threshold = 1000;
 

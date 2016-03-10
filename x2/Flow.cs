@@ -53,6 +53,9 @@ namespace x2
         public LogLevel SlowHandlerLogLevel { get; set; }
         public int SlowHandlerLogThreshold { get; set; }
 
+        public LogLevel SlowScopeLogLevel { get; set; }
+        public int SlowScopeLogThreshold { get; set; }
+
         public LogLevel LongQueueLogLevel { get; set; }
         public int LongQueueLogThreshold { get; set; }
 
@@ -71,6 +74,8 @@ namespace x2
 
             SlowHandlerLogLevel = Config.Flow.Logging.SlowHandler.LogLevel;
             SlowHandlerLogThreshold = Config.Flow.Logging.SlowHandler.Threshold;
+            SlowScopeLogLevel = Config.Flow.Logging.SlowScope.LogLevel;
+            SlowScopeLogThreshold = Config.Flow.Logging.SlowScope.Threshold;
             LongQueueLogLevel = Config.Flow.Logging.LongQueue.LogLevel;
             LongQueueLogThreshold = Config.Flow.Logging.LongQueue.Threshold;
         }
