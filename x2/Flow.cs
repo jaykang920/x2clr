@@ -272,16 +272,25 @@ namespace x2
 
         public abstract void Feed(Event e);
 
+        /// <summary>
+        /// Increments the channel reference count by one and returns the result.
+        /// </summary>
         internal int AddChannelRef()
         {
             return Interlocked.Increment(ref channelRefCount);
         }
 
+        /// <summary>
+        /// Decrements the channel reference count by one and returns the result.
+        /// </summary>
         internal int RemoveChannelRef()
         {
             return Interlocked.Decrement(ref channelRefCount);
         }
 
+        /// <summary>
+        /// Resets the channel reference count as zero.
+        /// </summary>
         internal int ResetChannelRef()
         {
             return Interlocked.Exchange(ref channelRefCount, 0);

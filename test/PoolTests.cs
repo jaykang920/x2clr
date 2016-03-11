@@ -11,7 +11,7 @@ namespace x2.Tests
     {
         class Foo
         {
-            public int bar;
+            public int bar = 0;
         }
 
         [Test]

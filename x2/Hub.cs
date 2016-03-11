@@ -12,13 +12,16 @@ namespace x2
     /// </summary>
     public sealed class Hub
     {
-        // List of all the flows attached to the hub
+        // List of all the flows attached to this hub
         private List<Flow> flows;
         // Explicit (named) channel subscription map
         private Dictionary<string, List<Flow>> subscriptions;
 
         private ReaderWriterLockSlim rwlock;
 
+        /// <summary>
+        /// Gets the x2 subsystem heartbeat event.
+        /// </summary>
         public static HeartbeatEvent HeartbeatEvent { get; private set; }
 
         /// <summary>
@@ -28,6 +31,7 @@ namespace x2
 
         static Hub()
         {
+            // Initialize the singleton instance.
             HeartbeatEvent = new HeartbeatEvent { _Transform = false };
             Instance = new Hub();
         }
@@ -103,7 +107,7 @@ namespace x2
                 throw new ArgumentNullException();
             }
 
-            rwlock.EnterReadLock();  // not using ReadLock intentionally
+            rwlock.EnterReadLock();
             try
             {
                 List<Flow> subscribers;

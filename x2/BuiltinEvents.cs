@@ -8,6 +8,9 @@ using x2;
 
 namespace x2
 {
+    /// <summary>
+    /// Event type identifiers for built-in events.
+    /// </summary>
     public static class BuiltinEventType
     {
         public const int HeartbeatEvent = -1;
@@ -26,6 +29,16 @@ namespace x2
             info.Add("TimeoutEvent", -4);
         }
 
+        public static bool ContainsName(string name)
+        {
+            return info.ContainsName(name);
+        }
+
+        public static bool ContainsValue(int value)
+        {
+            return info.ContainsValue(value);
+        }
+
         public static string GetName(int value)
         {
             return info.GetName(value);
@@ -42,6 +55,9 @@ namespace x2
         }
     }
 
+    /// <summary>
+    /// x2 subsystem heartbeat event.
+    /// </summary>
     public class HeartbeatEvent : Event
     {
         new protected static readonly Tag tag;
@@ -141,6 +157,9 @@ namespace x2
         }
     }
 
+    /// <summary>
+    /// A local event enqueued when a flow starts.
+    /// </summary>
     public class FlowStart : Event
     {
         new protected static readonly Tag tag;
@@ -208,6 +227,9 @@ namespace x2
         }
     }
 
+    /// <summary>
+    /// A local event enqueued when a flow stops.
+    /// </summary>
     public class FlowStop : Event
     {
         new protected static readonly Tag tag;
@@ -275,6 +297,9 @@ namespace x2
         }
     }
 
+    /// <summary>
+    /// A local timeout event.
+    /// </summary>
     public class TimeoutEvent : Event
     {
         new protected static readonly Tag tag;
@@ -283,6 +308,9 @@ namespace x2
 
         private object key_;
 
+        /// <summary>
+        /// Event key object.
+        /// </summary>
         public object Key
         {
             get { return key_; }
