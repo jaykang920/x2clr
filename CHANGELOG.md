@@ -1,3 +1,5 @@
+## 0.8.0 (2016-03-14)
+
 Features:
 
 - enhanced the TCP session recovery from instant disconnection
