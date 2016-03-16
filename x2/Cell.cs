@@ -2,8 +2,6 @@
 // See the file LICENSE for details.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Text;
 
 namespace x2
@@ -19,7 +17,7 @@ namespace x2
         protected static readonly Tag tag;
 
         /// <summary>
-        /// Fingerprint to keep track of property assignments.
+        /// Fingerprint to keep track of property assignment status.
         /// </summary>
         protected Fingerprint fingerprint;
 
@@ -29,15 +27,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Initializes a new Cell instance with the specified Fingerprint.
-        /// </summary>
-        protected Cell(Fingerprint fingerprint)
-        {
-            this.fingerprint = fingerprint;
-        }
-
-        /// <summary>
-        /// Initializes a new Cell instance with the specified fingerprint length.
+        /// Initializes a new Cell instance with the given fingerprint length.
         /// </summary>
         protected Cell(int length)
         {
@@ -94,6 +84,10 @@ namespace x2
             return Equivalent(other, fingerprint);
         }
 
+        /// <summary>
+        /// Determines whether the specified Cell object is equivalent to this
+        /// one based on the given fingerprint.
+        /// </summary>
         public bool Equivalent(Cell other, Fingerprint fingerprint)
         {
             if (!other.IsKindOf(this))
@@ -107,19 +101,12 @@ namespace x2
             return IsEquivalent(other, fingerprint);
         }
 
-        protected virtual bool IsEquivalent(Cell other, Fingerprint fingerprint)
-        {
-            return true;
-        }
-
+        /// <summary>
+        /// Gets the fingerprint of this cell.
+        /// </summary>
         public Fingerprint GetFingerprint()
         {
             return fingerprint;
-        }
-
-        internal void SetFingerprint(Fingerprint fingerprint)
-        {
-            this.fingerprint = fingerprint;
         }
 
         /// <summary>
@@ -130,17 +117,28 @@ namespace x2
             return GetHashCode(fingerprint);
         }
 
+        /// <summary>
+        /// Overridden by subclasses to build a hash code generator chain.
+        /// </summary>
         public virtual int GetHashCode(Fingerprint fingerprint)
         {
             return Hash.Seed;
         }
 
         /// <summary>
-        /// Returns the custom type tag of this object.
+        /// Returns the custom type tag of this cell.
         /// </summary>
         public virtual Tag GetTypeTag()
         {
             return tag;
+        }
+
+        /// <summary>
+        /// Overridden by subclasses to build an equivalence test chain.
+        /// </summary>
+        protected virtual bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
+            return true;
         }
 
         /// <summary>
@@ -163,6 +161,14 @@ namespace x2
         }
 
         /// <summary>
+        /// Sets the fingerprint of this cell as the specified one.
+        /// </summary>
+        internal void SetFingerprint(Fingerprint fingerprint)
+        {
+            this.fingerprint = fingerprint;
+        }
+
+        /// <summary>
         /// Returns a string that describes the current object.
         /// </summary>
         public override string ToString()
@@ -174,48 +180,58 @@ namespace x2
             Describe(stringBuilder);
             stringBuilder.Append(" }");
             return stringBuilder.ToString();
-            /*
-            VerboseSerializer serializer = new StringSerializer();
-            serializer.Write(this);
-            return serializer.ToString();
-            */
         }
 
         /// <summary>
-        /// Describes the immediate property values into the specified
-        /// <see cref="System.Text.StringBuilder">StringBuilder</see>.
+        /// Overridden by subclasses to build a ToString chain.
         /// </summary>
-        /// Each derived class should override this method properly.
-        /// <returns>
-        /// The string containing the name-value pairs of the immediate 
-        /// properties of this class.
-        /// </returns>
         protected virtual void Describe(StringBuilder stringBuilder)
         {
         }
 
+        #region Serialization
+
+        /// <summary>
+        /// Overridden by subclasses to build a deserialization chain.
+        /// </summary>
         public virtual void Deserialize(Deserializer deserializer)
         {
             fingerprint.Deserialize(deserializer);
         }
+
+        /// <summary>
+        /// Overridden by subclasses to build a verbose deserialization chain.
+        /// </summary>
         public virtual void Deserialize(VerboseDeserializer deserializer)
         {
         }
 
+        /// <summary>
+        /// Overridden by subclasses to build an encoded length computation chain.
+        /// </summary>
         public virtual int GetEncodedLength()
         {
             return fingerprint.GetEncodedLength();
         }
 
+        /// <summary>
+        /// Overridden by subclasses to build a serialization chain.
+        /// </summary>
         public virtual void Serialize(Serializer serializer)
         {
             fingerprint.Serialize(serializer);
         }
 
+        /// <summary>
+        /// Overridden by subclasses to build a verbose serialization chain.
+        /// </summary>
         public virtual void Serialize(VerboseSerializer serializer)
         {
         }
 
+        /// <summary>
+        /// Loads a new cell of type T from the specified deserializer.
+        /// </summary>
         public static void Load<T>(Deserializer deserializer, out T value) where T : Cell, new()
         {
             var type = typeof(T);
@@ -233,6 +249,8 @@ namespace x2
                 value.Deserialize(deserializer);
             }
         }
+
+        #endregion  // Serialization
 
         #region Operators
 
@@ -254,7 +272,7 @@ namespace x2
             return !(x == y);
         }
 
-        #endregion
+        #endregion  // Operators
 
         /// <summary>
         /// Supports light-weight custom type hierarchy for Cell and its subclasses.

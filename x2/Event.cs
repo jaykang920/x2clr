@@ -2,8 +2,6 @@
 // See the file LICENSE for details.
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Text;
 
 namespace x2
@@ -17,8 +15,6 @@ namespace x2
         /// Per-class type tag to support custom type hierarchy.
         /// </summary>
         new protected static readonly Tag tag;
-
-        public static int TypeId { get { return tag.TypeId; } }
 
         private string _channel;
         private int _handle;
@@ -82,35 +78,21 @@ namespace x2
         public Event() : base(tag.NumProps) { }
 
         /// <summary>
-        /// Initializes a new instance of the Event class with the specified 
-        /// Fingerprint.
+        /// Initializes a new Event instance with the given fingerprint length.
         /// </summary>
-        protected Event(Fingerprint fingerprint) : base(fingerprint) { }
-
-        /// <summary>
-        /// Initializes a new instance of the Event class with the specified 
-        /// fingerprint length.
-        /// </summary>
-        /// <param name="length">
-        /// The fingerprint length required to cover all the properties of the 
-        /// subclasses.
-        /// </param>
         protected Event(int length) : base(length + tag.NumProps) { }
 
+        /// <summary>
+        /// Creates a new instance of the Event class.
+        /// </summary>
         public static Event New()
         {
             return new Event();
         }
 
         /// <summary>
-        /// Describes the immediate property values into the specified
-        /// <see cref="System.Text.StringBuilder">StringBuilder</see>.
+        /// Overridden by subclasses to build a ToString chain.
         /// </summary>
-        /// Each derived class should override this method properly.
-        /// <returns>
-        /// The string containing the name-value pairs of the immediate 
-        /// properties of this class.
-        /// </returns>
         protected override void Describe(StringBuilder stringBuilder)
         {
             stringBuilder
@@ -119,13 +101,8 @@ namespace x2
         }
 
         /// <summary>
-        /// Determines whether this Event object is equal to the specified Event.
+        /// Overridden by subclasses to build an equality test chain.
         /// </summary>
-        /// <param name="other">An Event object to compare with this Event.</param>
-        /// <returns>
-        /// <b>true</b> if this Event is equal to <c>other</c>; otherwise,
-        /// <b>false</b>.
-        /// </returns>
         protected override bool EqualsTo(Cell other)
         {
             if (!base.EqualsTo(other))
@@ -152,6 +129,10 @@ namespace x2
             return GetHashCode(fingerprint, GetTypeId());
         }
 
+        /// <summary>
+        /// Returns the hash code for this event based on the specified
+        /// fingerprint, assuming the given type identifier.
+        /// </summary>
         public int GetHashCode(Fingerprint fingerprint, int typeId)
         {
             Hash hash = new Hash(GetHashCode(fingerprint));
@@ -160,6 +141,9 @@ namespace x2
             return hash.Code;
         }
 
+        /// <summary>
+        /// Overridden by subclasses to build a hash code generator chain.
+        /// </summary>
         public override int GetHashCode(Fingerprint fingerprint)
         {
             Hash hash = new Hash(base.GetHashCode(fingerprint));
@@ -177,16 +161,26 @@ namespace x2
             return hash.Code;
         }
 
+        /// <summary>
+        /// Returns the type identifier of this event.
+        /// </summary>
+        /// <returns></returns>
         public virtual int GetTypeId()
         {
             return tag.TypeId;
         }
 
+        /// <summary>
+        /// Returns the custom type tag of this event.
+        /// </summary>
         public override Cell.Tag GetTypeTag()
         {
             return tag;
         }
 
+        /// <summary>
+        /// Overridden by subclasses to build an equivalence test chain.
+        /// </summary>
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
@@ -212,24 +206,11 @@ namespace x2
             return true;
         }
 
-        /// <summary>
-        /// Determines whether this event object is a kind of the specified type
-        /// identifier in the custom type hierarchy.
-        /// </summary>
-        public bool IsKindOf(int typeId)
-        {
-            Tag tag = (Tag)GetTypeTag();
-            while (tag != null)
-            {
-                if (tag.TypeId == typeId)
-                {
-                    return true;
-                }
-                tag = (Tag)tag.Base;
-            }
-            return false;
-        }
+        #region Serialization
 
+        /// <summary>
+        /// Overridden by subclasses to build a deserialization chain.
+        /// </summary>
         public override void Deserialize(Deserializer deserializer)
         {
             base.Deserialize(deserializer);
@@ -240,12 +221,18 @@ namespace x2
             }
         }
 
+        /// <summary>
+        /// Overridden by subclasses to build a verbose deserialization chain.
+        /// </summary>
         public override void Deserialize(VerboseDeserializer deserializer)
         {
             base.Deserialize(deserializer);
             deserializer.Read("_WaitHandle", out _waitHandle);
         }
-        
+
+        /// <summary>
+        /// Overridden by subclasses to build an encoded length computation chain.
+        /// </summary>
         public override int GetEncodedLength()
         {
             int length = Serializer.GetEncodedLength(GetTypeId());
@@ -258,6 +245,9 @@ namespace x2
             return length;
         }
 
+        /// <summary>
+        /// Overridden by subclasses to build a serialization chain.
+        /// </summary>
         public override void Serialize(Serializer serializer)
         {
             serializer.Write(GetTypeId());
@@ -268,30 +258,31 @@ namespace x2
                 serializer.Write(_waitHandle);
             }
         }
+
+        /// <summary>
+        /// Overridden by subclasses to build a verbose serialization chain.
+        /// </summary>
         public override void Serialize(VerboseSerializer serializer)
         {
             base.Serialize(serializer);
             serializer.Write("_WaitHandle", _waitHandle);
         }
 
+        #endregion  // Serialization
+
         /// <summary>
-        /// Supports light-weight custom type hierarchy for Event and its derived 
-        /// classes.
+        /// Supports light-weight custom type hierarchy for Event and its subclasses.
         /// </summary>
         new public class Tag : Cell.Tag
         {
             /// <summary>
-            /// Gets the integer type identifier.
+            /// Gets the type identifier of this event type.
             /// </summary>
             public int TypeId { get; private set; }
 
             /// <summary>
             /// Initializes a new instance of the Event.Tag class.
             /// </summary>
-            /// <param name="baseTag">The base type tag.</param>
-            /// <param name="runtimeType">The associated runtime type.</param>
-            /// <param name="numProps">The number of immediate properties.</param>
-            /// <param name="typeId">The integer type identifier.</param>
             public Tag(Tag baseTag, Type runtimeType, int numProps, int typeId)
                 : base(baseTag, runtimeType, numProps)
             {
@@ -300,6 +291,9 @@ namespace x2
         }
     }
 
+    /// <summary>
+    /// An event proxy to support hash table matching based on equivalence.
+    /// </summary>
     public class EventEquivalent : Event
     {
         public Event InnerEvent { get; set; }

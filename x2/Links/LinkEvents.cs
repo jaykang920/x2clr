@@ -68,8 +68,6 @@ namespace x2
     {
         new protected static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
-
         private string linkName_;
         private bool result_;
         private object context_;
@@ -227,8 +225,6 @@ namespace x2
     public class LinkSessionDisconnected : Event
     {
         new protected static readonly Tag tag;
-
-        new public static int TypeId { get { return tag.TypeId; } }
 
         private string linkName_;
         private int handle_;
@@ -388,8 +384,6 @@ namespace x2
     {
         new protected static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
-
         private byte[] data_;
 
         public byte[] Data
@@ -541,8 +535,6 @@ namespace x2
     public class HandshakeResp : Event
     {
         new protected static readonly Tag tag;
-
-        new public static int TypeId { get { return tag.TypeId; } }
 
         private byte[] data_;
 
@@ -696,8 +688,6 @@ namespace x2
     {
         new protected static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
-
         private bool result_;
 
         public bool Result
@@ -849,8 +839,6 @@ namespace x2
     public class LinkSessionRecovered : Event
     {
         new protected static readonly Tag tag;
-
-        new public static int TypeId { get { return tag.TypeId; } }
 
         private string linkName_;
         private int handle_;
@@ -1009,8 +997,6 @@ namespace x2
     public class SessionReq : Event
     {
         new protected static readonly Tag tag;
-
-        new public static int TypeId { get { return tag.TypeId; } }
 
         private string token_;
         private long rxCounter_;
@@ -1293,8 +1279,6 @@ namespace x2
     {
         new protected static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
-
         private string token_;
         private int retransmission_;
 
@@ -1490,8 +1474,6 @@ namespace x2
     {
         new protected static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
-
         private bool recovered_;
 
         public bool Recovered
@@ -1643,8 +1625,6 @@ namespace x2
     public class SessionEnd : Event
     {
         new protected static readonly Tag tag;
-
-        new public static int TypeId { get { return tag.TypeId; } }
 
         static SessionEnd()
         {
