@@ -125,7 +125,7 @@ namespace x2
         {
         }
 
-        public override bool EqualsTo(Cell other)
+        protected override bool EqualsTo(Cell other)
         {
             if (!base.EqualsTo(other))
             {
@@ -183,7 +183,7 @@ namespace x2
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
             {
@@ -285,7 +285,7 @@ namespace x2
         {
         }
 
-        public override bool EqualsTo(Cell other)
+        protected override bool EqualsTo(Cell other)
         {
             if (!base.EqualsTo(other))
             {
@@ -343,7 +343,7 @@ namespace x2
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
             {
@@ -425,7 +425,7 @@ namespace x2
             Initialize();
         }
 
-        public override bool EqualsTo(Cell other)
+        protected override bool EqualsTo(Cell other)
         {
             if (!base.EqualsTo(other))
             {
@@ -465,7 +465,7 @@ namespace x2
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
             {
@@ -579,7 +579,7 @@ namespace x2
             Initialize();
         }
 
-        public override bool EqualsTo(Cell other)
+        protected override bool EqualsTo(Cell other)
         {
             if (!base.EqualsTo(other))
             {
@@ -619,7 +619,7 @@ namespace x2
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
             {
@@ -733,7 +733,7 @@ namespace x2
             Initialize();
         }
 
-        public override bool EqualsTo(Cell other)
+        protected override bool EqualsTo(Cell other)
         {
             if (!base.EqualsTo(other))
             {
@@ -773,7 +773,7 @@ namespace x2
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
             {
@@ -907,7 +907,7 @@ namespace x2
         {
         }
 
-        public override bool EqualsTo(Cell other)
+        protected override bool EqualsTo(Cell other)
         {
             if (!base.EqualsTo(other))
             {
@@ -965,7 +965,7 @@ namespace x2
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
             {
@@ -1080,7 +1080,7 @@ namespace x2
             Initialize();
         }
 
-        public override bool EqualsTo(Cell other)
+        protected override bool EqualsTo(Cell other)
         {
             if (!base.EqualsTo(other))
             {
@@ -1147,7 +1147,7 @@ namespace x2
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
             {
@@ -1341,7 +1341,7 @@ namespace x2
             Initialize();
         }
 
-        public override bool EqualsTo(Cell other)
+        protected override bool EqualsTo(Cell other)
         {
             if (!base.EqualsTo(other))
             {
@@ -1390,7 +1390,7 @@ namespace x2
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
             {
@@ -1527,7 +1527,7 @@ namespace x2
             Initialize();
         }
 
-        public override bool EqualsTo(Cell other)
+        protected override bool EqualsTo(Cell other)
         {
             if (!base.EqualsTo(other))
             {
@@ -1567,7 +1567,7 @@ namespace x2
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
             {
@@ -1669,7 +1669,7 @@ namespace x2
             Initialize();
         }
 
-        public override bool EqualsTo(Cell other)
+        protected override bool EqualsTo(Cell other)
         {
             if (!base.EqualsTo(other))
             {
@@ -1694,7 +1694,7 @@ namespace x2
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
             {

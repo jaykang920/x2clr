@@ -45,8 +45,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Determines whether the specified object is equal to the current
-        /// object.
+        /// Determines whether the specified object is equal to this one.
         /// </summary>
         public override bool Equals(object obj)
         {
@@ -54,8 +53,6 @@ namespace x2
             {
                 return true;
             }
-            // Any comparison except the reference equality is delegated to the
-            // EqualsTo() method chain.
             Cell other = obj as Cell;
             if ((object)other == null)
             {
@@ -65,52 +62,15 @@ namespace x2
         }
 
         /// <summary>
-        /// Determines whether this Cell object is equal to the specified one.
+        /// Overridden by subclasses to build an equality test chain.
         /// </summary>
-        public virtual bool EqualsTo(Cell other)
+        protected virtual bool EqualsTo(Cell other)
         {
             if (GetType() != other.GetType())
             {
                 return false;
             }
-            /*
-            if (!fingerprint.Equals(other.fingerprint))
-            {
-                return false;
-            }
-            */
             return true;
-        }
-
-        public Fingerprint GetFingerprint()
-        {
-            return fingerprint;
-        }
-
-        internal void SetFingerprint(Fingerprint fingerprint)
-        {
-            this.fingerprint = fingerprint;
-        }
-
-        /// <summary>
-        /// Returns the hash code for the current object.
-        /// </summary>
-        public override int GetHashCode()
-        {
-            return GetHashCode(fingerprint);
-        }
-
-        public virtual int GetHashCode(Fingerprint fingerprint)
-        {
-            return Hash.Seed;
-        }
-
-        /// <summary>
-        /// Returns the custom type tag of this object.
-        /// </summary>
-        public virtual Tag GetTypeTag()
-        {
-            return tag;
         }
 
         /// <summary>
@@ -147,9 +107,40 @@ namespace x2
             return IsEquivalent(other, fingerprint);
         }
 
-        public virtual bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        protected virtual bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             return true;
+        }
+
+        public Fingerprint GetFingerprint()
+        {
+            return fingerprint;
+        }
+
+        internal void SetFingerprint(Fingerprint fingerprint)
+        {
+            this.fingerprint = fingerprint;
+        }
+
+        /// <summary>
+        /// Returns the hash code for the current object.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return GetHashCode(fingerprint);
+        }
+
+        public virtual int GetHashCode(Fingerprint fingerprint)
+        {
+            return Hash.Seed;
+        }
+
+        /// <summary>
+        /// Returns the custom type tag of this object.
+        /// </summary>
+        public virtual Tag GetTypeTag()
+        {
+            return tag;
         }
 
         /// <summary>

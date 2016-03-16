@@ -8,7 +8,7 @@ namespace x2
     /// <summary>
     /// Utility struct for hash code generation.
     /// </summary>
-    /// Be aware that this struct is mutable.
+    /// <remarks>Be aware that this struct is mutable.</remarks>
     public partial struct Hash
     {
         /// <summary>

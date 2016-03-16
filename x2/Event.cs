@@ -126,7 +126,7 @@ namespace x2
         /// <b>true</b> if this Event is equal to <c>other</c>; otherwise,
         /// <b>false</b>.
         /// </returns>
-        public override bool EqualsTo(Cell other)
+        protected override bool EqualsTo(Cell other)
         {
             if (!base.EqualsTo(other))
             {
@@ -155,7 +155,7 @@ namespace x2
         public int GetHashCode(Fingerprint fingerprint, int typeId)
         {
             Hash hash = new Hash(GetHashCode(fingerprint));
-            hash.Update(-1);
+            hash.Update(-1);  // separator
             hash.Update(typeId);
             return hash.Code;
         }
@@ -187,7 +187,7 @@ namespace x2
             return tag;
         }
 
-        public override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
             {
@@ -305,7 +305,7 @@ namespace x2
         public Event InnerEvent { get; set; }
         public int InnerTypeId { get; set; }
 
-        public override bool EqualsTo(Cell other)
+        protected override bool EqualsTo(Cell other)
         {
             return other.Equivalent(InnerEvent, fingerprint);
         }
