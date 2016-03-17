@@ -16,6 +16,8 @@ namespace x2
         /// </summary>
         new protected static readonly Tag tag;
 
+        public static int TypeId { get { return tag.TypeId; } }
+
         private string _channel;
         private int _handle;
         private bool _transform = true;

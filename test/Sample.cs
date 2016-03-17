@@ -659,6 +659,8 @@ namespace x2.Tests
     {
         new protected static readonly Tag tag;
 
+        new public static int TypeId { get { return tag.TypeId; } }
+
         private int foo_;
         private string bar_;
 
@@ -854,6 +856,8 @@ namespace x2.Tests
     {
         new protected static readonly Tag tag;
 
+        new public static int TypeId { get { return tag.TypeId; } }
+
         private bool baz_;
 
         public bool Baz
@@ -1006,6 +1010,8 @@ namespace x2.Tests
     {
         new protected static readonly Tag tag;
 
+        new public static int TypeId { get { return tag.TypeId; } }
+
         private bool qux_;
 
         public bool Qux
@@ -1157,6 +1163,8 @@ namespace x2.Tests
     public class SampleEvent4 : SampleEvent2
     {
         new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private bool quux_;
 

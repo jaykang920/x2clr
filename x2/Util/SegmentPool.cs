@@ -128,7 +128,7 @@ namespace x2
     /// <summary>
     /// Manages a pool of fixed-length (2^n) byte array segments.
     /// </summary>
-    public sealed class SegmentPool
+    public static class SegmentPool
     {
         private static List<SegmentedBuffer> pools;
 

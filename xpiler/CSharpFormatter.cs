@@ -224,6 +224,11 @@ namespace xpiler
             Indent(0); Out.WriteLine("{");
             Indent(1); Out.WriteLine("new protected static readonly Tag tag;");
             Out.WriteLine();
+            if (def.IsEvent)
+            {
+                Indent(1); Out.WriteLine("new public static int TypeId { get { return tag.TypeId; } }");
+                Out.WriteLine();
+            }
             FormatFields(def);
             if (def.HasProperties)
             {

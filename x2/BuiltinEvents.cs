@@ -62,6 +62,8 @@ namespace x2
     {
         new protected static readonly Tag tag;
 
+        new public static int TypeId { get { return tag.TypeId; } }
+
         static HeartbeatEvent()
         {
             tag = new Tag(Event.tag, typeof(HeartbeatEvent), 0,
@@ -162,6 +164,8 @@ namespace x2
     {
         new protected static readonly Tag tag;
 
+        new public static int TypeId { get { return tag.TypeId; } }
+
         static FlowStart()
         {
             tag = new Tag(Event.tag, typeof(FlowStart), 0,
@@ -230,6 +234,8 @@ namespace x2
     {
         new protected static readonly Tag tag;
 
+        new public static int TypeId { get { return tag.TypeId; } }
+
         static FlowStop()
         {
             tag = new Tag(Event.tag, typeof(FlowStop), 0,
@@ -297,6 +303,8 @@ namespace x2
     public class TimeoutEvent : Event
     {
         new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private object key_;
 
