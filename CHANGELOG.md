@@ -1,3 +1,7 @@
+Features:
+
+- property type datetime is now encoded as milliseconds, not microseconds
+
 ## 0.8.0 (2016-03-14)
 
 Features:
