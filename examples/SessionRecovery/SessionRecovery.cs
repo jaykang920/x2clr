@@ -12,6 +12,8 @@ namespace x2.Examples.SessionRecovery
     {
         new protected static readonly Tag tag;
 
+        new public static int TypeId { get { return tag.TypeId; } }
+
         private long serial_;
 
         public long Serial
@@ -163,6 +165,8 @@ namespace x2.Examples.SessionRecovery
     public class TestResp : Event
     {
         new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private long serial_;
 

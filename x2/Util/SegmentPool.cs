@@ -9,13 +9,29 @@ namespace x2
 {
     /// <summary>
     /// A reduced form of the ArraySegment(byte) struct, assuming a known
-    /// <c>count</c> value.
+    /// constant count value.
     /// </summary>
     public struct Segment
     {
         private byte[] array;
         private int offset;
 
+        /// <summary>
+        /// Gets the backing byte array containing the range of bytes that this
+        /// segment delimits.
+        /// </summary>
+        public byte[] Array { get { return array; } }
+
+        /// <summary>
+        /// Gets the position of the first byte in the range delimited by this
+        /// segment, relative to the start of the backing byte array.
+        /// </summary>
+        public int Offset { get { return offset; } }
+
+        /// <summary>
+        /// Initializes a new instance of the Segment structure that delimits
+        /// the specified range of the bytes in the specified byte array.
+        /// </summary>
         public Segment(byte[] array, int offset)
         {
             if (array == null)
@@ -28,15 +44,6 @@ namespace x2
             }
             this.array = array;
             this.offset = offset;
-        }
-
-        public byte[] Array { get { return array; } }
-
-        public int Offset { get { return offset; } } 
-
-        public override int GetHashCode()
-        {
-            return array.GetHashCode() ^ offset;
         }
 
         public override bool Equals(Object obj)
@@ -53,6 +60,13 @@ namespace x2
             return obj.array == array && obj.offset == offset;
         }
 
+        public override int GetHashCode()
+        {
+            return array.GetHashCode() ^ offset;
+        }
+
+        // Operators
+
         public static bool operator ==(Segment x, Segment y)
         {
             return x.Equals(y);
@@ -65,8 +79,7 @@ namespace x2
     } 
 
     /// <summary>
-    /// Manages a single large buffer block as if it's a pool of smaller
-    /// fixed-length (2^n bytes) segments.
+    /// Manages a single large buffer block as if it's a pool of smaller segments.
     /// </summary>
     public sealed class SegmentedBuffer
     {
@@ -74,52 +87,64 @@ namespace x2
         private static readonly int segmentSize = Config.Buffer.SegmentSize;
 
         private byte[] buffer;
-        private int currentOffset;
-        private Stack<int> freeOffsetPool;
+        private int offset;
+        private Stack<int> available;
 
         private object syncRoot = new Object();
 
+        /// <summary>
+        /// Initializes a new instance of the SegmentedBuffer class.
+        /// </summary>
         public SegmentedBuffer()
         {
-            freeOffsetPool = new Stack<int>();
             buffer = new byte[chunkSize];
+            available = new Stack<int>();
         }
 
+        /// <summary>
+        /// Tries to acquire an available buffer segment.
+        /// </summary>
+        /// <returns>true if successful, false if there is no available segment.
+        /// </returns>
         public bool Acquire(ref Segment segment)
         {
-            lock (freeOffsetPool)
+            lock (available)
             {
-                if (freeOffsetPool.Count > 0)
+                if (available.Count > 0)
                 {
-                    segment = new Segment(buffer, freeOffsetPool.Pop());
+                    segment = new Segment(buffer, available.Pop());
                     return true;
                 }
             }
 
-            int offset;
+            int position;
             lock (syncRoot)
             {
-                if ((chunkSize - segmentSize) < currentOffset)
+                if ((chunkSize - segmentSize) < offset)
                 {
                     return false;
                 }
-
-                offset = currentOffset;
-                currentOffset += segmentSize;
+                position = offset;
+                offset += segmentSize;
             }
-            segment = new Segment(buffer, offset);
+            segment = new Segment(buffer, position);
             return true;
         }
 
+        /// <summary>
+        /// Tries to return the specified segment back to the pool.
+        /// </summary>
+        /// <returns>true if successful, false if the specified segment does not
+        /// belong to this pool.</returns>
         public bool Release(Segment segment)
         {
             if (segment.Array != buffer)
             {
                 return false;
             }
-            lock (freeOffsetPool)
+            lock (available)
             {
-                freeOffsetPool.Push(segment.Offset);
+                available.Push(segment.Offset);
             }
             return true;
         }
@@ -145,6 +170,9 @@ namespace x2
             }
         }
 
+        /// <summary>
+        /// Acquires an avilable segment from the pool.
+        /// </summary>
         public static Segment Acquire()
         {
             Segment result = new Segment();
@@ -174,6 +202,9 @@ namespace x2
             return result;
         }
 
+        /// <summary>
+        /// Returns the specified segment back to the pool.
+        /// </summary>
         public static void Release(Segment segment)
         {
             using (new ReadLock(rwlock))

@@ -126,8 +126,9 @@ namespace x2
         /// </summary>
         public void Write(DateTime value)
         {
-            long usecs = (value.Ticks - 621355968000000000) / 10;
-            WriteFixedBigEndian(usecs);
+            long milliseconds =
+                (value.Ticks - 621355968000000000) / TimeSpan.TicksPerMillisecond;
+            WriteFixedBigEndian(milliseconds);
         }
 
         // Overloaded Write for composite types

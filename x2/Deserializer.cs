@@ -187,10 +187,10 @@ namespace x2
         /// </summary>
         public void Read(out DateTime value)
         {
-            long usecs;
-            ReadFixedBigEndian(out usecs);
+            long milliseconds;
+            ReadFixedBigEndian(out milliseconds);
             DateTime unixEpoch = new DateTime(621355968000000000);
-            value = unixEpoch.AddTicks(usecs * 10);
+            value = unixEpoch.AddTicks(milliseconds * TimeSpan.TicksPerMillisecond);
         }
 
         // Overloaded Read for composite types
@@ -466,7 +466,7 @@ namespace x2
                 }
                 shift += 7;
             }
-            return (i < 10 ? (i + 1) : 10);
+            return (i < 10 ? (i + 1) : 0);
         }
 
         /// <summary>

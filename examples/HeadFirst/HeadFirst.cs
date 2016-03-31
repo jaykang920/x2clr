@@ -12,6 +12,8 @@ namespace x2.Examples.HeadFirst
     {
         new protected static readonly Tag tag;
 
+        new public static int TypeId { get { return tag.TypeId; } }
+
         private string message_;
 
         public string Message
@@ -163,6 +165,8 @@ namespace x2.Examples.HeadFirst
     public class CapitalizeResp : Event
     {
         new protected static readonly Tag tag;
+
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private string result_;
 

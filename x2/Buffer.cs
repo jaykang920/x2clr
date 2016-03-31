@@ -107,6 +107,9 @@ namespace x2
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the Buffer class.
+        /// </summary>
         public Buffer()
         {
             if (sizeExponent < 0 || 31 < sizeExponent)
@@ -305,6 +308,9 @@ namespace x2
             back += numBytes;
         }
 
+        /// <summary>
+        /// Returns a byte array containing all the bytes in this buffer.
+        /// </summary>
         public byte[] ToArray()
         {
             byte[] array = new byte[Length];
@@ -342,6 +348,7 @@ namespace x2
                 }
                 marker = -1;
             }
+
             if (position == back)
             {
                 index = 1;
@@ -359,6 +366,7 @@ namespace x2
                 back -= BlockSize * count;
                 front = position & remainderMask;
             }
+
             if (count > 0)
             {
                 int roomFactor = 1 << level;
