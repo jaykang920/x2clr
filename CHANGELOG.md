@@ -1,3 +1,7 @@
+Features:
+
+- renamed a few methods
+
 ## 0.8.1 (2016-04-01)
 
 Features:
