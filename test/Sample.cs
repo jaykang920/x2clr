@@ -203,17 +203,17 @@ namespace x2.Tests
             serializer.Write("Bar", bar_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(foo_);
+                length += Serializer.GetLength(foo_);
             }
             if (touched[1])
             {
-                length += Serializer.GetEncodedLength(bar_);
+                length += Serializer.GetLength(bar_);
             }
             return length;
         }
@@ -350,13 +350,13 @@ namespace x2.Tests
             serializer.Write("Baz", baz_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(baz_);
+                length += Serializer.GetLength(baz_);
             }
             return length;
         }
@@ -491,13 +491,13 @@ namespace x2.Tests
             serializer.Write("Qux", qux_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(qux_);
+                length += Serializer.GetLength(qux_);
             }
             return length;
         }
@@ -632,13 +632,13 @@ namespace x2.Tests
             serializer.Write("Quux", quux_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(quux_);
+                length += Serializer.GetLength(quux_);
             }
             return length;
         }
@@ -823,17 +823,17 @@ namespace x2.Tests
             serializer.Write("Bar", bar_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(foo_);
+                length += Serializer.GetLength(foo_);
             }
             if (touched[1])
             {
-                length += Serializer.GetEncodedLength(bar_);
+                length += Serializer.GetLength(bar_);
             }
             return length;
         }
@@ -983,13 +983,13 @@ namespace x2.Tests
             serializer.Write("Baz", baz_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(baz_);
+                length += Serializer.GetLength(baz_);
             }
             return length;
         }
@@ -1137,13 +1137,13 @@ namespace x2.Tests
             serializer.Write("Qux", qux_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(qux_);
+                length += Serializer.GetLength(qux_);
             }
             return length;
         }
@@ -1291,13 +1291,13 @@ namespace x2.Tests
             serializer.Write("Quux", quux_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(quux_);
+                length += Serializer.GetLength(quux_);
             }
             return length;
         }

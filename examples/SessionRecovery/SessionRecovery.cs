@@ -139,13 +139,13 @@ namespace x2.Examples.SessionRecovery
             serializer.Write("Serial", serial_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(serial_);
+                length += Serializer.GetLength(serial_);
             }
             return length;
         }
@@ -293,13 +293,13 @@ namespace x2.Examples.SessionRecovery
             serializer.Write("Serial", serial_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(serial_);
+                length += Serializer.GetLength(serial_);
             }
             return length;
         }

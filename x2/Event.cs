@@ -235,14 +235,14 @@ namespace x2
         /// <summary>
         /// Overridden by subclasses to build an encoded length computation chain.
         /// </summary>
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = Serializer.GetEncodedLength(GetTypeId());
-            length += base.GetEncodedLength();
+            int length = Serializer.GetLength(GetTypeId());
+            length += base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[1])
             {
-                length += Serializer.GetEncodedLength(_waitHandle);
+                length += Serializer.GetLength(_waitHandle);
             }
             return length;
         }

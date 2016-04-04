@@ -92,7 +92,7 @@ namespace x2
         public void Write(string value)
         {
             // UTF-8 encoding
-            int length = GetEncodedLengthUTF8(value);
+            int length = GetLengthUTF8(value);
             WriteVariableNonnegative(length);
             if (length == 0)
             {
@@ -229,7 +229,7 @@ namespace x2
         public void Write<T>(T value) where T : Cell
         {
             bool isNull = Object.ReferenceEquals(value, null);
-            int length = isNull ? 0 : value.GetEncodedLength();
+            int length = isNull ? 0 : value.GetLength();
             WriteVariableNonnegative(length);
             if (!isNull)
             {

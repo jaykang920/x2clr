@@ -139,13 +139,13 @@ namespace x2.Examples.HeadFirst
             serializer.Write("Message", message_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(message_);
+                length += Serializer.GetLength(message_);
             }
             return length;
         }
@@ -293,13 +293,13 @@ namespace x2.Examples.HeadFirst
             serializer.Write("Result", result_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(result_);
+                length += Serializer.GetLength(result_);
             }
             return length;
         }

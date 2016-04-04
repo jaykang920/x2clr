@@ -209,9 +209,9 @@ namespace x2
         /// <summary>
         /// Overridden by subclasses to build an encoded length computation chain.
         /// </summary>
-        public virtual int GetEncodedLength()
+        public virtual int GetLength()
         {
-            return fingerprint.GetEncodedLength();
+            return fingerprint.GetLength();
         }
 
         /// <summary>

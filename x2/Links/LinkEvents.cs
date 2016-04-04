@@ -515,13 +515,13 @@ namespace x2
             serializer.Write("Data", data_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(data_);
+                length += Serializer.GetLength(data_);
             }
             return length;
         }
@@ -669,13 +669,13 @@ namespace x2
             serializer.Write("Data", data_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(data_);
+                length += Serializer.GetLength(data_);
             }
             return length;
         }
@@ -823,13 +823,13 @@ namespace x2
             serializer.Write("Result", result_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(result_);
+                length += Serializer.GetLength(result_);
             }
             return length;
         }
@@ -1248,25 +1248,25 @@ namespace x2
             serializer.Write("TxBuffered", txBuffered_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(token_);
+                length += Serializer.GetLength(token_);
             }
             if (touched[1])
             {
-                length += Serializer.GetEncodedLength(rxCounter_);
+                length += Serializer.GetLength(rxCounter_);
             }
             if (touched[2])
             {
-                length += Serializer.GetEncodedLength(txCounter_);
+                length += Serializer.GetLength(txCounter_);
             }
             if (touched[3])
             {
-                length += Serializer.GetEncodedLength(txBuffered_);
+                length += Serializer.GetLength(txBuffered_);
             }
             return length;
         }
@@ -1457,17 +1457,17 @@ namespace x2
             serializer.Write("Retransmission", retransmission_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(token_);
+                length += Serializer.GetLength(token_);
             }
             if (touched[1])
             {
-                length += Serializer.GetEncodedLength(retransmission_);
+                length += Serializer.GetLength(retransmission_);
             }
             return length;
         }
@@ -1617,13 +1617,13 @@ namespace x2
             serializer.Write("Recovered", recovered_);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetEncodedLength(recovered_);
+                length += Serializer.GetLength(recovered_);
             }
             return length;
         }
@@ -1723,9 +1723,9 @@ namespace x2
             base.Serialize(serializer);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             return length;
         }
 

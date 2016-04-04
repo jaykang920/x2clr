@@ -8,80 +8,80 @@ using System.Text;
 
 namespace x2
 {
-    // Serializer.GetEncodedLength
+    // Serializer.GetLength
     public sealed partial class Serializer
     {
-        // Overloaded GetEncodedLength for primitive types
+        // Overloaded GetLength for primitive types
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified boolean
         /// value.
         /// </summary>
-        public static int GetEncodedLength(bool value) { return 1; }
+        public static int GetLength(bool value) { return 1; }
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified single
         /// byte.
         /// </summary>
-        public static int GetEncodedLength(byte value) { return 1; }
+        public static int GetLength(byte value) { return 1; }
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified 8-bit
         /// signed integer.
         /// </summary>
-        public static int GetEncodedLength(sbyte value) { return 1; }
+        public static int GetLength(sbyte value) { return 1; }
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified 16-bit
         /// signed integer.
         /// </summary>
-        public static int GetEncodedLength(short value) { return 2; }
+        public static int GetLength(short value) { return 2; }
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified 32-bit
         /// signed integer.
         /// </summary>
-        public static int GetEncodedLength(int value)
+        public static int GetLength(int value)
         {
-            return GetEncodedLengthVariable((uint)((value << 1) ^ (value >> 31)));
+            return GetLengthVariable((uint)((value << 1) ^ (value >> 31)));
         }
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified 64-bit
         /// signed integer.
         /// </summary>
-        public static int GetEncodedLength(long value)
+        public static int GetLength(long value)
         {
-            return GetEncodedLengthVariable((ulong)((value << 1) ^ (value >> 63)));
+            return GetLengthVariable((ulong)((value << 1) ^ (value >> 63)));
         }
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified 32-bit
         /// floating-point number.
         /// </summary>
-        public static int GetEncodedLength(float value) { return 4; }
+        public static int GetLength(float value) { return 4; }
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified 64-bit
         /// floating-point number.
         /// </summary>
-        public static int GetEncodedLength(double value) { return 8; }
+        public static int GetLength(double value) { return 8; }
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified text
         /// string.
         /// </summary>
-        public static int GetEncodedLength(string value)
+        public static int GetLength(string value)
         {
-            int length = GetEncodedLengthUTF8(value);
-            return GetEncodedLengthVariableNonnegative(length) + length;
+            int length = GetLengthUTF8(value);
+            return GetLengthVariableNonnegative(length) + length;
         }
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified text
         /// string with UTF-8 encoding.
         /// </summary>
-        private static int GetEncodedLengthUTF8(string value)
+        private static int GetLengthUTF8(string value)
         {
             int length = 0;
             if (!Object.ReferenceEquals(value, null))
@@ -102,31 +102,31 @@ namespace x2
         /// Gets the number of bytes required to encode the specified datetime
         /// value.
         /// </summary>
-        public static int GetEncodedLength(DateTime value) { return 8; }
+        public static int GetLength(DateTime value) { return 8; }
 
-        // Overloaded GetEncodedLength for composite types
+        // Overloaded GetLength for composite types
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified array of
         /// bytes.
         /// </summary>
-        public static int GetEncodedLength(byte[] value)
+        public static int GetLength(byte[] value)
         {
             int length = Object.ReferenceEquals(value, null) ? 0 : value.Length;
-            return GetEncodedLengthVariableNonnegative(length) + length;
+            return GetLengthVariableNonnegative(length) + length;
         }
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified ordered
         /// list of Int32 values.
         /// </summary>
-        public static int GetEncodedLength(List<int> value)
+        public static int GetLength(List<int> value)
         {
             int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
-            int length = GetEncodedLengthVariableNonnegative(count);
+            int length = GetLengthVariableNonnegative(count);
             for (int i = 0; i < count; ++i)
             {
-                length += GetEncodedLength(value[i]);
+                length += GetLength(value[i]);
             }
             return length;
         }
@@ -135,13 +135,13 @@ namespace x2
         /// Gets the number of bytes required to encode the specified ordered
         /// list of Int64 values.
         /// </summary>
-        public static int GetEncodedLength(List<long> value)
+        public static int GetLength(List<long> value)
         {
             int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
-            int length = GetEncodedLengthVariableNonnegative(count);
+            int length = GetLengthVariableNonnegative(count);
             for (int i = 0; i < count; ++i)
             {
-                length += GetEncodedLength(value[i]);
+                length += GetLength(value[i]);
             }
             return length;
         }
@@ -150,13 +150,13 @@ namespace x2
         /// Gets the number of bytes required to encode the specified ordered
         /// list of 32-bit floating-point values.
         /// </summary>
-        public static int GetEncodedLength(List<float> value)
+        public static int GetLength(List<float> value)
         {
             int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
-            int length = GetEncodedLengthVariableNonnegative(count);
+            int length = GetLengthVariableNonnegative(count);
             for (int i = 0; i < count; ++i)
             {
-                length += GetEncodedLength(value[i]);
+                length += GetLength(value[i]);
             }
             return length;
         }
@@ -165,13 +165,13 @@ namespace x2
         /// Gets the number of bytes required to encode the specified ordered
         /// list of DateTime values.
         /// </summary>
-        public static int GetEncodedLength(List<DateTime> value)
+        public static int GetLength(List<DateTime> value)
         {
             int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
-            int length = GetEncodedLengthVariableNonnegative(count);
+            int length = GetLengthVariableNonnegative(count);
             for (int i = 0; i < count; ++i)
             {
-                length += GetEncodedLength(value[i]);
+                length += GetLength(value[i]);
             }
             return length;
         }
@@ -180,13 +180,13 @@ namespace x2
         /// Gets the number of bytes required to encode the specified ordered
         /// list of Int32 lists.
         /// </summary>
-        public static int GetEncodedLength(List<List<int>> value)
+        public static int GetLength(List<List<int>> value)
         {
             int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
-            int length = GetEncodedLengthVariableNonnegative(count);
+            int length = GetLengthVariableNonnegative(count);
             for (int i = 0; i < count; ++i)
             {
-                length += GetEncodedLength(value[i]);
+                length += GetLength(value[i]);
             }
             return length;
         }
@@ -195,13 +195,13 @@ namespace x2
         /// Gets the number of bytes required to encode the specified ordered
         /// list of Cell-derived objects.
         /// </summary>
-        public static int GetEncodedLength<T>(List<T> value) where T : Cell
+        public static int GetLength<T>(List<T> value) where T : Cell
         {
             int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
-            int length = GetEncodedLengthVariableNonnegative(count);
+            int length = GetLengthVariableNonnegative(count);
             for (int i = 0; i < count; ++i)
             {
-                length += GetEncodedLength(value[i]);
+                length += GetLength(value[i]);
             }
             return length;
         }
@@ -210,20 +210,20 @@ namespace x2
         /// Gets the number of bytes required to encode the specified
         /// Cell-derived object.
         /// </summary>
-        public static int GetEncodedLength<T>(T value) where T : Cell
+        public static int GetLength<T>(T value) where T : Cell
         {
             int length = Object.ReferenceEquals(value, null) ?
-                0 : value.GetEncodedLength();
-            return GetEncodedLengthVariableNonnegative(length) + length;
+                0 : value.GetLength();
+            return GetLengthVariableNonnegative(length) + length;
         }
 
-        // GetEncodedLength helper methods
+        // GetLength helper methods
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified 32-bit
         /// unsigned integer with unsigned LEB128 encoding.
         /// </summary>
-        private static int GetEncodedLengthVariable(uint value)
+        private static int GetLengthVariable(uint value)
         {
             if ((value & 0xffffff80) == 0) { return 1; }
             if ((value & 0xffffc000) == 0) { return 2; }
@@ -236,7 +236,7 @@ namespace x2
         /// Gets the number of bytes required to encode the specified 64-bit
         /// unsigned integer with unsigned LEB128 encoding.
         /// </summary>
-        private static int GetEncodedLengthVariable(ulong value)
+        private static int GetLengthVariable(ulong value)
         {
             if ((value & 0xffffffffffffff80L) == 0) { return 1; }
             if ((value & 0xffffffffffffc000L) == 0) { return 2; }
@@ -254,10 +254,10 @@ namespace x2
         /// Gets the number of bytes required to encode the specified 32-bit
         /// non-negative integer.
         /// </summary>
-        public static int GetEncodedLengthVariableNonnegative(int value)
+        public static int GetLengthVariableNonnegative(int value)
         {
             if (value < 0) { throw new ArgumentOutOfRangeException(); }
-            return GetEncodedLengthVariable((uint)value);
+            return GetLengthVariable((uint)value);
         }
     }
 }

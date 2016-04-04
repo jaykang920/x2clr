@@ -141,9 +141,9 @@ namespace x2
             base.Serialize(serializer);
         }
 
-        public override int GetEncodedLength()
+        public override int GetLength()
         {
-            int length = base.GetEncodedLength();
+            int length = base.GetLength();
             return length;
         }
 

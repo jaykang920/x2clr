@@ -541,9 +541,9 @@ namespace xpiler
             Indent(1); Out.WriteLine("}");
 
             Out.WriteLine();
-            Indent(1); Out.WriteLine("public override int GetEncodedLength()");
+            Indent(1); Out.WriteLine("public override int GetLength()");
             Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("int length = base.GetEncodedLength();");
+            Indent(2); Out.WriteLine("int length = base.GetLength();");
             if (def.HasProperties)
             {
                 Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
@@ -551,7 +551,7 @@ namespace xpiler
                 {
                     Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
                     Indent(2); Out.WriteLine("{");
-                    Indent(3); Out.WriteLine("length += Serializer.GetEncodedLength({0});", property.NativeName);
+                    Indent(3); Out.WriteLine("length += Serializer.GetLength({0});", property.NativeName);
                     Indent(2); Out.WriteLine("}");
                 }
             }

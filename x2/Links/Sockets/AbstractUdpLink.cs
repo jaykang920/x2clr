@@ -260,7 +260,7 @@ namespace x2
             }
 
             // Apply the datagram length limit.
-            int length = e.GetEncodedLength();
+            int length = e.GetLength();
             if (length > txBuffer.BlockSize)
             {
                 Log.Error("{0} dropped big event {1}", Name, e);

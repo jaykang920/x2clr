@@ -256,9 +256,9 @@ namespace x2
             }
         }
 
-        public int GetEncodedLength()
+        public int GetLength()
         {
-            return Serializer.GetEncodedLengthVariableNonnegative(length)
+            return Serializer.GetLengthVariableNonnegative(length)
                 + LengthInBytes;
         }
 
