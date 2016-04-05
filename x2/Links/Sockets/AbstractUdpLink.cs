@@ -330,7 +330,7 @@ namespace x2
             rxBuffer.Rewind();
 
             var deserializer = new Deserializer(rxBuffer);
-            Event retrieved = EventFactory.Create(deserializer);
+            Event retrieved = deserializer.Create();
             if (retrieved == null)
             {
                 return;

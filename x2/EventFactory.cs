@@ -4,19 +4,25 @@ using System.Reflection;
 
 namespace x2
 {
+    /// <summary>
+    /// Holds a map of retrievable events and their factory method delegates.
+    /// </summary>
     public static class EventFactory
     {
-        private static IDictionary<int, Func<Event>> register;
+        private static IDictionary<int, Func<Event>> map;
 
         static EventFactory()
         {
-            register = new Dictionary<int, Func<Event>>();
+            map = new Dictionary<int, Func<Event>>();
         }
 
+        /// <summary>
+        /// Creates a new event instance of the specified type idendifier.
+        /// </summary>
         public static Event Create(int typeId)
         {
             Func<Event> factoryMethod;
-            if (!register.TryGetValue(typeId, out factoryMethod))
+            if (!map.TryGetValue(typeId, out factoryMethod))
             {
                 Log.Error("EventFactory.Create : unknown event type id {0}", typeId);
                 return null;
@@ -24,26 +30,18 @@ namespace x2
             return factoryMethod();
         }
 
-        public static Event Create(Deserializer deserializer)
-        {
-            int typeId;
-            try
-            {
-                deserializer.Read(out typeId);
-            }
-            catch (Exception)
-            {
-                Log.Error("EventFactory.Create : error reading event type id");
-                return null;
-            }
-            return Create(typeId);
-        }
-
+        /// <summary>
+        /// Registers the specified type parameter as a retrievable event.
+        /// </summary>
         public static void Register<T>() where T : Event
         {
             Register(typeof(T));
         }
 
+        /// <summary>
+        /// Registers all the Event subclasses in the specified assembly as
+        /// retrievable events.
+        /// </summary>
         public static void Register(Assembly assembly)
         {
             var eventType = typeof(Event);
@@ -58,7 +56,10 @@ namespace x2
             }
         }
 
-        private static void Register(Type type)
+        /// <summary>
+        /// Registers the specified type as a retrievable event.
+        /// </summary>
+        public static void Register(Type type)
         {
             PropertyInfo prop = type.GetProperty("TypeId",
                 BindingFlags.Public | BindingFlags.Static);
@@ -72,10 +73,14 @@ namespace x2
             Register(typeId, factoryMethod);
         }
 
+        /// <summary>
+        /// Registers a retrievable event type identifier with its factory
+        /// method.
+        /// </summary>
         public static void Register(int typeId, Func<Event> factoryMethod)
         {
             Func<Event> existing;
-            if (register.TryGetValue(typeId, out existing))
+            if (map.TryGetValue(typeId, out existing))
             {
                 if (!existing.Equals(factoryMethod))
                 {
@@ -84,7 +89,7 @@ namespace x2
                 }
                 return;
             }
-            register.Add(typeId, factoryMethod);
+            map.Add(typeId, factoryMethod);
         }
     }
 }

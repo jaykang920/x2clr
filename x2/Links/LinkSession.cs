@@ -624,7 +624,7 @@ namespace x2
                 Interlocked.Increment(ref rxCounter);
 
                 var deserializer = new Deserializer(rxBuffer);
-                Event retrieved = EventFactory.Create(deserializer);
+                Event retrieved = deserializer.Create();
                 if ((object)retrieved == null)
                 {
                     goto next;

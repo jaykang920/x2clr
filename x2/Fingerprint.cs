@@ -221,7 +221,7 @@ namespace x2
         public void Deserialize(Deserializer deserializer)
         {
             int length;
-            deserializer.ReadVariableNonnegative(out length);
+            deserializer.ReadNonnegative(out length);
             int lengthInBytes = ((length - 1) >> 3) + 1;
             int lengthInBlocks = ((lengthInBytes - 1) >> 2) + 1;
             int effectiveBytes = LengthInBytes;

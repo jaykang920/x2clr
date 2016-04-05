@@ -65,15 +65,15 @@ namespace x2
         /// <summary>
         /// Gets or sets the current zero-based position.
         /// </summary>
-        public long Position
+        public int Position
         {
             get
             {
-                return (long)(position - front);
+                return (position - front);
             }
             set
             {
-                int adjusted = (int)value + front;
+                int adjusted = value + front;
                 if (adjusted < front || back < adjusted)
                 {
                     throw new IndexOutOfRangeException();

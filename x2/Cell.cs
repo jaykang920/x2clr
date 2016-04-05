@@ -229,27 +229,6 @@ namespace x2
         {
         }
 
-        /// <summary>
-        /// Loads a new cell of type T from the specified deserializer.
-        /// </summary>
-        public static void Load<T>(Deserializer deserializer, out T value) where T : Cell, new()
-        {
-            var type = typeof(T);
-            var eventType = typeof(Event);
-            if (type.IsSubclassOf(eventType) || type == eventType)
-            {
-                value = EventFactory.Create(deserializer) as T;
-            }
-            else
-            {
-                value = new T();
-            }
-            if (!Object.ReferenceEquals(value, null))
-            {
-                value.Deserialize(deserializer);
-            }
-        }
-
         #endregion  // Serialization
 
         #region Operators
