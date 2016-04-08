@@ -73,7 +73,7 @@ namespace x2
         /// </summary>
         public void Write(float value)
         {
-            WriteFixedBigEndian(
+            WriteFixed(
                 BitConverter.ToInt32(System.BitConverter.GetBytes(value), 0));
         }
 
@@ -82,7 +82,7 @@ namespace x2
         /// </summary>
         public void Write(double value)
         {
-            WriteFixedBigEndian(
+            WriteFixed(
                 BitConverter.ToInt64(System.BitConverter.GetBytes(value), 0));
         }
 
@@ -128,7 +128,7 @@ namespace x2
         {
             long milliseconds =
                 (value.Ticks - 621355968000000000) / TimeSpan.TicksPerMillisecond;
-            WriteFixedBigEndian(milliseconds);
+            WriteFixed(milliseconds);
         }
 
         // Overloaded Write for composite types
@@ -243,7 +243,7 @@ namespace x2
         /// Encodes a 32-bit signed integer into the underlying stream,
         /// by fixed-width big-endian byte order.
         /// </summary>
-        private void WriteFixedBigEndian(int value)
+        private void WriteFixed(int value)
         {
             buffer.EnsureCapacityToWrite(4);
             buffer.PutByte((byte)(value >> 24));
@@ -256,7 +256,7 @@ namespace x2
         /// Encodes a 64-bit signed integer into the underlying stream,
         /// by fixed-width big-endian byte order.
         /// </summary>
-        private void WriteFixedBigEndian(long value)
+        private void WriteFixed(long value)
         {
             buffer.EnsureCapacityToWrite(8);
             buffer.PutByte((byte)(value >> 56));
@@ -267,36 +267,6 @@ namespace x2
             buffer.PutByte((byte)(value >> 16));
             buffer.PutByte((byte)(value >> 8));
             buffer.PutByte((byte)value);
-        }
-
-        /// <summary>
-        /// Encodes a 32-bit signed integer into the underlying stream,
-        /// by fixed-width little-endian byte order.
-        /// </summary>
-        private void WriteFixedLittleEndian(int value)
-        {
-            buffer.EnsureCapacityToWrite(4);
-            buffer.PutByte((byte)value);
-            buffer.PutByte((byte)(value >> 8));
-            buffer.PutByte((byte)(value >> 16));
-            buffer.PutByte((byte)(value >> 24));
-        }
-
-        /// <summary>
-        /// Encodes a 64-bit signed integer into the underlying stream,
-        /// by fixed-width little-endian byte order.
-        /// </summary>
-        private void WriteFixedLittleEndian(long value)
-        {
-            buffer.EnsureCapacityToWrite(8);
-            buffer.PutByte((byte)value);
-            buffer.PutByte((byte)(value >> 8));
-            buffer.PutByte((byte)(value >> 16));
-            buffer.PutByte((byte)(value >> 24));
-            buffer.PutByte((byte)(value >> 32));
-            buffer.PutByte((byte)(value >> 40));
-            buffer.PutByte((byte)(value >> 48));
-            buffer.PutByte((byte)(value >> 56));
         }
 
         /// <summary>

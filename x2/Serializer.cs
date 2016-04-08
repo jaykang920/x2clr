@@ -17,7 +17,7 @@ namespace x2
 
         /// <summary>
         /// Initializes a new Serializer object that works on the specified
-        /// stream.
+        /// buffer.
         /// </summary>
         public Serializer(Buffer buffer)
         {
