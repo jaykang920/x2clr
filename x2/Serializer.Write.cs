@@ -14,7 +14,7 @@ namespace x2
         // Overloaded Write for primitive types
 
         /// <summary>
-        /// Encodes a boolean value into the underlying stream.
+        /// Encodes a boolean value into the underlying buffer.
         /// </summary>
         public void Write(bool value)
         {
@@ -23,7 +23,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a single byte into the underlying stream.
+        /// Encodes a single byte into the underlying buffer.
         /// </summary>
         public void Write(byte value)
         {
@@ -32,7 +32,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes an 8-bit signed integer into the underlying stream.
+        /// Encodes an 8-bit signed integer into the underlying buffer.
         /// </summary>
         public void Write(sbyte value)
         {
@@ -41,7 +41,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a 16-bit signed integer into the underlying stream.
+        /// Encodes a 16-bit signed integer into the underlying buffer.
         /// </summary>
         public void Write(short value)
         {
@@ -51,7 +51,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a 32-bit signed integer into the underlying stream.
+        /// Encodes a 32-bit signed integer into the underlying buffer.
         /// </summary>
         public void Write(int value)
         {
@@ -60,7 +60,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a 64-bit signed integer into the underlying stream.
+        /// Encodes a 64-bit signed integer into the underlying buffer.
         /// </summary>
         public void Write(long value)
         {
@@ -69,7 +69,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a 32-bit floating-point number into the underlying stream.
+        /// Encodes a 32-bit floating-point number into the underlying buffer.
         /// </summary>
         public void Write(float value)
         {
@@ -78,7 +78,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a 64-bit floating-point number into the underlying stream.
+        /// Encodes a 64-bit floating-point number into the underlying buffer.
         /// </summary>
         public void Write(double value)
         {
@@ -87,7 +87,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a text string into the underlying stream.
+        /// Encodes a text string into the underlying buffer.
         /// </summary>
         public void Write(string value)
         {
@@ -122,7 +122,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a datetime value into the underlying stream.
+        /// Encodes a datetime value into the underlying buffer.
         /// </summary>
         public void Write(DateTime value)
         {
@@ -144,7 +144,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes an ordered list of Int32 values into the underlying stream.
+        /// Encodes an ordered list of Int32 values into the underlying buffer.
         /// </summary>
         public void Write(List<int> value)
         {
@@ -157,7 +157,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes an ordered list of Int64 values into the underlying stream.
+        /// Encodes an ordered list of Int64 values into the underlying buffer.
         /// </summary>
         public void Write(List<long> value)
         {
@@ -171,7 +171,7 @@ namespace x2
 
         /// <summary>
         /// Encodes an ordered list of 32-bit floating-point values into the
-        /// underlying stream.
+        /// underlying buffer.
         /// </summary>
         public void Write(List<float> value)
         {
@@ -184,7 +184,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes an ordered list of DateTime values into the underlying stream.
+        /// Encodes an ordered list of DateTime values into the underlying buffer.
         /// </summary>
         public void Write(List<DateTime> value)
         {
@@ -197,7 +197,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes an ordered list of Int32 lists into the underlying stream.
+        /// Encodes an ordered list of Int32 lists into the underlying buffer.
         /// </summary>
         public void Write(List<List<int>> value)
         {
@@ -211,7 +211,7 @@ namespace x2
 
         /// <summary>
         /// Encodes an ordered list of Cell-derived objects into the underlying
-        /// stream.
+        /// buffer.
         /// </summary>
         public void Write<T>(List<T> value) where T : Cell
         {
@@ -224,7 +224,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a Cell-derived objects into the underlying stream.
+        /// Encodes a Cell-derived objects into the underlying buffer.
         /// </summary>
         public void Write<T>(T value) where T : Cell
         {
@@ -240,7 +240,7 @@ namespace x2
         // Wrtie helper methods
 
         /// <summary>
-        /// Encodes a 32-bit signed integer into the underlying stream,
+        /// Encodes a 32-bit signed integer into the underlying buffer,
         /// by fixed-width big-endian byte order.
         /// </summary>
         private void WriteFixed(int value)
@@ -253,7 +253,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a 64-bit signed integer into the underlying stream,
+        /// Encodes a 64-bit signed integer into the underlying buffer,
         /// by fixed-width big-endian byte order.
         /// </summary>
         private void WriteFixed(long value)
@@ -270,7 +270,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a 32-bit unsigned integer into the underlying stream,
+        /// Encodes a 32-bit unsigned integer into the underlying buffer,
         /// with unsigned LEB128 encoding.
         /// </summary>
         public void WriteVariable(uint value)
@@ -305,7 +305,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a 64-bit unsigned integer into the underlying stream,
+        /// Encodes a 64-bit unsigned integer into the underlying buffer,
         /// with unsigned LEB128 encoding.
         /// </summary>
         public void WriteVariable(ulong value)
@@ -324,7 +324,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes a 32-bit non-negative integer into the underlying stream.
+        /// Encodes a 32-bit non-negative integer into the underlying buffer.
         /// </summary>
         public void WriteVariableNonnegative(int value)
         {

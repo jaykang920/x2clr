@@ -6,44 +6,44 @@ using System.Text;
 
 using x2;
 
-namespace x2.Examples.HeadFirst
+namespace x2.Examples.HelloWorld
 {
-    public class CapitalizeReq : Event
+    public class HelloReq : Event
     {
         new protected static readonly Tag tag;
 
         new public static int TypeId { get { return tag.TypeId; } }
 
-        private string message_;
+        private string name_;
 
-        public string Message
+        public string Name
         {
-            get { return message_; }
+            get { return name_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                message_ = value;
+                name_ = value;
             }
         }
 
-        static CapitalizeReq()
+        static HelloReq()
         {
-            tag = new Tag(Event.tag, typeof(CapitalizeReq), 1,
+            tag = new Tag(Event.tag, typeof(HelloReq), 1,
                     1);
         }
 
-        new public static CapitalizeReq New()
+        new public static HelloReq New()
         {
-            return new CapitalizeReq();
+            return new HelloReq();
         }
 
-        public CapitalizeReq()
+        public HelloReq()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected CapitalizeReq(int length)
+        protected HelloReq(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -55,8 +55,8 @@ namespace x2.Examples.HeadFirst
             {
                 return false;
             }
-            CapitalizeReq o = (CapitalizeReq)other;
-            if (message_ != o.message_)
+            HelloReq o = (HelloReq)other;
+            if (name_ != o.name_)
             {
                 return false;
             }
@@ -74,7 +74,7 @@ namespace x2.Examples.HeadFirst
             if (touched[0])
             {
                 hash.Update(tag.Offset + 0);
-                hash.Update(message_);
+                hash.Update(name_);
             }
             return hash.Code;
         }
@@ -95,11 +95,11 @@ namespace x2.Examples.HeadFirst
             {
                 return false;
             }
-            CapitalizeReq o = (CapitalizeReq)other;
+            HelloReq o = (HelloReq)other;
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (message_ != o.message_)
+                if (name_ != o.name_)
                 {
                     return false;
                 }
@@ -113,14 +113,14 @@ namespace x2.Examples.HeadFirst
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                deserializer.Read(out message_);
+                deserializer.Read(out name_);
             }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
         {
             base.Deserialize(deserializer);
-            deserializer.Read("Message", out message_);
+            deserializer.Read("Name", out name_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -129,14 +129,14 @@ namespace x2.Examples.HeadFirst
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                serializer.Write(message_);
+                serializer.Write(name_);
             }
         }
 
         public override void Serialize(VerboseSerializer serializer)
         {
             base.Serialize(serializer);
-            serializer.Write("Message", message_);
+            serializer.Write("Name", name_);
         }
 
         public override int GetLength()
@@ -145,7 +145,7 @@ namespace x2.Examples.HeadFirst
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetLength(message_);
+                length += Serializer.GetLength(name_);
             }
             return length;
         }
@@ -153,16 +153,16 @@ namespace x2.Examples.HeadFirst
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Message=\"{0}\"", message_.Replace("\"", "\\\""));
+            stringBuilder.AppendFormat(" Name=\"{0}\"", name_.Replace("\"", "\\\""));
         }
 
         private void Initialize()
         {
-            message_ = "";
+            name_ = "";
         }
     }
 
-    public class CapitalizeResp : Event
+    public class HelloResp : Event
     {
         new protected static readonly Tag tag;
 
@@ -180,24 +180,24 @@ namespace x2.Examples.HeadFirst
             }
         }
 
-        static CapitalizeResp()
+        static HelloResp()
         {
-            tag = new Tag(Event.tag, typeof(CapitalizeResp), 1,
+            tag = new Tag(Event.tag, typeof(HelloResp), 1,
                     2);
         }
 
-        new public static CapitalizeResp New()
+        new public static HelloResp New()
         {
-            return new CapitalizeResp();
+            return new HelloResp();
         }
 
-        public CapitalizeResp()
+        public HelloResp()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected CapitalizeResp(int length)
+        protected HelloResp(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -209,7 +209,7 @@ namespace x2.Examples.HeadFirst
             {
                 return false;
             }
-            CapitalizeResp o = (CapitalizeResp)other;
+            HelloResp o = (HelloResp)other;
             if (result_ != o.result_)
             {
                 return false;
@@ -249,7 +249,7 @@ namespace x2.Examples.HeadFirst
             {
                 return false;
             }
-            CapitalizeResp o = (CapitalizeResp)other;
+            HelloResp o = (HelloResp)other;
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
