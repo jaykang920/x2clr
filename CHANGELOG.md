@@ -1,4 +1,4 @@
-Features:
+## 0.8.2 (2016-04-05)
 
 - renamed a few methods
 
