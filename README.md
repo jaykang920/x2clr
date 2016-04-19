@@ -26,7 +26,7 @@ ZIP archives containing specific tagged versions of the source code are availabl
 Getting Started
 ---------------
 
-[HelloWorld example](https://github.com/jaykang920/x2clr/wiki/HelloWorldt-Example) can be a simple start point to learn how x2clr applications are organized.
+[HelloWorld example](https://github.com/jaykang920/x2clr/wiki/HelloWorld-Example) can be a simple start point to learn how x2clr applications are organized.
 
 License
 -------
