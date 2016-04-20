@@ -52,7 +52,7 @@
       <Name>x2clr</Name>
     </ProjectReference>
     <ProjectReference Include="HelloWorld.csproj">
-      <Project>{679b3542-024b-4cdf-a285-76a9027124f1}</Project>
+      <Project>{430a3542-025b-4cdf-a285-76a9027124f2}</Project>
       <Name>HelloWorld</Name>
     </ProjectReference>
   </ItemGroup>

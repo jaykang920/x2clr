@@ -23,5 +23,4 @@ namespace x2.Examples.HelloWorld
             new HelloResp().Bind(e => Console.WriteLine(e.Result));
         }
     }
-
 }
