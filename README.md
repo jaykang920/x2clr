@@ -13,6 +13,8 @@ Requirements
 Installation
 ------------
 
+### Binary
+
 x2clr can be installed via the [NuGet UI](https://docs.nuget.org/consume/package-manager-dialog) (as [x2clr](https://www.nuget.org/packages/x2clr)), or via the NuGet Package Manager console command:
 
     PM> Install-Package x2clr
@@ -21,7 +23,11 @@ The xpiler converts x2 definition files into corresponding C# source code files.
 
     PM> Install-Package x2clr.xpiler
 
-ZIP archives containing specific tagged versions of the source code are available in [releases](https://github.com/jaykang920/x2clr/releases).
+### Source
+
+You may clone the latest source code of x2clr from its [GitHub repository](https://github.com/jaykang920/x2clr.git).
+
+Zipped archives containing specific tagged versions of the source code are available in [releases](https://github.com/jaykang920/x2clr/releases).
 
 Getting Started
 ---------------
