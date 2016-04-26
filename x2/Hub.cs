@@ -31,8 +31,8 @@ namespace x2
 
         static Hub()
         {
-            // Initialize the singleton instance.
             HeartbeatEvent = new HeartbeatEvent { _Transform = false };
+            // Initialize the singleton instance.
             Instance = new Hub();
         }
 
@@ -174,7 +174,7 @@ namespace x2
             {
                 snapshot = new List<Flow>(flows);
             }
-            for (int i = 0, count = snapshot.Count; i < count; ++i)
+            for (int i = snapshot.Count - 1; i >= 0; --i)
             {
                 try
                 {
