@@ -4,6 +4,117 @@ x2clr
 x2clr is the reference port of [x2](https://github.com/jaykang920/x2) written in
 C# targeting CLR (Common Language Runtime) environments such as .NET or Mono.
 
+Features
+--------
+
+### Distributable Event-Driven Architecture
+
+Writing distributed (including client/server) applications has never been this easy.
+You can flexibly make changes to the deployment topology of your application, while your business logic remains unchanged.
+
+### Communication Protocol Code Generation
+
+xpiler converts your shared knowledge definitions to corresponding C# source code files.
+Relying on the knowledge shared among application participants, x2clr wire format comes extremely efficient.
+
+### Advanced Gimmicks
+
+* Hierarchical events
+* Precise handler binding with multi-property pattern matching
+* Time-deferred or periodic event supply
+* Coroutines to join multiple event handlers
+
+Example
+-------
+
+```xml
+<x2>
+    <event name="EchoReq" type="1">
+        <property name="Message" type="string"/>
+    </event>
+    <event name="EchoResp" type="2">
+        <property name="Message" type="string"/>
+    </event>
+</x2>
+```
+
+```csharp
+public EchoCase : Case
+{
+    protected override void Setup()
+    {
+        Bind(new EchoReq(),
+            req => { new EchoResp { Message = req.Message }.InResponseOf(req).Post(); });
+    }
+}
+
+public EchoServer : AsyncTcpServer
+{
+    public EchoServer() : base("EchoServer") { }
+    
+    protected override void Setup()
+    {
+        base.Setup();
+        Bind(new EchoResp(), Send);
+        Listen(6789);
+    }
+    
+    public static void Main()
+    {
+        EventFactory.Resiger<EchoReq>();
+        Hub.Instance
+            .Attach(new SingleThreadFlow()
+                .Add(new EchoCase())
+                .Add(new EchoServer());
+        using (new Hub.Flows().Startup())
+        {
+            while (true)
+            {
+                string message = Console.ReadLine();
+                if (message == "quit")
+                {
+                    break;
+                }
+            }
+        }
+    }
+}
+
+public EchoClient : AsyncTcpClient
+{
+    public EchoClient() : base("EchoClient") { }
+    
+    protected override void Setup()
+    {
+        base.Setup();
+        Bind(new EchoReq(), Send);
+        Bind(new EchoResp(), resp => { Console.WriteLine(resp.Message); });
+        Connect("127.0.0.1", 6789);
+    }
+    
+    public static void Main()
+    {
+        EventFactory.Resiger<EchoResp>();
+        Hub.Instance.Attach(new SingleThreadFlow().Add(new EchoClient()));
+        using (new Hub.Flows().Startup())
+        {
+            while (true)
+            {
+                string message = Console.ReadLine();
+                if (message == "quit")
+                {
+                    break;
+                }
+                else
+                {
+                    new EchoReq { Message = message }.Post();
+                }
+            }
+        }
+    }
+}
+```
+
 Requirements
 ------------
 
@@ -29,10 +140,10 @@ You may clone the latest source code of x2clr from its [GitHub repository](https
 
 Zipped archives containing specific tagged versions of the source code are available in [releases](https://github.com/jaykang920/x2clr/releases).
 
-Getting Started
----------------
+Documentation
+-------------
 
-[HelloWorld example](https://github.com/jaykang920/x2clr/wiki/HelloWorld-Example) can be a simple start point to learn how x2clr applications are organized.
+[x2clr wiki](https://github.com/jaykang920/x2clr/wiki) can be a simple start point to learn how x2clr applications are organized.
 
 License
 -------
