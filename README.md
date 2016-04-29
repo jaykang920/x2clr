@@ -7,7 +7,7 @@ C# targeting CLR (Common Language Runtime) environments such as .NET or Mono.
 Features
 --------
 
-### Distributable Event-Driven Architecture
+### Distributable Application Architecture
 
 Writing distributed (including client/server) applications has never been this easy.
 You can flexibly make changes to the deployment topology of your application, while your business logic remains unchanged.
@@ -17,7 +17,7 @@ You can flexibly make changes to the deployment topology of your application, wh
 xpiler converts your shared knowledge definitions to corresponding C# source code files.
 Relying on the knowledge shared among application participants, x2clr wire format comes extremely efficient.
 
-### Advanced Gimmicks
+### Advanced Event-Driven Programming
 
 * Hierarchical events
 * Precise handler binding with multi-property pattern matching
