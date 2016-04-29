@@ -151,7 +151,7 @@ Zipped archives containing specific tagged versions of the source code are avail
 Documentation
 -------------
 
-[x2clr wiki](https://github.com/jaykang920/x2clr/wiki) can be a simple start point to learn how x2clr applications are organized.
+[x2clr wiki](https://github.com/jaykang920/x2clr/wiki) can be a good start point to learn how x2clr applications are organized.
 
 License
 -------
