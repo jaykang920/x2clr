@@ -27,6 +27,8 @@ Relying on the knowledge shared among application participants, x2clr wire forma
 Example
 -------
 
+Here we develop a simple TCP echo client/server, starting with defining two events.
+
 ```xml
 <x2>
     <event name="EchoReq" type="1">
@@ -38,6 +40,8 @@ Example
 </x2>
 ```
 
+And we encapsulate our core function (generating echo response) into a case. Please note that this logic case knows nothing about the communication detail.
+
 ```csharp
 public EchoCase : Case
 {
@@ -47,7 +51,11 @@ public EchoCase : Case
             req => { new EchoResp { Message = req.Message }.InResponseOf(req).Post(); });
     }
 }
+```
 
+Now we extend builtin TCP link cases to handle the network communication.
+
+```csharp
 public EchoServer : AsyncTcpServer
 {
     public EchoServer() : base("EchoServer") { }
