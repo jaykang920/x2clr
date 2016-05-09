@@ -19,7 +19,7 @@ Relying on the knowledge shared among application participants, x2clr wire forma
 
 ### Advanced Event-Driven Programming
 
-* Hierarchical events
+* Hierarchical, self-descriptive events
 * Precise handler binding with multi-property pattern matching
 * Time-deferred or periodic event supply
 * Coroutines to join multiple event handlers
