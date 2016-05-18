@@ -24,5 +24,7 @@
     <event name="TimeoutEvent" id="BuiltinEventType.TimeoutEvent" local="true">
         <!-- Event key object. -->
         <property name="Key" type="object"/>
+        <!-- Optional integer parameter -->
+        <property name="IntParam" type="int32"/>
     </event>
 </x2>
