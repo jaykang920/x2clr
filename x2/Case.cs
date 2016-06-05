@@ -24,7 +24,7 @@ namespace x2
     }
 
     /// <summary>
-    /// Represents a finite set of application logic
+    /// Represents a finite set of application logic.
     /// </summary>
     public abstract class Case : EventSink, ICase
     {

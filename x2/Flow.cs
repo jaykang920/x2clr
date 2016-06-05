@@ -10,7 +10,7 @@ using System.Threading;
 namespace x2
 {
     /// <summary>
-    /// Represents an logically independent execution flow.
+    /// Represents a logically independent execution flow.
     /// </summary>
     public abstract class Flow
     {
@@ -29,6 +29,9 @@ namespace x2
 
         private int channelRefCount;
 
+        /// <summary>
+        /// Gets or sets the current flow in which the current thread is running.
+        /// </summary>
         public/*internal*/ static Flow CurrentFlow
         {
             get { return currentFlow; }
@@ -240,12 +243,18 @@ namespace x2
             return this;
         }
 
+        /// <summary>
+        /// Adds the specified case to this flow.
+        /// </summary>
         public Flow Add(ICase c)
         {
             caseStack.Add(c);
             return this;
         }
 
+        /// <summary>
+        /// Removes the specified case from this flow.
+        /// </summary>
         public Flow Remove(ICase c)
         {
             caseStack.Remove(c);
