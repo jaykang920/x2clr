@@ -150,15 +150,25 @@ namespace x2
             var tcpSession = (AbstractTcpSession)session;
             var clientSocket = tcpSession.Socket;
 
-            // Adjust client socket options.
-            clientSocket.NoDelay = NoDelay;
+            try
+            {
+                // Adjust client socket options.
+                clientSocket.NoDelay = NoDelay;
 
-            tcpSession.BeginReceive(true);
+                tcpSession.BeginReceive(true);
 
-            Log.Info("{0} {1} accepted from {2}",
-                Name, tcpSession.InternalHandle, clientSocket.RemoteEndPoint);
+                Log.Info("{0} {1} accepted from {2}",
+                    Name, tcpSession.InternalHandle, clientSocket.RemoteEndPoint);
 
-            return base.OnAcceptInternal(session);
+                return base.OnAcceptInternal(session);
+
+            }
+            catch (ObjectDisposedException ode)
+            {
+                Log.Warn("{0} {1} accept error: {2}",
+                    Name, tcpSession.InternalHandle, ode);
+                return false;
+            }
         }
 
         protected override void Setup()

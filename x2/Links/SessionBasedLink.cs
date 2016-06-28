@@ -71,8 +71,11 @@ namespace x2
             if (result)
             {
                 var session = (LinkSession)context;
-                // Assign a new link session handle.
-                session.Handle = HandlePool.Acquire();
+                lock (session.SyncRoot)
+                {
+                    // Assign a new link session handle.
+                    session.Handle = HandlePool.Acquire();
+                }
                 session.Connected = true;
             }
 
@@ -92,8 +95,16 @@ namespace x2
         {
             Log.Info("{0} disconnected {1} {2}", Name, handle, context);
 
+            if (handle == 0)
+            {
+                return;
+            }
+
             // Release the link session handle.
             HandlePool.Release(handle);
+
+            var session = (LinkSession)context;
+            session.Connected = false;
 
             OnSessionDisconnectedInternal(handle, context);
 

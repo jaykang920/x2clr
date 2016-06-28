@@ -219,18 +219,25 @@ namespace x2
                     lock (existing.SyncRoot)
                     {
                         handle = existing.Handle;
-                        CancelRecoveryTimer(handle);
-                        session.InheritFrom(existing);
                     }
 
-                    session.Send(new SessionResp {
-                        _Transform = false,
-                        Token = session.Token,
-                        Retransmission = incomingRetransmission
-                    });
+                    if (handle != 0)
+                    {
+                        lock (existing.SyncRoot)
+                        {
+                            CancelRecoveryTimer(handle);
+                            session.InheritFrom(existing);
+                        }
 
-                    OnLinkSessionRecoveredInternal(handle, session, outgoingRetransmission);
-                    return;
+                        session.Send(new SessionResp {
+                            _Transform = false,
+                            Token = session.Token,
+                            Retransmission = incomingRetransmission
+                        });
+
+                        OnLinkSessionRecoveredInternal(handle, session, outgoingRetransmission);
+                        return;
+                    }
                 }
             }
 
