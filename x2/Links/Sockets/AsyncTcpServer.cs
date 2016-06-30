@@ -106,12 +106,9 @@ namespace x2
                     }
                 }
             }
-            catch (ObjectDisposedException)
+            catch (Exception ex)
             {
-            }
-            catch (Exception e)
-            {
-                Log.Error("{0} accept error : {1}", Name, e.Message);
+                Log.Error("{0} accept error : {1}", Name, ex.Message);
             }
 
             AcceptImpl(e);  // chain into the next accept
