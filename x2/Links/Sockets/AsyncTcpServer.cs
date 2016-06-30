@@ -80,28 +80,38 @@ namespace x2
         // Completion callback for AcceptAsync
         private void OnAccept(SocketAsyncEventArgs e)
         {
-            if (e.SocketError == SocketError.Success)
+            try
             {
-                var clientSocket = e.AcceptSocket;
-                var session = new AsyncTcpSession(this, clientSocket);
+                if (e.SocketError == SocketError.Success)
+                {
+                    var clientSocket = e.AcceptSocket;
+                    var session = new AsyncTcpSession(this, clientSocket);
 
-                if (!OnAcceptInternal(session))
-                {
-                    OnLinkSessionConnectedInternal(false, clientSocket.RemoteEndPoint);
-                    session.CloseInternal();
-                }
-            }
-            else
-            {
-                if (e.SocketError == SocketError.OperationAborted)
-                {
-                    Log.Info("{0} listening socket closed", Name);
-                    return;
+                    if (!OnAcceptInternal(session))
+                    {
+                        OnLinkSessionConnectedInternal(false, clientSocket.RemoteEndPoint);
+                        session.CloseInternal();
+                    }
                 }
                 else
                 {
-                    Log.Error("{0} accept error : {1}", Name, e.SocketError);
+                    if (e.SocketError == SocketError.OperationAborted)
+                    {
+                        Log.Info("{0} listening socket closed", Name);
+                        return;
+                    }
+                    else
+                    {
+                        Log.Error("{0} accept error : {1}", Name, e.SocketError);
+                    }
                 }
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+            catch (Exception e)
+            {
+                Log.Error("{0} accept error : {1}", Name, e.Message);
             }
 
             AcceptImpl(e);  // chain into the next accept
