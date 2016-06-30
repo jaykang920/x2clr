@@ -67,7 +67,7 @@ namespace x2
             catch (ObjectDisposedException) { }
             catch (Exception e)
             {
-                Log.Warn("{0} {1} recv error {2}", link.Name, handle, e);
+                Log.Warn("{0} {1} recv error {2}", link.Name, InternalHandle, e);
 
                 OnDisconnect();
             }
@@ -83,7 +83,7 @@ namespace x2
                 if (!pending)
                 {
                     Log.Debug("{0} {1} SendAsync completed immediately",
-                        link.Name, handle);
+                        link.Name, InternalHandle);
 
                     OnSend(txEventArgs);
                 }
@@ -91,7 +91,7 @@ namespace x2
             catch (ObjectDisposedException) { }
             catch (Exception e)
             {
-                Log.Warn("{0} {1} send error {2}", link.Name, handle, e);
+                Log.Warn("{0} {1} send error {2}", link.Name, InternalHandle, e);
 
                 OnDisconnect();
             }
@@ -125,12 +125,12 @@ namespace x2
                             return;
                         }
                         // (e.BytesTransferred == 0) implies a graceful shutdown
-                        Log.Info("{0} {1} disconnected", link.Name, handle);
+                        Log.Info("{0} {1} disconnected", link.Name, InternalHandle);
                         break;
                     case SocketError.OperationAborted:
                         return;
                     default:
-                        Log.Warn("{0} {1} recv error {2}", link.Name, handle, e.SocketError);
+                        Log.Warn("{0} {1} recv error {2}", link.Name, InternalHandle, e.SocketError);
                         break;
                 }
             }
@@ -140,7 +140,7 @@ namespace x2
             }
             catch (Exception ex)
             {
-                Log.Warn("{0} {1} recv error {2}", link.Name, handle, ex);
+                Log.Warn("{0} {1} recv error {2}", link.Name, InternalHandle, ex);
             }
             OnDisconnect();
         }
@@ -160,7 +160,7 @@ namespace x2
                     case SocketError.OperationAborted:
                         return;
                     default:
-                        Log.Warn("{0} {1} send error {2}", link.Name, handle, e.SocketError);
+                        Log.Warn("{0} {1} send error {2}", link.Name, InternalHandle, e.SocketError);
                         break;
                 }
             }
@@ -170,7 +170,7 @@ namespace x2
             }
             catch (Exception ex)
             {
-                Log.Warn("{0} {1} send error {2}", link.Name, handle, ex);
+                Log.Warn("{0} {1} send error {2}", link.Name, InternalHandle, ex);
             }
             OnDisconnect();
         }

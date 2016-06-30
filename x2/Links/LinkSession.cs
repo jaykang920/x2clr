@@ -277,7 +277,7 @@ namespace x2
         {
             if (disposed && !link.SessionRecoveryEnabled)
             {
-                Log.Warn("{0} {1} dropped {2}", link.Name, handle, e);
+                Log.Warn("{0} {1} dropped {2}", link.Name, InternalHandle, e);
                 return;
             }
 
@@ -287,7 +287,7 @@ namespace x2
                     !connected && e.GetTypeId() > 0)  // not builtin events
                 {
                     Log.Info("{0} {1} pre-establishment buffered {2}",
-                        link.Name, handle, e);
+                        link.Name, InternalHandle, e);
                     preConnectionQueue.Add(e);
                     return;
                 }
@@ -296,7 +296,7 @@ namespace x2
 
                 if (txFlag || disposed)
                 {
-                    //Log.Debug("{0} {1} buffered {2}", link.Name, handle, e);
+                    //Log.Debug("{0} {1} buffered {2}", link.Name, InternalHandle, e);
                     return;
                 }
 
@@ -313,7 +313,8 @@ namespace x2
                 handle = oldSession.Handle;
                 Token = oldSession.Token;
 
-                Log.Debug("{0} {1} session inheritance {2}", link.Name, handle, Token);
+                Log.Debug("{0} {1} session inheritance {3}",
+                    link.Name, handle, Token);
 
                 BufferTransform = oldSession.BufferTransform;
                 rxTransformReady = oldSession.rxTransformReady;
@@ -349,7 +350,7 @@ namespace x2
                         }
 
                         Log.Info("{0} {1} pre-establishment buffered {2}",
-                            link.Name, handle, preConnectionQueue.Count);
+                            link.Name, InternalHandle, preConnectionQueue.Count);
 
                         if (preConnectionQueue.Count != 0)
                         {
@@ -362,7 +363,7 @@ namespace x2
                             oldSession.eventsToSend.Clear();
                         }
 
-                        Log.Info("{0} {1} eventsToSend {2}", link.Name, handle, eventsToSend.Count);
+                        Log.Info("{0} {1} eventsToSend {2}", link.Name, InternalHandle, eventsToSend.Count);
                     }
 
                     connected = true;
@@ -449,7 +450,7 @@ namespace x2
                         buffers2.Clear();
 
                         Log.Info("{0} {1} pre-establishment buffered {2}",
-                            link.Name, handle, preConnectionQueue.Count);
+                            link.Name, InternalHandle, preConnectionQueue.Count);
 
                         if (preConnectionQueue.Count != 0)
                         {
@@ -462,7 +463,7 @@ namespace x2
                             oldSession.eventsToSend.Clear();
                         }
 
-                        Log.Info("{0} {1} eventsToSend {2}", link.Name, handle, eventsToSend.Count);
+                        Log.Info("{0} {1} eventsToSend {2}", link.Name, InternalHandle, eventsToSend.Count);
                     }
 
                     Log.Warn("{0} {1} retransmitting {2} events ({3} bytes)",
