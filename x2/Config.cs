@@ -122,6 +122,7 @@ namespace x2
             Coroutine.DefaultTimeout = 30.0;  // in seconds
         }
 
+#if XML_CONFIG
         /// <summary>
         /// Loads the configuration properties from the application
         /// configuration.
@@ -151,5 +152,6 @@ namespace x2
             Coroutine.MaxWaitHandles = section.Coroutine.MaxWaitHandles;
             Coroutine.DefaultTimeout = section.Coroutine.DefaultTimeout;
         }
+#endif
     }
 }
