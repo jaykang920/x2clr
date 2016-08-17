@@ -37,13 +37,13 @@ namespace x2
 
         public BlockCipher()
         {
-            encryptionAlgorithm = new AesCryptoServiceProvider();
+            encryptionAlgorithm = Aes.Create();
             encryptionAlgorithm.BlockSize = blockSize;
             encryptionAlgorithm.KeySize = keySize;
             encryptionAlgorithm.Mode = CipherMode.CBC;
             encryptionAlgorithm.Padding = PaddingMode.PKCS7;
 
-            decryptionAlgorithm = new AesCryptoServiceProvider();
+            decryptionAlgorithm = Aes.Create();
             decryptionAlgorithm.BlockSize = blockSize;
             decryptionAlgorithm.KeySize = keySize;
             decryptionAlgorithm.Mode = CipherMode.CBC;

@@ -145,7 +145,7 @@ namespace x2
 
         static AbstractTcpClient()
         {
-            EventFactory.Register<HeartbeatEvent>();
+            EventFactory.Register(HeartbeatEvent.TypeId, HeartbeatEvent.New);
         }
 
         /// <summary>

@@ -2,7 +2,9 @@
 // See the file LICENSE for details.
 
 using System;
+#if XML_CONFIG
 using System.Configuration;
+#endif
 
 namespace x2
 {
