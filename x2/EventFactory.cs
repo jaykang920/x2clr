@@ -44,15 +44,40 @@ namespace x2
         /// </summary>
         public static void Register(Assembly assembly)
         {
+            Register(assembly, null);
+        }
+
+        /// <summary>
+        /// Registers all the Event classes extending the optionally specified
+        /// base classes as retrievable events.
+        /// </summary>
+        public static void Register(Assembly assembly, params Type[] baseTypes)
+        {
             var eventType = typeof(Event);
             var types = assembly.GetTypes();
             for (int i = 0, count = types.Length; i < count; ++i)
             {
                 var type = types[i];
-                if (type.IsSubclassOf(eventType))
+                if (!type.IsSubclassOf(eventType))
                 {
-                    Register(type);
+                    continue;
                 }
+                if (baseTypes != null)
+                {
+                    int j;
+                    for (j = 0; j < baseTypes.Length; ++j)
+                    {
+                        if (type.IsSubclassOf(baseTypes[j]))
+                        {
+                            break;
+                        }
+                    }
+                    if (j >= baseTypes.Length)
+                    {
+                        continue;
+                    }
+                }
+                Register(type);
             }
         }
 
@@ -61,14 +86,21 @@ namespace x2
         /// </summary>
         public static void Register(Type type)
         {
-            PropertyInfo prop = type.GetProperty("TypeId",
-                BindingFlags.Public | BindingFlags.Static);
             MethodInfo method = type.GetMethod("New",
                 BindingFlags.Public | BindingFlags.Static);
-
-            int typeId = (int)prop.GetValue(null, null);
             Func<Event> factoryMethod = (Func<Event>)
                 Delegate.CreateDelegate(typeof(Func<Event>), method);
+
+            int typeId;
+#if UNITY_WORKAROUND
+            // To avoid Type.GetProperty and PropertyInfo.GetValue calls
+            Event e = factoryMethod();
+            typeId = e.GetTypeId();
+#else
+            PropertyInfo prop = type.GetProperty("TypeId",
+                BindingFlags.Public | BindingFlags.Static);
+            typeId = (int)prop.GetValue(null, null);
+#endif
 
             Register(typeId, factoryMethod);
         }
