@@ -86,20 +86,23 @@ namespace x2
         /// </summary>
         public static void Register(Type type)
         {
-            MethodInfo method = type.GetMethod("New",
-                BindingFlags.Public | BindingFlags.Static);
-            Func<Event> factoryMethod = (Func<Event>)
-                Delegate.CreateDelegate(typeof(Func<Event>), method);
-
             int typeId;
+            Func<Event> factoryMethod;
+
 #if UNITY_WORKAROUND
-            // To avoid Type.GetProperty and PropertyInfo.GetValue calls
-            Event e = factoryMethod();
+            // To avoid reflection calls on System.Type class
+            Event e = (Event)Activator.CreateInstance(type);
             typeId = e.GetTypeId();
+            factoryMethod = e.GetFactoryMethod();
 #else
             PropertyInfo prop = type.GetProperty("TypeId",
                 BindingFlags.Public | BindingFlags.Static);
             typeId = (int)prop.GetValue(null, null);
+
+            MethodInfo method = type.GetMethod("New",
+                BindingFlags.Public | BindingFlags.Static);
+            factoryMethod = (Func<Event>)
+                Delegate.CreateDelegate(typeof(Func<Event>), method);
 #endif
 
             Register(typeId, factoryMethod);

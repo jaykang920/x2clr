@@ -181,6 +181,15 @@ namespace x2
         }
 
         /// <summary>
+        /// Returns the factory method delegate that can create an instance of
+        /// this event.
+        /// </summary>
+        public virtual Func<Event> GetFactoryMethod()
+        {
+            return Event.New;
+        }
+
+        /// <summary>
         /// Overridden by subclasses to build an equivalence test chain.
         /// </summary>
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)

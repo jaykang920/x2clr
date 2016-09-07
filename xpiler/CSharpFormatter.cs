@@ -435,10 +435,20 @@ namespace xpiler
                 Indent(1); Out.WriteLine("}");
                 Out.WriteLine();
             }
+
             Indent(1); Out.WriteLine("public override Cell.Tag GetTypeTag() ");
             Indent(1); Out.WriteLine("{");
             Indent(2); Out.WriteLine("return tag;");
             Indent(1); Out.WriteLine("}");
+
+            if (def.IsEvent)
+            {
+                Out.WriteLine();
+                Indent(1); Out.WriteLine("public override Func<Event> GetFactoryMethod()");
+                Indent(1); Out.WriteLine("{");
+                Indent(2); Out.WriteLine("return {0}.New;", def.Name);
+                Indent(1); Out.WriteLine("}");
+            }
         }
 
         private void FormatIsEquivalent(CellDef def)
