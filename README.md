@@ -22,7 +22,7 @@ Relying on the knowledge shared among application participants, x2clr wire forma
 * Hierarchical, self-descriptive events
 * Precise handler binding with multi-property pattern matching
 * Time-deferred or periodic event supply
-* Coroutines to join multiple event handlers
+* Coroutines to join multiple sequential event handlers
 
 Example
 -------
@@ -147,6 +147,10 @@ The xpiler converts x2 definition files into corresponding C# source code files.
 You may clone the latest source code of x2clr from its [GitHub repository](https://github.com/jaykang920/x2clr.git).
 
 Zipped archives containing specific tagged versions of the source code are available in [releases](https://github.com/jaykang920/x2clr/releases).
+
+### Unity3D
+
+If you want to use x2clr in Unity3D, you should build it with the conditional compile constant UNITY_WORKAROUND and drop the DLL into the Assets/Plugin folder.
 
 Documentation
 -------------
