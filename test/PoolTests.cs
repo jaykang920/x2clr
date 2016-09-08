@@ -27,11 +27,10 @@ namespace x2.Tests
         }
 
         [Test]
-        [ExpectedException(ExpectedException=typeof(ArgumentNullException))]
         public void TestNullPush()
         {
             var p = new Pool<Foo>();
-            p.Push(null);
+            Assert.Throws<ArgumentNullException>(() => { p.Push(null); });
         }
 
         [Test]

@@ -59,7 +59,6 @@
     <DefineConstants>UNITY_WORKAROUND</DefineConstants>
     <ConfigGroup>Release</ConfigGroup>
   </PropertyGroup>
-
   <Choose>
     <When Condition="$(DefineConstants.Contains('XML_CONFIG'))">
       <ItemGroup>
@@ -72,8 +71,7 @@
         <Reference Include="System" />
       </ItemGroup>
     </Otherwise>
-  </Choose>  
-  
+  </Choose>
   <ItemGroup>
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>

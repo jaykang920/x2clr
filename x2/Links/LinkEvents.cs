@@ -183,6 +183,11 @@ namespace x2
             return tag;
         }
 
+        public override Func<Event> GetFactoryMethod()
+        {
+            return LinkSessionConnected.New;
+        }
+
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
@@ -343,6 +348,11 @@ namespace x2
             return tag;
         }
 
+        public override Func<Event> GetFactoryMethod()
+        {
+            return LinkSessionDisconnected.New;
+        }
+
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
@@ -463,6 +473,11 @@ namespace x2
         public override Cell.Tag GetTypeTag() 
         {
             return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return HandshakeReq.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
@@ -619,6 +634,11 @@ namespace x2
             return tag;
         }
 
+        public override Func<Event> GetFactoryMethod()
+        {
+            return HandshakeResp.New;
+        }
+
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
@@ -771,6 +791,11 @@ namespace x2
         public override Cell.Tag GetTypeTag() 
         {
             return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return HandshakeAck.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
@@ -965,6 +990,11 @@ namespace x2
             return tag;
         }
 
+        public override Func<Event> GetFactoryMethod()
+        {
+            return LinkSessionRecovered.New;
+        }
+
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
@@ -1145,6 +1175,11 @@ namespace x2
         public override Cell.Tag GetTypeTag() 
         {
             return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return SessionReq.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
@@ -1390,6 +1425,11 @@ namespace x2
             return tag;
         }
 
+        public override Func<Event> GetFactoryMethod()
+        {
+            return SessionResp.New;
+        }
+
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
@@ -1567,6 +1607,11 @@ namespace x2
             return tag;
         }
 
+        public override Func<Event> GetFactoryMethod()
+        {
+            return SessionAck.New;
+        }
+
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
@@ -1692,6 +1737,11 @@ namespace x2
         public override Cell.Tag GetTypeTag() 
         {
             return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return SessionEnd.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)

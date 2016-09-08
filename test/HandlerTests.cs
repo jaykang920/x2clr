@@ -38,7 +38,7 @@ namespace x2.Tests
         private IntBox intBox1 = new IntBox();
         private IntBox intBox2 = new IntBox();
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             IntBox.StaticValue = 0;

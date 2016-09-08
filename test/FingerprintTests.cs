@@ -10,10 +10,9 @@ namespace x2.Tests
     public class FingerprintTests
     {
         [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestNegativeLength()
         {
-            Fingerprint fp = new Fingerprint(-1);
+            Assert.Throws<ArgumentOutOfRangeException>(() => { Fingerprint fp = new Fingerprint(-1); });
         }
 
         [Test]
