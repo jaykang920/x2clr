@@ -10,7 +10,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>x2clr is the reference port of x2 written in C# targeting CLR (Common Language Runtime) environments such as .NET or Mono.</description>
     <copyright>Copyright © 2013-2016 Jae-jun Kang</copyright>
-    <tags>x2 x2clr distributed messaging communications network socket</tags>
+    <tags>x2 x2clr event-driven distributed messaging communications network socket</tags>
   </metadata>
 
   <files>
