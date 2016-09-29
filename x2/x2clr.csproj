@@ -93,21 +93,21 @@
     <Compile Include="Links\ClientLink.cs" />
     <Compile Include="Links\LinkEvents.cs" />
     <Compile Include="Links\ServerLink.cs" />
-    <Compile Include="Links\Sockets\TcpServer.cs" />
-    <Compile Include="Links\Sockets\TcpSession.cs" />
+    <Compile Include="Links\Socket\TcpServer.cs" />
+    <Compile Include="Links\Socket\TcpSession.cs" />
     <Compile Include="Links\SendBuffer.cs" />
-    <Compile Include="Links\Sockets\AsyncTcpClient.cs" />
-    <Compile Include="Links\Sockets\TcpClient.cs" />
-    <Compile Include="Links\Sockets\AbstractTcpClient.cs" />
-    <Compile Include="Links\Sockets\AbstractTcpSession.cs" />
-    <Compile Include="Links\Sockets\AsyncTcpSession.cs" />
-    <Compile Include="Links\Sockets\AsyncTcpServer.cs" />
+    <Compile Include="Links\Socket\AsyncTcpClient.cs" />
+    <Compile Include="Links\Socket\TcpClient.cs" />
+    <Compile Include="Links\Socket\AbstractTcpClient.cs" />
+    <Compile Include="Links\Socket\AbstractTcpSession.cs" />
+    <Compile Include="Links\Socket\AsyncTcpSession.cs" />
+    <Compile Include="Links\Socket\AsyncTcpServer.cs" />
     <Compile Include="Links\LinkSession.cs" />
     <Compile Include="Links\SessionBasedLink.cs" />
-    <Compile Include="Links\Sockets\AbstractTcpServer.cs" />
-    <Compile Include="Links\Sockets\AbstractUdpLink.cs" />
-    <Compile Include="Links\Sockets\AsyncUdpLink.cs" />
-    <Compile Include="Links\Sockets\UdpLink.cs" />
+    <Compile Include="Links\Socket\AbstractTcpServer.cs" />
+    <Compile Include="Links\Socket\AbstractUdpLink.cs" />
+    <Compile Include="Links\Socket\AsyncUdpLink.cs" />
+    <Compile Include="Links\Socket\UdpLink.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Serializer.GetLength.cs" />
     <Compile Include="Serializer.Write.cs" />
@@ -175,7 +175,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>pushd $(ProjectDir)
-..\bin\$(ConfigGroup)\xpiler.exe . Links Links/Sockets
+..\bin\$(ConfigGroup)\xpiler.exe . Links Links/Socket
 popd</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

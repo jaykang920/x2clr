@@ -313,7 +313,7 @@ namespace x2
                 handle = oldSession.Handle;
                 Token = oldSession.Token;
 
-                Log.Debug("{0} {1} session inheritance {3}",
+                Log.Debug("{0} {1} session inheritance {2}",
                     link.Name, handle, Token);
 
                 BufferTransform = oldSession.BufferTransform;
