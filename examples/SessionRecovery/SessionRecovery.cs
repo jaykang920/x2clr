@@ -89,6 +89,11 @@ namespace x2.Examples.SessionRecovery
             return tag;
         }
 
+        public override Func<Event> GetFactoryMethod()
+        {
+            return TestReq.New;
+        }
+
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
@@ -241,6 +246,11 @@ namespace x2.Examples.SessionRecovery
         public override Cell.Tag GetTypeTag() 
         {
             return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return TestResp.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)

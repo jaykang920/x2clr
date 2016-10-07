@@ -89,6 +89,11 @@ namespace x2.Examples.HelloWorld
             return tag;
         }
 
+        public override Func<Event> GetFactoryMethod()
+        {
+            return HelloReq.New;
+        }
+
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
         {
             if (!base.IsEquivalent(other, fingerprint))
@@ -241,6 +246,11 @@ namespace x2.Examples.HelloWorld
         public override Cell.Tag GetTypeTag() 
         {
             return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return HelloResp.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
