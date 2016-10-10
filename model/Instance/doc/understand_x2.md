@@ -105,15 +105,32 @@
 
  - Waits in queue.Dequeue() till an event arrives
 
+## Event dispatching 
+
+ - Hub: Channel (string) based filtering of flows or broadcast to all flows 
+ - Then, typeid / fingerprint based dispatching.
+ - string channel is good enough? 
+
+ - Instance based (Value based) dispatching is absolutely required. 
 
 ## Event communication 
 
+ - Subscription
+ - Posting
+ - Dispatching
+
 ### xpiler 
+
+ - very simple. 
+ - more examples required   
+    - inheritance 
+    - class / struct type field
+ 
+ 
 
 ### subscribe / publishing 
 
 ## Case development 
-
 
 
 

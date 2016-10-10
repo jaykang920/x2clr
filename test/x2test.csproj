@@ -74,6 +74,7 @@
     </Compile>
     <Compile Include="BinderTests.cs" />
     <Compile Include="ConfigTests.cs" />
+    <Compile Include="Func\TestFuncEvents.cs" />
     <Compile Include="Func\TestFuncHubFlow.cs" />
     <Compile Include="Func\TestFuncTcpSimple.cs" />
     <Compile Include="PoolTests.cs" />

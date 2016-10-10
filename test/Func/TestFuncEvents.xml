@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<x2 namespace="x2.Tests.Func">
+
+    <event name="HelloCaseEvent" id="1">
+        <property name="Foo" type="int32"/>
+        <property name="Bar" type="string"/>
+    </event>
+
+</x2>
