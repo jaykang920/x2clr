@@ -284,14 +284,16 @@ namespace x2.Tests
 
             Assert.False(fp2.Equals(fp1));
 
-            /*
-            Buffer buffer = new Buffer(12);
-            fp1.Dump(buffer);
-            buffer.Rewind();
-            fp2.Load(buffer);
+            Buffer stream = new Buffer();
+            Serializer serializer = new Serializer(stream);
+            Deserializer deserializer = new Deserializer(stream);
+
+            fp1.Serialize(serializer);
+            stream.Rewind();
+            fp2.Deserialize(deserializer);
 
             Assert.True(fp2.Equals(fp1));
-            */
+            Assert.True(fp2.Equivalent(fp1));
         }
     }
 }
