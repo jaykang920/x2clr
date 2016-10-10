@@ -89,7 +89,36 @@
 
  - Summarize the concept??  
 
- 
+## Binder Unit Test 
+
+ - Event based dispatching 
+ - TypeId + Fingerprint based dispatching 
+ - Base event handler dispatching using typeid from Tag.   
+
+# Hub / Flow / Case 
+
+## Startup / Teardown 
+
+ - Very simple. Just provide with Hub.Attach(), Flow.Add() 
+
+## EventBasedFlow / SingleThreadedFlow 
+
+ - Waits in queue.Dequeue() till an event arrives
+
+
+## Event communication 
+
+### xpiler 
+
+### subscribe / publishing 
+
+## Case development 
+
+
+
+
+
+
 
 
   
