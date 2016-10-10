@@ -12,8 +12,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xpiler", "xpiler\xpiler.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2test", "test\x2test.csproj", "{4F62C483-01DB-45B7-88A4-28D5B94A17E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2functest", "x2functest\x2functest.csproj", "{BA3B21C9-8D68-480E-8A49-6A67F2ED6CF8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Unity|Any CPU = Debug_Unity|Any CPU
@@ -46,14 +44,6 @@ Global
 		{4F62C483-01DB-45B7-88A4-28D5B94A17E7}.Release_Unity|Any CPU.Build.0 = Release|Any CPU
 		{4F62C483-01DB-45B7-88A4-28D5B94A17E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F62C483-01DB-45B7-88A4-28D5B94A17E7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BA3B21C9-8D68-480E-8A49-6A67F2ED6CF8}.Debug_Unity|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA3B21C9-8D68-480E-8A49-6A67F2ED6CF8}.Debug_Unity|Any CPU.Build.0 = Debug|Any CPU
-		{BA3B21C9-8D68-480E-8A49-6A67F2ED6CF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA3B21C9-8D68-480E-8A49-6A67F2ED6CF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA3B21C9-8D68-480E-8A49-6A67F2ED6CF8}.Release_Unity|Any CPU.ActiveCfg = Release|Any CPU
-		{BA3B21C9-8D68-480E-8A49-6A67F2ED6CF8}.Release_Unity|Any CPU.Build.0 = Release|Any CPU
-		{BA3B21C9-8D68-480E-8A49-6A67F2ED6CF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA3B21C9-8D68-480E-8A49-6A67F2ED6CF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -19,25 +19,25 @@ namespace x2.Tests
 
             // Static construction
 
-            var tag = ((Cell)cell1).GetTypeTag();
+            var tag = cell1.GetTypeTag();
             Assert.IsNull(tag.Base);
             Assert.AreEqual(cell1.GetType(), tag.RuntimeType);
             Assert.AreEqual(2, tag.NumProps);
             Assert.AreEqual(0, tag.Offset);
 
-            tag = ((Cell)cell2).GetTypeTag();
+            tag = cell2.GetTypeTag();
             Assert.AreEqual(cell1.GetTypeTag(), tag.Base);
             Assert.AreEqual(cell2.GetType(), tag.RuntimeType);
             Assert.AreEqual(1, tag.NumProps);
             Assert.AreEqual(2, tag.Offset);
 
-            tag = ((Cell)cell3).GetTypeTag();
+            tag = cell3.GetTypeTag();
             Assert.AreEqual(cell1.GetTypeTag(), tag.Base);
             Assert.AreEqual(cell3.GetType(), tag.RuntimeType);
             Assert.AreEqual(1, tag.NumProps);
             Assert.AreEqual(2, tag.Offset);
 
-            tag = ((Cell)cell4).GetTypeTag();
+            tag = cell4.GetTypeTag();
             Assert.AreEqual(cell2.GetTypeTag(), tag.Base);
             Assert.AreEqual(cell4.GetType(), tag.RuntimeType);
             Assert.AreEqual(1, tag.NumProps);

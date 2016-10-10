@@ -51,6 +51,45 @@
 
  - Consider Buffer as an internal class. 
 
+## Capo Unit Test 
+
+ - What is Capo? It seems to be borrowed from guitar Capo. 
+ - Capo dispaces index by provided offset.  
+ - It is used mostly with Fingerprint to access indexed value with modified offset.
+
+## Cell Unit Test
+
+ - Cell has a Tag and a Fingerprint
+ - Base class does not do much and it is incomplete. 
+ - It will become complete with Event 
+
+### SampleCell1
+
+ - Tag : 2 properties. No base. typeof(SampleCell1) 
+ - Tag and Fingerprint enables to track field modification from subclassing tree. 
+ - Fingerprint is used to serialize only fields that are touched. 
+   - Is this useful? It can cause sensetive bugs in communication. (Code level protocol) 
+ 
+### TestEquality() 
+
+ - Equals() checks EqualsTo() on both objects. 
+
+### TestHashing() 
+
+ - GetHashCode() reflected Fingerprint Touch and Field values. 
+ - Following two have different hash code since Bar field's value is different. 
+    - var cell2 = new SampleCell1 { Foo = 1, Bar = "bar" };
+    - var cell3 = new SampleCell1 { Foo = 1, Bar = "foo" };
+
+### TestEquivalence() 
+
+ - Two cells are equivalent if : 
+    - their fingerprints are equivalent 
+    - their field values are same when checked by fingerprint
+
+ - Summarize the concept??  
+
+ 
 
 
   

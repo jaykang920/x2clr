@@ -50,7 +50,7 @@ namespace x2.Tests
 
     public class SampleCell1 : Cell
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
         private int foo_;
         private string bar_;
@@ -234,7 +234,7 @@ namespace x2.Tests
 
     public class SampleCell2 : SampleCell1
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
         private bool baz_;
 
@@ -375,7 +375,7 @@ namespace x2.Tests
 
     public class SampleCell3 : SampleCell1
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
         private bool qux_;
 
@@ -516,7 +516,7 @@ namespace x2.Tests
 
     public class SampleCell4 : SampleCell2
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
         private bool quux_;
 
@@ -657,9 +657,9 @@ namespace x2.Tests
 
     public class SampleEvent1 : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private int foo_;
         private string bar_;
@@ -690,7 +690,7 @@ namespace x2.Tests
                     1);
         }
 
-        new public static SampleEvent1 New()
+        public new static SampleEvent1 New()
         {
             return new SampleEvent1();
         }
@@ -859,9 +859,9 @@ namespace x2.Tests
 
     public class SampleEvent2 : SampleEvent1
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private bool baz_;
 
@@ -881,7 +881,7 @@ namespace x2.Tests
                     2);
         }
 
-        new public static SampleEvent2 New()
+        public new static SampleEvent2 New()
         {
             return new SampleEvent2();
         }
@@ -1018,9 +1018,9 @@ namespace x2.Tests
 
     public class SampleEvent3 : SampleEvent1
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private bool qux_;
 
@@ -1040,7 +1040,7 @@ namespace x2.Tests
                     3);
         }
 
-        new public static SampleEvent3 New()
+        public new static SampleEvent3 New()
         {
             return new SampleEvent3();
         }
@@ -1177,9 +1177,9 @@ namespace x2.Tests
 
     public class SampleEvent4 : SampleEvent2
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private bool quux_;
 
@@ -1199,7 +1199,7 @@ namespace x2.Tests
                     4);
         }
 
-        new public static SampleEvent4 New()
+        public new static SampleEvent4 New()
         {
             return new SampleEvent4();
         }
