@@ -89,6 +89,12 @@
     <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\x2\x2clr.csproj">
+      <Project>{79a3e41b-fa7f-4ed8-86ab-fcf61a6f65b9}</Project>
+      <Name>x2clr</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

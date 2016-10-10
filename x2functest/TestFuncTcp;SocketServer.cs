@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using x2;
 
 namespace x2functest
 {

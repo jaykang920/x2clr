@@ -16,4 +16,34 @@
  - Changes to other parts of your codebase don’t make them(unit tests) start failing 
 
 
+# HelloWorld in Examples
+
+ - xpiler generates Event subclass from xml definition 
+ - Event is a subclass of Cell 
+ - Cell has a Tag and a Fingerprint 
+    - Cell has several equal functions: 
+        - Equals, EqualsTo
+        - Equivalent(Cell), Equivalent(Cell, Finterprint)
+    - Tag has Base tag, NumProps, 
+
+## Fingerprint Unit Test 
+
+ Fingerprint is a bit vector of fixed length. 
+
+ block (0~31 bit) | blocks (higher than 32bit)
+
+### Equivalent 
+
+ Def. A is equivalent to B, if Fingerprint A covers and equals all bits of another Fingerprint B. 
+
+### Deserialize
+
+ It seems that desrialize has a bug or incomplete since: 
+  - it does not set length and it does not allocate blocks.  
+
+  
+
+
  
+
+     
