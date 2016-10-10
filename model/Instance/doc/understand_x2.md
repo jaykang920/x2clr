@@ -40,6 +40,18 @@
 
  It seems that desrialize has a bug or incomplete since: 
   - it does not set length and it does not allocate blocks.  
+  
+## Buffer Unit Test
+
+ - Segment / SegmentedBuffer / SegmentPool are related. 
+ - Buffer uses SegmentPool. 
+ - Correctness proof is required.    
+ - Internal workings are tighltly dependent on call order. 
+    - MarkToRead, Trim, and so on. 
+
+ - Consider Buffer as an internal class. 
+
+
 
   
 
