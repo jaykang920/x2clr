@@ -34,6 +34,8 @@ namespace x2.Tests.Func
 
         /// <summary>
         /// Case post and gets callback with a simple event
+        /// XXX: This test fails when run with run tests all. 
+        /// Hub singleton seems to be the cause of fail.
         /// </summary>
         [Test]
         public void TestEventEcho()

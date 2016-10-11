@@ -127,24 +127,64 @@
  - more examples required   
     - inheritance 
     - class / struct type field
- 
 
 
 # Distributed through Tcp
 
+## Hello Example to TestFuncTcpSimple 
+
+### AsyncTcpServer 
+
+ - AbstractTcpServer 
+    - Accept and manages LinkSession
+ - ServerLink 
+    - Has LinkSessions
+    - Broadcast 
+    - Send 
+ - SessionBasedLink 
+    - Has Preprocess. This can be used to modify Events. 
+ - Link 
+ - Case 
+
+Q1. How to bind / post events from other Cases using TcpServer? 
+
+ - Receiving is simple with Flow event subscription. 
+ - Sending is through Flow to TcpServer Case, then to the LinkSession. 
+ - Sending flow is not natural and there is queueing delay. 
+ - Reported issue 12. 
+
+A1. Multiple Flows, Hub channels, and Preprocess delegate can solve the issue. 
+
+ - Add an example with a functional test. 
+
+
+### TimeFlow 
+
+ - FrameBasedFlow 
+ - Periodic processing functionality 
+ - EventBasedFlow blocks waiting for Events in queue.
+
+
+# Game Dev. - Instance Model 
+
+## Session Server 
+
+ - SingleThreadFlow()
+ - TcpServer()
+ - SessionCase 
+    - Reactive 
+        - Authorize 
+        - Join / leave / create instance 
+    - Active 
+        - ? 
+
+## Game Server 
+
+ - SingleThreadFlow() 
+    - Assign channel 
 
 
 
-## Case development 
-
-
-# Enhancements 
-
-## Issue 1. Hub is a singleton. UnitTests requires to have Hub instance cleaned up completely. 
- 
- - Not easy to have it.
-
- 
   
 
 

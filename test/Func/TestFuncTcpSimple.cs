@@ -15,5 +15,15 @@ namespace x2.Tests.Func
 
             
         }
+
+        public class ServerCase : Case
+        {
+
+        }
+
+        public class ClientCase : Case
+        {
+
+        }
     }
 }
