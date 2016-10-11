@@ -7,7 +7,7 @@ using System.IO;
 namespace xpiler
 {
     /// <summary>
-    /// Abstract base class for static output file formatters.
+    /// Abstract base class for output file formatters.
     /// </summary>
     abstract class Formatter
     {
@@ -26,8 +26,8 @@ namespace xpiler
         public Document Doc { get; set; }
         public StreamWriter Out { get; set; }
 
-        public abstract void FormatReference(Reference reference);
-        public abstract void FormatConsts(ConstsDef def);
         public abstract void FormatCell(CellDef def);
+        public abstract void FormatConsts(ConstsDef def);
+        public abstract void FormatReference(Reference def);
     }
 }

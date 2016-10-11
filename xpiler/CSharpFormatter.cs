@@ -136,10 +136,37 @@ namespace xpiler
 
         public string Target { get; set; }
 
-        public override void FormatReference(Reference reference)
+        public override void FormatCell(CellDef def)
         {
-            Indent(0); Out.WriteLine("using {0};", reference.Target.Replace('/', '.'));
+            def.BaseClass = def.Base;
+            if (String.IsNullOrEmpty(def.BaseClass))
+            {
+                def.BaseClass = (def.IsEvent ? "Event" : "Cell");
+            }
+            PreprocessProperties(def);
+
+            FormatComment(0, def.Comment);
+            Indent(0); Out.WriteLine("public class {0} : {1}", def.Name, def.BaseClass);
+            Indent(0); Out.WriteLine("{");
+            Indent(1); Out.WriteLine("new protected static readonly Tag tag;");
             Out.WriteLine();
+            if (def.IsEvent)
+            {
+                Indent(1); Out.WriteLine("new public static int TypeId { get { return tag.TypeId; } }");
+                Out.WriteLine();
+            }
+            FormatFields(def);
+            if (def.HasProperties)
+            {
+                Out.WriteLine();
+            }
+            FormatProperties(def);
+            if (def.HasProperties)
+            {
+                Out.WriteLine();
+            }
+            FormatMethods(def);
+            Indent(0); Out.WriteLine("}");
         }
 
         public override void FormatConsts(ConstsDef def)
@@ -210,37 +237,10 @@ namespace xpiler
             Indent(0); Out.WriteLine("}");
         }
 
-        public override void FormatCell(CellDef def)
+        public override void FormatReference(Reference def)
         {
-            def.BaseClass = def.Base;
-            if (String.IsNullOrEmpty(def.BaseClass))
-            {
-                def.BaseClass = (def.IsEvent ? "Event" : "Cell");
-            }
-            PreprocessProperties(def);
-
-            FormatComment(0, def.Comment);
-            Indent(0); Out.WriteLine("public class {0} : {1}", def.Name, def.BaseClass);
-            Indent(0); Out.WriteLine("{");
-            Indent(1); Out.WriteLine("new protected static readonly Tag tag;");
+            Indent(0); Out.WriteLine("using {0};", def.Target.Replace('/', '.'));
             Out.WriteLine();
-            if (def.IsEvent)
-            {
-                Indent(1); Out.WriteLine("new public static int TypeId { get { return tag.TypeId; } }");
-                Out.WriteLine();
-            }
-            FormatFields(def);
-            if (def.HasProperties)
-            {
-                Out.WriteLine();
-            }
-            FormatProperties(def);
-            if (def.HasProperties)
-            {
-                Out.WriteLine();
-            }
-            FormatMethods(def);
-            Indent(0); Out.WriteLine("}");
         }
 
         private void FormatFields(CellDef def)
