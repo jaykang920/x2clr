@@ -113,31 +113,38 @@
 
  - Instance based (Value based) dispatching is absolutely required. 
 
-## Event communication 
+### Value based dispatching 
 
- - Subscription
- - Posting
- - Dispatching
+ - It works and following is why: 
+   - Binder::BuildHandlerChain() has handlerMap.TryGetValue(equivalent, out handlers) 
+   - Then TryGetValue uses HashCode of equivalent which reflects hash value of Fingerprint. 
+   - Then Fingerprint reflects value of assigend field value. 
+   - This is an ingenious structure. But it is rather difficult to understand at first and debug. 
 
-### xpiler 
+# xpiler 
 
  - very simple. 
  - more examples required   
     - inheritance 
     - class / struct type field
  
- 
 
-### subscribe / publishing 
+
+# Distributed through Tcp
+
+
+
 
 ## Case development 
 
 
+# Enhancements 
 
+## Issue 1. Hub is a singleton. UnitTests requires to have Hub instance cleaned up completely. 
+ 
+ - Not easy to have it.
 
-
-
-
+ 
   
 
 

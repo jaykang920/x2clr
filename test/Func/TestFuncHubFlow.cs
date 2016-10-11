@@ -10,6 +10,9 @@ namespace x2.Tests.Func
     [TestFixture]
     public class TestFuncHubFlow
     {
+        /// <summary>
+        /// Shows a simple process of Hub and Flow startup and shutdown 
+        /// </summary>
         [Test]
         public void TestStartupTearDown()
         {
@@ -17,22 +20,25 @@ namespace x2.Tests.Func
 
             Hub.Instance
                 .Attach( 
-                    new SingleThreadFlow().Add(new MyCase(0, 0))
+                    new SingleThreadFlow().Add(new SimpleCase(0, 0))
                 );
 
             Hub.Startup(); 
 
-            // MyCase.Setup called
+            // SimpleCase.Setup called
 
             Hub.Shutdown(); 
 
-            // MyCase.Teardown called
+            // SimpleCase.Teardown called
         }
 
+        /// <summary>
+        /// Case post and gets callback with a simple event
+        /// </summary>
         [Test]
         public void TestEventEcho()
         {
-            var mc = new MyCase(0, 0);
+            var mc = new SimpleCase(0, 0);
 
             Hub.Instance
                 .Attach( 
@@ -41,7 +47,7 @@ namespace x2.Tests.Func
 
             Hub.Startup(); 
 
-            // Wait till MyCase shutdown
+            // Wait till SimpleCase shutdown
 
             while (mc.Shutdown == false)
             {
@@ -53,11 +59,14 @@ namespace x2.Tests.Func
             // Performance : 1 million echo between Hub / Case, 12 seconds.
         }
 
+        /// <summary>
+        /// Shows Case instances can post and callback each other with a same event type
+        /// </summary>
         [Test]
         public void TestEventBetweenCaseInstances()
         {
-            var mc1 = new MyCase(1, 2); 
-            var mc2 = new MyCase(2, 1); 
+            var mc1 = new SimpleCase(1, 2); 
+            var mc2 = new SimpleCase(2, 1); 
 
             Hub.Instance
                 .Attach( 
@@ -66,27 +75,28 @@ namespace x2.Tests.Func
 
             Hub.Startup(); 
 
-            // Wait till MyCase shutdown
+            // Wait till SimpleCase shutdown
 
             while (mc1.Shutdown == false)
             {
                 Thread.Sleep(10);
             }
 
-            Assert.IsTrue(mc1.HelloCount == MyCase.TestCount || mc2.HelloCount == MyCase.TestCount);
+            Assert.IsTrue(mc1.HelloCount == SimpleCase.TestCount || mc2.HelloCount == SimpleCase.TestCount);
 
             Hub.Shutdown();
         }
     }
 
-    public class MyCase : Case
+    public class SimpleCase : Case
     {
         public volatile bool Shutdown = false;
         public const int TestCount = 1;
+
         private readonly int _me;
         private readonly int _other;
 
-        public MyCase(int me, int other)
+        public SimpleCase(int me, int other)
         {
             _me = me;
             _other = other;
@@ -97,6 +107,12 @@ namespace x2.Tests.Func
         protected override void Setup()
         {
             // If an event is bound with a field value, it can affect event dispatching.
+            // Reason: 
+            //  - Binder::BuildHandlerChain() has handlerMap.TryGetValue(equivalent, out handlers) 
+            //  - Then TryGetValue uses HashCode of equivalent which reflects hash value of Fingerprint. 
+            //  - Then Fingerprint reflects value of assigend field value. 
+            //  - This is an ingenious structure. But it is rather difficult to understand at first and debug. 
+
             new HelloCaseEvent() { Foo = _other }.Bind(OnHelloCase);
 
             new HelloCaseEvent() { Foo = _me, Bar = "Hello"}.Post();
