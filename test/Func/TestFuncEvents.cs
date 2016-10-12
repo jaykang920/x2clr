@@ -209,4 +209,163 @@ namespace x2.Tests.Func
             bar_ = "";
         }
     }
+
+    public class TimerFlowCaseEvent : Event
+    {
+        protected new static readonly Tag tag;
+
+        public new static int TypeId { get { return tag.TypeId; } }
+
+        private string value_;
+
+        public string Value
+        {
+            get { return value_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                value_ = value;
+            }
+        }
+
+        static TimerFlowCaseEvent()
+        {
+            tag = new Tag(Event.tag, typeof(TimerFlowCaseEvent), 1,
+                    2);
+        }
+
+        public new static TimerFlowCaseEvent New()
+        {
+            return new TimerFlowCaseEvent();
+        }
+
+        public TimerFlowCaseEvent()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected TimerFlowCaseEvent(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            TimerFlowCaseEvent o = (TimerFlowCaseEvent)other;
+            if (value_ != o.value_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(tag.Offset + 0);
+                hash.Update(value_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return TimerFlowCaseEvent.New;
+        }
+
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
+            if (!base.IsEquivalent(other, fingerprint))
+            {
+                return false;
+            }
+            TimerFlowCaseEvent o = (TimerFlowCaseEvent)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (value_ != o.value_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                deserializer.Read(out value_);
+            }
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("Value", out value_);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(value_);
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+            serializer.Write("Value", value_);
+        }
+
+        public override int GetLength()
+        {
+            int length = base.GetLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetLength(value_);
+            }
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Value=\"{0}\"", value_.Replace("\"", "\\\""));
+        }
+
+        private void Initialize()
+        {
+            value_ = "";
+        }
+    }
 }

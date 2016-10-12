@@ -6,4 +6,7 @@
         <property name="Bar" type="string"/>
     </event>
 
+    <event name="TimerFlowCaseEvent" id="2">
+        <property name="Value" type="string"/>
+    </event>
 </x2>
