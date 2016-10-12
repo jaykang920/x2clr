@@ -16,4 +16,10 @@
  - Changes to other parts of your codebase don’t make them(unit tests) start failing 
 
 
+## Functional Tests
+
+ - Unit test framework can be used for functional tests. 
+ - It is simple and efficient to write client / server functional tests. 
+ - A separate project - functest - will be used to write tests:willo
+
  
