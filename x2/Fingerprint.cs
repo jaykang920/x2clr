@@ -4,11 +4,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+// ReSharper disable All
 
 namespace x2
 {
     /// <summary>
     /// Manages a fixed-length compact array of bit values.
+    /// index ranges over from 0 to length - 1.
     /// </summary>
     public class Fingerprint : IComparable<Fingerprint>, IIndexable<bool>
     {
@@ -40,16 +42,20 @@ namespace x2
         /// </summary>
         public Fingerprint(int length)
         {
-            if (length < 0)
+            if (length <= 0)
             {
                 throw new ArgumentOutOfRangeException();
             }
+
             this.length = length;
+
             if (length > 32)
             {
                 length -= 32;
                 blocks = new int[((length - 1) >> 5) + 1];
             }
+
+            // else use block upto 32 bits.
         }
 
         /// <summary>
@@ -74,15 +80,16 @@ namespace x2
             block = 0;
             if (blocks != null)
             {
-                for (int i = 0; i < blocks.Length; ++i)
-                {
-                    blocks[i] = 0;
-                }
+                Array.Clear(blocks, 0, blocks.Length);
             }
         }
 
         /// <summary>
         /// Compares this Fingerprint with the specified Fingerprint object.
+        /// Compared order is determined by : 
+        ///   - length
+        ///   - blocks content from higher bytes to lower bytes
+        ///   - block conent
         /// </summary>
         /// Implements IComparable(T).CompareTo interface.
         public int CompareTo(Fingerprint other)
@@ -127,8 +134,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Determines whether the specified object is equal to the current
-        /// object.
+        /// Determines whether the specified object is equal to the current object.
         /// </summary>
         public override bool Equals(object obj)
         {
@@ -220,7 +226,7 @@ namespace x2
 
         public void Deserialize(Deserializer deserializer)
         {
-            int length;
+            int length = 0;
             deserializer.ReadNonnegative(out length);
             int lengthInBytes = ((length - 1) >> 3) + 1;
             int lengthInBlocks = ((lengthInBytes - 1) >> 2) + 1;
@@ -256,6 +262,9 @@ namespace x2
             }
         }
 
+        /// <summary>
+        /// Gets length in bytes 
+        /// </summary>
         public int GetLength()
         {
             return Serializer.GetLengthVariableNonnegative(length)

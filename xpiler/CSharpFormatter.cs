@@ -222,11 +222,11 @@ namespace xpiler
             FormatComment(0, def.Comment);
             Indent(0); Out.WriteLine("public class {0} : {1}", def.Name, def.BaseClass);
             Indent(0); Out.WriteLine("{");
-            Indent(1); Out.WriteLine("new protected static readonly Tag tag;");
+            Indent(1); Out.WriteLine("protected new static readonly Tag tag;");
             Out.WriteLine();
             if (def.IsEvent)
             {
-                Indent(1); Out.WriteLine("new public static int TypeId { get { return tag.TypeId; } }");
+                Indent(1); Out.WriteLine("public new static int TypeId { get { return tag.TypeId; } }");
                 Out.WriteLine();
             }
             FormatFields(def);
@@ -341,7 +341,7 @@ namespace xpiler
             if (def.IsEvent)
             {
                 Out.WriteLine();
-                Indent(1); Out.WriteLine("new public static {0} New()", def.Name);
+                Indent(1); Out.WriteLine("public new static {0} New()", def.Name);
                 Indent(1); Out.WriteLine("{");
                 Indent(2); Out.WriteLine("return new {0}();", def.Name);
                 Indent(1); Out.WriteLine("}");
