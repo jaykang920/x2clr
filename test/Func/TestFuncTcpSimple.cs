@@ -37,10 +37,12 @@ namespace x2.Tests.Func
             clientFlow.SubscribeTo("client");
 
             // Make Hello works. 
-            while (serverCase.HelloReqCount <= 0)
+            while (serverCase.HelloReqCount <= 0 || clientCase.HelloRespCount <= 0)
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(10);
             }
+
+            Assert.IsTrue(serverCase.HelloReqCount > 0 && clientCase.HelloRespCount > 0);
 
             Hub.Shutdown();
         }
@@ -93,6 +95,7 @@ namespace x2.Tests.Func
         public class ClientCase : AsyncTcpClient
         {
             public int HelloCount { get; set; }
+            public int HelloRespCount { get; set; }
 
             public ClientCase(string name)
                 : base(name)
@@ -134,7 +137,7 @@ namespace x2.Tests.Func
 
             private void OnHelloResp(HelloResp resp)
             {
-                // received...
+                HelloRespCount++;
             }
 
             void OnFlowStart(FlowStart e)
