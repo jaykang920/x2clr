@@ -22,8 +22,11 @@ namespace x2.Tests.Func
                 .Attach(serverFlow)
                 .Attach(clientFlow);
 
-            serverFlow.Add(new ServerCase("server"));
-            clientFlow.Add(new ClientCase("client"));
+            var serverCase = new ServerCase("server");
+            var clientCase = new ClientCase("client");
+
+            serverFlow.Add(serverCase);
+            clientFlow.Add(clientCase);
 
             Hub.Startup();
 
@@ -34,7 +37,10 @@ namespace x2.Tests.Func
             clientFlow.SubscribeTo("client");
 
             // Make Hello works. 
-            Thread.Sleep(1000); 
+            while (serverCase.HelloReqCount <= 0)
+            {
+                Thread.Sleep(1000);
+            }
 
             Hub.Shutdown();
         }
@@ -42,6 +48,8 @@ namespace x2.Tests.Func
 
         public class ServerCase : AsyncTcpServer
         {
+            public int HelloReqCount { get; set; }
+
             public ServerCase(string name)
                 : base(name)
             {
@@ -67,11 +75,13 @@ namespace x2.Tests.Func
                 e._Channel = "server";
             }
 
-            void OnHello(HelloReq req)
+            private void OnHello(HelloReq req)
             {
+                HelloReqCount++;
+
                 var resp = new HelloResp
                 {
-                    Result = String.Format("Hello, {0}!", req.Name)
+                    Result = $"Hello, {req.Name}!"
                 };
 
                 resp._Channel = "server";
@@ -100,6 +110,7 @@ namespace x2.Tests.Func
                 new TimerFlowCaseEvent().Bind(OnTimerEvent);
                 new FlowStart().Bind(OnFlowStart);
                 new HelloReq().Bind(ConnectAndRequest);
+                new HelloResp().Bind(OnHelloResp);
 
                 RemoteHost = "127.0.0.1";
                 RemotePort = 6789;
@@ -110,15 +121,20 @@ namespace x2.Tests.Func
                 e._Channel = "client";
             }
 
-            void OnTimerEvent(TimerFlowCaseEvent e)
+            private void OnTimerEvent(TimerFlowCaseEvent e)
             {
                 HelloCount++;
 
-                var hello = new HelloReq { Name = string.Format("Hello {0}", HelloCount) };
+                var hello = new HelloReq { Name = $"Hello {HelloCount}"};
 
                 hello._Channel = "client"; 
 
                 hello.Post();
+            }
+
+            private void OnHelloResp(HelloResp resp)
+            {
+                // received...
             }
 
             void OnFlowStart(FlowStart e)
