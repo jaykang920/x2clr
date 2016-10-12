@@ -79,7 +79,10 @@ namespace x2.Tests.Func
 
         void OnFlowStart(FlowStart e)
         {
-            TimeFlow.Default.ReserveRepetition(new TimerFlowCaseEvent(), TimeSpan.FromMilliseconds(10)); 
-        }
+            TimeFlow.Default.ReserveRepetition(
+                new TimerFlowCaseEvent(),
+                TimeSpan.FromMilliseconds(10)
+            );
+        } 
     }
 }

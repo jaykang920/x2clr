@@ -129,7 +129,7 @@
     - class / struct type field
 
 
-# Distributed through Tcp
+# Distribution through Tcp
 
 ## Hello Example to TestFuncTcpSimple 
 
@@ -146,7 +146,13 @@
  - Link 
  - Case 
 
-Q1. How to bind / post events from other Cases using TcpServer? 
+#### TestFuncTcpSimple
+
+ - Use timer to periodically send event 
+ - Use channel to differentiate client event from server response 
+
+
+#### Q1. How to bind / post events from other Cases using TcpServer? 
 
  - Receiving is simple with Flow event subscription. 
  - Sending is through Flow to TcpServer Case, then to the LinkSession. 
@@ -158,11 +164,29 @@ A1. Multiple Flows, Hub channels, and Preprocess delegate can solve the issue.
  - Add an example with a functional test. 
 
 
+
 ### TimeFlow 
 
  - FrameBasedFlow 
+    - Has a Thread
+    - Calls Run 
+    - Run calls Update
+
  - Periodic processing functionality 
- - EventBasedFlow blocks waiting for Events in queue.
+    - With a timer
+    - Call Reserve
+    - TimeFlow::Update calls Timer::Tick() 
+    - No queue processing intended
+
+### Usage Example 
+
+  - Use TimeFlow.Default timeflow 
+  - Register Periodic event with Case Instance Id 
+  - Use it to periodically run the Case Instance.
+  - To cancel timer, original event needs to be kept. 
+
+The above scheme can be used to schedule most games. 
+Games with lots of entities need different scheduling scheme.
 
 
 # Game Dev. - Instance Model 
@@ -176,7 +200,6 @@ A1. Multiple Flows, Hub channels, and Preprocess delegate can solve the issue.
         - Authorize 
         - Join / leave / create instance 
     - Active 
-        - ? 
 
 ## Game Server 
 

@@ -9,4 +9,12 @@
     <event name="TimerFlowCaseEvent" id="2">
         <property name="Value" type="string"/>
     </event>
+
+  <event name="HelloReq" id="3">
+    <property name="Name" type="string"/>
+  </event>
+
+  <event name="HelloResp" id="4">
+    <property name="Result" type="string"/>
+  </event>
 </x2>
