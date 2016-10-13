@@ -31,6 +31,8 @@ namespace x2.Tests
             fp.Touch(2);
             fp.Touch(4);
 
+            // Capo just displaces Fingerprint index with a provided offset. 
+
             var window = new Capo<bool>(fp, 3);
             Assert.False(window[0]);
             Assert.True(window[1]);

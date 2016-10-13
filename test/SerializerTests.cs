@@ -189,7 +189,6 @@ namespace x2.Tests
         {
             //using (var stream = new MemoryStream())
             {
-                long l, bytes;
                 Buffer stream = new Buffer();
                 Serializer serializer = new Serializer(stream);
                 Deserializer deserializer = new Deserializer(stream);
@@ -204,7 +203,8 @@ namespace x2.Tests
                 stream.Rewind();
                 //stream.Seek(0, SeekOrigin.Begin);
 
-                bytes = deserializer.Read(out l);
+                long l;
+                long bytes = deserializer.Read(out l);
                 Assert.AreEqual(1, bytes);
                 Assert.AreEqual(0L, l);
 

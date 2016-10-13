@@ -14,7 +14,7 @@ namespace x2
         /// <summary>
         /// Per-class type tag to support custom type hierarchy.
         /// </summary>
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
         public static int TypeId { get { return tag.TypeId; } }
 
@@ -284,7 +284,7 @@ namespace x2
         /// <summary>
         /// Supports light-weight custom type hierarchy for Event and its subclasses.
         /// </summary>
-        new public class Tag : Cell.Tag
+        public new class Tag : Cell.Tag
         {
             /// <summary>
             /// Gets the type identifier of this event type.

@@ -6,656 +6,9 @@ using System.Text;
 
 using x2;
 
-namespace x2.Tests
+namespace x2.Tests.Func
 {
-    public static class SampleConsts
-    {
-        public const int Const1 = 1;
-        public const int Const2 = 2;
-
-        private static ConstsInfo<int> info;
-
-        static SampleConsts()
-        {
-            info = new ConstsInfo<int>();
-            info.Add("Const1", 1);
-            info.Add("Const2", 2);
-        }
-
-        public static bool ContainsName(string name)
-        {
-            return info.ContainsName(name);
-        }
-
-        public static bool ContainsValue(int value)
-        {
-            return info.ContainsValue(value);
-        }
-
-        public static string GetName(int value)
-        {
-            return info.GetName(value);
-        }
-
-        public static int Parse(string name)
-        {
-            return info.Parse(name);
-        }
-
-        public static bool TryParse(string name, out int result)
-        {
-            return info.TryParse(name, out result);
-        }
-    }
-
-    public class SampleCell1 : Cell
-    {
-        protected new static readonly Tag tag;
-
-        private int foo_;
-        private string bar_;
-
-        public int Foo
-        {
-            get { return foo_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 0);
-                foo_ = value;
-            }
-        }
-
-        public string Bar
-        {
-            get { return bar_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 1);
-                bar_ = value;
-            }
-        }
-
-        static SampleCell1()
-        {
-            tag = new Tag(null, typeof(SampleCell1), 2);
-        }
-
-        public SampleCell1()
-            : base(tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected SampleCell1(int length)
-            : base(length + tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected override bool EqualsTo(Cell other)
-        {
-            if (!base.EqualsTo(other))
-            {
-                return false;
-            }
-            SampleCell1 o = (SampleCell1)other;
-            if (foo_ != o.foo_)
-            {
-                return false;
-            }
-            if (bar_ != o.bar_)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode(Fingerprint fingerprint)
-        {
-            var hash = new Hash(base.GetHashCode(fingerprint));
-            if (fingerprint.Length <= tag.Offset)
-            {
-                return hash.Code;
-            }
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                hash.Update(tag.Offset + 0);
-                hash.Update(foo_);
-            }
-            if (touched[1])
-            {
-                hash.Update(tag.Offset + 1);
-                hash.Update(bar_);
-            }
-            return hash.Code;
-        }
-
-        public override Cell.Tag GetTypeTag() 
-        {
-            return tag;
-        }
-
-        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
-        {
-            if (!base.IsEquivalent(other, fingerprint))
-            {
-                return false;
-            }
-            SampleCell1 o = (SampleCell1)other;
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                if (foo_ != o.foo_)
-                {
-                    return false;
-                }
-            }
-            if (touched[1])
-            {
-                if (bar_ != o.bar_)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public override void Deserialize(Deserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                deserializer.Read(out foo_);
-            }
-            if (touched[1])
-            {
-                deserializer.Read(out bar_);
-            }
-        }
-
-        public override void Deserialize(VerboseDeserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            deserializer.Read("Foo", out foo_);
-            deserializer.Read("Bar", out bar_);
-        }
-
-        public override void Serialize(Serializer serializer)
-        {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(foo_);
-            }
-            if (touched[1])
-            {
-                serializer.Write(bar_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Foo", foo_);
-            serializer.Write("Bar", bar_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                length += Serializer.GetLength(foo_);
-            }
-            if (touched[1])
-            {
-                length += Serializer.GetLength(bar_);
-            }
-            return length;
-        }
-
-        protected override void Describe(StringBuilder stringBuilder)
-        {
-            base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Foo={0}", foo_);
-            stringBuilder.AppendFormat(" Bar=\"{0}\"", bar_.Replace("\"", "\\\""));
-        }
-
-        private void Initialize()
-        {
-            foo_ = 0;
-            bar_ = "";
-        }
-    }
-
-    public class SampleCell2 : SampleCell1
-    {
-        protected new static readonly Tag tag;
-
-        private bool baz_;
-
-        public bool Baz
-        {
-            get { return baz_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 0);
-                baz_ = value;
-            }
-        }
-
-        static SampleCell2()
-        {
-            tag = new Tag(SampleCell1.tag, typeof(SampleCell2), 1);
-        }
-
-        public SampleCell2()
-            : base(tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected SampleCell2(int length)
-            : base(length + tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected override bool EqualsTo(Cell other)
-        {
-            if (!base.EqualsTo(other))
-            {
-                return false;
-            }
-            SampleCell2 o = (SampleCell2)other;
-            if (baz_ != o.baz_)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode(Fingerprint fingerprint)
-        {
-            var hash = new Hash(base.GetHashCode(fingerprint));
-            if (fingerprint.Length <= tag.Offset)
-            {
-                return hash.Code;
-            }
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                hash.Update(tag.Offset + 0);
-                hash.Update(baz_);
-            }
-            return hash.Code;
-        }
-
-        public override Cell.Tag GetTypeTag() 
-        {
-            return tag;
-        }
-
-        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
-        {
-            if (!base.IsEquivalent(other, fingerprint))
-            {
-                return false;
-            }
-            SampleCell2 o = (SampleCell2)other;
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                if (baz_ != o.baz_)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public override void Deserialize(Deserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                deserializer.Read(out baz_);
-            }
-        }
-
-        public override void Deserialize(VerboseDeserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            deserializer.Read("Baz", out baz_);
-        }
-
-        public override void Serialize(Serializer serializer)
-        {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(baz_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Baz", baz_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                length += Serializer.GetLength(baz_);
-            }
-            return length;
-        }
-
-        protected override void Describe(StringBuilder stringBuilder)
-        {
-            base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Baz={0}", baz_);
-        }
-
-        private void Initialize()
-        {
-            baz_ = false;
-        }
-    }
-
-    public class SampleCell3 : SampleCell1
-    {
-        protected new static readonly Tag tag;
-
-        private bool qux_;
-
-        public bool Qux
-        {
-            get { return qux_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 0);
-                qux_ = value;
-            }
-        }
-
-        static SampleCell3()
-        {
-            tag = new Tag(SampleCell1.tag, typeof(SampleCell3), 1);
-        }
-
-        public SampleCell3()
-            : base(tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected SampleCell3(int length)
-            : base(length + tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected override bool EqualsTo(Cell other)
-        {
-            if (!base.EqualsTo(other))
-            {
-                return false;
-            }
-            SampleCell3 o = (SampleCell3)other;
-            if (qux_ != o.qux_)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode(Fingerprint fingerprint)
-        {
-            var hash = new Hash(base.GetHashCode(fingerprint));
-            if (fingerprint.Length <= tag.Offset)
-            {
-                return hash.Code;
-            }
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                hash.Update(tag.Offset + 0);
-                hash.Update(qux_);
-            }
-            return hash.Code;
-        }
-
-        public override Cell.Tag GetTypeTag() 
-        {
-            return tag;
-        }
-
-        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
-        {
-            if (!base.IsEquivalent(other, fingerprint))
-            {
-                return false;
-            }
-            SampleCell3 o = (SampleCell3)other;
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                if (qux_ != o.qux_)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public override void Deserialize(Deserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                deserializer.Read(out qux_);
-            }
-        }
-
-        public override void Deserialize(VerboseDeserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            deserializer.Read("Qux", out qux_);
-        }
-
-        public override void Serialize(Serializer serializer)
-        {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(qux_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Qux", qux_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                length += Serializer.GetLength(qux_);
-            }
-            return length;
-        }
-
-        protected override void Describe(StringBuilder stringBuilder)
-        {
-            base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Qux={0}", qux_);
-        }
-
-        private void Initialize()
-        {
-            qux_ = false;
-        }
-    }
-
-    public class SampleCell4 : SampleCell2
-    {
-        protected new static readonly Tag tag;
-
-        private bool quux_;
-
-        public bool Quux
-        {
-            get { return quux_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 0);
-                quux_ = value;
-            }
-        }
-
-        static SampleCell4()
-        {
-            tag = new Tag(SampleCell2.tag, typeof(SampleCell4), 1);
-        }
-
-        public SampleCell4()
-            : base(tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected SampleCell4(int length)
-            : base(length + tag.NumProps)
-        {
-            Initialize();
-        }
-
-        protected override bool EqualsTo(Cell other)
-        {
-            if (!base.EqualsTo(other))
-            {
-                return false;
-            }
-            SampleCell4 o = (SampleCell4)other;
-            if (quux_ != o.quux_)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode(Fingerprint fingerprint)
-        {
-            var hash = new Hash(base.GetHashCode(fingerprint));
-            if (fingerprint.Length <= tag.Offset)
-            {
-                return hash.Code;
-            }
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                hash.Update(tag.Offset + 0);
-                hash.Update(quux_);
-            }
-            return hash.Code;
-        }
-
-        public override Cell.Tag GetTypeTag() 
-        {
-            return tag;
-        }
-
-        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
-        {
-            if (!base.IsEquivalent(other, fingerprint))
-            {
-                return false;
-            }
-            SampleCell4 o = (SampleCell4)other;
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                if (quux_ != o.quux_)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public override void Deserialize(Deserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                deserializer.Read(out quux_);
-            }
-        }
-
-        public override void Deserialize(VerboseDeserializer deserializer)
-        {
-            base.Deserialize(deserializer);
-            deserializer.Read("Quux", out quux_);
-        }
-
-        public override void Serialize(Serializer serializer)
-        {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(quux_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Quux", quux_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                length += Serializer.GetLength(quux_);
-            }
-            return length;
-        }
-
-        protected override void Describe(StringBuilder stringBuilder)
-        {
-            base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Quux={0}", quux_);
-        }
-
-        private void Initialize()
-        {
-            quux_ = false;
-        }
-    }
-
-    public class SampleEvent1 : Event
+    public class HelloCaseEvent : Event
     {
         protected new static readonly Tag tag;
 
@@ -684,24 +37,24 @@ namespace x2.Tests
             }
         }
 
-        static SampleEvent1()
+        static HelloCaseEvent()
         {
-            tag = new Tag(Event.tag, typeof(SampleEvent1), 2,
+            tag = new Tag(Event.tag, typeof(HelloCaseEvent), 2,
                     1);
         }
 
-        public new static SampleEvent1 New()
+        public new static HelloCaseEvent New()
         {
-            return new SampleEvent1();
+            return new HelloCaseEvent();
         }
 
-        public SampleEvent1()
+        public HelloCaseEvent()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected SampleEvent1(int length)
+        protected HelloCaseEvent(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -713,7 +66,7 @@ namespace x2.Tests
             {
                 return false;
             }
-            SampleEvent1 o = (SampleEvent1)other;
+            HelloCaseEvent o = (HelloCaseEvent)other;
             if (foo_ != o.foo_)
             {
                 return false;
@@ -758,7 +111,7 @@ namespace x2.Tests
 
         public override Func<Event> GetFactoryMethod()
         {
-            return SampleEvent1.New;
+            return HelloCaseEvent.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
@@ -767,7 +120,7 @@ namespace x2.Tests
             {
                 return false;
             }
-            SampleEvent1 o = (SampleEvent1)other;
+            HelloCaseEvent o = (HelloCaseEvent)other;
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
@@ -857,42 +210,42 @@ namespace x2.Tests
         }
     }
 
-    public class SampleEvent2 : SampleEvent1
+    public class TimerFlowCaseEvent : Event
     {
         protected new static readonly Tag tag;
 
         public new static int TypeId { get { return tag.TypeId; } }
 
-        private bool baz_;
+        private string value_;
 
-        public bool Baz
+        public string Value
         {
-            get { return baz_; }
+            get { return value_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                baz_ = value;
+                value_ = value;
             }
         }
 
-        static SampleEvent2()
+        static TimerFlowCaseEvent()
         {
-            tag = new Tag(SampleEvent1.tag, typeof(SampleEvent2), 1,
+            tag = new Tag(Event.tag, typeof(TimerFlowCaseEvent), 1,
                     2);
         }
 
-        public new static SampleEvent2 New()
+        public new static TimerFlowCaseEvent New()
         {
-            return new SampleEvent2();
+            return new TimerFlowCaseEvent();
         }
 
-        public SampleEvent2()
+        public TimerFlowCaseEvent()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected SampleEvent2(int length)
+        protected TimerFlowCaseEvent(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -904,8 +257,8 @@ namespace x2.Tests
             {
                 return false;
             }
-            SampleEvent2 o = (SampleEvent2)other;
-            if (baz_ != o.baz_)
+            TimerFlowCaseEvent o = (TimerFlowCaseEvent)other;
+            if (value_ != o.value_)
             {
                 return false;
             }
@@ -923,7 +276,7 @@ namespace x2.Tests
             if (touched[0])
             {
                 hash.Update(tag.Offset + 0);
-                hash.Update(baz_);
+                hash.Update(value_);
             }
             return hash.Code;
         }
@@ -940,7 +293,7 @@ namespace x2.Tests
 
         public override Func<Event> GetFactoryMethod()
         {
-            return SampleEvent2.New;
+            return TimerFlowCaseEvent.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
@@ -949,11 +302,11 @@ namespace x2.Tests
             {
                 return false;
             }
-            SampleEvent2 o = (SampleEvent2)other;
+            TimerFlowCaseEvent o = (TimerFlowCaseEvent)other;
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (baz_ != o.baz_)
+                if (value_ != o.value_)
                 {
                     return false;
                 }
@@ -967,14 +320,14 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                deserializer.Read(out baz_);
+                deserializer.Read(out value_);
             }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
         {
             base.Deserialize(deserializer);
-            deserializer.Read("Baz", out baz_);
+            deserializer.Read("Value", out value_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -983,14 +336,14 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                serializer.Write(baz_);
+                serializer.Write(value_);
             }
         }
 
         public override void Serialize(VerboseSerializer serializer)
         {
             base.Serialize(serializer);
-            serializer.Write("Baz", baz_);
+            serializer.Write("Value", value_);
         }
 
         public override int GetLength()
@@ -999,7 +352,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetLength(baz_);
+                length += Serializer.GetLength(value_);
             }
             return length;
         }
@@ -1007,51 +360,51 @@ namespace x2.Tests
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Baz={0}", baz_);
+            stringBuilder.AppendFormat(" Value=\"{0}\"", value_.Replace("\"", "\\\""));
         }
 
         private void Initialize()
         {
-            baz_ = false;
+            value_ = "";
         }
     }
 
-    public class SampleEvent3 : SampleEvent1
+    public class HelloReq : Event
     {
         protected new static readonly Tag tag;
 
         public new static int TypeId { get { return tag.TypeId; } }
 
-        private bool qux_;
+        private string name_;
 
-        public bool Qux
+        public string Name
         {
-            get { return qux_; }
+            get { return name_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                qux_ = value;
+                name_ = value;
             }
         }
 
-        static SampleEvent3()
+        static HelloReq()
         {
-            tag = new Tag(SampleEvent1.tag, typeof(SampleEvent3), 1,
+            tag = new Tag(Event.tag, typeof(HelloReq), 1,
                     3);
         }
 
-        public new static SampleEvent3 New()
+        public new static HelloReq New()
         {
-            return new SampleEvent3();
+            return new HelloReq();
         }
 
-        public SampleEvent3()
+        public HelloReq()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected SampleEvent3(int length)
+        protected HelloReq(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -1063,8 +416,8 @@ namespace x2.Tests
             {
                 return false;
             }
-            SampleEvent3 o = (SampleEvent3)other;
-            if (qux_ != o.qux_)
+            HelloReq o = (HelloReq)other;
+            if (name_ != o.name_)
             {
                 return false;
             }
@@ -1082,7 +435,7 @@ namespace x2.Tests
             if (touched[0])
             {
                 hash.Update(tag.Offset + 0);
-                hash.Update(qux_);
+                hash.Update(name_);
             }
             return hash.Code;
         }
@@ -1099,7 +452,7 @@ namespace x2.Tests
 
         public override Func<Event> GetFactoryMethod()
         {
-            return SampleEvent3.New;
+            return HelloReq.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
@@ -1108,11 +461,11 @@ namespace x2.Tests
             {
                 return false;
             }
-            SampleEvent3 o = (SampleEvent3)other;
+            HelloReq o = (HelloReq)other;
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (qux_ != o.qux_)
+                if (name_ != o.name_)
                 {
                     return false;
                 }
@@ -1126,14 +479,14 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                deserializer.Read(out qux_);
+                deserializer.Read(out name_);
             }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
         {
             base.Deserialize(deserializer);
-            deserializer.Read("Qux", out qux_);
+            deserializer.Read("Name", out name_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -1142,14 +495,14 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                serializer.Write(qux_);
+                serializer.Write(name_);
             }
         }
 
         public override void Serialize(VerboseSerializer serializer)
         {
             base.Serialize(serializer);
-            serializer.Write("Qux", qux_);
+            serializer.Write("Name", name_);
         }
 
         public override int GetLength()
@@ -1158,7 +511,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetLength(qux_);
+                length += Serializer.GetLength(name_);
             }
             return length;
         }
@@ -1166,51 +519,51 @@ namespace x2.Tests
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Qux={0}", qux_);
+            stringBuilder.AppendFormat(" Name=\"{0}\"", name_.Replace("\"", "\\\""));
         }
 
         private void Initialize()
         {
-            qux_ = false;
+            name_ = "";
         }
     }
 
-    public class SampleEvent4 : SampleEvent2
+    public class HelloResp : Event
     {
         protected new static readonly Tag tag;
 
         public new static int TypeId { get { return tag.TypeId; } }
 
-        private bool quux_;
+        private string result_;
 
-        public bool Quux
+        public string Result
         {
-            get { return quux_; }
+            get { return result_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                quux_ = value;
+                result_ = value;
             }
         }
 
-        static SampleEvent4()
+        static HelloResp()
         {
-            tag = new Tag(SampleEvent2.tag, typeof(SampleEvent4), 1,
+            tag = new Tag(Event.tag, typeof(HelloResp), 1,
                     4);
         }
 
-        public new static SampleEvent4 New()
+        public new static HelloResp New()
         {
-            return new SampleEvent4();
+            return new HelloResp();
         }
 
-        public SampleEvent4()
+        public HelloResp()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected SampleEvent4(int length)
+        protected HelloResp(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -1222,8 +575,8 @@ namespace x2.Tests
             {
                 return false;
             }
-            SampleEvent4 o = (SampleEvent4)other;
-            if (quux_ != o.quux_)
+            HelloResp o = (HelloResp)other;
+            if (result_ != o.result_)
             {
                 return false;
             }
@@ -1241,7 +594,7 @@ namespace x2.Tests
             if (touched[0])
             {
                 hash.Update(tag.Offset + 0);
-                hash.Update(quux_);
+                hash.Update(result_);
             }
             return hash.Code;
         }
@@ -1258,7 +611,7 @@ namespace x2.Tests
 
         public override Func<Event> GetFactoryMethod()
         {
-            return SampleEvent4.New;
+            return HelloResp.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
@@ -1267,11 +620,11 @@ namespace x2.Tests
             {
                 return false;
             }
-            SampleEvent4 o = (SampleEvent4)other;
+            HelloResp o = (HelloResp)other;
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (quux_ != o.quux_)
+                if (result_ != o.result_)
                 {
                     return false;
                 }
@@ -1285,14 +638,14 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                deserializer.Read(out quux_);
+                deserializer.Read(out result_);
             }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
         {
             base.Deserialize(deserializer);
-            deserializer.Read("Quux", out quux_);
+            deserializer.Read("Result", out result_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -1301,14 +654,14 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                serializer.Write(quux_);
+                serializer.Write(result_);
             }
         }
 
         public override void Serialize(VerboseSerializer serializer)
         {
             base.Serialize(serializer);
-            serializer.Write("Quux", quux_);
+            serializer.Write("Result", result_);
         }
 
         public override int GetLength()
@@ -1317,7 +670,7 @@ namespace x2.Tests
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetLength(quux_);
+                length += Serializer.GetLength(result_);
             }
             return length;
         }
@@ -1325,12 +678,489 @@ namespace x2.Tests
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Quux={0}", quux_);
+            stringBuilder.AppendFormat(" Result=\"{0}\"", result_.Replace("\"", "\\\""));
         }
 
         private void Initialize()
         {
-            quux_ = false;
+            result_ = "";
+        }
+    }
+
+    public class NodeJoinReq : Event
+    {
+        protected new static readonly Tag tag;
+
+        public new static int TypeId { get { return tag.TypeId; } }
+
+        private string name_;
+
+        public string Name
+        {
+            get { return name_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                name_ = value;
+            }
+        }
+
+        static NodeJoinReq()
+        {
+            tag = new Tag(Event.tag, typeof(NodeJoinReq), 1,
+                    5);
+        }
+
+        public new static NodeJoinReq New()
+        {
+            return new NodeJoinReq();
+        }
+
+        public NodeJoinReq()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected NodeJoinReq(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            NodeJoinReq o = (NodeJoinReq)other;
+            if (name_ != o.name_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(tag.Offset + 0);
+                hash.Update(name_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return NodeJoinReq.New;
+        }
+
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
+            if (!base.IsEquivalent(other, fingerprint))
+            {
+                return false;
+            }
+            NodeJoinReq o = (NodeJoinReq)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (name_ != o.name_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                deserializer.Read(out name_);
+            }
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("Name", out name_);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(name_);
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+            serializer.Write("Name", name_);
+        }
+
+        public override int GetLength()
+        {
+            int length = base.GetLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetLength(name_);
+            }
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Name=\"{0}\"", name_.Replace("\"", "\\\""));
+        }
+
+        private void Initialize()
+        {
+            name_ = "";
+        }
+    }
+
+    public class NodeJoinResp : Event
+    {
+        protected new static readonly Tag tag;
+
+        public new static int TypeId { get { return tag.TypeId; } }
+
+        private string name_;
+
+        public string Name
+        {
+            get { return name_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                name_ = value;
+            }
+        }
+
+        static NodeJoinResp()
+        {
+            tag = new Tag(Event.tag, typeof(NodeJoinResp), 1,
+                    6);
+        }
+
+        public new static NodeJoinResp New()
+        {
+            return new NodeJoinResp();
+        }
+
+        public NodeJoinResp()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected NodeJoinResp(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            NodeJoinResp o = (NodeJoinResp)other;
+            if (name_ != o.name_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(tag.Offset + 0);
+                hash.Update(name_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return NodeJoinResp.New;
+        }
+
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
+            if (!base.IsEquivalent(other, fingerprint))
+            {
+                return false;
+            }
+            NodeJoinResp o = (NodeJoinResp)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (name_ != o.name_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                deserializer.Read(out name_);
+            }
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("Name", out name_);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(name_);
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+            serializer.Write("Name", name_);
+        }
+
+        public override int GetLength()
+        {
+            int length = base.GetLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetLength(name_);
+            }
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Name=\"{0}\"", name_.Replace("\"", "\\\""));
+        }
+
+        private void Initialize()
+        {
+            name_ = "";
+        }
+    }
+
+    public class NodeLeaveReq : Event
+    {
+        protected new static readonly Tag tag;
+
+        public new static int TypeId { get { return tag.TypeId; } }
+
+        private string name_;
+
+        public string Name
+        {
+            get { return name_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                name_ = value;
+            }
+        }
+
+        static NodeLeaveReq()
+        {
+            tag = new Tag(Event.tag, typeof(NodeLeaveReq), 1,
+                    7);
+        }
+
+        public new static NodeLeaveReq New()
+        {
+            return new NodeLeaveReq();
+        }
+
+        public NodeLeaveReq()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected NodeLeaveReq(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            NodeLeaveReq o = (NodeLeaveReq)other;
+            if (name_ != o.name_)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(tag.Offset + 0);
+                hash.Update(name_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return NodeLeaveReq.New;
+        }
+
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
+            if (!base.IsEquivalent(other, fingerprint))
+            {
+                return false;
+            }
+            NodeLeaveReq o = (NodeLeaveReq)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (name_ != o.name_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                deserializer.Read(out name_);
+            }
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("Name", out name_);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(name_);
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+            serializer.Write("Name", name_);
+        }
+
+        public override int GetLength()
+        {
+            int length = base.GetLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetLength(name_);
+            }
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Name=\"{0}\"", name_.Replace("\"", "\\\""));
+        }
+
+        private void Initialize()
+        {
+            name_ = "";
         }
     }
 }
