@@ -341,7 +341,7 @@ namespace xpiler
             if (def.IsEvent)
             {
                 Out.WriteLine();
-                Indent(1); Out.WriteLine("new public static {0} New()", def.Name);
+                Indent(1); Out.WriteLine("public new static {0} New()", def.Name);
                 Indent(1); Out.WriteLine("{");
                 Indent(2); Out.WriteLine("return new {0}();", def.Name);
                 Indent(1); Out.WriteLine("}");

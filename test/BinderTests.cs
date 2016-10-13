@@ -174,6 +174,25 @@ namespace x2.Tests
             Assert.AreEqual(0, binder.BuildHandlerChain(e4, equivalent, handlerChain));
         }
 
+        [Test]
+        public void TestBasicPerformance()
+        {
+            Binder binder = new Binder();
+            var equivalent = new EventEquivalent();
+            List<Handler> handlerChain = new List<Handler>();
+
+            binder.Bind(new SampleEvent1 { Foo = 1 }, new MethodHandler<SampleEvent1>(OnSampleEvent1));
+
+            // const int testCount = 1000000;
+            const int testCount = 1;
+
+            for (var i = 0; i < testCount; ++i)
+            {
+                binder.BuildHandlerChain(new SampleEvent1 {Foo = 1}, equivalent, handlerChain);
+            }
+            // 1,000,000 counts in 342 ms in release mode
+        }
+
         void OnEvent(Event e)
         {
         }

@@ -12,13 +12,13 @@ namespace x2.Tests
         [Test]
         public void TestNegativeLength()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => { Fingerprint fp = new Fingerprint(-1); });
+            Assert.Throws<ArgumentOutOfRangeException>(() => { var fp = new Fingerprint(-1); });
         }
 
         [Test]
         public void TestAccessors()
         {
-            Fingerprint fp = new Fingerprint(33);
+            var fp = new Fingerprint(33);
 
             Assert.Throws(typeof(IndexOutOfRangeException),
                 () => { fp.Get(-1); });
@@ -41,7 +41,7 @@ namespace x2.Tests
         [Test]
         public void TestCreation()
         {
-            Fingerprint fp1 = new Fingerprint(1);
+            var fp1 = new Fingerprint(1);
             Assert.AreEqual(1, fp1.Length);
             Assert.False(fp1.Get(0));
             
@@ -51,6 +51,23 @@ namespace x2.Tests
             {
                 Assert.False(fp2.Get(i));
             }
+        }
+
+        [Test]
+        public void TestGetLength()
+        {
+            var fp1 = new Fingerprint(99);
+
+            Assert.AreEqual(99, fp1.Length);
+
+            var blen = fp1.GetLength();
+
+            var lengthInBytes = (((fp1.Length - 1) >> 3) + 1);
+            var expectedBytesLen = lengthInBytes  + Serializer.GetLengthVariableNonnegative(99);
+
+            // GetLength() seems strange. Added issue to the jaykang920
+
+            Assert.AreEqual(expectedBytesLen, blen);
         }
 
         [Test]
