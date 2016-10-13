@@ -8,17 +8,44 @@ using x2;
 namespace Server.Session
 {
     /// <summary>
-    /// Handles Login, Lobby events for Users
+    /// Listen
     /// </summary>
     public class SessionServer : AsyncTcpServer
     {
         public SessionServer()
-            : base("session")
+            : base("SessionServer")
         {
 
         }
 
+        protected override void Setup()
+        {
+            base.Setup();
 
+            RegisterEvents();
+
+            InitializeSendEvents();
+            InitializeRecvEvents();
+
+            Flow.SubscribeTo("Net");
+
+            // Listen to Port passed in
+        }
+
+        void RegisterEvents()
+        {
+
+        }
+
+        void InitializeSendEvents()
+        {
+            // Bind to Send
+        }
+
+        void InitializeRecvEvents()
+        {
+            //   
+        }
     }
 
 }
