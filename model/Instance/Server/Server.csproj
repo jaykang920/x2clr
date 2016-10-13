@@ -43,8 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Couchbase\Query.cs" />
+    <Compile Include="Couchbase\QueryRunner.cs" />
     <Compile Include="Game\GameServer.cs" />
     <Compile Include="Game\Instance.cs" />
+    <Compile Include="Game\InstanceFactory.cs" />
     <Compile Include="Game\InstanceRunner.cs" />
     <Compile Include="Master\DirectoryInstance.cs" />
     <Compile Include="Master\DirectoryUser.cs" />

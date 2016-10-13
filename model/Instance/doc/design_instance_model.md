@@ -1,5 +1,7 @@
 # Session 
 
+## Classes
+
  - SessionServer
    - Is a AsyncTcpServer
    - Has Users
@@ -10,6 +12,32 @@
   
  - LobbyCase 
    - Handles match / join / leave instance 
+   
+ - GameServerClient 
+   - Is a AsyncTcpClient 
+   - Connects to a GameServer
+   - Has a list in SessionServer 
+   
+## Runtime Configuration 
+
+ - A SingleThreadFlow subscribed to "Net"
+   - Has SessionServer
+   - Preprocess changes _Channel to "App"
+   
+ - A SingleThreadFlow subscribed to "Cluster" 
+   - Has Clients to Servers  
+   - Preprocess changes _Channel to "App" 
+   
+ - A SingleThreadFlow subscribed to "App"
+   - Has LoginCase and LobbyCase 
+   - Change _Channel to "Net" when sending to clients 
+   - Change _Channel to "Cluster" when sending to servers 
+
+ - The above setup seems not natural. There must be a better way. 
+   - Because 
+     - Only Flow can subscribe to Channel.
+     - Flow is not a natural way to partition queue processing. 
+      
    
 # Master 
 
@@ -29,17 +57,26 @@
    - Has a Rank Indexer 
    
  - Common to directories
-   - Can run any flow (Strictly Actor)
+   - Can run in any flow (Strictly Actor)
     
 # Game 
 
  - GameServer 
    - Is a AsyncTcpServer 
    
- - InstanceRunner 
-   - Is a SingleThreadFlow with a Channel name assigned. 
+ - InstanceRunner
+   - Is a Case
+   - Creates and manages Instances
+   - Runs in a SingleThreadFlow
    
- - InstanceDirector 
-   - Is a Case that dispatch Events to Instances
+ - InstanceFactory 
+   - A singleton 
+   - Instance Type based factory
+   
+ - Instance 
+   - A class 
+   - Callback through Bind
+   
+   
    
     
