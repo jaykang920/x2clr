@@ -17,4 +17,17 @@
   <event name="HelloResp" id="4">
     <property name="Result" type="string"/>
   </event>
+
+  <event name="NodeJoinReq" id="5">
+    <property name="Name" type="string"/>
+  </event>
+
+  <event name="NodeJoinResp" id="6">
+    <property name="Name" type="string"/>
+  </event>
+
+  <event name="NodeLeaveReq" id="7">
+    <property name="Name" type="string"/>
+  </event>
+
 </x2>

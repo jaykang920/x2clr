@@ -163,7 +163,18 @@ A1. Multiple Flows, Hub channels, and Preprocess delegate can solve the issue.
 
  - Add an example with a functional test. 
 
+## Server session management 
 
+ - Connecting other servers
+ - Detecting other servers
+ - Detecting disconnection 
+ 
+### TestFuncSessionManagement 
+
+ - SampleClientCase connects and communicates NodeJoin / NodeLeave with Name 
+  
+  
+  
 
 ### TimeFlow 
 
