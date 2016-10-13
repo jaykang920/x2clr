@@ -172,9 +172,7 @@ A1. Multiple Flows, Hub channels, and Preprocess delegate can solve the issue.
 ### TestFuncSessionManagement 
 
  - SampleClientCase connects and communicates NodeJoin / NodeLeave with Name 
-  
-  
-  
+ - Connect / Join is finished. 
 
 ### TimeFlow 
 
@@ -200,28 +198,23 @@ The above scheme can be used to schedule most games.
 Games with lots of entities need different scheduling scheme.
 
 
-# Game Dev. - Instance Model 
+# Summary 
 
-## Session Server 
-
- - SingleThreadFlow()
- - TcpServer()
- - SessionCase 
-    - Reactive 
-        - Authorize 
-        - Join / leave / create instance 
-    - Active 
-
-## Game Server 
-
- - SingleThreadFlow() 
-    - Assign channel 
-
-
-
-  
-
-
+ Now I can go for Instance model development. 
  
+ x2 has rather steep learning curve, especially in: 
+  - Hub event dispatching scheme
+    - Fingerprint / Capo / Cell 
+    - Flow channel in Hub 
+    
+  - Sending through Post / Bind 
+    - new HelloResp().Bind(Send) 
+    - At first, this seems very odd since we use Send(session, Event) always. 
+    - But it can be a good practice once acquainted. 
+    
+  - No example for game server specific functionality
+    - This is a hurdle for wide spread use of x2. 
 
-     
+    
+    
+    
