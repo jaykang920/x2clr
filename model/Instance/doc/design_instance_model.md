@@ -18,6 +18,12 @@
    - Connects to a GameServer
    - Has a list in SessionServer 
    
+## Channel 
+
+ - AsyncTcpClient is in one NetFlow with a Channel set with the server name or id
+   - Example, "master", "gs1", "gs2", ... 
+ - AsyncTcpServer is in one NetFlow with "Clients" Channel  
+ 
 # Master 
 
  - MasterServer
