@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<x2 namespace="Events.Tests"> <!-- id : 1 ~ 1000 -->
+    <event name="SampleEvent1" id="1">
+        <property name="Name" type="string"/>
+    </event>
+    <event name="SampleEvent2" id="2" base="SampleEvent1">
+        <property name="Result" type="string"/>
+    </event>
+</x2>

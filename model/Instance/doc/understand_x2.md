@@ -127,35 +127,23 @@
  - more examples required   
     - inheritance 
     - class / struct type field
+    
+## Subclassing
+
+ base keyword is used in xpiler
+ 
+    <event name="SampleEvent2" id="2" base="SampleEvent1">
+        <property name="Baz" type="bool"/>
+    </event>
+
+## Containers
+
+ 
 
 
 # Distribution through Tcp
 
 ## Hello Example to TestFuncTcpSimple 
-
-### TimeFlow 
-
- - FrameBasedFlow 
-    - Has a Thread
-    - Calls Run 
-    - Run calls Update
-
- - Periodic processing functionality 
-    - With a timer
-    - Call Reserve
-    - TimeFlow::Update calls Timer::Tick() 
-    - No queue processing intended
-
-#### Usage Example 
-
-  - Use TimeFlow.Default timeflow 
-  - Register Periodic event with Case Instance Id 
-  - Use it to periodically run the Case Instance.
-  - To cancel timer, original event needs to be kept. 
-
-The above scheme can be used to schedule most games. 
-Games with lots of entities need different scheduling scheme.
-
 
 ### AsyncTcpServer 
 
@@ -170,6 +158,12 @@ Games with lots of entities need different scheduling scheme.
  - Link 
  - Case 
 
+#### TestFuncTcpSimple
+
+ - Use timer to periodically send event 
+ - Use channel to differentiate client event from server response 
+
+
 #### Q1. How to bind / post events from other Cases using TcpServer? 
 
  - Receiving is simple with Flow event subscription. 
@@ -181,51 +175,58 @@ A1. Multiple Flows, Hub channels, and Preprocess delegate can solve the issue.
 
  - Add an example with a functional test. 
 
-#### TestFuncTcpSimple
+## Server session management 
 
- - Use timer to periodically send event 
- - Use channel to differentiate client event from server response 
+ - Connecting other servers
+ - Detecting other servers
+ - Detecting disconnection 
  
- - AbstractTcpClient has a bug when Connect(). 
-    - Fixed by checking connecting status.
+### TestFuncSessionManagement 
 
-## Server Cluster
+ - SampleClientCase connects and communicates NodeJoin / NodeLeave with Name 
+ - Connect / Join is finished. 
 
- - Session setup
-   - One AsyncTcpServer
-   - One AsyncTcpClient per remote server
+### TimeFlow 
 
- - Detecting Disconnection
-    - LinkSessionConnected / LinkSessionDisconnected Event posted to Hub from SessionBasedLink 
-    - Same on Server and Client.
+ - FrameBasedFlow 
+    - Has a Thread
+    - Calls Run 
+    - Run calls Update
+
+ - Periodic processing functionality 
+    - With a timer
+    - Call Reserve
+    - TimeFlow::Update calls Timer::Tick() 
+    - No queue processing intended
+
+### Usage Example 
+
+  - Use TimeFlow.Default timeflow 
+  - Register Periodic event with Case Instance Id 
+  - Use it to periodically run the Case Instance.
+  - To cancel timer, original event needs to be kept. 
+
+The above scheme can be used to schedule most games. 
+Games with lots of entities need different scheduling scheme.
+
+
+# Summary 
+
+ Now I can go for Instance model development. 
+ 
+ x2 has rather steep learning curve, especially in: 
+  - Hub event dispatching scheme
+    - Fingerprint / Capo / Cell 
+    - Flow channel in Hub 
     
- - Reconnecting
-    - Session recovery can make things more complicated. 
-     
-  
+  - Sending through Post / Bind 
+    - new HelloResp().Bind(Send) 
+    - At first, this seems very odd since we use Send(session, Event) always. 
+    - But it can be a good practice once acquainted. 
+    
+  - No example for game server specific functionality
+    - This is a hurdle for wide spread use of x2. 
 
-# Game Dev. - Instance Model 
-
-## Session Server 
-
- - SingleThreadFlow()
- - TcpServer()
- - SessionCase 
-    - Reactive 
-        - Authorize 
-        - Join / leave / create instance 
-    - Active 
-
-## Game Server 
-
- - SingleThreadFlow() 
-    - Assign channel 
-
-
-
-  
-
-
- 
-
-     
+    
+    
+    

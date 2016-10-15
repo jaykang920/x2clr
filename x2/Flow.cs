@@ -249,6 +249,7 @@ namespace x2
         public Flow Add(ICase c)
         {
             caseStack.Add(c);
+            OnCaseAdded(c);
             return this;
         }
 
@@ -258,6 +259,7 @@ namespace x2
         public Flow Remove(ICase c)
         {
             caseStack.Remove(c);
+            OnCaseRemoved(c);
             return this;
         }
 
@@ -373,6 +375,10 @@ namespace x2
         protected virtual void OnStart() { }
 
         protected virtual void OnStop() { }
+
+        protected virtual void OnCaseAdded(ICase c) { }
+
+        protected virtual void OnCaseRemoved(ICase c) { }
 
         private void OnHeartbeatEvent(HeartbeatEvent e)
         {
