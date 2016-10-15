@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChannelNames.cs" />
+    <Compile Include="Core\ChannelFilter.cs" />
     <Compile Include="Couchbase\Query.cs" />
     <Compile Include="Couchbase\QueryRunner.cs" />
     <Compile Include="Game\GameServer.cs" />

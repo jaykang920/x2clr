@@ -127,6 +127,18 @@
  - more examples required   
     - inheritance 
     - class / struct type field
+    
+## Subclassing
+
+ base keyword is used in xpiler
+ 
+    <event name="SampleEvent2" id="2" base="SampleEvent1">
+        <property name="Baz" type="bool"/>
+    </event>
+
+## Containers
+
+ 
 
 
 # Distribution through Tcp

@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2clr", "..\..\x2\x2clr.csproj", "{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{348338A4-0599-4DB4-992C-064B6FDA7C1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Unity|Any CPU = Debug_Unity|Any CPU
@@ -51,6 +53,14 @@ Global
 		{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}.Release_Unity|Any CPU.Build.0 = Release_Unity|Any CPU
 		{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{348338A4-0599-4DB4-992C-064B6FDA7C1D}.Debug_Unity|Any CPU.ActiveCfg = Debug|Any CPU
+		{348338A4-0599-4DB4-992C-064B6FDA7C1D}.Debug_Unity|Any CPU.Build.0 = Debug|Any CPU
+		{348338A4-0599-4DB4-992C-064B6FDA7C1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{348338A4-0599-4DB4-992C-064B6FDA7C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{348338A4-0599-4DB4-992C-064B6FDA7C1D}.Release_Unity|Any CPU.ActiveCfg = Release|Any CPU
+		{348338A4-0599-4DB4-992C-064B6FDA7C1D}.Release_Unity|Any CPU.Build.0 = Release|Any CPU
+		{348338A4-0599-4DB4-992C-064B6FDA7C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{348338A4-0599-4DB4-992C-064B6FDA7C1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

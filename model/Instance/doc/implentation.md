@@ -1,7 +1,7 @@
 # Intro 
 
  - This implemenation is basically learning process. 
- - With continued refactoring, the final result should be a proof x2 usability and performance. 
+ - With continued refactoring, should be the final result a proof of x2 usability and performance. 
  
 # Process 
 
