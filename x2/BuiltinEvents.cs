@@ -60,9 +60,9 @@ namespace x2
     /// </summary>
     public class HeartbeatEvent : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         static HeartbeatEvent()
         {
@@ -70,7 +70,7 @@ namespace x2
                     (int)BuiltinEventType.HeartbeatEvent);
         }
 
-        new public static HeartbeatEvent New()
+        public new static HeartbeatEvent New()
         {
             return new HeartbeatEvent();
         }
@@ -167,9 +167,9 @@ namespace x2
     /// </summary>
     public class FlowStart : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         static FlowStart()
         {
@@ -177,7 +177,7 @@ namespace x2
                     (int)BuiltinEventType.FlowStart);
         }
 
-        new public static FlowStart New()
+        public new static FlowStart New()
         {
             return new FlowStart();
         }
@@ -242,9 +242,9 @@ namespace x2
     /// </summary>
     public class FlowStop : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         static FlowStop()
         {
@@ -252,7 +252,7 @@ namespace x2
                     (int)BuiltinEventType.FlowStop);
         }
 
-        new public static FlowStop New()
+        public new static FlowStop New()
         {
             return new FlowStop();
         }
@@ -317,9 +317,9 @@ namespace x2
     /// </summary>
     public class TimeoutEvent : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private object key_;
         private int intParam_;
@@ -356,7 +356,7 @@ namespace x2
                     (int)BuiltinEventType.TimeoutEvent);
         }
 
-        new public static TimeoutEvent New()
+        public new static TimeoutEvent New()
         {
             return new TimeoutEvent();
         }

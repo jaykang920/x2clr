@@ -133,38 +133,6 @@
 
 ## Hello Example to TestFuncTcpSimple 
 
-### AsyncTcpServer 
-
- - AbstractTcpServer 
-    - Accept and manages LinkSession
- - ServerLink 
-    - Has LinkSessions
-    - Broadcast 
-    - Send 
- - SessionBasedLink 
-    - Has Preprocess. This can be used to modify Events. 
- - Link 
- - Case 
-
-#### TestFuncTcpSimple
-
- - Use timer to periodically send event 
- - Use channel to differentiate client event from server response 
-
-
-#### Q1. How to bind / post events from other Cases using TcpServer? 
-
- - Receiving is simple with Flow event subscription. 
- - Sending is through Flow to TcpServer Case, then to the LinkSession. 
- - Sending flow is not natural and there is queueing delay. 
- - Reported issue 12. 
-
-A1. Multiple Flows, Hub channels, and Preprocess delegate can solve the issue. 
-
- - Add an example with a functional test. 
-
-
-
 ### TimeFlow 
 
  - FrameBasedFlow 
@@ -178,7 +146,7 @@ A1. Multiple Flows, Hub channels, and Preprocess delegate can solve the issue.
     - TimeFlow::Update calls Timer::Tick() 
     - No queue processing intended
 
-### Usage Example 
+#### Usage Example 
 
   - Use TimeFlow.Default timeflow 
   - Register Periodic event with Case Instance Id 
@@ -188,6 +156,53 @@ A1. Multiple Flows, Hub channels, and Preprocess delegate can solve the issue.
 The above scheme can be used to schedule most games. 
 Games with lots of entities need different scheduling scheme.
 
+
+### AsyncTcpServer 
+
+ - AbstractTcpServer 
+    - Accept and manages LinkSession
+ - ServerLink 
+    - Has LinkSessions
+    - Broadcast 
+    - Send 
+ - SessionBasedLink 
+    - Has Preprocess. This can be used to modify Events. 
+ - Link 
+ - Case 
+
+#### Q1. How to bind / post events from other Cases using TcpServer? 
+
+ - Receiving is simple with Flow event subscription. 
+ - Sending is through Flow to TcpServer Case, then to the LinkSession. 
+ - Sending flow is not natural and there is queueing delay. 
+ - Reported issue 12. 
+
+A1. Multiple Flows, Hub channels, and Preprocess delegate can solve the issue. 
+
+ - Add an example with a functional test. 
+
+#### TestFuncTcpSimple
+
+ - Use timer to periodically send event 
+ - Use channel to differentiate client event from server response 
+ 
+ - AbstractTcpClient has a bug when Connect(). 
+    - Fixed by checking connecting status.
+
+## Server Cluster
+
+ - Session setup
+   - One AsyncTcpServer
+   - One AsyncTcpClient per remote server
+
+ - Detecting Disconnection
+    - LinkSessionConnected / LinkSessionDisconnected Event posted to Hub from SessionBasedLink 
+    - Same on Server and Client.
+    
+ - Reconnecting
+    - Session recovery can make things more complicated. 
+     
+  
 
 # Game Dev. - Instance Model 
 

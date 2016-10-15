@@ -66,9 +66,9 @@ namespace x2
 
     public class LinkSessionConnected : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private string linkName_;
         private bool result_;
@@ -110,7 +110,7 @@ namespace x2
                     (int)LinkEventType.LinkSessionConnected);
         }
 
-        new public static LinkSessionConnected New()
+        public new static LinkSessionConnected New()
         {
             return new LinkSessionConnected();
         }
@@ -231,9 +231,9 @@ namespace x2
 
     public class LinkSessionDisconnected : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private string linkName_;
         private int handle_;
@@ -275,7 +275,7 @@ namespace x2
                     (int)LinkEventType.LinkSessionDisconnected);
         }
 
-        new public static LinkSessionDisconnected New()
+        public new static LinkSessionDisconnected New()
         {
             return new LinkSessionDisconnected();
         }
@@ -396,9 +396,9 @@ namespace x2
 
     public class HandshakeReq : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private byte[] data_;
 
@@ -418,7 +418,7 @@ namespace x2
                     (int)LinkEventType.HandshakeReq);
         }
 
-        new public static HandshakeReq New()
+        public new static HandshakeReq New()
         {
             return new HandshakeReq();
         }
@@ -555,9 +555,9 @@ namespace x2
 
     public class HandshakeResp : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private byte[] data_;
 
@@ -577,7 +577,7 @@ namespace x2
                     (int)LinkEventType.HandshakeResp);
         }
 
-        new public static HandshakeResp New()
+        public new static HandshakeResp New()
         {
             return new HandshakeResp();
         }
@@ -714,9 +714,9 @@ namespace x2
 
     public class HandshakeAck : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private bool result_;
 
@@ -736,7 +736,7 @@ namespace x2
                     (int)LinkEventType.HandshakeAck);
         }
 
-        new public static HandshakeAck New()
+        public new static HandshakeAck New()
         {
             return new HandshakeAck();
         }
@@ -873,9 +873,9 @@ namespace x2
 
     public class LinkSessionRecovered : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private string linkName_;
         private int handle_;
@@ -917,7 +917,7 @@ namespace x2
                     (int)LinkEventType.LinkSessionRecovered);
         }
 
-        new public static LinkSessionRecovered New()
+        public new static LinkSessionRecovered New()
         {
             return new LinkSessionRecovered();
         }
@@ -1038,9 +1038,9 @@ namespace x2
 
     public class SessionReq : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private string token_;
         private long rxCounter_;
@@ -1093,7 +1093,7 @@ namespace x2
                     (int)LinkEventType.SessionReq);
         }
 
-        new public static SessionReq New()
+        public new static SessionReq New()
         {
             return new SessionReq();
         }
@@ -1326,9 +1326,9 @@ namespace x2
 
     public class SessionResp : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private string token_;
         private int retransmission_;
@@ -1359,7 +1359,7 @@ namespace x2
                     (int)LinkEventType.SessionResp);
         }
 
-        new public static SessionResp New()
+        public new static SessionResp New()
         {
             return new SessionResp();
         }
@@ -1528,9 +1528,9 @@ namespace x2
 
     public class SessionAck : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         private bool recovered_;
 
@@ -1550,7 +1550,7 @@ namespace x2
                     (int)LinkEventType.SessionAck);
         }
 
-        new public static SessionAck New()
+        public new static SessionAck New()
         {
             return new SessionAck();
         }
@@ -1687,9 +1687,9 @@ namespace x2
 
     public class SessionEnd : Event
     {
-        new protected static readonly Tag tag;
+        protected new static readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public new static int TypeId { get { return tag.TypeId; } }
 
         static SessionEnd()
         {
@@ -1697,7 +1697,7 @@ namespace x2
                     (int)LinkEventType.SessionEnd);
         }
 
-        new public static SessionEnd New()
+        public new static SessionEnd New()
         {
             return new SessionEnd();
         }

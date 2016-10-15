@@ -210,7 +210,11 @@ namespace x2
                     using (new WriteLock(rwlock))
                     {
                         eventQueue.Add(e);
-                        Connect();
+
+                        if (!connecting)
+                        {
+                            Connect();
+                        }
                     }
                 }
             }
