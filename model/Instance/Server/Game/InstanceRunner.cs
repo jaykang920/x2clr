@@ -7,7 +7,7 @@ using x2;
 
 namespace Server.Game
 {
-    class InstanceRunner : SingleThreadFlow
+    public class InstanceRunner : Case
     {
     }
 }

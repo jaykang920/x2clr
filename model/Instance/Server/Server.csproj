@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,13 +47,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChannelNames.cs" />
     <Compile Include="Couchbase\Query.cs" />
     <Compile Include="Couchbase\QueryRunner.cs" />
     <Compile Include="Game\GameServer.cs" />
     <Compile Include="Game\Instance.cs" />
     <Compile Include="Game\InstanceFactory.cs" />
     <Compile Include="Game\InstanceRunner.cs" />
+    <Compile Include="Master\Config.cs" />
     <Compile Include="Master\DirectoryInstance.cs" />
+    <Compile Include="Master\DirectoryServer.cs" />
     <Compile Include="Master\DirectoryUser.cs" />
     <Compile Include="Master\MasterServer.cs" />
     <Compile Include="Program.cs" />
@@ -61,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

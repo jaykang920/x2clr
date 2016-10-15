@@ -22,17 +22,16 @@ namespace Server.Session
         {
             base.Setup();
 
-            RegisterEvents();
-
+            InitializeFactoryEvents();
             InitializeSendEvents();
             InitializeRecvEvents();
 
-            Flow.SubscribeTo("Net");
+            Flow.SubscribeTo(ChannelNames.GetClientsChannel());
 
             // Listen to Port passed in
         }
 
-        void RegisterEvents()
+        void InitializeFactoryEvents()
         {
 
         }

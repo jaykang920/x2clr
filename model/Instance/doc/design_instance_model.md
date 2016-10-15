@@ -20,9 +20,12 @@
    
 ## Channel 
 
- - AsyncTcpClient is in one NetFlow with a Channel set with the server name or id
+ - AsyncTcpClient is in one SingleThreadFlow with a Channel set with the server name or id
    - Example, "master", "gs1", "gs2", ... 
- - AsyncTcpServer is in one NetFlow with "Clients" Channel  
+ - AsyncTcpServer is in one SingleThreadFlow with "Clients" Channel  
+ - SingleThreadFlow w/ Login Channel for LoginCase 
+ - SingleThreadFlow w/ Lobby Channel for LobbyCase
+ 
  
 # Master 
 
@@ -40,8 +43,15 @@
    - Is a Case 
    - Handles Login / Logout / Location change 
    - Has a Rank Indexer 
+
  - Common to directories
    - Can run in any flow (Strictly Actor)
+   
+## Channel 
+
+ - "Clients" for all accepted servers
+ - "App" for Instance, Server, User directory regardless of Flow
+ - Multicasting to Flow queues happens, but keep x2 scheme and enhance performance later with profiling.
     
 # Game 
 
