@@ -21,15 +21,15 @@
  
 ## Classes 
 
- <> has 
-    - <receiving channels, posting channels> 
+ {} has 
+    - {receiving channels, posting channels} 
  
   
 ## Local 
  
- - LoginCase : <Session | SessionCient | MasterNet, SessionNet | MasterClient> 
- - DirectoryUser : <Master | MasterClient, MasterNet>  
- - ClientCase : <SessionNet, SessionClient>
+ - LoginCase : {Session | SessionCient | MasterNet, SessionNet | MasterClient} 
+ - DirectoryUser : {Master | MasterClient, MasterNet}  
+ - ClientCase : {SessionNet, SessionClient}
      
 
 Login flow: 
@@ -43,15 +43,15 @@ Login flow:
 
 Copied from local: 
 
- - LoginCase : <Session, MasterClient | SessionNet> 
- - DirectoryUser : <User, MasterNet>  
- - ClientCase : <SessionNet, SessionClient>
+ - LoginCase : {Session, MasterClient | SessionNet} 
+ - DirectoryUser : {User, MasterNet}  
+ - ClientCase : {SessionNet, SessionClient}
 
- - SessionNet : <SessionNet, _> 
+ - SessionNet : {SessionNet, _} 
    - Preprocess sets Event._Channel to Login (Depending on TypeId)  
- - MasterClient : <MasterClient, _> 
+ - MasterClient : {MasterClient, _} 
    - Preprocess sets Event._Channel to Login (Depending on TypeId)
- - MasterNet : <MaserNet, _> 
+ - MasterNet : {MaserNet, _} 
    - Prepress sets Event._Channel to User (Depending on TypeId)
    
  Login flow: 

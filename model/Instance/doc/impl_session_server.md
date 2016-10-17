@@ -17,22 +17,6 @@
    - Works in a separated flow "GameClient{0}" % Id 
 
 ## Construction w/ Tests
-
-### Channel / Bind guide
-
- Distribution needs to be considered.
- Partition of sent events needs to be considered. 
-
- Channels: 
- 
- - Server processing Channels 
-   - Ex. Login, Lobby, InstanceRunner1, InstanceRunner2, Cluster, etc. 
- - Net send Channels 
-   - One for all accepted sessions. Usually ServerName + Net 
-     - Ex. SessionNet, MasterNet, GameNet 
-   - One for each AsyncTcpClient to other servers. 
-     - Ex. MasterClient, GameClient1, GameClient2, etc 
-
  
 ### TestLogin
 
