@@ -24,22 +24,18 @@
    
  - Common to directories
    - Can run in any flow (Strictly Actor)
-
-## Construction 
-
- x2 can change cluster configuration easily.
-
- Therefore, construction goes in following order: 
-
- - functional tests with NUnit
- - setup Cases 
- - setup Event Bind
- - setup ChannelFilter
- 
-
+   
 ## DirectoryServer 
 
-
+ - Status synchronization 
+ - ServerList has a list of Servers 
+ - Role is required 
+ - TestDirectoryServer shows Join / ServerList flow 
  
+ Next implementation is SessionServer / Client, 
+ then comes back to DirectoryUser for authentication. 
+  
+## MasterServer 
+
  
   

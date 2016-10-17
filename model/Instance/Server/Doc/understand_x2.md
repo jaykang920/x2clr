@@ -138,38 +138,7 @@
 
 ## Containers
 
- list is supported. 
-
-     <x2>
-        <cell name="Item">
-            <property name="Id" type="int32"/>
-        </cell>
-    ...
-        <event name="ItemListResp" id="EventType.ItemListResp">
-            <property name="Items" type="list(Item)"/>
-        </event>
-     </x2>
-
-
-    // On server-side
-    void OnItemListReq(ItemListReq req)
-    {
-        var resp = new ItemListResp().InResponseOf(req);
-
-        var items = new List<Item>();
-        items.Add(item1);
-        items.Add(item2);
-        resp.Items = items;
-        ...
-        resp.Post();
-    }
-
-    // On client-side
-    void OnItemListResp(ItemListResp e)
-    {
-        List<Item> items = e.Items;
-        ...
-    }
+ 
 
 
 # Distribution through Tcp
@@ -205,13 +174,6 @@
 A1. Multiple Flows, Hub channels, and Preprocess delegate can solve the issue. 
 
  - Add an example with a functional test. 
-
-## Multicasting
-
- - Case inside AsyncTcpServer level, which has a session Handle 
- - That sets Handle and Send or ???
- 
- - TODO: Ask the author. The answer is vague.
 
 ## Server session management 
 

@@ -48,10 +48,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChannelNames.cs" />
+    <Compile Include="Core\ChannelCase.cs" />
     <Compile Include="Core\ChannelFilter.cs" />
+    <Compile Include="Core\NetClient.cs" />
+    <Compile Include="Core\NetServer.cs" />
     <Compile Include="Couchbase\Query.cs" />
     <Compile Include="Couchbase\QueryRunner.cs" />
-    <Compile Include="Game\GameNet.cs" />
+    <Compile Include="Game\Config.cs" />
+    <Compile Include="Game\GameNetServer.cs" />
     <Compile Include="Game\Instance.cs" />
     <Compile Include="Game\InstanceFactory.cs" />
     <Compile Include="Game\InstanceRunner.cs" />
@@ -59,7 +63,7 @@
     <Compile Include="Master\DirectoryInstance.cs" />
     <Compile Include="Master\DirectoryServer.cs" />
     <Compile Include="Master\DirectoryUser.cs" />
-    <Compile Include="Master\MasterNet.cs" />
+    <Compile Include="Master\MasterNetServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Session\Config.cs" />
@@ -67,25 +71,23 @@
     <Compile Include="Session\LoginCase.cs" />
     <Compile Include="Session\Main.cs" />
     <Compile Include="Session\MasterClient.cs" />
-    <Compile Include="Session\SessionNet.cs" />
+    <Compile Include="Session\SessionNetServer.cs" />
     <Compile Include="Session\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Doc\design_channel.md" />
     <None Include="Doc\design_instance_model.md" />
+    <None Include="Doc\design_multicasting.md" />
     <None Include="Doc\distribution.md" />
     <None Include="Doc\dotnet_resources.md" />
     <None Include="Doc\enhance_x2.md" />
     <None Include="Doc\implentation.md" />
     <None Include="Doc\impl_master_server.md" />
+    <None Include="Doc\impl_session_server.md" />
     <None Include="Doc\README.md" />
     <None Include="Doc\understand_x2.md" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Doc\game_idea.jpg" />
-    <Content Include="Doc\idea_master_server.svg" />
-    <Content Include="Doc\session_idea.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\x2\x2clr.csproj">
@@ -96,6 +98,11 @@
       <Project>{9205a83e-86bb-4b13-bf92-b0c37f43b472}</Project>
       <Name>Events</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Doc\game_idea.jpg" />
+    <Content Include="Doc\idea_master_server.svg" />
+    <Content Include="Doc\session_idea.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -10,7 +10,7 @@ namespace Events
     /// ErrorCodes for all protocol
     /// Use descriptive name to explain error
     /// </summary>
-    enum ErrorLogin
+    public enum ErrorLogin
     {
         Success = 0, 
         FailLogin = ErrorCodes.LoginBegin,

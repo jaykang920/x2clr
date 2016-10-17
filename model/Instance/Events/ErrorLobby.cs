@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Events
 {
-    enum ErrorLobby
+    public enum ErrorLobby
     {
         Success = 0, 
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Events
 {
-    enum ErrorCodes
+    public enum ErrorCodes
     {
         LoginBegin = 1000, 
         LobbyBegin = 2000, 

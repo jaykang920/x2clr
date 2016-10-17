@@ -3,10 +3,10 @@ using x2;
 
 namespace Server.Master
 {
-    public class MasterNet : AsyncTcpServer
+    public class MasterNetServer : Core.NetServer
     {
         Config config; 
-        public MasterNet(Config cfg)
+        public MasterNetServer(Config cfg)
             : base(cfg.Name)
         {
             config = cfg;
@@ -18,8 +18,6 @@ namespace Server.Master
 
             InitializeFactoryEvents();
             InitializeBinds();
-
-            Flow.SubscribeTo(ChannelNames.GetSlaveServerChannel());
 
             Listen(config.Port);
         }

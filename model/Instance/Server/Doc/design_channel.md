@@ -55,7 +55,7 @@ Network middlemen:
  - MasterNetServer : {MaserNetServer, _} 
    - Prepress sets Event._Channel to User (Depending on TypeId)
    
- Login flow: 
+Login flow: 
 
  - ClientCase posts EventLoginReq to SessionNetClient channel
    - SessionNetClient sends to a session of SessionNetServer 

@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Reflection;
 using x2;
 
-namespace Server.Session
+namespace Server.Game
 {
-    /// <summary>
-    /// Listen
-    /// </summary>
-    public class SessionNet : AsyncTcpServer
+    public class GameNetServer : Core.NetServer
     {
         Config config;
 
-        public SessionNet(Config cfg)
+        public GameNetServer(Config cfg)
             : base(cfg.Name)
         {
             config = cfg;
@@ -27,8 +24,6 @@ namespace Server.Session
 
             InitializeFactoryEvents();
             InitializeBinds();
-
-            Flow.SubscribeTo(ChannelNames.GetClientsChannel());
 
             Listen(config.Port);
         }

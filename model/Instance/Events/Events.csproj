@@ -45,7 +45,9 @@
     <Compile Include="ErrorLobby.cs" />
     <Compile Include="ErrorLogin.cs" />
     <Compile Include="EventCluster.cs" />
+    <Compile Include="EventLoginTypes.cs" />
     <Compile Include="EventClusterTypes.cs" />
+    <Compile Include="EventLogin.cs" />
     <Compile Include="EventTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -57,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="EventCluster.xml" />
+    <Content Include="EventLogin.xml" />
     <Content Include="EventTests.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
