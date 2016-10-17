@@ -7,9 +7,9 @@ using x2;
 
 namespace Server.Game
 {
-    public class GameServer : AsyncTcpServer
+    public class GameNet : AsyncTcpServer
     {
-        public GameServer()
+        public GameNet()
             : base("GameServer")
         {
 

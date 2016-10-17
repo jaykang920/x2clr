@@ -3,10 +3,10 @@ using x2;
 
 namespace Server.Master
 {
-    public class MasterServer : AsyncTcpServer
+    public class MasterNet : AsyncTcpServer
     {
         Config config; 
-        public MasterServer(Config cfg)
+        public MasterNet(Config cfg)
             : base(cfg.Name)
         {
             config = cfg;
@@ -17,7 +17,6 @@ namespace Server.Master
             base.Setup();
 
             InitializeFactoryEvents();
-
             InitializeBinds();
 
             Flow.SubscribeTo(ChannelNames.GetSlaveServerChannel());
@@ -32,7 +31,8 @@ namespace Server.Master
         
         void InitializeBinds()
         {
-            // Bind to Send  
+            // Send or Multicast when recieved
+            new Event().Bind(Send);
         }
     }
 }

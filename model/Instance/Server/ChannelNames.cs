@@ -27,5 +27,10 @@ namespace Server
         {
             return string.Format("GS{0}", id);
         }
+
+        public static string GetSessionServerChannel()
+        {
+            return "Session";
+        }
     }
 }

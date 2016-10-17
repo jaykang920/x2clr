@@ -51,7 +51,7 @@
     <Compile Include="Core\ChannelFilter.cs" />
     <Compile Include="Couchbase\Query.cs" />
     <Compile Include="Couchbase\QueryRunner.cs" />
-    <Compile Include="Game\GameServer.cs" />
+    <Compile Include="Game\GameNet.cs" />
     <Compile Include="Game\Instance.cs" />
     <Compile Include="Game\InstanceFactory.cs" />
     <Compile Include="Game\InstanceRunner.cs" />
@@ -59,12 +59,15 @@
     <Compile Include="Master\DirectoryInstance.cs" />
     <Compile Include="Master\DirectoryServer.cs" />
     <Compile Include="Master\DirectoryUser.cs" />
-    <Compile Include="Master\MasterServer.cs" />
+    <Compile Include="Master\MasterNet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Session\Config.cs" />
     <Compile Include="Session\LobbyCase.cs" />
     <Compile Include="Session\LoginCase.cs" />
-    <Compile Include="Session\SessionServer.cs" />
+    <Compile Include="Session\Main.cs" />
+    <Compile Include="Session\MasterClient.cs" />
+    <Compile Include="Session\SessionNet.cs" />
     <Compile Include="Session\User.cs" />
   </ItemGroup>
   <ItemGroup>

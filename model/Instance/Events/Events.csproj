@@ -40,6 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ErrorCodes.cs" />
+    <Compile Include="ErrorGame.cs" />
+    <Compile Include="ErrorLobby.cs" />
+    <Compile Include="ErrorLogin.cs" />
     <Compile Include="EventCluster.cs" />
     <Compile Include="EventClusterTypes.cs" />
     <Compile Include="EventTests.cs" />

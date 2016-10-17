@@ -81,6 +81,7 @@
     <Compile Include="TestChannelFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestDirectoryServer.cs" />
+    <Compile Include="TestLogin.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\x2\x2clr.csproj">
