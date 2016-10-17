@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Collections.Generic;
 using NUnit.Framework;
 using x2;
 using Server.Master;
@@ -35,6 +36,15 @@ namespace Test
 
             dir.SetDownstreamChannel(Server.ChannelNames.GetSlaveServerChannel());
 
+            sim.Join();
+
+            while (sim.Servers == null)
+            {
+                Thread.Sleep(10);
+            }
+
+            Assert.IsTrue(sim.Servers != null);
+            Assert.IsTrue(sim.Servers[0].Id == 1);
 
             Hub.Shutdown();
         }
@@ -42,6 +52,22 @@ namespace Test
 
     class SimulatedServer : Case
     {
+        public List<Events.Cluster.ServerStatus> Servers; 
+
+        public void Join()
+        {
+            // Post Join
+            Post(
+                new Events.Cluster.EventJoin()
+                {
+                    Id = 1, 
+                    Role = 2, 
+                    Ip = "127.0.0.1", 
+                    Port = 1234
+                }
+            );
+        }
+
         protected override void Setup()
         {
             new EventServerList().Bind(OnServerList);
@@ -54,6 +80,7 @@ namespace Test
         void Post(Event e)
         {
             e._Channel = Server.ChannelNames.GetMasterServerChannel();
+            e.Post();
         }
 
         /// <summary>
@@ -62,7 +89,7 @@ namespace Test
         /// <param name="e"></param>
         void OnServerList(EventServerList e)
         {
-
+            Servers = e.Servers;
         }
     }
 }

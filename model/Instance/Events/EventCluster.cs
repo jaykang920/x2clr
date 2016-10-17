@@ -16,9 +16,10 @@ namespace Events.Cluster
         protected new static readonly Tag tag;
 
         private int id_;
+        private int role_;
         private string ip_;
         private int port_;
-        private bool status_;
+        private bool up_;
 
         public int Id
         {
@@ -30,12 +31,22 @@ namespace Events.Cluster
             }
         }
 
+        public int Role
+        {
+            get { return role_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                role_ = value;
+            }
+        }
+
         public string Ip
         {
             get { return ip_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 1);
+                fingerprint.Touch(tag.Offset + 2);
                 ip_ = value;
             }
         }
@@ -45,24 +56,24 @@ namespace Events.Cluster
             get { return port_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 2);
+                fingerprint.Touch(tag.Offset + 3);
                 port_ = value;
             }
         }
 
-        public bool Status
+        public bool Up
         {
-            get { return status_; }
+            get { return up_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 3);
-                status_ = value;
+                fingerprint.Touch(tag.Offset + 4);
+                up_ = value;
             }
         }
 
         static ServerStatus()
         {
-            tag = new Tag(null, typeof(ServerStatus), 4);
+            tag = new Tag(null, typeof(ServerStatus), 5);
         }
 
         public ServerStatus()
@@ -88,6 +99,10 @@ namespace Events.Cluster
             {
                 return false;
             }
+            if (role_ != o.role_)
+            {
+                return false;
+            }
             if (ip_ != o.ip_)
             {
                 return false;
@@ -96,7 +111,7 @@ namespace Events.Cluster
             {
                 return false;
             }
-            if (status_ != o.status_)
+            if (up_ != o.up_)
             {
                 return false;
             }
@@ -119,17 +134,22 @@ namespace Events.Cluster
             if (touched[1])
             {
                 hash.Update(tag.Offset + 1);
-                hash.Update(ip_);
+                hash.Update(role_);
             }
             if (touched[2])
             {
                 hash.Update(tag.Offset + 2);
-                hash.Update(port_);
+                hash.Update(ip_);
             }
             if (touched[3])
             {
                 hash.Update(tag.Offset + 3);
-                hash.Update(status_);
+                hash.Update(port_);
+            }
+            if (touched[4])
+            {
+                hash.Update(tag.Offset + 4);
+                hash.Update(up_);
             }
             return hash.Code;
         }
@@ -156,21 +176,28 @@ namespace Events.Cluster
             }
             if (touched[1])
             {
-                if (ip_ != o.ip_)
+                if (role_ != o.role_)
                 {
                     return false;
                 }
             }
             if (touched[2])
             {
-                if (port_ != o.port_)
+                if (ip_ != o.ip_)
                 {
                     return false;
                 }
             }
             if (touched[3])
             {
-                if (status_ != o.status_)
+                if (port_ != o.port_)
+                {
+                    return false;
+                }
+            }
+            if (touched[4])
+            {
+                if (up_ != o.up_)
                 {
                     return false;
                 }
@@ -188,15 +215,19 @@ namespace Events.Cluster
             }
             if (touched[1])
             {
-                deserializer.Read(out ip_);
+                deserializer.Read(out role_);
             }
             if (touched[2])
             {
-                deserializer.Read(out port_);
+                deserializer.Read(out ip_);
             }
             if (touched[3])
             {
-                deserializer.Read(out status_);
+                deserializer.Read(out port_);
+            }
+            if (touched[4])
+            {
+                deserializer.Read(out up_);
             }
         }
 
@@ -204,9 +235,10 @@ namespace Events.Cluster
         {
             base.Deserialize(deserializer);
             deserializer.Read("Id", out id_);
+            deserializer.Read("Role", out role_);
             deserializer.Read("Ip", out ip_);
             deserializer.Read("Port", out port_);
-            deserializer.Read("Status", out status_);
+            deserializer.Read("Up", out up_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -219,15 +251,19 @@ namespace Events.Cluster
             }
             if (touched[1])
             {
-                serializer.Write(ip_);
+                serializer.Write(role_);
             }
             if (touched[2])
             {
-                serializer.Write(port_);
+                serializer.Write(ip_);
             }
             if (touched[3])
             {
-                serializer.Write(status_);
+                serializer.Write(port_);
+            }
+            if (touched[4])
+            {
+                serializer.Write(up_);
             }
         }
 
@@ -235,9 +271,10 @@ namespace Events.Cluster
         {
             base.Serialize(serializer);
             serializer.Write("Id", id_);
+            serializer.Write("Role", role_);
             serializer.Write("Ip", ip_);
             serializer.Write("Port", port_);
-            serializer.Write("Status", status_);
+            serializer.Write("Up", up_);
         }
 
         public override int GetLength()
@@ -250,15 +287,19 @@ namespace Events.Cluster
             }
             if (touched[1])
             {
-                length += Serializer.GetLength(ip_);
+                length += Serializer.GetLength(role_);
             }
             if (touched[2])
             {
-                length += Serializer.GetLength(port_);
+                length += Serializer.GetLength(ip_);
             }
             if (touched[3])
             {
-                length += Serializer.GetLength(status_);
+                length += Serializer.GetLength(port_);
+            }
+            if (touched[4])
+            {
+                length += Serializer.GetLength(up_);
             }
             return length;
         }
@@ -267,17 +308,19 @@ namespace Events.Cluster
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Id={0}", id_);
+            stringBuilder.AppendFormat(" Role={0}", role_);
             stringBuilder.AppendFormat(" Ip=\"{0}\"", ip_.Replace("\"", "\\\""));
             stringBuilder.AppendFormat(" Port={0}", port_);
-            stringBuilder.AppendFormat(" Status={0}", status_);
+            stringBuilder.AppendFormat(" Up={0}", up_);
         }
 
         private void Initialize()
         {
             id_ = 0;
+            role_ = 0;
             ip_ = "";
             port_ = 0;
-            status_ = false;
+            up_ = false;
         }
     }
 
@@ -287,15 +330,15 @@ namespace Events.Cluster
 
         public new static int TypeId { get { return tag.TypeId; } }
 
-        private List<ServerStatus> name_;
+        private List<ServerStatus> servers_;
 
-        public List<ServerStatus> Name
+        public List<ServerStatus> Servers
         {
-            get { return name_; }
+            get { return servers_; }
             set
             {
                 fingerprint.Touch(tag.Offset + 0);
-                name_ = value;
+                servers_ = value;
             }
         }
 
@@ -329,7 +372,7 @@ namespace Events.Cluster
                 return false;
             }
             EventServerList o = (EventServerList)other;
-            if (!Extensions.EqualsExtended(name_, o.name_))
+            if (!Extensions.EqualsExtended(servers_, o.servers_))
             {
                 return false;
             }
@@ -347,7 +390,7 @@ namespace Events.Cluster
             if (touched[0])
             {
                 hash.Update(tag.Offset + 0);
-                hash.Update(name_);
+                hash.Update(servers_);
             }
             return hash.Code;
         }
@@ -377,7 +420,7 @@ namespace Events.Cluster
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                if (name_ != o.name_)
+                if (servers_ != o.servers_)
                 {
                     return false;
                 }
@@ -391,14 +434,14 @@ namespace Events.Cluster
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                deserializer.Read(out name_);
+                deserializer.Read(out servers_);
             }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
         {
             base.Deserialize(deserializer);
-            deserializer.Read("Name", out name_);
+            deserializer.Read("Servers", out servers_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -407,14 +450,14 @@ namespace Events.Cluster
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                serializer.Write(name_);
+                serializer.Write(servers_);
             }
         }
 
         public override void Serialize(VerboseSerializer serializer)
         {
             base.Serialize(serializer);
-            serializer.Write("Name", name_);
+            serializer.Write("Servers", servers_);
         }
 
         public override int GetLength()
@@ -423,7 +466,7 @@ namespace Events.Cluster
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
-                length += Serializer.GetLength(name_);
+                length += Serializer.GetLength(servers_);
             }
             return length;
         }
@@ -431,12 +474,12 @@ namespace Events.Cluster
         protected override void Describe(StringBuilder stringBuilder)
         {
             base.Describe(stringBuilder);
-            stringBuilder.AppendFormat(" Name={0}", name_.ToStringExtended());
+            stringBuilder.AppendFormat(" Servers={0}", servers_.ToStringExtended());
         }
 
         private void Initialize()
         {
-            name_ = null;
+            servers_ = null;
         }
     }
 
@@ -447,6 +490,7 @@ namespace Events.Cluster
         public new static int TypeId { get { return tag.TypeId; } }
 
         private int id_;
+        private int role_;
         private string ip_;
         private int port_;
 
@@ -460,12 +504,22 @@ namespace Events.Cluster
             }
         }
 
+        public int Role
+        {
+            get { return role_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                role_ = value;
+            }
+        }
+
         public string Ip
         {
             get { return ip_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 1);
+                fingerprint.Touch(tag.Offset + 2);
                 ip_ = value;
             }
         }
@@ -475,14 +529,14 @@ namespace Events.Cluster
             get { return port_; }
             set
             {
-                fingerprint.Touch(tag.Offset + 2);
+                fingerprint.Touch(tag.Offset + 3);
                 port_ = value;
             }
         }
 
         static EventJoin()
         {
-            tag = new Tag(Event.tag, typeof(EventJoin), 3,
+            tag = new Tag(Event.tag, typeof(EventJoin), 4,
                     (int)EventClusterTypes.Join);
         }
 
@@ -514,6 +568,10 @@ namespace Events.Cluster
             {
                 return false;
             }
+            if (role_ != o.role_)
+            {
+                return false;
+            }
             if (ip_ != o.ip_)
             {
                 return false;
@@ -541,11 +599,16 @@ namespace Events.Cluster
             if (touched[1])
             {
                 hash.Update(tag.Offset + 1);
-                hash.Update(ip_);
+                hash.Update(role_);
             }
             if (touched[2])
             {
                 hash.Update(tag.Offset + 2);
+                hash.Update(ip_);
+            }
+            if (touched[3])
+            {
+                hash.Update(tag.Offset + 3);
                 hash.Update(port_);
             }
             return hash.Code;
@@ -583,12 +646,19 @@ namespace Events.Cluster
             }
             if (touched[1])
             {
-                if (ip_ != o.ip_)
+                if (role_ != o.role_)
                 {
                     return false;
                 }
             }
             if (touched[2])
+            {
+                if (ip_ != o.ip_)
+                {
+                    return false;
+                }
+            }
+            if (touched[3])
             {
                 if (port_ != o.port_)
                 {
@@ -608,9 +678,13 @@ namespace Events.Cluster
             }
             if (touched[1])
             {
-                deserializer.Read(out ip_);
+                deserializer.Read(out role_);
             }
             if (touched[2])
+            {
+                deserializer.Read(out ip_);
+            }
+            if (touched[3])
             {
                 deserializer.Read(out port_);
             }
@@ -620,6 +694,7 @@ namespace Events.Cluster
         {
             base.Deserialize(deserializer);
             deserializer.Read("Id", out id_);
+            deserializer.Read("Role", out role_);
             deserializer.Read("Ip", out ip_);
             deserializer.Read("Port", out port_);
         }
@@ -634,9 +709,13 @@ namespace Events.Cluster
             }
             if (touched[1])
             {
-                serializer.Write(ip_);
+                serializer.Write(role_);
             }
             if (touched[2])
+            {
+                serializer.Write(ip_);
+            }
+            if (touched[3])
             {
                 serializer.Write(port_);
             }
@@ -646,6 +725,7 @@ namespace Events.Cluster
         {
             base.Serialize(serializer);
             serializer.Write("Id", id_);
+            serializer.Write("Role", role_);
             serializer.Write("Ip", ip_);
             serializer.Write("Port", port_);
         }
@@ -660,9 +740,13 @@ namespace Events.Cluster
             }
             if (touched[1])
             {
-                length += Serializer.GetLength(ip_);
+                length += Serializer.GetLength(role_);
             }
             if (touched[2])
+            {
+                length += Serializer.GetLength(ip_);
+            }
+            if (touched[3])
             {
                 length += Serializer.GetLength(port_);
             }
@@ -673,6 +757,7 @@ namespace Events.Cluster
         {
             base.Describe(stringBuilder);
             stringBuilder.AppendFormat(" Id={0}", id_);
+            stringBuilder.AppendFormat(" Role={0}", role_);
             stringBuilder.AppendFormat(" Ip=\"{0}\"", ip_.Replace("\"", "\\\""));
             stringBuilder.AppendFormat(" Port={0}", port_);
         }
@@ -680,6 +765,7 @@ namespace Events.Cluster
         private void Initialize()
         {
             id_ = 0;
+            role_ = 0;
             ip_ = "";
             port_ = 0;
         }

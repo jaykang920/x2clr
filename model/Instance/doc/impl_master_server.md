@@ -24,12 +24,18 @@
    
  - Common to directories
    - Can run in any flow (Strictly Actor)
+   
+## DirectoryServer 
 
+ - Status synchronization 
+ - ServerList has a list of Servers 
+ - Role is required 
+ - TestDirectoryServer shows Join / ServerList flow 
+ 
+ Next implementation is SessionServer / Client, 
+ then comes back to DirectoryUser for authentication. 
+  
 ## MasterServer 
 
- - Runs in NetFlow 
- - "Clients" Channel 
- - Register events with a assembly 
- 
  
   
