@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<x2 namespace="Events.Cluster"> <!-- id : 1001 ~ 2000 -->
+  <cell name ="ServerStatus">
+    <property name="Id" type="int32"/>
+    <property name="Ip" type="string"/>
+    <property name="Port" type="int32"/>
+    <property name="Status" type="bool"/>
+  </cell>
+  <event name="EventServerList" id="EventClusterTypes.ServerList">
+    <property name="Name" type="list(ServerStatus)"/>
+  </event>
+  <event name="EventJoin" id="EventClusterTypes.Join">
+    <property name="Id" type="int32"/>
+    <property name="Ip" type="string"/>
+    <property name="Port" type="int32"/>
+  </event>
+  <event name="EventLeave" id="EventClusterTypes.Leave">
+    <property name="Id" type="int32"/>
+  </event>
+</x2>

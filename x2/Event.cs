@@ -3,6 +3,7 @@
 
 using System;
 using System.Text;
+using System.Collections.Generic;
 
 namespace x2
 {
@@ -22,6 +23,7 @@ namespace x2
         private int _handle;
         private bool _transform = true;
         private int _waitHandle;
+        private List<int> _multicasts;
 
         /// <summary>
         /// Gets or sets the name of the hub channel which this event is
@@ -67,6 +69,14 @@ namespace x2
                 fingerprint.Touch(tag.Offset + 1);
                 _waitHandle = value;
             }
+        }
+
+        /// <summary>
+        /// Get multicast handles
+        /// </summary>
+        public List<int> _Multicasts
+        {
+            get { return _multicasts; }
         }
 
         static Event()
@@ -187,6 +197,26 @@ namespace x2
         public virtual Func<Event> GetFactoryMethod()
         {
             return Event.New;
+        }
+
+        public void AddMulticast(int handle)
+        {
+            if ( _multicasts == null)
+            {
+                _multicasts = new List<int>();
+            }
+
+            _multicasts.Add(handle);
+        }
+
+        public void AddMulticast(List<int> handles)
+        {
+            if ( _multicasts == null)
+            {
+                _multicasts = new List<int>();
+            }
+
+            _multicasts.AddRange(handles);
         }
 
         /// <summary>

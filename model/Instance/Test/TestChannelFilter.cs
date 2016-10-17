@@ -5,7 +5,7 @@ using Events.Tests;
 namespace Test
 {
     [TestFixture]
-    public class TestUpstreamFilter
+    public class TestChannelFilter
     {
         [Test]
         public void TestFiltering()

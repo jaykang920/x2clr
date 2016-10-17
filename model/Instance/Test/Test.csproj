@@ -78,11 +78,9 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="TestChannelFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <Compile Include="TestDirectoryServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\x2\x2clr.csproj">
@@ -97,6 +95,9 @@
       <Project>{18ecfcbc-1d54-4bfb-96c7-4af4ffaf6ea2}</Project>
       <Name>Server</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

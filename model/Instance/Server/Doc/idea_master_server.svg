@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="idea_master_server.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="525.23855"
+     inkscape:cy="260.86335"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1028"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="456.49335"
+       y="197.96696"
+       id="text3344"
+       sodipodi:linespacing="125%"
+       transform="scale(0.8401345,1.1902856)"><tspan
+         sodipodi:role="line"
+         id="tspan3346"
+         x="456.49335"
+         y="197.96696">MasterServer : AsyncTcpServer</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="140.34016"
+       y="201.59698"
+       id="text3344-0"
+       sodipodi:linespacing="125%"
+       transform="scale(0.8401345,1.1902856)"><tspan
+         sodipodi:role="line"
+         id="tspan3346-1"
+         x="140.34016"
+         y="201.59698">SingleThreadFlow / &quot;Slave&quot;</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.50219774px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 324.14759,231.57537 c 50.19466,0 50.19466,-0.29962 50.19466,-0.29962"
+       id="path3366"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="141.35565"
+       y="261.06888"
+       id="text3344-0-4"
+       sodipodi:linespacing="125%"
+       transform="scale(0.8401345,1.1902856)"><tspan
+         sodipodi:role="line"
+         id="tspan3346-1-0"
+         x="141.35565"
+         y="261.06888">SingleThreadFlow / &quot;Cluster&quot;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="456.06873"
+       y="260.00089"
+       id="text3344-0-4-8"
+       sodipodi:linespacing="125%"
+       transform="scale(0.8401345,1.1902856)"><tspan
+         sodipodi:role="line"
+         id="tspan3346-1-0-5"
+         x="456.06873"
+         y="260.00089">DirectoryServer : Case</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.50219774px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 322.76791,303.12845 c 50.19466,0 50.19466,-0.29961 50.19466,-0.29961"
+       id="path3366-3"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="140.60704"
+       y="318.38232"
+       id="text3344-0-4-0"
+       sodipodi:linespacing="125%"
+       transform="scale(0.8401345,1.1902856)"><tspan
+         sodipodi:role="line"
+         id="tspan3346-1-0-3"
+         x="140.60704"
+         y="318.38232">SingleThreadFlow / &quot;User&quot;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="457.88434"
+       y="320.87421"
+       id="text3344-0-4-0-9"
+       sodipodi:linespacing="125%"
+       transform="scale(0.8401345,1.1902856)"><tspan
+         sodipodi:role="line"
+         id="tspan3346-1-0-3-1"
+         x="457.88434"
+         y="320.87421">DirectoryUser : Case</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.50219774px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 323.78684,373.89019 c 50.19466,0 50.19466,-0.29962 50.19466,-0.29962"
+       id="path3366-3-6"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="141.9006"
+       y="376.80942"
+       id="text3344-0-4-0-7"
+       sodipodi:linespacing="125%"
+       transform="scale(0.8401345,1.1902856)"><tspan
+         sodipodi:role="line"
+         id="tspan3346-1-0-3-4"
+         x="141.9006"
+         y="376.80942">SingleThreadFlow / &quot;Instance&quot;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="459.17789"
+       y="379.30127"
+       id="text3344-0-4-0-9-0"
+       sodipodi:linespacing="125%"
+       transform="scale(0.8401345,1.1902856)"><tspan
+         sodipodi:role="line"
+         id="tspan3346-1-0-3-1-8"
+         x="459.17789"
+         y="379.30127">DirectoryInstance : Case</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.50219774px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 324.87361,443.43515 c 50.19466,0 50.19466,-0.29962 50.19466,-0.29962"
+       id="path3366-3-6-6"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:30.73467064px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="33.463207"
+       y="148.71164"
+       id="text3497"
+       sodipodi:linespacing="125%"
+       transform="scale(0.88319499,1.1322528)"><tspan
+         sodipodi:role="line"
+         id="tspan3499"
+         x="33.463207"
+         y="148.71164">Flow / Case Configuration</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="222.14285"
+       y="79.505066"
+       id="text3501"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3503"
+         x="222.14285"
+         y="79.505066">Master Server</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 32.857143,98.076489 C 718.57143,98.790775 718.57143,98.790775 718.57143,98.790775"
+       id="path3505"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:30.73467064px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="38.545502"
+       y="479.38708"
+       id="text3497-4"
+       sodipodi:linespacing="125%"
+       transform="scale(0.88319499,1.1322528)"><tspan
+         sodipodi:role="line"
+         id="tspan3499-9"
+         x="38.545502"
+         y="479.38708">Distribution</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:25.14692688px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="124.84547"
+       y="533.67151"
+       id="text3525"
+       sodipodi:linespacing="125%"
+       transform="scale(0.9003884,1.1106318)"><tspan
+         sodipodi:role="line"
+         id="tspan3527"
+         x="124.84547"
+         y="533.67151">Event Category</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="160.68004"
+       y="538.6557"
+       id="text3344-0-4-0-7-8"
+       sodipodi:linespacing="125%"
+       transform="scale(0.8401345,1.1902856)"><tspan
+         sodipodi:role="line"
+         id="tspan3346-1-0-3-4-1"
+         x="160.68004"
+         y="538.6557">EventCluster</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="160.2393"
+       y="573.17841"
+       id="text3344-0-4-0-7-8-4"
+       sodipodi:linespacing="125%"
+       transform="scale(0.8401345,1.1902856)"><tspan
+         sodipodi:role="line"
+         id="tspan3346-1-0-3-4-1-8"
+         x="160.2393"
+         y="573.17841">EventUser</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="159.22035"
+       y="610.7251"
+       id="text3344-0-4-0-7-8-4-7"
+       sodipodi:linespacing="125%"
+       transform="scale(0.8401345,1.1902856)"><tspan
+         sodipodi:role="line"
+         id="tspan3346-1-0-3-4-1-8-8"
+         x="159.22035"
+         y="610.7251">EventInstance</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:13.02628231px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="341.76483"
+       y="619.87616"
+       id="text3587"
+       sodipodi:linespacing="125%"
+       transform="scale(0.97289779,1.0278572)"><tspan
+         sodipodi:role="line"
+         id="tspan3589"
+         x="341.76483"
+         y="619.87616">Server join / leave / status</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:13.02628231px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="340.23483"
+       y="661.91248"
+       id="text3587-1"
+       sodipodi:linespacing="125%"
+       transform="scale(0.97289779,1.0278572)"><tspan
+         sodipodi:role="line"
+         id="tspan3589-5"
+         x="340.23483"
+         y="661.91248">Authentication / location / status / stats / ranking</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:13.02628231px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="338.82288"
+       y="706.7663"
+       id="text3587-1-8"
+       sodipodi:linespacing="125%"
+       transform="scale(0.97289779,1.0278572)"><tspan
+         sodipodi:role="line"
+         id="tspan3589-5-8"
+         x="338.82288"
+         y="706.7663">Instance creation / destruction / join / leave / matching</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3631"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
+         id="flowRegion3633"><rect
+           id="rect3635"
+           width="97.85714"
+           height="42.857143"
+           x="568.57141"
+           y="798.07648" /></flowRegion><flowPara
+         id="flowPara3637" /></flowRoot>    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:25.14692688px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="127.12466"
+       y="713.71271"
+       id="text3525-3"
+       sodipodi:linespacing="125%"
+       transform="scale(0.9003884,1.1106318)"><tspan
+         sodipodi:role="line"
+         id="tspan3527-4"
+         x="127.12466"
+         y="713.71271">Flow Upstream</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:25.14692688px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="126.98912"
+       y="806.63721"
+       id="text3525-3-8"
+       sodipodi:linespacing="125%"
+       transform="scale(0.9003884,1.1106318)"><tspan
+         sodipodi:role="line"
+         id="tspan3527-4-1"
+         x="126.98912"
+         y="806.63721">Flow Downstream</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.27570724px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="177.95908"
+       y="615.68848"
+       id="text3707"
+       sodipodi:linespacing="125%"
+       transform="scale(0.74557091,1.341254)"><tspan
+         sodipodi:role="line"
+         id="tspan3709"
+         x="177.95908"
+         y="615.68848">UpstreamFilter sets _Channel for each event category in Preprocess delegate</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.27570724px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="177.6618"
+       y="693.93079"
+       id="text3707-0"
+       sodipodi:linespacing="125%"
+       transform="scale(0.74557093,1.341254)"><tspan
+         sodipodi:role="line"
+         id="tspan3709-5"
+         x="177.6618"
+         y="693.93079">Set _Channel to &quot;Slave&quot; when Post()</tspan></text>
+  </g>
+</svg>

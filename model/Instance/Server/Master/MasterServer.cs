@@ -18,7 +18,9 @@ namespace Server.Master
 
             InitializeFactoryEvents();
 
-            Flow.SubscribeTo(ChannelNames.GetClientsChannel());
+            InitializeBinds();
+
+            Flow.SubscribeTo(ChannelNames.GetSlaveServerChannel());
 
             Listen(config.Port);
         }
@@ -26,6 +28,11 @@ namespace Server.Master
         void InitializeFactoryEvents()
         {
             EventFactory.Register(Assembly.Load(config.EventAssembly));
+        }
+        
+        void InitializeBinds()
+        {
+            // Bind to Send  
         }
     }
 }

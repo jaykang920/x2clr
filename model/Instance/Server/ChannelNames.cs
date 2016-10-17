@@ -18,6 +18,11 @@ namespace Server
             return "Master";
         }
 
+        public static string GetSlaveServerChannel()
+        {
+            return "Slave";
+        }
+
         public static string GetGameServerChannel(int id)
         {
             return string.Format("GS{0}", id);

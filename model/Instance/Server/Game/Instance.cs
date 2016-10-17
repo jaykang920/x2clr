@@ -7,7 +7,7 @@ using x2;
 
 namespace Server.Game
 {
-    public abstract class Instance  : Case 
+    public class Instance  : Case 
     {
     }
 }

@@ -69,13 +69,29 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Doc\design_instance_model.md" />
+    <None Include="Doc\distribution.md" />
+    <None Include="Doc\dotnet_resources.md" />
+    <None Include="Doc\enhance_x2.md" />
+    <None Include="Doc\implentation.md" />
+    <None Include="Doc\impl_master_server.md" />
+    <None Include="Doc\README.md" />
+    <None Include="Doc\understand_x2.md" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Doc\game_idea.jpg" />
+    <Content Include="Doc\idea_master_server.svg" />
+    <Content Include="Doc\session_idea.jpg" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\x2\x2clr.csproj">
       <Project>{79a3e41b-fa7f-4ed8-86ab-fcf61a6f65b9}</Project>
       <Name>x2clr</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Events\Events.csproj">
+      <Project>{9205a83e-86bb-4b13-bf92-b0c37f43b472}</Project>
+      <Name>Events</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

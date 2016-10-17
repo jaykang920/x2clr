@@ -68,14 +68,30 @@ namespace x2
         /// </summary>
         public override void Send(Event e)
         {
+            SendSession(e._Handle, e);
+
+            var lst = e._Multicasts;
+
+            if ( lst != null)
+            {
+                foreach ( var handle in lst)
+                {
+                    SendSession(handle, e);
+                }
+            }
+        }
+
+        private void SendSession(int handle, Event e)
+        {
             LinkSession session;
             using (new ReadLock(rwlock))
             {
-                if (!sessions.TryGetValue(e._Handle, out session))
+                if (!sessions.TryGetValue(handle, out session))
                 {
                     return;
                 }
             }
+
             session.Send(e);
         }
 
