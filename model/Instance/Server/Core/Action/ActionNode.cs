@@ -13,7 +13,7 @@ namespace Core.Action
         /// <summary>
         /// Update the time of the behaviour tree.
         /// </summary>
-        FlowStatus Tick(TimeData time);
+        ActionStatus Tick(TimeData time);
     }
 
 
@@ -30,16 +30,16 @@ namespace Core.Action
         /// <summary>
         /// Function to invoke for the action.
         /// </summary>
-        private Func<TimeData, FlowStatus> fn;
+        private Func<TimeData, ActionStatus> fn;
         
 
-        public ActionNode(string name, Func<TimeData, FlowStatus> fn)
+        public ActionNode(string name, Func<TimeData, ActionStatus> fn)
         {
             this.name=name;
             this.fn=fn;
         }
 
-        public FlowStatus Tick(TimeData time)
+        public ActionStatus Tick(TimeData time)
         {
             return fn(time);
         }

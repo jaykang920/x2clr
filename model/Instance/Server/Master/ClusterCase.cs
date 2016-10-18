@@ -11,7 +11,7 @@ namespace Server.Master
     /// <summary>
     /// Manages server configuration and instances.
     /// </summary>
-    public class DirectoryServer : Case
+    public class ClusterCase : Core.ChannelCase
     {
         class Entry
         {
@@ -41,26 +41,16 @@ namespace Server.Master
             }
         }
 
-        private string downstreamChannel;
         private Dictionary<int, Entry> dictionary;  // Id as Key
         private List<int> handles;
 
-        public DirectoryServer()
+        public ClusterCase()
             : base()
         {
             dictionary = new Dictionary<int, Entry>();
             handles = new List<int>();
         }
 
-
-        /// <summary>
-        /// Set Flow downstream channel to send to net or local processing
-        /// </summary>
-        /// <param name="channel"></param>
-        public void SetDownstreamChannel(string channel)
-        {
-            downstreamChannel = channel;
-        }
 
         protected override void Setup()
         {
@@ -76,13 +66,15 @@ namespace Server.Master
 
             if ( !dictionary.TryGetValue(join.Id, out server))
             {
-                server = new Master.DirectoryServer.Entry();
+                server = new Master.ClusterCase.Entry();
 
                 server.Id = join.Id;
                 server.Role = join.Role;
                 server.Ip = join.Ip;
                 server.Port = join.Port; 
             }
+
+            server.Handle = join._Handle;
 
             dictionary[join.Id] = server;
             dictionary[join.Id].Up = true;
@@ -117,12 +109,6 @@ namespace Server.Master
             resp.AddMulticast(handles);
 
             Post(resp);
-        }
-
-        void Post(Event e)
-        {
-            e._Channel = downstreamChannel;
-            e.Post();
         }
     }
 }

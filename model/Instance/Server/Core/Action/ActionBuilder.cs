@@ -3,27 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Flow
+namespace Core.Action
 {
     /// <summary>
     /// Fluent API for building a behaviour tree.
     /// </summary>
-    public class FlowBuilder
+    public class ActionBuilder
     {
         /// <summary>
         /// Last node created.
         /// </summary>
-        private IFlowNode curNode = null;
+        private IActionNode curNode = null;
 
         /// <summary>
         /// Stack node nodes that we are build via the fluent API.
         /// </summary>
-        private Stack<IFlowCompositeNode> parentNodeStack = new Stack<IFlowCompositeNode>();
+        private Stack<IActionCompositeNode> parentNodeStack = new Stack<IActionCompositeNode>();
 
         /// <summary>
         /// Create an action node.
         /// </summary>
-        public FlowBuilder Do(string name, Func<TimeData, FlowStatus> fn)
+        public ActionBuilder Do(string name, Func<TimeData, ActionStatus> fn)
         {
             if (parentNodeStack.Count <= 0)
             {
@@ -38,15 +38,15 @@ namespace Flow
         /// <summary>
         /// Like an action node... but the function can return true/false and is mapped to success/failure.
         /// </summary>
-        public FlowBuilder Condition(string name, Func<TimeData, bool> fn)
+        public ActionBuilder Condition(string name, Func<TimeData, bool> fn)
         {
-            return Do(name, t => fn(t) ? FlowStatus.Success : FlowStatus.Failure);
+            return Do(name, t => fn(t) ? ActionStatus.Success : ActionStatus.Failure);
         }
 
         /// <summary>
         /// Create an inverter node that inverts the success/failure of its children.
         /// </summary>
-        public FlowBuilder Inverter(string name)
+        public ActionBuilder Inverter(string name)
         {
             var inverterNode = new InverterNode(name);
 
@@ -62,7 +62,7 @@ namespace Flow
         /// <summary>
         /// Create a sequence node.
         /// </summary>
-        public FlowBuilder Sequence(string name)
+        public ActionBuilder Sequence(string name)
         {
             var sequenceNode = new SequenceNode(name);
 
@@ -78,7 +78,7 @@ namespace Flow
         /// <summary>
         /// Create a parallel node.
         /// </summary>
-        public FlowBuilder Parallel(string name, int numRequiredToFail, int numRequiredToSucceed)
+        public ActionBuilder Parallel(string name, int numRequiredToFail, int numRequiredToSucceed)
         {
             var parallelNode = new ParallelNode(name, numRequiredToFail, numRequiredToSucceed);
 
@@ -94,7 +94,7 @@ namespace Flow
         /// <summary>
         /// Create a selector node.
         /// </summary>
-        public FlowBuilder Selector(string name)
+        public ActionBuilder Selector(string name)
         {
             var selectorNode = new SelectorNode(name);
 
@@ -110,7 +110,7 @@ namespace Flow
         /// <summary>
         /// Splice a sub tree into the parent tree.
         /// </summary>
-        public FlowBuilder Splice(IFlowNode subTree)
+        public ActionBuilder Splice(IActionNode subTree)
         {
             if (subTree == null)
             {
@@ -129,7 +129,7 @@ namespace Flow
         /// <summary>
         /// Build the actual tree.
         /// </summary>
-        public IFlowNode Build()
+        public IActionNode Build()
         {
             if (curNode == null)
             {
@@ -141,7 +141,7 @@ namespace Flow
         /// <summary>
         /// Ends a sequence of children.
         /// </summary>
-        public FlowBuilder End()
+        public ActionBuilder End()
         {
             curNode = parentNodeStack.Pop();
             return this;

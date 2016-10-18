@@ -37,7 +37,7 @@ namespace Core.Action
             this.numRequiredToSucceed = numRequiredToSucceed;
         }
 
-        public FlowStatus Tick(TimeData time)
+        public ActionStatus Tick(TimeData time)
         {
             var numChildrenSuceeded = 0;
             var numChildrenFailed = 0;
@@ -47,22 +47,22 @@ namespace Core.Action
                 var childStatus = child.Tick(time);
                 switch (childStatus)
                 {
-                    case FlowStatus.Success: ++numChildrenSuceeded; break;
-                    case FlowStatus.Failure: ++numChildrenFailed; break;
+                    case ActionStatus.Success: ++numChildrenSuceeded; break;
+                    case ActionStatus.Failure: ++numChildrenFailed; break;
                 }
             }
 
             if (numRequiredToSucceed > 0 && numChildrenSuceeded >= numRequiredToSucceed)
             {
-                return FlowStatus.Success;
+                return ActionStatus.Success;
             }
 
             if (numRequiredToFail > 0 && numChildrenFailed >= numRequiredToFail)
             {
-                return FlowStatus.Failure;
+                return ActionStatus.Failure;
             }
 
-            return FlowStatus.Running;
+            return ActionStatus.Running;
         }
 
         public void AddChild(IActionNode child)

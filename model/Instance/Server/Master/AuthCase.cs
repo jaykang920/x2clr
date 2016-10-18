@@ -12,7 +12,7 @@ namespace Server.Master
     /// <summary>
     /// Authenticate and manages User location
     /// </summary>
-    public class DirectoryUser : Core.ChannelCase
+    public class AuthCase : Core.ChannelCase
     {
         class Entry
         {
@@ -24,7 +24,7 @@ namespace Server.Master
         Dictionary<string, Entry> dic;
         // TODO: After DB processing, Dictionary<int, Entry> indexerGuid;
 
-        public DirectoryUser()
+        public AuthCase()
         {
             dic = new Dictionary<string, Entry>();
         }

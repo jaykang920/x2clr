@@ -7,7 +7,7 @@ using x2;
 
 namespace Server.Game
 {
-    public class InstanceRunner : Case
+    public class InstanceRunner : Core.ChannelCase
     {
     }
 }

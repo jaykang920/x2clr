@@ -81,6 +81,8 @@
     <Compile Include="TestChannelFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestDirectoryServer.cs" />
+    <Compile Include="TestInstanceRunner.cs" />
+    <Compile Include="TestLobby.cs" />
     <Compile Include="TestLogin.cs" />
   </ItemGroup>
   <ItemGroup>

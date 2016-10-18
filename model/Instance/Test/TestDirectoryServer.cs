@@ -22,7 +22,7 @@ namespace Test
                 .Attach(slaveFlow)
                 .Attach(TimeFlow.Default);
 
-            var dir = new DirectoryServer();
+            var dir = new ClusterCase();
             var sim = new SimulatedServer();
 
             serverFlow.Add(dir);
@@ -34,7 +34,7 @@ namespace Test
             serverFlow.SubscribeTo(Server.ChannelNames.GetMasterServerChannel());
             slaveFlow.SubscribeTo(Server.ChannelNames.GetSlaveServerChannel());
 
-            dir.SetDownstreamChannel(Server.ChannelNames.GetSlaveServerChannel());
+            dir.AddFilter(Event.TypeId, Server.ChannelNames.GetSlaveServerChannel());
 
             sim.Join();
 

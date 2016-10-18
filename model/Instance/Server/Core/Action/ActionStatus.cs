@@ -6,9 +6,9 @@ using System.Text;
 namespace Core.Action
 {
     /// <summary>
-    /// The return type when invoking flow tree
+    /// The return type when invoking action tree
     /// </summary>
-    public enum FlowStatus
+    public enum ActionStatus
     {
         Success,
         Failure,

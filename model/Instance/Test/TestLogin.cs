@@ -29,7 +29,7 @@ namespace Test
             var clientFlow = new SingleThreadFlow();
 
             var loginCase = new Server.Session.LoginCase(); 
-            var dirUserCase  = new Server.Master.DirectoryUser();
+            var dirUserCase  = new Server.Master.AuthCase();
             var clientCase = new TestClientLoginCase();
 
             loginCase.AddFilter(EventMasterLoginReq.TypeId, "Master");

@@ -45,6 +45,8 @@
     <Compile Include="ErrorLobby.cs" />
     <Compile Include="ErrorLogin.cs" />
     <Compile Include="EventCluster.cs" />
+    <Compile Include="EventInstance.cs" />
+    <Compile Include="EventInstanceTypes.cs" />
     <Compile Include="EventLoginTypes.cs" />
     <Compile Include="EventClusterTypes.cs" />
     <Compile Include="EventLogin.cs" />

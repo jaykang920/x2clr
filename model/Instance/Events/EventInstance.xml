@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<x2 namespace="Events.Instance">
+  <cell name ="Member">
+    <property name="Account"   type="string"/>
+    <property name="Guid" type="int32"/>
+  </cell>
+
+  <event name="EventBase" id="EventInstanceTypes.Base">
+    <property name="World"      type="int32"/>
+    <property name="Requester"  type="Member"/>
+    <property name="Id"       type="int32"/>
+  </event>
+
+  <event name="EventCreateReq" id="EventInstanceTypes.CreateReq" base="EventBase">
+  </event>
+
+  <event name="EventCreateResp" id="EventInstanceTypes.CreateResp" base="EventBase">
+    <property name="Result"   type="int32"/>
+  </event>
+
+  <event name="EventJoinReq" id="EventInstanceTypes.JoinReq" base="EventBase">
+  </event>
+
+  <event name="EventJoinResp" id="EventInstanceTypes.JoinResp" base="EventBase">
+    <property name="Result"   type="int32"/>
+    <property name="Members"  type="list(Member)"/>
+  </event>
+
+  <event name="EventLeaveReq" id="EventInstanceTypes.LeaveReq" base="EventBase">
+  </event>
+
+  <event name="EventLeaveResp" id="EventInstanceTypes.LeaveResp" base="EventBase">
+    <property name="Result"   type="int32"/>
+  </event>
+
+  <event name="EventStatus" id="EventInstanceTypes.Status" base="EventBase">
+    <property name="Status"   type="int32"/>
+    <property name="Members"  type="list(Member)"/>
+  </event>
+
+  <event name="EventRunnerStatus" id="EventInstanceTypes.RunnerStatus">
+    <property name="Name"       type="string"/>
+    <property name="Status"     type="int32"/>
+    <property name="Count"      type="int32"/>
+  </event>
+  
+</x2>
