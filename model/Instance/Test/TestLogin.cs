@@ -13,6 +13,10 @@ namespace Test
     [TestFixture]
     public class TestLogin
     {
+        /// <summary>
+        /// This test shows Flow and Case setup for Channel filtering. 
+        /// To test functionality, the default Flow broacasting based Hub.Feed() and Event binding is enough.
+        /// </summary>
         [Test]
         public void TestLoginLogout()
         {
@@ -35,7 +39,7 @@ namespace Test
 
             // Client Posts LoginReq to Session channel
             clientCase.AddFilter(EventLoginReq.TypeId, "Session");
-
+            clientCase.AddFilter(EventLogout.TypeId, "Session");
 
             Hub.Instance
                 .Attach(sessionFlow)
@@ -54,13 +58,16 @@ namespace Test
 
             Hub.Startup();
 
-
             clientCase.ReqLogin("test1", "test1");
 
             while ( clientCase.Login == false )
             {
                 Thread.Sleep(10);
             }
+
+            clientCase.ReqLogout();
+
+            Thread.Sleep(100);
 
             Hub.Shutdown();
         }
@@ -70,13 +77,27 @@ namespace Test
     {
         public bool Login = false;
 
+        string account;
+
         public void ReqLogin(string account, string password)
         {
+            this.account = account;
+
             Post(
                 new EventLoginReq
                 {
                     Account = account, 
                     Password = password
+                }
+            );
+        }
+
+        public void ReqLogout()
+        {
+            Post(
+                new EventLogout
+                {
+                    Account = account
                 }
             );
         }

@@ -9,7 +9,8 @@ namespace Events
     // range from 2001 ~ 3000
     public enum EventLoginTypes
     {
-        LoginReq = 2001,
+        LoginBase= 2001,
+        LoginReq,
         LoginResp,
         Logout,
         MasterLoginReq,
