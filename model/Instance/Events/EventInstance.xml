@@ -11,7 +11,16 @@
     <property name="Id"       type="int32"/>
   </event>
 
+  <event name="EventMatchReq" id="EventInstanceTypes.MatchReq" base="EventBase">
+  </event>
+
+  <event name="EventMatchResp" id="EventInstanceTypes.MatchResp" base="EventBase">
+    <property name="Result"   type="int32"/>
+    <property name="Members"  type="list(Member)"/>
+  </event>
+
   <event name="EventCreateReq" id="EventInstanceTypes.CreateReq" base="EventBase">
+    <property name="Members"  type="list(Member)"/>
   </event>
 
   <event name="EventCreateResp" id="EventInstanceTypes.CreateResp" base="EventBase">

@@ -437,30 +437,30 @@ namespace Events.Instance
         }
     }
 
-    public class EventCreateReq : EventBase
+    public class EventMatchReq : EventBase
     {
         protected new static readonly Tag tag;
 
         public new static int TypeId { get { return tag.TypeId; } }
 
-        static EventCreateReq()
+        static EventMatchReq()
         {
-            tag = new Tag(EventBase.tag, typeof(EventCreateReq), 0,
-                    (int)EventInstanceTypes.CreateReq);
+            tag = new Tag(EventBase.tag, typeof(EventMatchReq), 0,
+                    (int)EventInstanceTypes.MatchReq);
         }
 
-        public new static EventCreateReq New()
+        public new static EventMatchReq New()
         {
-            return new EventCreateReq();
+            return new EventMatchReq();
         }
 
-        public EventCreateReq()
+        public EventMatchReq()
             : base(tag.NumProps)
         {
             Initialize();
         }
 
-        protected EventCreateReq(int length)
+        protected EventMatchReq(int length)
             : base(length + tag.NumProps)
         {
             Initialize();
@@ -493,7 +493,7 @@ namespace Events.Instance
 
         public override Func<Event> GetFactoryMethod()
         {
-            return EventCreateReq.New;
+            return EventMatchReq.New;
         }
 
         protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
@@ -538,6 +538,367 @@ namespace Events.Instance
 
         private void Initialize()
         {
+        }
+    }
+
+    public class EventMatchResp : EventBase
+    {
+        protected new static readonly Tag tag;
+
+        public new static int TypeId { get { return tag.TypeId; } }
+
+        private int result_;
+        private List<Member> members_;
+
+        public int Result
+        {
+            get { return result_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                result_ = value;
+            }
+        }
+
+        public List<Member> Members
+        {
+            get { return members_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 1);
+                members_ = value;
+            }
+        }
+
+        static EventMatchResp()
+        {
+            tag = new Tag(EventBase.tag, typeof(EventMatchResp), 2,
+                    (int)EventInstanceTypes.MatchResp);
+        }
+
+        public new static EventMatchResp New()
+        {
+            return new EventMatchResp();
+        }
+
+        public EventMatchResp()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected EventMatchResp(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            EventMatchResp o = (EventMatchResp)other;
+            if (result_ != o.result_)
+            {
+                return false;
+            }
+            if (!Extensions.EqualsExtended(members_, o.members_))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(tag.Offset + 0);
+                hash.Update(result_);
+            }
+            if (touched[1])
+            {
+                hash.Update(tag.Offset + 1);
+                hash.Update(members_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return EventMatchResp.New;
+        }
+
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
+            if (!base.IsEquivalent(other, fingerprint))
+            {
+                return false;
+            }
+            EventMatchResp o = (EventMatchResp)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (result_ != o.result_)
+                {
+                    return false;
+                }
+            }
+            if (touched[1])
+            {
+                if (members_ != o.members_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                deserializer.Read(out result_);
+            }
+            if (touched[1])
+            {
+                deserializer.Read(out members_);
+            }
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("Result", out result_);
+            deserializer.Read("Members", out members_);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(result_);
+            }
+            if (touched[1])
+            {
+                serializer.Write(members_);
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+            serializer.Write("Result", result_);
+            serializer.Write("Members", members_);
+        }
+
+        public override int GetLength()
+        {
+            int length = base.GetLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetLength(result_);
+            }
+            if (touched[1])
+            {
+                length += Serializer.GetLength(members_);
+            }
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Result={0}", result_);
+            stringBuilder.AppendFormat(" Members={0}", members_.ToStringExtended());
+        }
+
+        private void Initialize()
+        {
+            result_ = 0;
+            members_ = null;
+        }
+    }
+
+    public class EventCreateReq : EventBase
+    {
+        protected new static readonly Tag tag;
+
+        public new static int TypeId { get { return tag.TypeId; } }
+
+        private List<Member> members_;
+
+        public List<Member> Members
+        {
+            get { return members_; }
+            set
+            {
+                fingerprint.Touch(tag.Offset + 0);
+                members_ = value;
+            }
+        }
+
+        static EventCreateReq()
+        {
+            tag = new Tag(EventBase.tag, typeof(EventCreateReq), 1,
+                    (int)EventInstanceTypes.CreateReq);
+        }
+
+        public new static EventCreateReq New()
+        {
+            return new EventCreateReq();
+        }
+
+        public EventCreateReq()
+            : base(tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected EventCreateReq(int length)
+            : base(length + tag.NumProps)
+        {
+            Initialize();
+        }
+
+        protected override bool EqualsTo(Cell other)
+        {
+            if (!base.EqualsTo(other))
+            {
+                return false;
+            }
+            EventCreateReq o = (EventCreateReq)other;
+            if (!Extensions.EqualsExtended(members_, o.members_))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode(Fingerprint fingerprint)
+        {
+            var hash = new Hash(base.GetHashCode(fingerprint));
+            if (fingerprint.Length <= tag.Offset)
+            {
+                return hash.Code;
+            }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                hash.Update(tag.Offset + 0);
+                hash.Update(members_);
+            }
+            return hash.Code;
+        }
+
+        public override int GetTypeId()
+        {
+            return tag.TypeId;
+        }
+
+        public override Cell.Tag GetTypeTag() 
+        {
+            return tag;
+        }
+
+        public override Func<Event> GetFactoryMethod()
+        {
+            return EventCreateReq.New;
+        }
+
+        protected override bool IsEquivalent(Cell other, Fingerprint fingerprint)
+        {
+            if (!base.IsEquivalent(other, fingerprint))
+            {
+                return false;
+            }
+            EventCreateReq o = (EventCreateReq)other;
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                if (members_ != o.members_)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Deserialize(Deserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                deserializer.Read(out members_);
+            }
+        }
+
+        public override void Deserialize(VerboseDeserializer deserializer)
+        {
+            base.Deserialize(deserializer);
+            deserializer.Read("Members", out members_);
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            base.Serialize(serializer);
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(members_);
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer)
+        {
+            base.Serialize(serializer);
+            serializer.Write("Members", members_);
+        }
+
+        public override int GetLength()
+        {
+            int length = base.GetLength();
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                length += Serializer.GetLength(members_);
+            }
+            return length;
+        }
+
+        protected override void Describe(StringBuilder stringBuilder)
+        {
+            base.Describe(stringBuilder);
+            stringBuilder.AppendFormat(" Members={0}", members_.ToStringExtended());
+        }
+
+        private void Initialize()
+        {
+            members_ = null;
         }
     }
 
