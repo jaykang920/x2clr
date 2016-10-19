@@ -17,6 +17,7 @@ namespace Server.Master
         class Entry
         {
             public string Account;
+            public string Nick;
             public int Guid;
             public int Handle;         // From SessionServer
         }

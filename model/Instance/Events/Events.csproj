@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums.cs" />
     <Compile Include="ErrorCodes.cs" />
     <Compile Include="ErrorGame.cs" />
     <Compile Include="ErrorLobby.cs" />
@@ -61,7 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="EventCluster.xml" />
-    <Content Include="EventInstance.xml" />
+    <Content Include="EventInstance.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="EventLogin.xml" />
     <Content Include="EventTests.xml" />
   </ItemGroup>

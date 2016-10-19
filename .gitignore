@@ -110,3 +110,4 @@ Backup*/
 UpgradeLog*.XML
 /examples/*.db
 /model/Instance/Events/xpiler.exe
+/model/Instance/doc/*.~ml

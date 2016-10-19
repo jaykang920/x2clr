@@ -10,34 +10,78 @@ namespace Server.Master
 {
     /// <summary>
     /// Manages instance and matching. Join and leave from instance.
+    /// 
+    /// Matching Rule: 
+    ///   - Supposing a two player board game. 
+    ///   - Matches instantly with a Bot and matching is finished. Join process continues.
+    ///   - Put the instance in candidateQueue 
+    ///   - When a new match request arrives, use candidateQueue to match to the human player. 
+    ///   - The new joined player is in waiting list watching the game with a bot.
+    ///   - When a human player leaves, 
     /// </summary>
-    public class MatchCase : Case
+    public class MatchCase : Core.ChannelCase
     {
-        // Instance info, InstanceRunner info kept 
-
-        public int World { get; private set; }
-
-        public MatchCase(int world)
+        /// <summary>
+        /// InstanRunner Entry to select from
+        /// </summary>
+        class InstanceRunnerEntry
         {
-            World = world; 
+            public int ServerId;
+            public int RunnerId;
+            public int InstanceCount;
+            public bool Up;
+        }
+
+        class InstanceEntry
+        {
+            public class Member
+            {
+                public string Account;
+                public bool Waiting;
+            }
+
+            public int Id;
+            public List<Member> Members = new List<Member>();
+            public Events.InstanceStatus Status;
+        }
+
+        List<InstanceRunnerEntry> runners;
+        Dictionary<int, InstanceEntry> instances;
+        Queue<InstanceEntry> matchQueue;
+
+        public MatchCase()
+        {
+            instances = new Dictionary<int, InstanceEntry>();
+            matchQueue = new Queue<InstanceEntry>();
+        }
+
+        public int Zone { get; private set; }
+
+        public MatchCase(int zone)
+        {
+            Zone = zone; 
         }
 
         protected override void Setup()
         {
             base.Setup();
 
-            // Event binding
-
-            new EventMatchReq { World = this.World }.Bind(OnMatchReq); 
+            new EventMatchReq { Zone = this.Zone }.Bind(OnMatchReq); 
         }
 
         void OnMatchReq(EventMatchReq req)
         {
-            // [1] Look for a proper instance
+            if ( matchQueue.Count > 0)
+            {
+                // Push a human player to the instance replacing the bot when a game restarts.
 
-            // [2] if not found, then push into a matching queue
+            }
+            else
+            {
+                // Create a new instance with a bot player
 
-            // [3] Periodically do match
+                // Push the instance into the matchQueue
+            }
         }
     }
 }
