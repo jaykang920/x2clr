@@ -61,6 +61,7 @@ namespace x2.Tests.Func
             // Performance : 1 million echo between Hub / Case, 12 seconds.
         }
 
+
         /// <summary>
         /// Shows Case instances can post and callback each other with a same event type
         /// </summary>
