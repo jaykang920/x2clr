@@ -15,8 +15,9 @@
  - MatchCases have its own Zone by design
  - Each MatchCase knows InstanceRunners by report 
  - Each MatchCase can process 100,000 requests per second 
-   - Try and test with 1,000,000 requests / sec.
+   - 100,000 ~ 300,000 is a reasonable limit per each MatchCase thread
  - Boot time is 2.7 hours with a single MatchCase
+   - 10 Zones could be enough
  
 ## Wishes 
 

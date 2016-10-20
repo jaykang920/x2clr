@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="525.23855"
-     inkscape:cy="260.86335"
+     inkscape:zoom="1.4"
+     inkscape:cx="596.70293"
+     inkscape:cy="233.70841"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -55,119 +55,51 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="456.49335"
-       y="197.96696"
+       x="155.52113"
+       y="193.1662"
        id="text3344"
        sodipodi:linespacing="125%"
        transform="scale(0.8401345,1.1902856)"><tspan
          sodipodi:role="line"
          id="tspan3346"
-         x="456.49335"
-         y="197.96696">MasterServer : AsyncTcpServer</tspan></text>
+         x="155.52113"
+         y="193.1662">MasterServer : AsyncTcpServer</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="140.34016"
-       y="201.59698"
-       id="text3344-0"
-       sodipodi:linespacing="125%"
-       transform="scale(0.8401345,1.1902856)"><tspan
-         sodipodi:role="line"
-         id="tspan3346-1"
-         x="140.34016"
-         y="201.59698">SingleThreadFlow / &quot;Slave&quot;</tspan></text>
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.50219774px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 324.14759,231.57537 c 50.19466,0 50.19466,-0.29962 50.19466,-0.29962"
-       id="path3366"
-       inkscape:connector-curvature="0" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="141.35565"
-       y="261.06888"
-       id="text3344-0-4"
-       sodipodi:linespacing="125%"
-       transform="scale(0.8401345,1.1902856)"><tspan
-         sodipodi:role="line"
-         id="tspan3346-1-0"
-         x="141.35565"
-         y="261.06888">SingleThreadFlow / &quot;Cluster&quot;</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="456.06873"
-       y="260.00089"
+       x="155.09651"
+       y="255.20012"
        id="text3344-0-4-8"
        sodipodi:linespacing="125%"
        transform="scale(0.8401345,1.1902856)"><tspan
          sodipodi:role="line"
          id="tspan3346-1-0-5"
-         x="456.06873"
-         y="260.00089">DirectoryServer : Case</tspan></text>
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.50219774px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 322.76791,303.12845 c 50.19466,0 50.19466,-0.29961 50.19466,-0.29961"
-       id="path3366-3"
-       inkscape:connector-curvature="0" />
+         x="155.09651"
+         y="255.20012">ClusterCase</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="140.60704"
-       y="318.38232"
-       id="text3344-0-4-0"
-       sodipodi:linespacing="125%"
-       transform="scale(0.8401345,1.1902856)"><tspan
-         sodipodi:role="line"
-         id="tspan3346-1-0-3"
-         x="140.60704"
-         y="318.38232">SingleThreadFlow / &quot;User&quot;</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="457.88434"
-       y="320.87421"
+       x="156.91212"
+       y="316.07343"
        id="text3344-0-4-0-9"
        sodipodi:linespacing="125%"
        transform="scale(0.8401345,1.1902856)"><tspan
          sodipodi:role="line"
          id="tspan3346-1-0-3-1"
-         x="457.88434"
-         y="320.87421">DirectoryUser : Case</tspan></text>
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.50219774px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 323.78684,373.89019 c 50.19466,0 50.19466,-0.29962 50.19466,-0.29962"
-       id="path3366-3-6"
-       inkscape:connector-curvature="0" />
+         x="156.91212"
+         y="316.07343">AuthCase</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="141.9006"
-       y="376.80942"
-       id="text3344-0-4-0-7"
-       sodipodi:linespacing="125%"
-       transform="scale(0.8401345,1.1902856)"><tspan
-         sodipodi:role="line"
-         id="tspan3346-1-0-3-4"
-         x="141.9006"
-         y="376.80942">SingleThreadFlow / &quot;Instance&quot;</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:15.85574722px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="459.17789"
-       y="379.30127"
+       x="158.20567"
+       y="374.50049"
        id="text3344-0-4-0-9-0"
        sodipodi:linespacing="125%"
        transform="scale(0.8401345,1.1902856)"><tspan
          sodipodi:role="line"
          id="tspan3346-1-0-3-1-8"
-         x="459.17789"
-         y="379.30127">DirectoryInstance : Case</tspan></text>
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.50219774px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 324.87361,443.43515 c 50.19466,0 50.19466,-0.29962 50.19466,-0.29962"
-       id="path3366-3-6-6"
-       inkscape:connector-curvature="0" />
+         x="158.20567"
+         y="374.50049">MatchCase</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:30.73467064px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -179,7 +111,7 @@
          sodipodi:role="line"
          id="tspan3499"
          x="33.463207"
-         y="148.71164">Flow / Case Configuration</tspan></text>
+         y="148.71164">Case Configuration</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -304,51 +236,15 @@
            y="798.07648" /></flowRegion><flowPara
          id="flowPara3637" /></flowRoot>    <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:25.14692688px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="127.12466"
-       y="713.71271"
-       id="text3525-3"
+       style="font-style:normal;font-weight:normal;font-size:24.7365799px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="47.908627"
+       y="809.15314"
+       id="text3390"
        sodipodi:linespacing="125%"
-       transform="scale(0.9003884,1.1106318)"><tspan
+       transform="scale(0.92924059,1.0761476)"><tspan
          sodipodi:role="line"
-         id="tspan3527-4"
-         x="127.12466"
-         y="713.71271">Flow Upstream</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:25.14692688px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="126.98912"
-       y="806.63721"
-       id="text3525-3-8"
-       sodipodi:linespacing="125%"
-       transform="scale(0.9003884,1.1106318)"><tspan
-         sodipodi:role="line"
-         id="tspan3527-4-1"
-         x="126.98912"
-         y="806.63721">Flow Downstream</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:12.27570724px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="177.95908"
-       y="615.68848"
-       id="text3707"
-       sodipodi:linespacing="125%"
-       transform="scale(0.74557091,1.341254)"><tspan
-         sodipodi:role="line"
-         id="tspan3709"
-         x="177.95908"
-         y="615.68848">UpstreamFilter sets _Channel for each event category in Preprocess delegate</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:12.27570724px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="177.6618"
-       y="693.93079"
-       id="text3707-0"
-       sodipodi:linespacing="125%"
-       transform="scale(0.74557093,1.341254)"><tspan
-         sodipodi:role="line"
-         id="tspan3709-5"
-         x="177.6618"
-         y="693.93079">Set _Channel to &quot;Slave&quot; when Post()</tspan></text>
+         id="tspan3392"
+         x="47.908627"
+         y="809.15314">Broadcast / Bind scheme kept!</tspan></text>
   </g>
 </svg>

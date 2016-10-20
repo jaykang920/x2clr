@@ -949,7 +949,6 @@ namespace Events.Instance
         private int serverId_;
         private int runnerId_;
         private int instanceId_;
-        private bool posted_;
 
         public int ServerId
         {
@@ -981,20 +980,10 @@ namespace Events.Instance
             }
         }
 
-        public bool Posted
-        {
-            get { return posted_; }
-            set
-            {
-                fingerprint.Touch(tag.Offset + 3);
-                posted_ = value;
-            }
-        }
-
         static EventInstanceBase()
         {
-            tag = new Tag(Event.tag, typeof(EventInstanceBase), 4,
-                    (int)EventIntanceTypes.Base);
+            tag = new Tag(Event.tag, typeof(EventInstanceBase), 3,
+                    (int)EventInstanceTypes.Base);
         }
 
         public new static EventInstanceBase New()
@@ -1033,10 +1022,6 @@ namespace Events.Instance
             {
                 return false;
             }
-            if (posted_ != o.posted_)
-            {
-                return false;
-            }
             return true;
         }
 
@@ -1062,11 +1047,6 @@ namespace Events.Instance
             {
                 hash.Update(tag.Offset + 2);
                 hash.Update(instanceId_);
-            }
-            if (touched[3])
-            {
-                hash.Update(tag.Offset + 3);
-                hash.Update(posted_);
             }
             return hash.Code;
         }
@@ -1115,13 +1095,6 @@ namespace Events.Instance
                     return false;
                 }
             }
-            if (touched[3])
-            {
-                if (posted_ != o.posted_)
-                {
-                    return false;
-                }
-            }
             return true;
         }
 
@@ -1141,10 +1114,6 @@ namespace Events.Instance
             {
                 deserializer.Read(out instanceId_);
             }
-            if (touched[3])
-            {
-                deserializer.Read(out posted_);
-            }
         }
 
         public override void Deserialize(VerboseDeserializer deserializer)
@@ -1153,7 +1122,6 @@ namespace Events.Instance
             deserializer.Read("ServerId", out serverId_);
             deserializer.Read("RunnerId", out runnerId_);
             deserializer.Read("InstanceId", out instanceId_);
-            deserializer.Read("Posted", out posted_);
         }
 
         public override void Serialize(Serializer serializer)
@@ -1172,10 +1140,6 @@ namespace Events.Instance
             {
                 serializer.Write(instanceId_);
             }
-            if (touched[3])
-            {
-                serializer.Write(posted_);
-            }
         }
 
         public override void Serialize(VerboseSerializer serializer)
@@ -1184,7 +1148,6 @@ namespace Events.Instance
             serializer.Write("ServerId", serverId_);
             serializer.Write("RunnerId", runnerId_);
             serializer.Write("InstanceId", instanceId_);
-            serializer.Write("Posted", posted_);
         }
 
         public override int GetLength()
@@ -1203,10 +1166,6 @@ namespace Events.Instance
             {
                 length += Serializer.GetLength(instanceId_);
             }
-            if (touched[3])
-            {
-                length += Serializer.GetLength(posted_);
-            }
             return length;
         }
 
@@ -1216,7 +1175,6 @@ namespace Events.Instance
             stringBuilder.AppendFormat(" ServerId={0}", serverId_);
             stringBuilder.AppendFormat(" RunnerId={0}", runnerId_);
             stringBuilder.AppendFormat(" InstanceId={0}", instanceId_);
-            stringBuilder.AppendFormat(" Posted={0}", posted_);
         }
 
         private void Initialize()
@@ -1224,7 +1182,6 @@ namespace Events.Instance
             serverId_ = 0;
             runnerId_ = 0;
             instanceId_ = 0;
-            posted_ = false;
         }
     }
 

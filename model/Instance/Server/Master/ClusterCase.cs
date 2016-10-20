@@ -11,7 +11,7 @@ namespace Server.Master
     /// <summary>
     /// Manages server configuration and instances.
     /// </summary>
-    public class ClusterCase : Core.ChannelCase
+    public class ClusterCase : Case
     {
         class Entry
         {
@@ -106,9 +106,7 @@ namespace Server.Master
 
             var resp = new EventServerList();
             resp.Servers = lst;
-            resp.AddMulticast(handles);
-
-            Post(resp);
+            resp.Post();
         }
     }
 }

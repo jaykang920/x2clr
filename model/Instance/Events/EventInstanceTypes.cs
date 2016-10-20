@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Events
+namespace Events.Instance
 {
     /// <summary>
     /// 4001 ~ 5000

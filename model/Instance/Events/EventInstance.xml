@@ -1,69 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <x2 namespace="Events.Instance">
   <cell name ="Member">
-    <property name="Account"   type="string"/>
-    <property name="Nick"   type="string"/>
-    <property name="Guid" type="int32"/>
-    <property name="Gold" type="int64"/>
-    <property name="Bot" type="bool"/>
+    <property name="Account"            type="string"/>
+    <property name="Nick"               type="string"/>
+    <property name="Guid"               type="int32"/>
+    <property name="Gold"               type="int64"/>
+    <property name="Bot"                type="bool"/>
   </cell>
 
   <event name="EventMatchReq" id="EventInstanceTypes.MatchReq">
-    <property name="Zone"      type="int32"/>
-    <property name="Requester"  type="Member"/>
+    <property name="Zone"               type="int32"/>
+    <property name="Requester"          type="Member"/>
   </event>
 
   <event name="EventMatchResp" id="EventInstanceTypes.MatchResp">
-    <property name="Zone"         type="int32"/>
-    <property name="Result"       type="int32"/>
-    <property name="Create"       type="bool"/>
-    <property name="ServerId"      type="int32"/>
-    <property name="RunnerId"      type="int32"/>
-    <property name="InstanceId"    type="int32"/>
-    <property name="Members"        type="list(Member)"/>
+    <property name="Zone"               type="int32"/>
+    <property name="Result"             type="int32"/>
+    <property name="Create"             type="bool"/>
+    <property name="ServerId"           type="int32"/>
+    <property name="RunnerId"           type="int32"/>
+    <property name="InstanceId"         type="int32"/>
+    <property name="Members"            type="list(Member)"/>
   </event>
 
-  <event name="EventInstanceBase" id ="EventIntanceTypes.Base">
-    <property name="ServerId"      type="int32"/>
-    <property name="RunnerId"      type="int32"/>
-    <property name="InstanceId"      type="int32"/>
-    <property name="Posted"        type="bool"/>
+  <event name="EventInstanceBase" id ="EventInstanceTypes.Base">
+    <property name="ServerId"           type="int32"/>
+    <property name="RunnerId"           type="int32"/>
+    <property name="InstanceId"         type="int32"/>
   </event>
 
   <event name="EventJoinReq" id="EventInstanceTypes.JoinReq" base="EventInstanceBase">
-    <property name="Zone"     type="int32"/>
-    <property name="Result"   type="int32"/>
-    <property name="Create"   type="bool"/>
-    <property name="Members"  type="list(Member)"/>
+    <property name="Zone"               type="int32"/>
+    <property name="Result"             type="int32"/>
+    <property name="Create"             type="bool"/>
+    <property name="Members"            type="list(Member)"/>
   </event>
 
   <event name="EventJoinResp" id="EventInstanceTypes.JoinResp" base="EventInstanceBase">
-    <property name="Result"   type="int32"/>
-    <property name="Members"  type="list(Member)"/>
+    <property name="Result"             type="int32"/>
+    <property name="Members"            type="list(Member)"/>
   </event>
 
   <event name="EventLeaveReq" id="EventInstanceTypes.LeaveReq" base="EventInstanceBase">
-    <property name="Account"       type="string"/>
+    <property name="Account"            type="string"/>
   </event>
 
   <event name="EventLeaveResp" id="EventInstanceTypes.LeaveResp" base="EventInstanceBase">
-    <property name="Account"      type="string"/>
-    <property name="Result"       type="int32"/>
+    <property name="Account"            type="string"/>
+    <property name="Result"             type="int32"/>
   </event>
 
   <event name="EventStatus" id="EventInstanceTypes.Status">
-    <property name="ServerId"      type="int32"/>
-    <property name="RunnerId"      type="int32"/>
-    <property name="InstanceId"    type="int32"/>
-    <property name="Status"        type="int32"/>
-    <property name="Members"       type="list(Member)"/>
+    <property name="ServerId"           type="int32"/>
+    <property name="RunnerId"           type="int32"/>
+    <property name="InstanceId"         type="int32"/>
+    <property name="Status"             type="int32"/>
+    <property name="Members"            type="list(Member)"/>
   </event>
 
   <event name="EventRunnerStatus" id="EventInstanceTypes.RunnerStatus">
-    <property name="ServerId"         type="int32"/>
-    <property name="RunnerId"         type="int32"/>
-    <property name="Status"           type="int32"/>
-    <property name="InstanceCount"    type="int32"/>
+    <property name="ServerId"           type="int32"/>
+    <property name="RunnerId"           type="int32"/>
+    <property name="Status"             type="int32"/>
+    <property name="InstanceCount"      type="int32"/>
   </event>
 
 </x2>

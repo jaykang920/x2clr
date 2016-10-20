@@ -12,7 +12,7 @@ namespace Server.Master
     /// <summary>
     /// Authenticate and manages User location
     /// </summary>
-    public class AuthCase : Core.ChannelCase
+    public class AuthCase : Case
     {
         class Entry
         {
@@ -64,22 +64,17 @@ namespace Server.Master
 
             dic[user.Account] = user;
 
-            Post(
-                new EventMasterLoginResp
-                {
-                    Account = user.Account, 
-                    Result = 0
-                }
-            );
+            new EventMasterLoginResp
+            {
+                Account = user.Account,
+                Result = 0
+            }
+            .Post();
         }
 
         void OnLogout(EventMasterLogout req)
         {
             dic.Remove(req.Account);
-
-            // NetServer needs to bind to broadcast
-
-            Post(req);
         }
     }
 }

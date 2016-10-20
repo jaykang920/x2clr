@@ -8,7 +8,7 @@ using Events.Login;
 
 namespace Server.Session
 {
-    public class LoginCase : Core.ChannelCase
+    public class LoginCase : Case
     {
         class Entry
         {
@@ -62,13 +62,12 @@ namespace Server.Session
 
             dic[user.Account] = user;
 
-            Post(
-                new EventMasterLoginReq
-                {
-                    Account = req.Account,
-                    Password = req.Password
-                }
-            );
+            new EventMasterLoginReq
+            {
+                Account = req.Account,
+                Password = req.Password
+            }
+            .Post();
         }
 
         void OnLoginResp(EventMasterLoginResp resp)
@@ -84,13 +83,12 @@ namespace Server.Session
                 // TODO: Somehow removed from dic
             }
 
-            Post(
-                new EventLoginResp
-                {
-                    Account = resp.Account, 
-                    Result = resp.Result
-                }
-            );
+            new EventLoginResp
+            {
+                Account = resp.Account,
+                Result = resp.Result
+            }
+            .Post();
         }
     }
 }

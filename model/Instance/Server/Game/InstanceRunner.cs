@@ -8,7 +8,7 @@ using Events.Instance;
 
 namespace Server.Game
 {
-    public class InstanceRunner : Core.ChannelCase
+    public class InstanceRunner : Case
     {
         int serverId;
         int runnerId;

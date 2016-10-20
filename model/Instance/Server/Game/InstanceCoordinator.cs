@@ -13,7 +13,7 @@ namespace Server.Game
     /// Channel name is prefix_id 
     /// InstanceRunner id must be from 1 to the number of InstanceRunners
     /// </summary>
-    public class InstanceCoordinator : Core.ChannelCase
+    public class InstanceCoordinator : Case
     {
         string prefix;
         int runnerCount;
@@ -31,19 +31,17 @@ namespace Server.Game
             base.Setup();
 
             // Only events not posted
-            new EventInstanceBase() { Posted = false }.Bind(OnPostToRunner);
+            new EventInstanceBase() { RunnerId = 0 }.Bind(OnPostToRunner);
         }
 
         void OnPostToRunner(EventInstanceBase evt)
         {
-            evt.Posted = true; 
-
-            if ( evt.RunnerId == 0)
+            if (evt.RunnerId == 0)
             {
                 evt.RunnerId = rand.Next() % runnerCount + 1;
             }
 
-            evt._Channel = string.Format("{0}_{1}", prefix, evt.RunnerId);
+            // Post with a RunnerId to a InstanceRunner
             evt.Post();
         }
     }

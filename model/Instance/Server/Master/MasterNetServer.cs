@@ -3,7 +3,7 @@ using x2;
 
 namespace Server.Master
 {
-    public class MasterNetServer : Core.NetServer
+    public class MasterNetServer : AsyncTcpServer
     {
         Config config; 
         public MasterNetServer(Config cfg)
@@ -29,7 +29,7 @@ namespace Server.Master
         
         void InitializeBinds()
         {
-            // Send or Multicast when recieved
+            // Send or Multicast when received
             new Event().Bind(Send);
         }
     }

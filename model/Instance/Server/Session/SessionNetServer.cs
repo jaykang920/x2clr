@@ -11,7 +11,7 @@ namespace Server.Session
     /// <summary>
     /// Listen
     /// </summary>
-    public class SessionNetServer : Core.NetServer
+    public class SessionNetServer : AsyncTcpServer
     {
         Config config;
 

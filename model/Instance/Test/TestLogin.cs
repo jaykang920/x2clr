@@ -73,7 +73,7 @@ namespace Test
         }
     }
 
-    class TestClientLoginCase : Server.Core.ChannelCase 
+    class TestClientLoginCase : Case
     {
         public bool Login = false;
 
@@ -83,23 +83,21 @@ namespace Test
         {
             this.account = account;
 
-            Post(
-                new EventLoginReq
-                {
-                    Account = account, 
-                    Password = password
-                }
-            );
+            new EventLoginReq
+            {
+                Account = account,
+                Password = password
+            }
+            .Post();
         }
 
         public void ReqLogout()
         {
-            Post(
-                new EventLogout
-                {
-                    Account = account
-                }
-            );
+            new EventLogout
+            {
+                Account = account
+            }
+            .Post();
         }
 
         protected override void Setup()

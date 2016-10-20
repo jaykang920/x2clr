@@ -57,10 +57,6 @@
     <Compile Include="Core\Action\SelectorNode.cs" />
     <Compile Include="Core\Action\SequenceNode.cs" />
     <Compile Include="Core\Action\TimeData.cs" />
-    <Compile Include="Core\ChannelCase.cs" />
-    <Compile Include="Core\ChannelFilter.cs" />
-    <Compile Include="Core\NetClient.cs" />
-    <Compile Include="Core\NetServer.cs" />
     <Compile Include="Couchbase\Query.cs" />
     <Compile Include="Couchbase\QueryRunner.cs" />
     <Compile Include="Game\Config.cs" />
@@ -69,6 +65,7 @@
     <Compile Include="Game\InstanceCoordinator.cs" />
     <Compile Include="Game\InstanceFactory.cs" />
     <Compile Include="Game\InstanceRunner.cs" />
+    <Compile Include="Game\MasterClient.cs" />
     <Compile Include="Master\Config.cs" />
     <Compile Include="Master\ClusterCase.cs" />
     <Compile Include="Master\AuthCase.cs" />
@@ -102,9 +99,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\x2\x2clr.csproj">
-      <Project>{79a3e41b-fa7f-4ed8-86ab-fcf61a6f65b9}</Project>
-      <Name>x2clr</Name>
+    <ProjectReference Include="..\..\..\x2\x2clr_s.csproj">
+      <Project>{9bf922db-d68f-43e5-bc42-c608b8fcf6a3}</Project>
+      <Name>x2clr_s</Name>
     </ProjectReference>
     <ProjectReference Include="..\Events\Events.csproj">
       <Project>{9205a83e-86bb-4b13-bf92-b0c37f43b472}</Project>

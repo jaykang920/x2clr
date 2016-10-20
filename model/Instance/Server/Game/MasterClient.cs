@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using x2;
 
-namespace Server.Session
+namespace Server.Game
 {
     /// <summary>
     /// 
@@ -28,7 +28,6 @@ namespace Server.Session
 
             Connect(ip, port);
 
-            // Event type / value partition required to be distributed. 
         }
     }
 }

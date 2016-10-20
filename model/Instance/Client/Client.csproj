@@ -55,10 +55,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\x2\x2clr.csproj">
-      <Project>{79a3e41b-fa7f-4ed8-86ab-fcf61a6f65b9}</Project>
-      <Name>x2clr</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Events\Events.csproj">
       <Project>{9205a83e-86bb-4b13-bf92-b0c37f43b472}</Project>
       <Name>Events</Name>

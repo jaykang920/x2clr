@@ -19,7 +19,7 @@ namespace Server.Master
     ///   - The new joined player is in waiting list watching the game with a bot.
     ///   - When a human player leaves, 
     /// </summary>
-    public class MatchCase : Core.ChannelCase
+    public class MatchCase : Case
     {
         /// <summary>
         /// InstanRunner Entry to select from

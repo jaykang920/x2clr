@@ -1,18 +1,21 @@
-# Problem Assessment 
+# x2 way of doing multicasting
 
-It is required to send to several sessions depending on context. 
- 
-x2 has Send / Broadcast only. 
- 
-Somehow there must be bound function to pass to the session depending on context. 
- 
-For example, a game instance needs to send to several session server sessions knowing who resides where. 
- 
-## Bind Approach
+ - Multicasting is required on each server. 
+ - x2 approach is to create an EventSink instance on session connected. 
+ - That session binds to application event with value. 
+ - That session can send to the session. 
 
+The configuration change should not affect bindings. 
+That's the x2 goal. 
 
-## Handle Multicasting 
+# Process 
 
+ - Develop cases and tests 
+ - Make distributed configuration 
+   - Setup distribution bindings on EventSink subclass 
+   - Test and confirm
+
+  
 
 
  

@@ -8,7 +8,7 @@ using x2;
 
 namespace Server.Game
 {
-    public class GameNetServer : Core.NetServer
+    public class GameNetServer : AsyncTcpServer
     {
         Config config;
 

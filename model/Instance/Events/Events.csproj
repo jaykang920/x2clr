@@ -55,18 +55,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\x2\x2clr.csproj">
-      <Project>{79a3e41b-fa7f-4ed8-86ab-fcf61a6f65b9}</Project>
-      <Name>x2clr</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="EventCluster.xml" />
     <Content Include="EventInstance.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="EventLogin.xml" />
     <Content Include="EventTests.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\x2\x2clr_s.csproj">
+      <Project>{9bf922db-d68f-43e5-bc42-c608b8fcf6a3}</Project>
+      <Name>x2clr_s</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
