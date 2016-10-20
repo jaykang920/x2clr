@@ -12,8 +12,6 @@ namespace x2.Tests
         [Test]
         public void TestBufferCreation()
         {
-            Config.Touch();
-
             var buf = new Buffer();
 
             Assert.IsTrue(IsPowerOfTwo(buf.BlockSize));
