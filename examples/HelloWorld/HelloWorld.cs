@@ -32,7 +32,7 @@ namespace x2.Examples.HelloWorld
                     1);
         }
 
-        new public static HelloReq New()
+        public new static HelloReq New()
         {
             return new HelloReq();
         }
@@ -191,7 +191,7 @@ namespace x2.Examples.HelloWorld
                     2);
         }
 
-        new public static HelloResp New()
+        public new static HelloResp New()
         {
             return new HelloResp();
         }

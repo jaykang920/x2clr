@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-// ReSharper disable All
 
 namespace x2
 {
@@ -42,7 +41,7 @@ namespace x2
         /// </summary>
         public Fingerprint(int length)
         {
-            if (length <= 0)
+            if (length < 0)
             {
                 throw new ArgumentOutOfRangeException();
             }
@@ -54,8 +53,6 @@ namespace x2
                 length -= 32;
                 blocks = new int[((length - 1) >> 5) + 1];
             }
-
-            // else use block upto 32 bits.
         }
 
         /// <summary>
@@ -86,10 +83,6 @@ namespace x2
 
         /// <summary>
         /// Compares this Fingerprint with the specified Fingerprint object.
-        /// Compared order is determined by : 
-        ///   - length
-        ///   - blocks content from higher bytes to lower bytes
-        ///   - block conent
         /// </summary>
         /// Implements IComparable(T).CompareTo interface.
         public int CompareTo(Fingerprint other)
@@ -226,7 +219,7 @@ namespace x2
 
         public void Deserialize(Deserializer deserializer)
         {
-            int length = 0;
+            int length;
             deserializer.ReadNonnegative(out length);
             int lengthInBytes = ((length - 1) >> 3) + 1;
             int lengthInBlocks = ((lengthInBytes - 1) >> 2) + 1;
@@ -262,9 +255,6 @@ namespace x2
             }
         }
 
-        /// <summary>
-        /// Gets length in bytes 
-        /// </summary>
         public int GetLength()
         {
             return Serializer.GetLengthVariableNonnegative(length)

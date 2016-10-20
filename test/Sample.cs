@@ -50,7 +50,7 @@ namespace x2.Tests
 
     public class SampleCell1 : Cell
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
         private int foo_;
         private string bar_;
@@ -234,7 +234,7 @@ namespace x2.Tests
 
     public class SampleCell2 : SampleCell1
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
         private bool baz_;
 
@@ -375,7 +375,7 @@ namespace x2.Tests
 
     public class SampleCell3 : SampleCell1
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
         private bool qux_;
 
@@ -516,7 +516,7 @@ namespace x2.Tests
 
     public class SampleCell4 : SampleCell2
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
         private bool quux_;
 
@@ -657,9 +657,9 @@ namespace x2.Tests
 
     public class SampleEvent1 : Event
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private int foo_;
         private string bar_;
@@ -859,9 +859,9 @@ namespace x2.Tests
 
     public class SampleEvent2 : SampleEvent1
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private bool baz_;
 
@@ -1018,9 +1018,9 @@ namespace x2.Tests
 
     public class SampleEvent3 : SampleEvent1
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private bool qux_;
 
@@ -1177,9 +1177,9 @@ namespace x2.Tests
 
     public class SampleEvent4 : SampleEvent2
     {
-        protected new static readonly Tag tag;
+        new protected static readonly Tag tag;
 
-        public new static int TypeId { get { return tag.TypeId; } }
+        new public static int TypeId { get { return tag.TypeId; } }
 
         private bool quux_;
 

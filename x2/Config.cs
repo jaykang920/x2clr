@@ -124,15 +124,6 @@ namespace x2
             Coroutine.DefaultTimeout = 30.0;  // in seconds
         }
 
-        /// <summary>
-        /// Call this to create a Config instance for unit tests.
-        /// When a static method is called, the class object is created. 
-        /// </summary>
-        public static void Touch()
-        {
-           
-        }
-
 #if XML_CONFIG
         /// <summary>
         /// Loads the configuration properties from the application

@@ -9,10 +9,6 @@ namespace x2
     /// <summary>
     /// A variable-length byte buffer class whose capacity is limited to a
     /// multiple of a power of 2.
-    /// Maintains a list of segments and works with Segment pool to allocate and 
-    /// deallocate Segments. 
-    /// Note: Consider buffer as an internal class to x2. 
-    /// Note: It depends heavily on callling order and internal state.
     /// </summary>
     public class Buffer : IDisposable
     {
@@ -418,10 +414,6 @@ namespace x2
             }
         }
 
-        /// <summary>
-        /// Ensures buffer capacity for numBytes by acquiring a Segment from a SegmentPool
-        /// </summary>
-        /// <param name="numBytes">Number of bytes to add into the buffer</param>
         public void EnsureCapacityToWrite(int numBytes)
         {
             int required = position + numBytes;

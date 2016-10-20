@@ -24,7 +24,6 @@ namespace x2
 
     /// <summary>
     /// Provides an offset-based indexer for the underlying IIndexable(T) object.
-    /// Capo seems to be borrowed from guitar Capo since it's used mainly with Fingerprint.
     /// </summary>
     public struct Capo<T> : IIndexable<T>
     {

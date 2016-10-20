@@ -32,7 +32,7 @@ namespace x2.Examples.SessionRecovery
                     1);
         }
 
-        new public static TestReq New()
+        public new static TestReq New()
         {
             return new TestReq();
         }
@@ -191,7 +191,7 @@ namespace x2.Examples.SessionRecovery
                     2);
         }
 
-        new public static TestResp New()
+        public new static TestResp New()
         {
             return new TestResp();
         }
