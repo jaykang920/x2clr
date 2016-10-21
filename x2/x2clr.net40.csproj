@@ -88,6 +88,8 @@
     <Compile Include="Extensions.Buffer.cs" />
     <Compile Include="Extensions.Collections.cs" />
     <Compile Include="Deserializer.cs" />
+    <Compile Include="Flows\ConcurrentQueueFlow.cs" />
+    <Compile Include="Flows\ConcurrentThreadFlow.cs" />
     <Compile Include="Flows\MultiThreadFlow.cs" />
     <Compile Include="Flows\SingleThreadFlow.cs" />
     <Compile Include="Links\ClientLink.cs" />
