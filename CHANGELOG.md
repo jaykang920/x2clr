@@ -1,3 +1,7 @@
+Bugfixes:
+
+- fixed possible duplicate connect attempt exception in AbstractTcpClient.ConnectAndSend
+
 ## 0.8.4 (2016-10-21)
 
 Features:
