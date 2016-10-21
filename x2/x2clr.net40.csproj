@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\Debug\net40\</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;NET40 XML_CONFIG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\bin\Debug\net40\x2clr.xml</DocumentationFile>
@@ -27,8 +27,7 @@
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\Release\net40\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>NET40 XML_CONFIG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\bin\Release\net40\x2clr.xml</DocumentationFile>
@@ -39,7 +38,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_Unity|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\bin\Debug\net40\</OutputPath>
-    <DefineConstants>DEBUG;UNITY_WORKAROUND</DefineConstants>
+    <DefineConstants>DEBUG;NET40 UNITY_WORKAROUND</DefineConstants>
     <DocumentationFile>..\bin\Debug\net40\x2clr.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DebugType>full</DebugType>
@@ -57,7 +56,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DefineConstants>UNITY_WORKAROUND</DefineConstants>
+    <DefineConstants>NET40 UNITY_WORKAROUND</DefineConstants>
     <ConfigGroup>Release</ConfigGroup>
   </PropertyGroup>
   <Choose>

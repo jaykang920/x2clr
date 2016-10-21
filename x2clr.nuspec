@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>x2clr</id>
-    <version>0.8.3</version>
+    <version>0.8.4</version>
     <authors>Jae-jun Kang</authors>
     <owners>Jae-jun Kang</owners>
     <licenseUrl>https://github.com/jaykang920/x2clr/blob/master/LICENSE</licenseUrl>
@@ -15,8 +15,11 @@
 
   <files>
     <file src="LICENSE"/>
-    <file src="bin\Release\x2clr.dll" target="lib"/>
-    <file src="bin\Release\x2clr.pdb" target="lib"/>
-    <file src="bin\Release\x2clr.xml" target="lib"/>
+    <file src="bin\Release\net35\x2clr.dll" target="lib\net35"/>
+    <file src="bin\Release\net35\x2clr.pdb" target="lib\net35"/>
+    <file src="bin\Release\net35\x2clr.xml" target="lib\net35"/>
+    <file src="bin\Release\net40\x2clr.dll" target="lib\net40"/>
+    <file src="bin\Release\net40\x2clr.pdb" target="lib\net40"/>
+    <file src="bin\Release\net40\x2clr.xml" target="lib\net40"/>
   </files>
 </package>
