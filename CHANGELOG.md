@@ -1,3 +1,17 @@
+## 0.8.4 (2016-10-21)
+
+Features:
+
+- initiated framework version multi-targeting (net35 and net40)
+- added .NET 4 ConcurrentQueue-based flow. Contributed by @keedongpark
+
+## 0.8.3 (2016-09-08)
+
+Improvements:
+
+- Unity3D: suppressed the use of reflection to support IL2CPP iOS build
+- Unity3D: now .NET 2.0 subset is supported
+
 ## 0.8.2 (2016-04-05)
 
 - renamed a few methods
