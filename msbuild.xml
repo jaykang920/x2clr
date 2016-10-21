@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="BuildKit"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="BuildKit">
+    <MSBuild Projects="xpiler\xpiler.csproj" Targets="Rebuild"
+             Properties="Configuration=Release"/>
+    <MSBuild Projects="x2\x2clr.net35.csproj" Targets="Rebuild"
+             Properties="Configuration=Release"/>
+    <MSBuild Projects="x2\x2clr.net40.csproj" Targets="Rebuild"
+             Properties="Configuration=Release"/>
+  </Target>
+</Project>
