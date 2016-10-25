@@ -1,3 +1,5 @@
+## 0.8.5 (2016-10-25)
+
 Features:
 
 - now `EventBasedFlow` subclasses works with ConcurrentQueue in .NET 4 or higher framework by default.
