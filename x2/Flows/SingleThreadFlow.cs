@@ -7,7 +7,19 @@ using System.Threading;
 
 namespace x2
 {
-    public class SingleThreadFlow : EventBasedFlow
+    public class SingleThreadFlow
+#if NET40
+        : SingleThreadFlow<ConcurrentEventQueue>
+#else
+        : SingleThreadFlow<SynchronizedEventQueue>
+#endif
+    {
+        public SingleThreadFlow() : base() { }
+
+        public SingleThreadFlow(string name) : base(name) { }
+    }
+
+    public class SingleThreadFlow<T> : EventBasedFlow<T> where T : EventQueue, new()
     {
         protected Thread thread;
 
@@ -60,24 +72,19 @@ namespace x2
         {
             currentFlow = this;
             equivalent = new EventEquivalent();
-            events = new List<Event>();
             handlerChain = new List<Handler>();
 
             while (true)
             {
-                if (queue.Dequeue(events) == 0)
+                Event e = queue.Dequeue();
+                if (Object.ReferenceEquals(e, null))
                 {
                     break;
                 }
-                for (int i = 0, count = events.Count; i < count; ++i)
-                {
-                    Dispatch(events[i]);
-                }
-                events.Clear();
+                Dispatch(e);
             }
 
             handlerChain = null;
-            events = null;
             equivalent = null;
             currentFlow = null;
         }

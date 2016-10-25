@@ -47,9 +47,9 @@
     <Compile Include="HelloWorld4.Server.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\x2\x2clr.csproj">
-      <Project>{79a3e41b-fa7f-4ed8-86ab-fcf61a6f65b9}</Project>
-      <Name>x2clr</Name>
+    <ProjectReference Include="..\..\x2\x2clr.net40.csproj">
+      <Project>{79a3e41b-fa7f-4ed8-86ab-fcf61a6f65ba}</Project>
+      <Name>x2clr.net40</Name>
     </ProjectReference>
     <ProjectReference Include="HelloWorld.csproj">
       <Project>{430a3542-025b-4cdf-a285-76a9027124f2}</Project>

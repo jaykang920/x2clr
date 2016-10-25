@@ -329,7 +329,12 @@ namespace x2
         }
     }
 
-    public sealed class TimeFlow : FrameBasedFlow
+    public sealed class TimeFlow
+#if NET40
+        : FrameBasedFlow<ConcurrentEventQueue>
+#else
+        : FrameBasedFlow<SynchronizedEventQueue>
+#endif
     {
         private const string defaultName = "default";
 

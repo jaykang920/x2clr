@@ -71,9 +71,9 @@ namespace x2
     /// <summary>
     /// Abstract base class for frame-based (looping) execution flows.
     /// </summary>
-    public abstract class FrameBasedFlow : Flow
+    public abstract class FrameBasedFlow<T> : Flow where T : EventQueue, new()
     {
-        protected BlockingQueue<Event> queue;
+        protected T queue;
         protected readonly object syncRoot;
         protected Thread thread;
 
@@ -91,7 +91,7 @@ namespace x2
         {
             if (queueing)
             {
-                queue = new BlockingQueue<Event>();
+                queue = new T();
             }
             syncRoot = new Object();
             thread = null;
@@ -173,7 +173,6 @@ namespace x2
             if ((object)queue != null)
             {
                 equivalent = new EventEquivalent();
-                events = new List<Event>();
                 handlerChain = new List<Handler>();
             }
 
@@ -187,23 +186,14 @@ namespace x2
                 {
                     while ((DateTime.UtcNow.Ticks - Time.CurrentTicks) < Resolution)
                     {
-                        if (queue.TryDequeue(events))
+                        Event e;
+                        if (queue.TryDequeue(out e))
                         {
-                            for (int i = 0, count = events.Count; i < count; ++i)
-                            {
-                                Event e = events[i];
+                            Dispatch(e);
 
-                                Dispatch(e);
-
-                                if (e.GetTypeId() == (int)BuiltinEventType.FlowStop)
-                                {
-                                    shouldStop = true;
-                                    break;
-                                }
-                            }
-                            events.Clear();
-                            if (shouldStop)
+                            if (e.GetTypeId() == (int)BuiltinEventType.FlowStop)
                             {
+                                shouldStop = true;
                                 break;
                             }
                         }
@@ -228,7 +218,6 @@ namespace x2
             if (queue != null)
             {
                 handlerChain = null;
-                events = null;
                 equivalent = null;
             }
             currentFlow = null;

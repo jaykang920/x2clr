@@ -76,7 +76,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="BlockingQueue.cs" />
+    <Compile Include="EventQueue.cs" />
     <Compile Include="BuiltinEvents.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ConfigSection.cs" />
@@ -88,8 +88,6 @@
     <Compile Include="Extensions.Buffer.cs" />
     <Compile Include="Extensions.Collections.cs" />
     <Compile Include="Deserializer.cs" />
-    <Compile Include="Flows\ConcurrentQueueFlow.cs" />
-    <Compile Include="Flows\ConcurrentThreadFlow.cs" />
     <Compile Include="Flows\MultiThreadFlow.cs" />
     <Compile Include="Flows\SingleThreadFlow.cs" />
     <Compile Include="Links\ClientLink.cs" />
@@ -110,6 +108,8 @@
     <Compile Include="Links\Socket\AbstractUdpLink.cs" />
     <Compile Include="Links\Socket\AsyncUdpLink.cs" />
     <Compile Include="Links\Socket\UdpLink.cs" />
+    <Compile Include="Queues\SynchronizedEventQueue.cs" />
+    <Compile Include="Queues\ConcurrentEventQueue.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Serializer.GetLength.cs" />
     <Compile Include="Serializer.Write.cs" />

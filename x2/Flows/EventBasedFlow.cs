@@ -11,14 +11,14 @@ namespace x2
     /// <summary>
     /// Abstract base class for event-based (waiting) execution flows.
     /// </summary>
-    public abstract class EventBasedFlow : Flow
+    public abstract class EventBasedFlow<T> : Flow where T : EventQueue, new()
     {
-        protected BlockingQueue<Event> queue;
+        protected T queue;
         protected readonly object syncRoot;
 
         protected EventBasedFlow()
         {
-            queue = new BlockingQueue<Event>();
+            queue = new T();
             syncRoot = new Object();
         }
 

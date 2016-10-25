@@ -19,8 +19,6 @@ namespace x2
         [ThreadStatic]
         protected static EventEquivalent equivalent;
         [ThreadStatic]
-        protected static List<Event> events;
-        [ThreadStatic]
         protected static List<Handler> handlerChain;
 
         protected Binder binder;

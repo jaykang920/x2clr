@@ -75,12 +75,12 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="BlockingQueue.cs" />
     <Compile Include="BuiltinEvents.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ConfigSection.cs" />
     <Compile Include="ConstsInfo.cs" />
     <Compile Include="EventFactory.cs" />
+    <Compile Include="EventQueue.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Extensions.Array.cs" />
     <Compile Include="Extensions.Event.cs" />
@@ -107,6 +107,8 @@
     <Compile Include="Links\Socket\AbstractUdpLink.cs" />
     <Compile Include="Links\Socket\AsyncUdpLink.cs" />
     <Compile Include="Links\Socket\UdpLink.cs" />
+    <Compile Include="Queues\ConcurrentEventQueue.cs" />
+    <Compile Include="Queues\SynchronizedEventQueue.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Serializer.GetLength.cs" />
     <Compile Include="Serializer.Write.cs" />

@@ -7,7 +7,19 @@ using System.Threading;
 
 namespace x2
 {
-    public class MultiThreadFlow : EventBasedFlow
+    public class MultiThreadFlow
+#if NET40
+        : MultiThreadFlow<ConcurrentEventQueue>
+#else
+        : MultiThreadFlow<SynchronizedEventQueue>
+#endif
+    {
+        public MultiThreadFlow(int numThreads) : base(numThreads) { }
+
+        public MultiThreadFlow(string name, int numThreads) : base(name, numThreads) { }
+    }
+
+    public class MultiThreadFlow<T> : EventBasedFlow<T> where T : EventQueue, new()
     {
         protected List<Thread> threads;
         protected int numThreads;

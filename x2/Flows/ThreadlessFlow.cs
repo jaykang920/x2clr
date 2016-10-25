@@ -8,7 +8,17 @@ using System.Threading;
 
 namespace x2
 {
-    public class ThreadlessFlow : EventBasedFlow
+    public class ThreadlessFlow
+#if NET40
+        : ThreadlessFlow<ConcurrentEventQueue>
+#else
+        : ThreadlessFlow<SynchronizedEventQueue>
+#endif
+    {
+        public ThreadlessFlow() : base() { }
+    }
+
+    public class ThreadlessFlow<Q> : EventBasedFlow<Q> where Q : EventQueue, new()
     {
         protected bool running;
 
@@ -27,7 +37,6 @@ namespace x2
 
                     currentFlow = this;
                     equivalent = new EventEquivalent();
-                    events = new List<Event>();
                     handlerChain = new List<Handler>();
 
                     running = true;
@@ -50,7 +59,6 @@ namespace x2
                 running = false;
 
                 handlerChain = null;
-                events = null;
                 equivalent = null;
                 currentFlow = null;
 
@@ -61,15 +69,12 @@ namespace x2
 
         public void Dispatch()
         {
-            if (queue.Dequeue(events) == 0)
+            Event e = queue.Dequeue();
+            if (Object.ReferenceEquals(e, null))
             {
                 return;
             }
-            for (int i = 0, count = events.Count; i < count; ++i)
-            {
-                Dispatch(events[i]);
-            }
-            events.Clear();
+            Dispatch(e);
         }
 
         public Event TryDispatch()
@@ -86,15 +91,15 @@ namespace x2
         public List<Event> TryDispatchAll()
         {
             var result = new List<Event>();
-            if (queue.TryDequeue(events))
+            while (true)
             {
-                for (int i = 0, count = events.Count; i < count; ++i)
+                Event e;
+                if (!queue.TryDequeue(out e))
                 {
-                    Event e = events[i];
-                    Dispatch(e);
-                    result.Add(e);
+                    break;
                 }
-                events.Clear();
+                Dispatch(e);
+                result.Add(e);
             }
             return result;
         }

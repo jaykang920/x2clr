@@ -7,12 +7,15 @@ using System.Threading;
 
 namespace x2
 {
-    public class BlockingQueue<T>
+    /// <summary>
+    /// Unbounded event queue based on lock and Monitor Wait/Pulse.
+    /// </summary>
+    public class SynchronizedEventQueue : EventQueue
     {
-        private Queue<T> queue;
+        private Queue<Event> queue;
         private bool closing;
 
-        public int Length
+        public override int Length
         {
             get
             {
@@ -23,18 +26,12 @@ namespace x2
             }
         }
 
-        public BlockingQueue()
+        public SynchronizedEventQueue()
         {
-            queue = new Queue<T>();
-            closing = false;
+            queue = new Queue<Event>();
         }
 
-        public void Close()
-        {
-            Close(default(T));
-        }
-
-        public void Close(T finalItem)
+        public override void Close(Event finalItem)
         {
             lock (queue)
             {
@@ -44,7 +41,7 @@ namespace x2
             }
         }
 
-        public T Dequeue()
+        public override Event Dequeue()
         {
             lock (queue)
             {
@@ -52,7 +49,7 @@ namespace x2
                 {
                     if (closing)
                     {
-                        return default(T);
+                        return null;
                     }
                     Monitor.Wait(queue);
                 }
@@ -60,29 +57,7 @@ namespace x2
             }
         }
 
-        public int Dequeue(IList<T> values)
-        {
-            lock (queue)
-            {
-                while (queue.Count == 0)
-                {
-                    if (closing)
-                    {
-                        return 0;
-                    }
-                    Monitor.Wait(queue);
-                }
-                int n = 0;
-                while (queue.Count != 0)
-                {
-                    values.Add(queue.Dequeue());
-                    ++n;
-                }
-                return n;
-            }
-        }
-
-        public void Enqueue(T item)
+        public override void Enqueue(Event item)
         {
             lock (queue)
             {
@@ -97,32 +72,16 @@ namespace x2
             }
         }
 
-        public bool TryDequeue(out T value)
+        public override bool TryDequeue(out Event value)
         {
             lock (queue)
             {
                 if (queue.Count == 0)
                 {
-                    value = default(T);
+                    value = null;
                     return false;
                 }
                 value = queue.Dequeue();
-                return true;
-            }
-        }
-
-        public bool TryDequeue(IList<T> values)
-        {
-            lock (queue)
-            {
-                if (queue.Count == 0)
-                {
-                    return false;
-                }
-                while (queue.Count != 0)
-                {
-                    values.Add(queue.Dequeue());
-                }
                 return true;
             }
         }
