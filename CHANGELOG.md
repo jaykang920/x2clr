@@ -1,3 +1,8 @@
+Features:
+
+- now `EventBasedFlow` subclasses works with ConcurrentQueue in .NET 4 or higher framework by default.
+- `EventQueue` may be subclassed to meet custom needs and be used with existing flow implmentations
+
 Bugfixes:
 
 - fixed possible duplicate connect attempt exception in AbstractTcpClient.ConnectAndSend
