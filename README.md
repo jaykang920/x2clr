@@ -17,7 +17,7 @@ You can flexibly make changes to the deployment topology of your application, wh
 xpiler converts your shared knowledge definitions to corresponding C# source code files.
 Relying on the knowledge shared among application participants, x2clr wire format comes extremely efficient.
 
-### Advanced Event-Driven Programming
+### Advanced Event-Driven Programming Support
 
 * Hierarchical, self-descriptive events
 * Precise handler binding with multi-property pattern matching
