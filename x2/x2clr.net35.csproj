@@ -107,7 +107,6 @@
     <Compile Include="Links\Socket\AbstractUdpLink.cs" />
     <Compile Include="Links\Socket\AsyncUdpLink.cs" />
     <Compile Include="Links\Socket\UdpLink.cs" />
-    <Compile Include="Queues\ConcurrentEventQueue.cs" />
     <Compile Include="Queues\SynchronizedEventQueue.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Serializer.GetLength.cs" />
