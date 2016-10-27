@@ -1,6 +1,9 @@
 x2clr
 =====
 
+[![NuGet](http://img.shields.io/nuget/v/x2clr.svg?style=flat)](https://www.nuget.org/packages/x2clr/)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/jaykang920/x2clr/issues)
+
 x2clr is the reference port of [x2](https://github.com/jaykang920/x2) written in
 C# targeting CLR (Common Language Runtime) environments such as .NET or Mono.
 
