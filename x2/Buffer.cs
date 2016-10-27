@@ -10,7 +10,7 @@ namespace x2
     /// A variable-length byte buffer class whose capacity is limited to a
     /// multiple of a power of 2.
     /// </summary>
-    public class Buffer : IDisposable
+    public sealed class Buffer : IDisposable
     {
         static readonly int sizeExponent = Config.Buffer.SizeExponent.Segment;
         static readonly int remainderMask = ~(~0 << sizeExponent);

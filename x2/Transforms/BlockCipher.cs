@@ -15,7 +15,7 @@ namespace x2
     /// <remarks>
     /// Illustration purpose only. Do NOT use this as is in production.
     /// </remarks>
-    public class BlockCipher : IBufferTransform
+    public sealed class BlockCipher : IBufferTransform
     {
         private const int blockSize = 128;
         private const int keySize = 128;

@@ -9,7 +9,7 @@ namespace x2
     /// <summary>
     /// Provides a disposable read lock.
     /// </summary>
-    public class ReadLock : IDisposable
+    public sealed class ReadLock : IDisposable
     {
         private ReaderWriterLockSlim rwlock;
 
@@ -35,7 +35,7 @@ namespace x2
     /// <summary>
     /// Provides a disposable read lock that is upgradable.
     /// </summary>
-    public class UpgradeableReadLock : IDisposable
+    public sealed class UpgradeableReadLock : IDisposable
     {
         private ReaderWriterLockSlim rwlock;
 
@@ -62,7 +62,7 @@ namespace x2
     /// <summary>
     /// Provides a disposable write lock.
     /// </summary>
-    public class WriteLock : IDisposable
+    public sealed class WriteLock : IDisposable
     {
         private ReaderWriterLockSlim rwlock;
 

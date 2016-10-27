@@ -24,7 +24,7 @@ namespace x2
         int InverseTransform(Buffer buffer, int length);
     }
 
-    public class BufferTransformStack : IBufferTransform
+    public sealed class BufferTransformStack : IBufferTransform
     {
         private List<IBufferTransform> transforms;
 

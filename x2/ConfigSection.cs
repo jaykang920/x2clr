@@ -7,7 +7,8 @@ using System.Configuration;
 
 namespace x2
 {
-    // x2clr configuration section handler
+    /// <summary>
+    /// </summary>
     public sealed class ConfigSection : ConfigurationSection
     {
         [ConfigurationProperty("log")]
