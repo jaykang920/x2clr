@@ -13,7 +13,7 @@ new features, please keep in mind that:
 - x2clr has many points to extend (flows, links, queues, etc). Extensions that
 can be included into the library code base should not depend on other libraries
 than the .NET framework itself. Extensions depending on third-party libraries
-have to be in a separate repository.
+have to be in separate repositories.
 
 ## Issues
 
@@ -30,8 +30,8 @@ When submitting a pull request to the [GitHub Pull Requests]
 (https://github.com/jaykang920/x2clr/pulls), please make sure that your new or
 updated code:
 
-- Follows x2clr coding style guide
-- Does not break any existing unit tests
+- Follows x2 and x2clr style guides
+- Does not break any existing unit test
 - Is accompanied with corresponding unit tests if appropriate
 
 If you are not familiar with pull requests, please read the
