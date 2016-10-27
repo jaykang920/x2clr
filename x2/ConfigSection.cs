@@ -8,6 +8,7 @@ using System.Configuration;
 namespace x2
 {
     /// <summary>
+    /// x2clr configuration section handler.
     /// </summary>
     public sealed class ConfigSection : ConfigurationSection
     {
