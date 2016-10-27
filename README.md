@@ -157,8 +157,8 @@ Documentation
 
 [x2clr wiki](https://github.com/jaykang920/x2clr/wiki) can be a good start point to learn how x2clr applications are organized.
 
-Contribution
-------------
+Contributions
+-------------
 
 We need your contribution! Please see [CONTRIBUTING.md](https://github.com/jaykang920/x2clr/blob/master/CONTRIBUTING.md) before you start.
 
