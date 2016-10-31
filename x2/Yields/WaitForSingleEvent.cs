@@ -8,7 +8,7 @@ namespace x2
     /// <summary>
     /// YieldInstruction that waits for a single event.
     /// </summary>
-    public class WaitForSingleEvent : YieldInstruction
+    public class WaitForSingleEvent : Yield
     {
         private readonly Coroutine coroutine;
 
@@ -62,7 +62,7 @@ namespace x2
                 WaitHandlePool.Release(waitHandle);
             }
 
-            coroutine.Context = e;
+            coroutine.Result = e;
             coroutine.Continue();
         }
 
@@ -79,7 +79,7 @@ namespace x2
 
             Log.Error("WaitForSingleEvent timeout for {0}", handlerToken.Key);
 
-            coroutine.Context = null;  // indicates timeout
+            coroutine.Result = null;  // indicates timeout
             coroutine.Continue();
         }
     }

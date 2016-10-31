@@ -8,7 +8,7 @@ namespace x2
     /// <summary>
     /// YieldInstruction that waits for multiple events.
     /// </summary>
-    public class WaitForMultipleEvents : YieldInstruction
+    public class WaitForMultipleEvents : Yield
     {
         private readonly Coroutine coroutine;
         private readonly Event[] expected, actual;
@@ -93,7 +93,7 @@ namespace x2
                     WaitHandlePool.Release(waitHandle);
                 }
 
-                coroutine.Context = actual;
+                coroutine.Result = actual;
                 coroutine.Continue();
             }
         }
@@ -116,7 +116,7 @@ namespace x2
 
             Log.Error("WaitForMultipleEvents timeout for {0}", expected);
 
-            coroutine.Context = actual;  // incomplete array indicates timeout
+            coroutine.Result = actual;  // incomplete array indicates timeout
             coroutine.Continue();
         }
     }

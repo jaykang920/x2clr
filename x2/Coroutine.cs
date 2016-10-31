@@ -6,9 +6,13 @@ using System.Collections;
 
 namespace x2
 {
-    // x2 Coroutine and YieldInstructions will not work in MultiThreadFlow!
+    // [NOTE] x2 Coroutine(Yield) will not work in MultiThreadFlow!
 
-    public abstract class YieldInstruction : IEnumerator
+    /// <summary>
+    /// This thin wrapper of IEnumerator serves as an iterator on which x2
+    /// coroutine works.
+    /// </summary>
+    public abstract class Yield : IEnumerator
     {
         // Alias of MoveNext()
         public bool Continue()
@@ -25,6 +29,9 @@ namespace x2
         }
     }
 
+    /// <summary>
+    /// Provides the core programming interface for x2 coroutines.
+    /// </summary>
     public class Coroutine
     {
         private IEnumerator routine;
@@ -32,7 +39,7 @@ namespace x2
         private bool started;
         private Coroutine parent;
 
-        public object Context { get; set; }
+        public object Result { get; set; }
 
         public Coroutine()
         {
@@ -76,7 +83,7 @@ namespace x2
                 if (parent != null)
                 {
                     // Indirectly chain into the parent coroutine.
-                    new WaitForNothing(parent, Context);
+                    new WaitForNothing(parent, Result);
                 }
             }
         }
@@ -99,11 +106,129 @@ namespace x2
             if (started && parent != null)
             {
                 // Chain into the parent coroutine.
-                parent.Context = Context;
+                parent.Result = Result;
                 parent.Continue();
             }
 
             return false;
+        }
+
+        // Inline coroutine activation methods (used with 'yield return' statements)
+
+        /// <summary>
+        /// Waits for the specified time in seconds.
+        /// </summary>
+        public Yield WaitForSeconds(double seconds)
+        {
+            return new WaitForSeconds(this, seconds);
+        }
+
+        /// <summary>
+        /// Waits for a single event until the default timeout.
+        /// </summary>
+        public Yield WaitForSingleEvent(Event e)
+        {
+            return new WaitForSingleEvent(this, e);
+        }
+
+        /// <summary>
+        /// Waits for a single event until the specified timeout in seconds.
+        /// </summary>
+        public Yield WaitForSingleEvent(Event e, double seconds)
+        {
+            return new WaitForSingleEvent(this, e, seconds);
+        }
+
+        /// <summary>
+        /// Posts the request and waits for a single response until default timeout.
+        /// </summary>
+        public Yield WaitForSingleResponse(Event request, Event response)
+        {
+            return new WaitForSingleResponse(this, request, response);
+        }
+
+        /// <summary>
+        /// Posts the request and waits for a single response until the specified
+        /// timeout in seconds.
+        /// </summary>
+        public Yield WaitForSingleResponse(Event request, Event response,
+            double seconds)
+        {
+            return new WaitForSingleResponse(this, request, response, seconds);
+        }
+
+        /// <summary>
+        /// Waits for multiple events until the default timeout.
+        /// </summary>
+        public Yield WaitForMultipleEvents(params Event[] e)
+        {
+            return new WaitForMultipleEvents(this, e);
+        }
+
+        /// <summary>
+        /// Waits for multiple events until the specified timeout in seconds.
+        /// </summary>
+        public Yield WaitForMultipleEvents(double seconds, params Event[] e)
+        {
+            return new WaitForMultipleEvents(this, seconds, e);
+        }
+
+        /// <summary>
+        /// Posts the requests and waits for multiple responses until default
+        /// timeout.
+        /// </summary>
+        public Yield WaitForMultipleResponses(Event[] requests,
+            params Event[] responses)
+        {
+            return new WaitForMultipleResponses(this, requests, responses);
+        }
+
+        /// <summary>
+        /// Posts the requests and waits for multiple responses until the
+        /// specified timeout in seconds.
+        /// </summary>
+        public Yield WaitForMultipleResponse(Event[] requests, double seconds,
+            params Event[] responses)
+        {
+            return new WaitForMultipleResponses(this, requests, seconds, responses);
+        }
+
+        /// <summary>
+        /// Waits for the completion of another coroutine.
+        /// </summary>
+        public Yield WaitForCompletion(Func<Coroutine, IEnumerator> func)
+        {
+            return new WaitForCompletion(this, func);
+        }
+
+        /// <summary>
+        /// Waits for the completion of another coroutine with a single
+        /// additional argument.
+        /// </summary>
+        public Yield WaitForCompletion<T>(Func<Coroutine, T, IEnumerator> func,
+            T arg)
+        {
+            return new WaitForCompletion<T>(this, func, arg);
+        }
+
+        /// <summary>
+        /// Waits for the completion of another coroutine with two additional
+        /// arguments.
+        /// </summary>
+        public Yield WaitForCompletion<T1, T2>(
+            Func<Coroutine, T1, T2, IEnumerator> func, T1 arg1, T2 arg2)
+        {
+            return new WaitForCompletion<T1, T2>(this, func, arg1, arg2);
+        }
+
+        /// <summary>
+        /// Waits for the completion of another coroutine with three additional
+        /// arguments.
+        /// </summary>
+        public Yield WaitForCompletion<T1, T2, T3>(
+            Func<Coroutine, T1, T2, T3, IEnumerator> func, T1 arg1, T2 arg2, T3 arg3)
+        {
+            return new WaitForCompletion<T1, T2, T3>(this, func, arg1, arg2, arg3);
         }
     }
 }

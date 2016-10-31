@@ -9,7 +9,7 @@ namespace x2
     /// <summary>
     /// YieldInstruction that waits for the specified time in seconds.
     /// </summary>
-    public class WaitForSeconds : YieldInstruction
+    public class WaitForSeconds : Yield
     {
         private readonly Coroutine coroutine;
         private readonly Binder.Token token;
@@ -26,25 +26,25 @@ namespace x2
         {
             Flow.Unbind(token);
 
-            coroutine.Context = e;
+            coroutine.Result = e;
             coroutine.Continue();
         }
     }
 
-    public class WaitForNothing : YieldInstruction
+    public class WaitForNothing : Yield
     {
         private readonly Coroutine coroutine;
-        private readonly object context;
+        private readonly object result;
         private readonly Binder.Token token;
 
         public WaitForNothing(Coroutine coroutine) : this(coroutine, null)
         {
         }
 
-        public WaitForNothing(Coroutine coroutine, object context)
+        public WaitForNothing(Coroutine coroutine, object result)
         {
             this.coroutine = coroutine;
-            this.context = context;
+            this.result = result;
             TimeoutEvent e = new TimeoutEvent { Key = this };
             token = Flow.Bind(e, OnTimeout);
             Hub.Post(e);
@@ -54,7 +54,7 @@ namespace x2
         {
             Flow.Unbind(token);
 
-            coroutine.Context = context;
+            coroutine.Result = result;
             coroutine.Continue();
         }
     }
