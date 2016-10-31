@@ -1,3 +1,9 @@
+Improvements:
+
+- Changed the coroutine programming interface.
+ - Support for syntax such as `yield return coroutine.WaitForSeconds(10);`
+ - `Coroutine.Context` property has been renamed as `Coroutine.Result`
+
 ## 0.8.5 (2016-10-25)
 
 Features:
