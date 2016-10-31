@@ -83,6 +83,7 @@
     <Compile Include="EventQueue.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Extensions.Array.cs" />
+    <Compile Include="Extensions.Coroutine.cs" />
     <Compile Include="Extensions.Event.cs" />
     <Compile Include="Extensions.Buffer.cs" />
     <Compile Include="Extensions.Collections.cs" />
