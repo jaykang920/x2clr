@@ -144,7 +144,59 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes an ordered list of Int32 values into the underlying buffer.
+        /// Encodes an ordered list of boolean values into the underlying buffer.
+        /// </summary>
+        public void Write(List<bool> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            WriteVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                Write(value[i]);
+            }
+        }
+
+        /// <summary>
+        /// Encodes an ordered list of byte values into the underlying buffer.
+        /// </summary>
+        public void Write(List<byte> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            WriteVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                Write(value[i]);
+            }
+        }
+
+        /// <summary>
+        /// Encodes an ordered list of 8-bit signed integers into the underlying buffer.
+        /// </summary>
+        public void Write(List<sbyte> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            WriteVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                Write(value[i]);
+            }
+        }
+
+        /// <summary>
+        /// Encodes an ordered list of 16-bit signed integers into the underlying buffer.
+        /// </summary>
+        public void Write(List<short> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            WriteVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                Write(value[i]);
+            }
+        }
+
+        /// <summary>
+        /// Encodes an ordered list of 32-bit signed integers into the underlying buffer.
         /// </summary>
         public void Write(List<int> value)
         {
@@ -157,7 +209,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Encodes an ordered list of Int64 values into the underlying buffer.
+        /// Encodes an ordered list of 64-bit signed integers values into the underlying buffer.
         /// </summary>
         public void Write(List<long> value)
         {
@@ -174,6 +226,33 @@ namespace x2
         /// underlying buffer.
         /// </summary>
         public void Write(List<float> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            WriteVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                Write(value[i]);
+            }
+        }
+
+        /// <summary>
+        /// Encodes an ordered list of 64-bit floating-point values into the
+        /// underlying buffer.
+        /// </summary>
+        public void Write(List<double> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            WriteVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                Write(value[i]);
+            }
+        }
+
+        /// <summary>
+        /// Encodes an ordered list of text strings into the underlying buffer.
+        /// </summary>
+        public void Write(List<string> value)
         {
             int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
             WriteVariableNonnegative(count);
