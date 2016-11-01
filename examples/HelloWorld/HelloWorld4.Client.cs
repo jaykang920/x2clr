@@ -16,7 +16,6 @@ namespace x2.Examples.HelloWorld
 
             protected override void Setup()
             {
-                base.Setup();
                 EventFactory.Register<HelloResp>();
                 new HelloReq().Bind(Send);
                 Bind(6788).Listen();

@@ -87,10 +87,12 @@ namespace x2
         }
 
         /// <summary>
-        /// Cleans up this link on shutdown.
+        /// <see cref="Case.TeardownInternal"/>
         /// </summary>
-        protected override void Teardown()
+        protected override void TeardownInternal()
         {
+            base.TeardownInternal();
+
             Close();
         }
 

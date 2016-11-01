@@ -20,7 +20,6 @@ namespace x2.Examples.HelloWorld
 
             protected override void Setup()
             {
-                base.Setup();
                 EventFactory.Register<HelloResp>();
                 new HelloReq().Bind(ConnectAndRequest);
 
@@ -33,7 +32,6 @@ namespace x2.Examples.HelloWorld
         {
             protected override void Setup()
             {
-                base.Setup();
                 Bind(new Event(), OnEvent);
             }
 

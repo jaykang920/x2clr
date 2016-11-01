@@ -173,8 +173,6 @@ namespace x2
 
         protected override void Setup()
         {
-            base.Setup();
-
             Bind(Hub.HeartbeatEvent, OnHeartbeatEvent);
         }
 

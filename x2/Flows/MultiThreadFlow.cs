@@ -42,7 +42,7 @@ namespace x2
             {
                 if (threads.Count == 0)
                 {
-                    Setup();
+                    SetupInternal();
                     caseStack.Setup(this);
                     for (int i = 0; i < numThreads; ++i)
                     {
@@ -76,7 +76,7 @@ namespace x2
                 threads.Clear();
 
                 caseStack.Teardown(this);
-                Teardown();
+                TeardownInternal();
             }
         }
 

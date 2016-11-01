@@ -468,8 +468,6 @@ namespace x2
 
         protected override void Setup()
         {
-            base.Setup();
-
             Flow.SubscribeTo(Name);
 
             Bind(Hub.HeartbeatEvent, OnHeartbeatEvent);

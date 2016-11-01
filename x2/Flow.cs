@@ -303,6 +303,9 @@ namespace x2
             return Interlocked.Exchange(ref channelRefCount, 0);
         }
 
+        /// <summary>
+        /// Called internally to dspatch the specified event to registered handlers.
+        /// </summary>
         protected void Dispatch(Event e)
         {
             // Safeguard for exclusive exception handling environments,
@@ -352,36 +355,68 @@ namespace x2
             handlerChain.Clear();
         }
 
-        protected virtual void Setup()
+        /// <summary>
+        /// Overridden by subclasses to build a startup handler chain.
+        /// </summary>
+        protected virtual void Setup() { }
+
+        /// <summary>
+        /// Called internally when this flow starts up.
+        /// </summary>
+        protected void SetupInternal()
         {
             Subscribe(Hub.HeartbeatEvent, OnHeartbeatEvent);
             Subscribe(new FlowStart(), OnFlowStart);
             Subscribe(new FlowStop(), OnFlowStop);
+
+            Setup();
         }
 
-        protected virtual void Teardown()
+        /// <summary>
+        /// Overridden by subclasses to build a shutdown handler chain.
+        /// </summary>
+        protected virtual void Teardown() { }
+
+        /// <summary>
+        /// Called internally when this flow shuts down.
+        /// </summary>
+        protected void TeardownInternal()
         {
+            Teardown();
+
             Unsubscribe(new FlowStop(), OnFlowStop);
             Unsubscribe(new FlowStart(), OnFlowStart);
             Unsubscribe(Hub.HeartbeatEvent, OnHeartbeatEvent);
         }
 
+        /// <summary>
+        /// Overridden by subclasses to build a HeartbeatEvent handler chain.
+        /// </summary>
         protected virtual void OnHeartbeat() { }
 
+        /// <summary>
+        /// Overridden by subclasses to build a FlowStart event handler chain.
+        /// </summary>
         protected virtual void OnStart() { }
 
+        /// <summary>
+        /// Overridden by subclasses to build a FlowStop event handler chain.
+        /// </summary>
         protected virtual void OnStop() { }
 
+        // HeartbeatEvent handler
         private void OnHeartbeatEvent(HeartbeatEvent e)
         {
             OnHeartbeat();
         }
 
+        // FlowStart event handler
         private void OnFlowStart(FlowStart e)
         {
             OnStart();
         }
 
+        // FlowStop event handler
         private void OnFlowStop(FlowStop e)
         {
             OnStop();

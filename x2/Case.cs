@@ -29,7 +29,7 @@ namespace x2
     public abstract class Case : EventSink, ICase
     {
         /// <summary>
-        /// Initializes this case with the specified holding flow.
+        /// <see cref="ICase.Setup"/>
         /// </summary>
         public void Setup(Flow holder)
         {
@@ -38,35 +38,51 @@ namespace x2
             Flow backup = Flow.CurrentFlow;
             Flow.CurrentFlow = holder;
 
-            Setup();
+            SetupInternal();
 
             Flow.CurrentFlow = backup;
         }
 
         /// <summary>
-        /// Cleans up this case with the specified holding flow.
+        /// <see cref="ICase.Teardown"/>
         /// </summary>
         public void Teardown(Flow holder)
         {
             Flow backup = Flow.CurrentFlow;
             Flow.CurrentFlow = holder;
 
-            Teardown();
+            TeardownInternal();
 
             Flow.CurrentFlow = backup;
 
-            Dispose();
+            Dispose();  // EventSink.Dispose()
         }
 
         /// <summary>
-        /// Initializes this case on startup.
+        /// Overridden by subclasses to build a initialization chain.
         /// </summary>
         protected virtual void Setup() { }
 
         /// <summary>
-        /// Cleans up this case on shutdown.
+        /// Called internally when this case is initialized.
+        /// </summary>
+        protected virtual void SetupInternal()
+        {
+            Setup();
+        }
+
+        /// <summary>
+        /// Overridden by subclasses to build a cleanup chain.
         /// </summary>
         protected virtual void Teardown() { }
+
+        /// <summary>
+        /// Called internally when this case is cleaned up.
+        /// </summary>
+        protected virtual void TeardownInternal()
+        {
+            Teardown();
+        }
     }
 
     public class CaseStack : ICase

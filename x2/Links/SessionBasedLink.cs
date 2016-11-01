@@ -217,9 +217,9 @@ namespace x2
         }
 
         /// <summary>
-        /// Initializes this link on startup.
+        /// <see cref="Case.SetupInternal"/>
         /// </summary>
-        protected override void Setup()
+        protected override void SetupInternal()
         {
             Bind(new LinkSessionConnected { LinkName = Name },
                 OnLinkSessionConnected);
@@ -227,6 +227,8 @@ namespace x2
                 OnLinkSessionDisconnected);
             Bind(new LinkSessionRecovered { LinkName = Name },
                 OnLinkSessionRecovered);
+
+            base.SetupInternal();
         }
 
         // LinkSessionConnected event handler

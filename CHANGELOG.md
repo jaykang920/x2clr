@@ -1,9 +1,15 @@
+Improvements:
+
+- overriding `Setup()` or `Teardown()` method in `Flow` or `Link` subclasses,
+now you don't have to chain into `base.Setup()` or `base.Teardown()` if you don't
+need it explicitly
+
 ## 0.9.0 (2016-10-31)
 
 Improvements:
 
-- Changed the coroutine programming interface.
- - Support for syntax such as `yield return coroutine.WaitForSeconds(10);`
+- changed the coroutine programming interface.
+ - support for syntax such as `yield return coroutine.WaitForSeconds(10);`
  - `Coroutine.Context` property has been renamed as `Coroutine.Result`
 
 ## 0.8.5 (2016-10-25)

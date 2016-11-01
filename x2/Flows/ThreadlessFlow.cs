@@ -32,7 +32,7 @@ namespace x2
             {
                 if (!running)
                 {
-                    Setup();
+                    SetupInternal();
                     caseStack.Setup(this);
 
                     currentFlow = this;
@@ -63,7 +63,7 @@ namespace x2
                 currentFlow = null;
 
                 caseStack.Teardown(this);
-                Teardown();
+                TeardownInternal();
             }
         }
 

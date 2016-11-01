@@ -118,7 +118,6 @@ namespace x2.Examples.SessionRecovery
 
         protected override void Setup()
         {
-            base.Setup();
             EventFactory.Register<TestReq>();
             Listen(6789);
         }
@@ -156,8 +155,6 @@ namespace x2.Examples.SessionRecovery
     {
         protected override void Setup()
         {
-            base.Setup();
-
             Bind(new TestReq(), OnTestReq);
         }
 

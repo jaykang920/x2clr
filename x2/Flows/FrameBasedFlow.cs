@@ -116,7 +116,7 @@ namespace x2
             {
                 if ((object)thread == null)
                 {
-                    Setup();
+                    SetupInternal();
                     caseStack.Setup(this);
                     thread = new Thread(this.Run);
                     thread.Name = name;
@@ -150,7 +150,7 @@ namespace x2
                 thread = null;
 
                 caseStack.Teardown(this);
-                Teardown();
+                TeardownInternal();
             }
         }
 

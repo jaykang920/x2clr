@@ -25,7 +25,6 @@ namespace x2.Examples.HelloWorld
 
             protected override void Setup()
             {
-                base.Setup();
                 EventFactory.Register<HelloResp>();
                 new HelloReq().Bind(Send);
                 Connect("127.0.0.1", 6789);

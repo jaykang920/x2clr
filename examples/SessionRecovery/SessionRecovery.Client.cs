@@ -55,7 +55,6 @@ namespace x2.Examples.SessionRecovery
 
         protected override void Setup()
         {
-            base.Setup();
             EventFactory.Register<TestResp>();
             Bind(new TestReq(), Send);
             Connect("127.0.0.1", 6789);
@@ -87,7 +86,6 @@ namespace x2.Examples.SessionRecovery
 
         protected override void Setup()
         {
-            base.Setup();
             Bind(new TestReq(), OnTestReq);
             Bind(new TestResp(), OnTestResp);
         }
@@ -120,8 +118,6 @@ namespace x2.Examples.SessionRecovery
 
         protected override void Setup()
         {
-            base.Setup();
-
             Bind(new TimeoutEvent(), OnTimer);
         }
 
