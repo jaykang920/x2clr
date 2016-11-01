@@ -2,6 +2,7 @@ x2clr
 =====
 
 [![NuGet](http://img.shields.io/nuget/v/x2clr.svg?style=flat)](https://www.nuget.org/packages/x2clr/)
+[![Build status](https://ci.appveyor.com/api/projects/status/bbc77j3n92e61eex?svg=true)](https://ci.appveyor.com/project/jaykang920/x2clr)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/jaykang920/x2clr/issues)
 
 x2clr is the reference port of [x2](https://github.com/jaykang920/x2) written in
