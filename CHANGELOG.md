@@ -1,3 +1,5 @@
+## 0.9.1 (2016-11-01)
+
 Improvements:
 
 - overriding `Setup()` or `Teardown()` method in `Flow` or `Link` subclasses,
