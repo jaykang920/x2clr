@@ -118,6 +118,66 @@ namespace x2
 
         /// <summary>
         /// Gets the number of bytes required to encode the specified ordered
+        /// list of boolean values.
+        /// </summary>
+        public static int GetLength(List<bool> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            int length = GetLengthVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                length += GetLength(value[i]);
+            }
+            return length;
+        }
+
+        /// <summary>
+        /// Gets the number of bytes required to encode the specified ordered
+        /// list of byte values.
+        /// </summary>
+        public static int GetLength(List<byte> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            int length = GetLengthVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                length += GetLength(value[i]);
+            }
+            return length;
+        }
+
+        /// <summary>
+        /// Gets the number of bytes required to encode the specified ordered
+        /// list of 8-bit signed integers.
+        /// </summary>
+        public static int GetLength(List<sbyte> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            int length = GetLengthVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                length += GetLength(value[i]);
+            }
+            return length;
+        }
+
+        /// <summary>
+        /// Gets the number of bytes required to encode the specified ordered
+        /// list of 16-bit signed integers.
+        /// </summary>
+        public static int GetLength(List<short> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            int length = GetLengthVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                length += GetLength(value[i]);
+            }
+            return length;
+        }
+
+        /// <summary>
+        /// Gets the number of bytes required to encode the specified ordered
         /// list of Int32 values.
         /// </summary>
         public static int GetLength(List<int> value)
@@ -151,6 +211,36 @@ namespace x2
         /// list of 32-bit floating-point values.
         /// </summary>
         public static int GetLength(List<float> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            int length = GetLengthVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                length += GetLength(value[i]);
+            }
+            return length;
+        }
+
+        /// <summary>
+        /// Gets the number of bytes required to encode the specified ordered
+        /// list of 64-bit floating-point values.
+        /// </summary>
+        public static int GetLength(List<double> value)
+        {
+            int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
+            int length = GetLengthVariableNonnegative(count);
+            for (int i = 0; i < count; ++i)
+            {
+                length += GetLength(value[i]);
+            }
+            return length;
+        }
+
+        /// <summary>
+        /// Gets the number of bytes required to encode the specified ordered
+        /// list of text strings.
+        /// </summary>
+        public static int GetLength(List<string> value)
         {
             int count = Object.ReferenceEquals(value, null) ? 0 : value.Count;
             int length = GetLengthVariableNonnegative(count);

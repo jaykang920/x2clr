@@ -252,7 +252,71 @@ namespace x2
         }
 
         /// <summary>
-        /// Decodes an ordered list of Int32 values out of the underlying buffer.
+        /// Decodes an ordered list of boolean values out of the underlying buffer.
+        /// </summary>
+        public void Read(out List<bool> value)
+        {
+            int count;
+            ReadNonnegative(out count);
+            value = new List<bool>();
+            for (int i = 0; i < count; ++i)
+            {
+                bool element;
+                Read(out element);
+                value.Add(element);
+            }
+        }
+
+        /// <summary>
+        /// Decodes an ordered list of byte values out of the underlying buffer.
+        /// </summary>
+        public void Read(out List<byte> value)
+        {
+            int count;
+            ReadNonnegative(out count);
+            value = new List<byte>();
+            for (int i = 0; i < count; ++i)
+            {
+                byte element;
+                Read(out element);
+                value.Add(element);
+            }
+        }
+
+        /// <summary>
+        /// Decodes an ordered list of 8-bit signed integers out of the underlying buffer.
+        /// </summary>
+        public void Read(out List<sbyte> value)
+        {
+            int count;
+            ReadNonnegative(out count);
+            value = new List<sbyte>();
+            for (int i = 0; i < count; ++i)
+            {
+                sbyte element;
+                Read(out element);
+                value.Add(element);
+            }
+        }
+
+        /// <summary>
+        /// Decodes an ordered list of 16-bit signed integers out of the underlying buffer.
+        /// </summary>
+        public void Read(out List<short> value)
+        {
+            int count;
+            ReadNonnegative(out count);
+            value = new List<short>();
+            for (int i = 0; i < count; ++i)
+            {
+                short element;
+                Read(out element);
+                value.Add(element);
+            }
+        }
+
+        /// <summary>
+        /// Decodes an ordered list of 32-bit signed integers out of the underlying buffer.
         /// </summary>
         public void Read(out List<int> value)
         {
@@ -268,7 +332,7 @@ namespace x2
         }
 
         /// <summary>
-        /// Decodes an ordered list of Int64 values out of the underlying buffer.
+        /// Decodes an ordered list of 64-bit signed integers out of the underlying buffer.
         /// </summary>
         public void Read(out List<long> value)
         {
@@ -295,6 +359,39 @@ namespace x2
             for (int i = 0; i < count; ++i)
             {
                 float element;
+                Read(out element);
+                value.Add(element);
+            }
+        }
+
+        /// <summary>
+        /// Decodes an ordered list of 64-bit floating-point values out of the
+        /// underlying buffer.
+        /// </summary>
+        public void Read(out List<double> value)
+        {
+            int count;
+            ReadNonnegative(out count);
+            value = new List<double>();
+            for (int i = 0; i < count; ++i)
+            {
+                double element;
+                Read(out element);
+                value.Add(element);
+            }
+        }
+
+        /// <summary>
+        /// Decodes an ordered list of text strings out of the underlying buffer.
+        /// </summary>
+        public void Read(out List<string> value)
+        {
+            int count;
+            ReadNonnegative(out count);
+            value = new List<string>();
+            for (int i = 0; i < count; ++i)
+            {
+                string element;
                 Read(out element);
                 value.Add(element);
             }
