@@ -65,7 +65,6 @@ public EchoServer : AsyncTcpServer
     
     protected override void Setup()
     {
-        base.Setup();
         Bind(new EchoResp(), Send);
         Listen(6789);
     }
@@ -97,7 +96,6 @@ public EchoClient : AsyncTcpClient
     
     protected override void Setup()
     {
-        base.Setup();
         Bind(new EchoReq(), Send);
         Bind(new EchoResp(), resp => { Console.WriteLine(resp.Message); });
         Connect("127.0.0.1", 6789);
