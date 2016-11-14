@@ -45,27 +45,6 @@ namespace x2
             return EventFactory.Create(typeId);
         }
 
-        /// <summary>
-        /// Loads a new cell of type T from this deserializer.
-        /// </summary>
-        private void Load<T>(out T value) where T : Cell, new()
-        {
-            var type = typeof(T);
-            var eventType = typeof(Event);
-            if (type.IsSubclassOf(eventType) || type == eventType)
-            {
-                value = Create() as T;
-            }
-            else
-            {
-                value = new T();
-            }
-            if (!Object.ReferenceEquals(value, null))
-            {
-                value.Deserialize(this);
-            }
-        }
-
         // Overloaded Read for primitive types
 
         /// <summary>
@@ -460,7 +439,20 @@ namespace x2
             marker = buffer.Position + length;
 
             // try
-            Load(out value);
+            var type = typeof(T);
+            var eventType = typeof(Event);
+            if (type.IsSubclassOf(eventType) || type == eventType)
+            {
+                value = Create() as T;
+            }
+            else
+            {
+                value = new T();
+            }
+            if (!Object.ReferenceEquals(value, null))
+            {
+                value.Deserialize(this);
+            }
             // catch
 
             if (buffer.Position != marker)

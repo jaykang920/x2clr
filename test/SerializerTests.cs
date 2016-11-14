@@ -270,5 +270,71 @@ namespace x2.Tests
                 Assert.AreEqual(0x7f00000000000000L >> 1, l);
             }
         }
+
+        [Test]
+        public void TestPartialSerialization()
+        {
+            EventFactory.Register<SampleEvent5>();
+
+            Buffer buffer = new Buffer();
+
+            var cell1 = new SampleCell1 {  // base
+                Foo = 9,
+                Bar = "hello"
+            };
+            var cell2 = new SampleCell2 {  // derived
+                Foo = 9,
+                Bar = "hello",
+                Baz = true
+            };
+
+            var event1 = new SampleEvent5();  // has base
+
+            // base > base > base
+            event1.SampleCell = cell1;
+            event1.Serialize(new Serializer(buffer));
+
+            long bufferLength = buffer.Length;
+
+            buffer.Rewind();
+            Deserializer deserializer = new Deserializer(buffer);
+
+            var retrieved = deserializer.Create();
+            retrieved.Deserialize(deserializer);
+
+            var event11 = retrieved as SampleEvent5;
+            Assert.NotNull(event11);
+
+            Assert.AreEqual(event1.SampleCell.Foo, event11.SampleCell.Foo);
+            Assert.AreEqual(event1.SampleCell.Bar, event11.SampleCell.Bar);
+
+            buffer.Reset();
+
+            // derived > base > base
+            event1.SampleCell = cell2;  // base <= derived
+            event1.Serialize(new Serializer(buffer));
+
+            Assert.AreEqual(bufferLength, buffer.Length);
+
+            {
+                var event2 = new SampleEvent6();  // has derived
+                event2.SampleCell = cell2;  // derived <= derived
+                Buffer buffer2 = new Buffer();
+                event2.Serialize(new Serializer(buffer2));
+                Assert.Greater(buffer2.Length, buffer.Length);
+            }
+
+            buffer.Rewind();
+            deserializer = new Deserializer(buffer);
+
+            retrieved = deserializer.Create();
+            retrieved.Deserialize(deserializer);
+
+            var event12 = retrieved as SampleEvent5;
+            Assert.NotNull(event12);
+
+            Assert.AreEqual(event1.SampleCell.Foo, event12.SampleCell.Foo);
+            Assert.AreEqual(event1.SampleCell.Bar, event12.SampleCell.Bar);
+        }
     }
 }

@@ -281,7 +281,16 @@ namespace x2
             }
             stringBuilder.Append(value.GetTypeTag().RuntimeType.Name);
             stringBuilder.Append(" {");
-            value.Serialize(this);
+            Type type = typeof(T);
+            bool flag = true;
+            if (type != value.GetType())
+            {
+                value.Serialize(this, type, ref flag);
+            }
+            else
+            {
+                value.Serialize(this);
+            }
             stringBuilder.Append(" }");
         }
     }

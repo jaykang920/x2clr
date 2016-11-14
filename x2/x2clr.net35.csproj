@@ -176,7 +176,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>pushd $(ProjectDir)
-..\bin\$(ConfigGroup)\xpiler.exe . Links Links/Socket
+..\bin\$(ConfigGroup)\xpiler.exe -f . Links Links/Socket
 popd</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

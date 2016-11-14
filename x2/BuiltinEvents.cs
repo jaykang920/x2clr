@@ -60,9 +60,9 @@ namespace x2
     /// </summary>
     public class HeartbeatEvent : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         static HeartbeatEvent()
         {
@@ -70,7 +70,7 @@ namespace x2
                     (int)BuiltinEventType.HeartbeatEvent);
         }
 
-        new public static HeartbeatEvent New()
+        public new static HeartbeatEvent New()
         {
             return new HeartbeatEvent();
         }
@@ -136,20 +136,37 @@ namespace x2
             base.Deserialize(deserializer);
         }
 
-        public override void Serialize(Serializer serializer)
+        public override int GetLength(Type targetType, ref bool flag)
         {
-            base.Serialize(serializer);
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
+            int length = base.GetLength(targetType, ref flag);
+            if (!flag) { return length; }
+            if (targetType != null && targetType == typeof(HeartbeatEvent))
+            {
+                flag = false;
+            }
             return length;
+        }
+
+        public override void Serialize(Serializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            if (targetType != null && targetType == typeof(HeartbeatEvent))
+            {
+                flag = false;
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            if (targetType != null && targetType == typeof(HeartbeatEvent))
+            {
+                flag = false;
+            }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -167,9 +184,9 @@ namespace x2
     /// </summary>
     public class FlowStart : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         static FlowStart()
         {
@@ -177,7 +194,7 @@ namespace x2
                     (int)BuiltinEventType.FlowStart);
         }
 
-        new public static FlowStart New()
+        public new static FlowStart New()
         {
             return new FlowStart();
         }
@@ -242,9 +259,9 @@ namespace x2
     /// </summary>
     public class FlowStop : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         static FlowStop()
         {
@@ -252,7 +269,7 @@ namespace x2
                     (int)BuiltinEventType.FlowStop);
         }
 
-        new public static FlowStop New()
+        public new static FlowStop New()
         {
             return new FlowStop();
         }
@@ -317,9 +334,9 @@ namespace x2
     /// </summary>
     public class TimeoutEvent : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         private object key_;
         private int intParam_;
@@ -356,7 +373,7 @@ namespace x2
                     (int)BuiltinEventType.TimeoutEvent);
         }
 
-        new public static TimeoutEvent New()
+        public new static TimeoutEvent New()
         {
             return new TimeoutEvent();
         }

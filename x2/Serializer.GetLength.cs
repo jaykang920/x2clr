@@ -302,8 +302,16 @@ namespace x2
         /// </summary>
         public static int GetLength<T>(T value) where T : Cell
         {
-            int length = Object.ReferenceEquals(value, null) ?
-                0 : value.GetLength();
+            bool isNull = Object.ReferenceEquals(value, null);
+            bool truncated = false;
+            Type type = typeof(T);
+            if (!isNull)
+            {
+                if (type != value.GetType()) { truncated = true; }
+            }
+            bool flag = true;
+            int length = isNull ? 0 :
+                (truncated ? value.GetLength(type, ref flag) : value.GetLength());
             return GetLengthVariableNonnegative(length) + length;
         }
 

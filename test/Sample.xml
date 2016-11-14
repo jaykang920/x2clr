@@ -40,4 +40,12 @@
         <property name="Quux" type="bool"/>
     </event>
 
+    <event name="SampleEvent5" id="5">
+        <property name="SampleCell" type="SampleCell1"/>
+    </event>
+
+    <event name="SampleEvent6" id="6">
+        <property name="SampleCell" type="SampleCell2"/>
+    </event>
+
 </x2>

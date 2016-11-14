@@ -148,11 +148,11 @@ namespace xpiler
             FormatComment(0, def.Comment);
             Indent(0); Out.WriteLine("public class {0} : {1}", def.Name, def.BaseClass);
             Indent(0); Out.WriteLine("{");
-            Indent(1); Out.WriteLine("new protected static readonly Tag tag;");
+            Indent(1); Out.WriteLine("protected static new readonly Tag tag;");
             Out.WriteLine();
             if (def.IsEvent)
             {
-                Indent(1); Out.WriteLine("new public static int TypeId { get { return tag.TypeId; } }");
+                Indent(1); Out.WriteLine("public static new int TypeId { get { return tag.TypeId; } }");
                 Out.WriteLine();
             }
             FormatFields(def);
@@ -489,6 +489,7 @@ namespace xpiler
 
         private void FormatDeserialize(CellDef def)
         {
+            // Deserialize(Deserializer)
             Indent(1); Out.WriteLine("public override void Deserialize(Deserializer deserializer)");
             Indent(1); Out.WriteLine("{");
             Indent(2); Out.WriteLine("base.Deserialize(deserializer);");
@@ -505,6 +506,7 @@ namespace xpiler
             }
             Indent(1); Out.WriteLine("}");
 
+            // Deserialize(VerboseDeserializer)
             Out.WriteLine();
             Indent(1); Out.WriteLine("public override void Deserialize(VerboseDeserializer deserializer)");
             Indent(1); Out.WriteLine("{");
@@ -521,39 +523,11 @@ namespace xpiler
 
         private void FormatSerialize(CellDef def)
         {
-            Indent(1); Out.WriteLine("public override void Serialize(Serializer serializer)");
+            // GetLength
+            Indent(1); Out.WriteLine("public override int GetLength(Type targetType, ref bool flag)");
             Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("base.Serialize(serializer);");
-            if (def.HasProperties)
-            {
-                Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
-                foreach (var property in def.Properties)
-                {
-                    Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
-                    Indent(2); Out.WriteLine("{");
-                    Indent(3); Out.WriteLine("serializer.Write({0});", property.NativeName);
-                    Indent(2); Out.WriteLine("}");
-                }
-            }
-            Indent(1); Out.WriteLine("}");
-
-            Out.WriteLine();
-            Indent(1); Out.WriteLine("public override void Serialize(VerboseSerializer serializer)");
-            Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("base.Serialize(serializer);");
-            if (def.HasProperties)
-            {
-                foreach (var property in def.Properties)
-                {
-                    Indent(2); Out.WriteLine("serializer.Write(\"{0}\", {1});", property.Name, property.NativeName);
-                }
-            }
-            Indent(1); Out.WriteLine("}");
-
-            Out.WriteLine();
-            Indent(1); Out.WriteLine("public override int GetLength()");
-            Indent(1); Out.WriteLine("{");
-            Indent(2); Out.WriteLine("int length = base.GetLength();");
+            Indent(2); Out.WriteLine("int length = base.GetLength(targetType, ref flag);");
+            Indent(2); Out.WriteLine("if (!flag) { return length; }");
             if (def.HasProperties)
             {
                 Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
@@ -565,7 +539,55 @@ namespace xpiler
                     Indent(2); Out.WriteLine("}");
                 }
             }
+            Indent(2); Out.WriteLine("if (targetType != null && targetType == typeof({0}))", def.Name);
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("flag = false;");
+            Indent(2); Out.WriteLine("}");
             Indent(2); Out.WriteLine("return length;");
+            Indent(1); Out.WriteLine("}");
+
+            // Serialize(Serializer)
+            Out.WriteLine();
+            Indent(1); Out.WriteLine("public override void Serialize(Serializer serializer,");
+            Indent(2); Out.WriteLine("Type targetType, ref bool flag)");
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("base.Serialize(serializer, targetType, ref flag);");
+            Indent(2); Out.WriteLine("if (!flag) { return; }");
+            if (def.HasProperties)
+            {
+                Indent(2); Out.WriteLine("var touched = new Capo<bool>(fingerprint, tag.Offset);");
+                foreach (var property in def.Properties)
+                {
+                    Indent(2); Out.WriteLine("if (touched[{0}])", property.Index);
+                    Indent(2); Out.WriteLine("{");
+                    Indent(3); Out.WriteLine("serializer.Write({0});", property.NativeName);
+                    Indent(2); Out.WriteLine("}");
+                }
+            }
+            Indent(2); Out.WriteLine("if (targetType != null && targetType == typeof({0}))", def.Name);
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("flag = false;");
+            Indent(2); Out.WriteLine("}");
+            Indent(1); Out.WriteLine("}");
+
+            // Serialize(VerboseSerializer)
+            Out.WriteLine();
+            Indent(1); Out.WriteLine("public override void Serialize(VerboseSerializer serializer,");
+            Indent(2); Out.WriteLine("Type targetType, ref bool flag)");
+            Indent(1); Out.WriteLine("{");
+            Indent(2); Out.WriteLine("base.Serialize(serializer, targetType, ref flag);");
+            Indent(2); Out.WriteLine("if (!flag) { return; }");
+            if (def.HasProperties)
+            {
+                foreach (var property in def.Properties)
+                {
+                    Indent(2); Out.WriteLine("serializer.Write(\"{0}\", {1});", property.Name, property.NativeName);
+                }
+            }
+            Indent(2); Out.WriteLine("if (targetType != null && targetType == typeof({0}))", def.Name);
+            Indent(2); Out.WriteLine("{");
+            Indent(3); Out.WriteLine("flag = false;");
+            Indent(2); Out.WriteLine("}");
             Indent(1); Out.WriteLine("}");
         }
 

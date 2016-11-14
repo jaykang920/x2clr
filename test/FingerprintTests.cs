@@ -65,8 +65,6 @@ namespace x2.Tests
             var lengthInBytes = (((fp1.Length - 1) >> 3) + 1);
             var expectedBytesLen = lengthInBytes  + Serializer.GetLengthVariableNonnegative(99);
 
-            // GetLength() seems strange. Added issue to the jaykang920
-
             Assert.AreEqual(expectedBytesLen, blen);
         }
 

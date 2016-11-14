@@ -308,11 +308,27 @@ namespace x2
         public void Write<T>(T value) where T : Cell
         {
             bool isNull = Object.ReferenceEquals(value, null);
-            int length = isNull ? 0 : value.GetLength();
+            bool truncated = false;
+            Type type = typeof(T);
+            if (!isNull)
+            {
+                if (type != value.GetType()) { truncated = true; }
+            }
+            bool flag = true;
+            int length = isNull ? 0 :
+                (truncated ? value.GetLength(type, ref flag) : value.GetLength());
             WriteVariableNonnegative(length);
             if (!isNull)
             {
-                value.Serialize(this);
+                if (truncated)
+                {
+                    flag = true;
+                    value.Serialize(this, type, ref flag);
+                }
+                else
+                {
+                    value.Serialize(this);
+                }
             }
         }
 

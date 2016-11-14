@@ -244,14 +244,18 @@ namespace x2
         /// <summary>
         /// Overridden by subclasses to build an encoded length computation chain.
         /// </summary>
-        public override int GetLength()
+        public override int GetLength(Type targetType, ref bool flag)
         {
             int length = Serializer.GetLength(GetTypeId());
-            length += base.GetLength();
+            length += base.GetLength(targetType, ref flag);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[1])
             {
                 length += Serializer.GetLength(_waitHandle);
+            }
+            if (targetType != null && targetType == typeof(Event))
+            {
+                flag = false;
             }
             return length;
         }
@@ -259,24 +263,34 @@ namespace x2
         /// <summary>
         /// Overridden by subclasses to build a serialization chain.
         /// </summary>
-        public override void Serialize(Serializer serializer)
+        public override void Serialize(Serializer serializer,
+            Type targetType, ref bool flag)
         {
             serializer.Write(GetTypeId());
-            base.Serialize(serializer);
+            base.Serialize(serializer, targetType, ref flag);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[1])
             {
                 serializer.Write(_waitHandle);
+            }
+            if (targetType != null && targetType == typeof(Event))
+            {
+                flag = false;
             }
         }
 
         /// <summary>
         /// Overridden by subclasses to build a verbose serialization chain.
         /// </summary>
-        public override void Serialize(VerboseSerializer serializer)
+        public override void Serialize(VerboseSerializer serializer,
+            Type targetType, ref bool flag)
         {
-            base.Serialize(serializer);
+            base.Serialize(serializer, targetType, ref flag);
             serializer.Write("_WaitHandle", _waitHandle);
+            if (targetType != null && targetType == typeof(Event))
+            {
+                flag = false;
+            }
         }
 
         #endregion  // Serialization

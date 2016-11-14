@@ -66,9 +66,9 @@ namespace x2
 
     public class LinkSessionConnected : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         private string linkName_;
         private bool result_;
@@ -110,7 +110,7 @@ namespace x2
                     (int)LinkEventType.LinkSessionConnected);
         }
 
-        new public static LinkSessionConnected New()
+        public new static LinkSessionConnected New()
         {
             return new LinkSessionConnected();
         }
@@ -231,9 +231,9 @@ namespace x2
 
     public class LinkSessionDisconnected : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         private string linkName_;
         private int handle_;
@@ -275,7 +275,7 @@ namespace x2
                     (int)LinkEventType.LinkSessionDisconnected);
         }
 
-        new public static LinkSessionDisconnected New()
+        public new static LinkSessionDisconnected New()
         {
             return new LinkSessionDisconnected();
         }
@@ -396,9 +396,9 @@ namespace x2
 
     public class HandshakeReq : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         private byte[] data_;
 
@@ -418,7 +418,7 @@ namespace x2
                     (int)LinkEventType.HandshakeReq);
         }
 
-        new public static HandshakeReq New()
+        public new static HandshakeReq New()
         {
             return new HandshakeReq();
         }
@@ -514,31 +514,48 @@ namespace x2
             deserializer.Read("Data", out data_);
         }
 
-        public override void Serialize(Serializer serializer)
+        public override int GetLength(Type targetType, ref bool flag)
         {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(data_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Data", data_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
+            int length = base.GetLength(targetType, ref flag);
+            if (!flag) { return length; }
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
                 length += Serializer.GetLength(data_);
             }
+            if (targetType != null && targetType == typeof(HandshakeReq))
+            {
+                flag = false;
+            }
             return length;
+        }
+
+        public override void Serialize(Serializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(data_);
+            }
+            if (targetType != null && targetType == typeof(HandshakeReq))
+            {
+                flag = false;
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            serializer.Write("Data", data_);
+            if (targetType != null && targetType == typeof(HandshakeReq))
+            {
+                flag = false;
+            }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -555,9 +572,9 @@ namespace x2
 
     public class HandshakeResp : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         private byte[] data_;
 
@@ -577,7 +594,7 @@ namespace x2
                     (int)LinkEventType.HandshakeResp);
         }
 
-        new public static HandshakeResp New()
+        public new static HandshakeResp New()
         {
             return new HandshakeResp();
         }
@@ -673,31 +690,48 @@ namespace x2
             deserializer.Read("Data", out data_);
         }
 
-        public override void Serialize(Serializer serializer)
+        public override int GetLength(Type targetType, ref bool flag)
         {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(data_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Data", data_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
+            int length = base.GetLength(targetType, ref flag);
+            if (!flag) { return length; }
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
                 length += Serializer.GetLength(data_);
             }
+            if (targetType != null && targetType == typeof(HandshakeResp))
+            {
+                flag = false;
+            }
             return length;
+        }
+
+        public override void Serialize(Serializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(data_);
+            }
+            if (targetType != null && targetType == typeof(HandshakeResp))
+            {
+                flag = false;
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            serializer.Write("Data", data_);
+            if (targetType != null && targetType == typeof(HandshakeResp))
+            {
+                flag = false;
+            }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -714,9 +748,9 @@ namespace x2
 
     public class HandshakeAck : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         private bool result_;
 
@@ -736,7 +770,7 @@ namespace x2
                     (int)LinkEventType.HandshakeAck);
         }
 
-        new public static HandshakeAck New()
+        public new static HandshakeAck New()
         {
             return new HandshakeAck();
         }
@@ -832,31 +866,48 @@ namespace x2
             deserializer.Read("Result", out result_);
         }
 
-        public override void Serialize(Serializer serializer)
+        public override int GetLength(Type targetType, ref bool flag)
         {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(result_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Result", result_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
+            int length = base.GetLength(targetType, ref flag);
+            if (!flag) { return length; }
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
                 length += Serializer.GetLength(result_);
             }
+            if (targetType != null && targetType == typeof(HandshakeAck))
+            {
+                flag = false;
+            }
             return length;
+        }
+
+        public override void Serialize(Serializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(result_);
+            }
+            if (targetType != null && targetType == typeof(HandshakeAck))
+            {
+                flag = false;
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            serializer.Write("Result", result_);
+            if (targetType != null && targetType == typeof(HandshakeAck))
+            {
+                flag = false;
+            }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -873,9 +924,9 @@ namespace x2
 
     public class LinkSessionRecovered : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         private string linkName_;
         private int handle_;
@@ -917,7 +968,7 @@ namespace x2
                     (int)LinkEventType.LinkSessionRecovered);
         }
 
-        new public static LinkSessionRecovered New()
+        public new static LinkSessionRecovered New()
         {
             return new LinkSessionRecovered();
         }
@@ -1038,9 +1089,9 @@ namespace x2
 
     public class SessionReq : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         private string token_;
         private long rxCounter_;
@@ -1093,7 +1144,7 @@ namespace x2
                     (int)LinkEventType.SessionReq);
         }
 
-        new public static SessionReq New()
+        public new static SessionReq New()
         {
             return new SessionReq();
         }
@@ -1252,40 +1303,10 @@ namespace x2
             deserializer.Read("TxBuffered", out txBuffered_);
         }
 
-        public override void Serialize(Serializer serializer)
+        public override int GetLength(Type targetType, ref bool flag)
         {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(token_);
-            }
-            if (touched[1])
-            {
-                serializer.Write(rxCounter_);
-            }
-            if (touched[2])
-            {
-                serializer.Write(txCounter_);
-            }
-            if (touched[3])
-            {
-                serializer.Write(txBuffered_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Token", token_);
-            serializer.Write("RxCounter", rxCounter_);
-            serializer.Write("TxCounter", txCounter_);
-            serializer.Write("TxBuffered", txBuffered_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
+            int length = base.GetLength(targetType, ref flag);
+            if (!flag) { return length; }
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
@@ -1303,7 +1324,54 @@ namespace x2
             {
                 length += Serializer.GetLength(txBuffered_);
             }
+            if (targetType != null && targetType == typeof(SessionReq))
+            {
+                flag = false;
+            }
             return length;
+        }
+
+        public override void Serialize(Serializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(token_);
+            }
+            if (touched[1])
+            {
+                serializer.Write(rxCounter_);
+            }
+            if (touched[2])
+            {
+                serializer.Write(txCounter_);
+            }
+            if (touched[3])
+            {
+                serializer.Write(txBuffered_);
+            }
+            if (targetType != null && targetType == typeof(SessionReq))
+            {
+                flag = false;
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            serializer.Write("Token", token_);
+            serializer.Write("RxCounter", rxCounter_);
+            serializer.Write("TxCounter", txCounter_);
+            serializer.Write("TxBuffered", txBuffered_);
+            if (targetType != null && targetType == typeof(SessionReq))
+            {
+                flag = false;
+            }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -1326,9 +1394,9 @@ namespace x2
 
     public class SessionResp : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         private string token_;
         private int retransmission_;
@@ -1359,7 +1427,7 @@ namespace x2
                     (int)LinkEventType.SessionResp);
         }
 
-        new public static SessionResp New()
+        public new static SessionResp New()
         {
             return new SessionResp();
         }
@@ -1476,30 +1544,10 @@ namespace x2
             deserializer.Read("Retransmission", out retransmission_);
         }
 
-        public override void Serialize(Serializer serializer)
+        public override int GetLength(Type targetType, ref bool flag)
         {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(token_);
-            }
-            if (touched[1])
-            {
-                serializer.Write(retransmission_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Token", token_);
-            serializer.Write("Retransmission", retransmission_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
+            int length = base.GetLength(targetType, ref flag);
+            if (!flag) { return length; }
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
@@ -1509,7 +1557,44 @@ namespace x2
             {
                 length += Serializer.GetLength(retransmission_);
             }
+            if (targetType != null && targetType == typeof(SessionResp))
+            {
+                flag = false;
+            }
             return length;
+        }
+
+        public override void Serialize(Serializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(token_);
+            }
+            if (touched[1])
+            {
+                serializer.Write(retransmission_);
+            }
+            if (targetType != null && targetType == typeof(SessionResp))
+            {
+                flag = false;
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            serializer.Write("Token", token_);
+            serializer.Write("Retransmission", retransmission_);
+            if (targetType != null && targetType == typeof(SessionResp))
+            {
+                flag = false;
+            }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -1528,9 +1613,9 @@ namespace x2
 
     public class SessionAck : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         private bool recovered_;
 
@@ -1550,7 +1635,7 @@ namespace x2
                     (int)LinkEventType.SessionAck);
         }
 
-        new public static SessionAck New()
+        public new static SessionAck New()
         {
             return new SessionAck();
         }
@@ -1646,31 +1731,48 @@ namespace x2
             deserializer.Read("Recovered", out recovered_);
         }
 
-        public override void Serialize(Serializer serializer)
+        public override int GetLength(Type targetType, ref bool flag)
         {
-            base.Serialize(serializer);
-            var touched = new Capo<bool>(fingerprint, tag.Offset);
-            if (touched[0])
-            {
-                serializer.Write(recovered_);
-            }
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-            serializer.Write("Recovered", recovered_);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
+            int length = base.GetLength(targetType, ref flag);
+            if (!flag) { return length; }
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[0])
             {
                 length += Serializer.GetLength(recovered_);
             }
+            if (targetType != null && targetType == typeof(SessionAck))
+            {
+                flag = false;
+            }
             return length;
+        }
+
+        public override void Serialize(Serializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            var touched = new Capo<bool>(fingerprint, tag.Offset);
+            if (touched[0])
+            {
+                serializer.Write(recovered_);
+            }
+            if (targetType != null && targetType == typeof(SessionAck))
+            {
+                flag = false;
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            serializer.Write("Recovered", recovered_);
+            if (targetType != null && targetType == typeof(SessionAck))
+            {
+                flag = false;
+            }
         }
 
         protected override void Describe(StringBuilder stringBuilder)
@@ -1687,9 +1789,9 @@ namespace x2
 
     public class SessionEnd : Event
     {
-        new protected static readonly Tag tag;
+        protected static new readonly Tag tag;
 
-        new public static int TypeId { get { return tag.TypeId; } }
+        public static new int TypeId { get { return tag.TypeId; } }
 
         static SessionEnd()
         {
@@ -1697,7 +1799,7 @@ namespace x2
                     (int)LinkEventType.SessionEnd);
         }
 
-        new public static SessionEnd New()
+        public new static SessionEnd New()
         {
             return new SessionEnd();
         }
@@ -1763,20 +1865,37 @@ namespace x2
             base.Deserialize(deserializer);
         }
 
-        public override void Serialize(Serializer serializer)
+        public override int GetLength(Type targetType, ref bool flag)
         {
-            base.Serialize(serializer);
-        }
-
-        public override void Serialize(VerboseSerializer serializer)
-        {
-            base.Serialize(serializer);
-        }
-
-        public override int GetLength()
-        {
-            int length = base.GetLength();
+            int length = base.GetLength(targetType, ref flag);
+            if (!flag) { return length; }
+            if (targetType != null && targetType == typeof(SessionEnd))
+            {
+                flag = false;
+            }
             return length;
+        }
+
+        public override void Serialize(Serializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            if (targetType != null && targetType == typeof(SessionEnd))
+            {
+                flag = false;
+            }
+        }
+
+        public override void Serialize(VerboseSerializer serializer,
+            Type targetType, ref bool flag)
+        {
+            base.Serialize(serializer, targetType, ref flag);
+            if (!flag) { return; }
+            if (targetType != null && targetType == typeof(SessionEnd))
+            {
+                flag = false;
+            }
         }
 
         protected override void Describe(StringBuilder stringBuilder)

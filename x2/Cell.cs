@@ -206,26 +206,46 @@ namespace x2
         {
         }
 
+        public int GetLength()
+        {
+            bool flag = true;
+            return GetLength(null, ref flag);
+        }
+
         /// <summary>
         /// Overridden by subclasses to build an encoded length computation chain.
         /// </summary>
-        public virtual int GetLength()
+        public virtual int GetLength(Type targetType, ref bool flag)
         {
             return fingerprint.GetLength();
+        }
+
+        public void Serialize(Serializer serializer)
+        {
+            bool flag = true;
+            Serialize(serializer, null, ref flag);
         }
 
         /// <summary>
         /// Overridden by subclasses to build a serialization chain.
         /// </summary>
-        public virtual void Serialize(Serializer serializer)
+        public virtual void Serialize(Serializer serializer,
+            Type targetType, ref bool flag)
         {
             fingerprint.Serialize(serializer);
+        }
+
+        public void Serialize(VerboseSerializer serializer)
+        {
+            bool flag = true;
+            Serialize(serializer, null, ref flag);
         }
 
         /// <summary>
         /// Overridden by subclasses to build a verbose serialization chain.
         /// </summary>
-        public virtual void Serialize(VerboseSerializer serializer)
+        public virtual void Serialize(VerboseSerializer serializer,
+            Type targetType, ref bool flag)
         {
         }
 
