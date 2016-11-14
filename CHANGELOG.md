@@ -1,6 +1,6 @@
 Features:
 
-- added support for partial serialziation: now a nested cell object is serialized exactly as it should be, even if it is actually an object of derived (bigger) type.
+- added support for partial serialization: now a nested cell object is serialized exactly as it should be, even if it is actually an object of derived (bigger) type.
 
 ## 0.9.1 (2016-11-01)
 
