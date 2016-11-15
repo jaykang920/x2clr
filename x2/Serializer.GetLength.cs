@@ -303,15 +303,15 @@ namespace x2
         public static int GetLength<T>(T value) where T : Cell
         {
             bool isNull = Object.ReferenceEquals(value, null);
-            bool truncated = false;
+            bool partial = false;
             Type type = typeof(T);
             if (!isNull)
             {
-                if (type != value.GetType()) { truncated = true; }
+                if (type != value.GetType()) { partial = true; }
             }
             bool flag = true;
             int length = isNull ? 0 :
-                (truncated ? value.GetLength(type, ref flag) : value.GetLength());
+                (partial ? value.GetLength(type, ref flag) : value.GetLength());
             return GetLengthVariableNonnegative(length) + length;
         }
 
