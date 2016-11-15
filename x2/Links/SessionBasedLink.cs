@@ -106,7 +106,15 @@ namespace x2
             var session = (LinkSession)context;
             session.Connected = false;
 
-            OnSessionDisconnectedInternal(handle, context);
+            try
+            {
+                OnSessionDisconnectedInternal(handle, context);
+            }
+            catch (ObjectDisposedException)
+            {
+                // already disposed
+                // TODO need to be improved
+            }
 
             Hub.Post(new LinkSessionDisconnected {
                 LinkName = Name,

@@ -210,13 +210,19 @@ namespace x2
                     using (new WriteLock(rwlock))
                     {
                         eventQueue.Add(e);
-                        if (!connecting)
+                        if (connecting)
                         {
-                            Connect();
+                            return;
+                        }
+                        else
+                        {
+                            connecting = true;
                         }
                     }
                 }
             }
+
+            Connect();
         }
 
         public void ConnectAndRequest(Event req)
@@ -261,10 +267,6 @@ namespace x2
         /// </summary>
         public void Connect(IPAddress ip, int port)
         {
-            if (connecting)
-            {
-                throw new InvalidOperationException();
-            }
             connecting = true;
 
             if (session != null &&
