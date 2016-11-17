@@ -8,9 +8,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBD}") = "x2clr.net40", "x2\x2clr.net
 		{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52} = {13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBD}") = "xpiler", "xpiler\xpiler.csproj", "{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBD}") = "x2clr.xpiler", "xpiler\x2clr.xpiler.csproj", "{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBD}") = "x2test.net40", "test\x2test.net40.csproj", "{4F62C483-01DB-45B7-88A4-28D5B94A17E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBD}") = "x2clr.test.net40", "test\x2clr.test.net40.csproj", "{4F62C483-01DB-45B7-88A4-28D5B94A17E8}"
 	ProjectSection(ProjectDependencies) = postProject
 		{79A3E41B-FA7F-4ED8-86AB-FCF61A6F65BA} = {79A3E41B-FA7F-4ED8-86AB-FCF61A6F65BA}
 	EndProjectSection

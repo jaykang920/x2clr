@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xpiler", "..\xpiler\xpiler.csproj", "{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x2clr.xpiler", "..\xpiler\x2clr.xpiler.csproj", "{13EEDB91-EAEF-4483-88E9-3F8E2DFA4D52}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{9B01C5F1-1AE6-493E-94AF-633D825D091E}"
 EndProject

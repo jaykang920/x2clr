@@ -68,7 +68,7 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>pushd $(ProjectDir)
-..\..\bin\$(ConfigurationName)\xpiler.exe -f .
+..\..\bin\$(ConfigurationName)\x2clr.xpiler.exe -f .
 popd</PreBuildEvent>
   </PropertyGroup>
 </Project>

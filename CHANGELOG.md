@@ -1,3 +1,7 @@
+## 0.9.2 (2016-11-17)
+
+renamed project and assembly names for xpiler and unit test
+
 Features:
 
 - added support for partial serialization: now a nested cell object is serialized exactly as it should be, even if it is actually an object of derived (bigger) type.

@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>x2.Tests</RootNamespace>
-    <AssemblyName>x2test</AssemblyName>
+    <AssemblyName>x2clr.test</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -74,7 +74,7 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>pushd $(ProjectDir)
-..\bin\$(ConfigurationName)\xpiler.exe -f .
+..\bin\$(ConfigurationName)\x2clr.xpiler.exe -f .
 popd</PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
