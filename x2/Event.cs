@@ -266,7 +266,6 @@ namespace x2
         public override void Serialize(Serializer serializer,
             Type targetType, ref bool flag)
         {
-            serializer.Write(GetTypeId());
             base.Serialize(serializer, targetType, ref flag);
             var touched = new Capo<bool>(fingerprint, tag.Offset);
             if (touched[1])

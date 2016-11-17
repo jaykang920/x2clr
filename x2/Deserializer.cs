@@ -438,22 +438,8 @@ namespace x2
             int markerSaved = marker;
             marker = buffer.Position + length;
 
-            // try
-            var type = typeof(T);
-            var eventType = typeof(Event);
-            if (type.IsSubclassOf(eventType) || type == eventType)
-            {
-                value = Create() as T;
-            }
-            else
-            {
-                value = new T();
-            }
-            if (!Object.ReferenceEquals(value, null))
-            {
-                value.Deserialize(this);
-            }
-            // catch
+            value = new T();
+            value.Deserialize(this);
 
             if (buffer.Position != marker)
             {

@@ -540,7 +540,9 @@ namespace x2
 
                 var sendBuffer = buffersSending[i];
                 sendBuffer.Reset();
-                e.Serialize(new Serializer(sendBuffer.Buffer));
+                Serializer serializer = new Serializer(sendBuffer.Buffer);
+                serializer.Write(e.GetTypeId());
+                e.Serialize(serializer);
 
                 bool transformed = false;
                 if (BufferTransform != null && txTransformReady && e._Transform)

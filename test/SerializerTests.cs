@@ -292,7 +292,9 @@ namespace x2.Tests
 
             // base > base > base
             event1.SampleCell = cell1;
-            event1.Serialize(new Serializer(buffer));
+            Serializer serializer = new Serializer(buffer);
+            serializer.Write(event1.GetTypeId());
+            event1.Serialize(serializer);
 
             long bufferLength = buffer.Length;
 
@@ -312,7 +314,9 @@ namespace x2.Tests
 
             // derived > base > base
             event1.SampleCell = cell2;  // base <= derived
-            event1.Serialize(new Serializer(buffer));
+            serializer = new Serializer(buffer);
+            serializer.Write(event1.GetTypeId());
+            event1.Serialize(serializer);
 
             Assert.AreEqual(bufferLength, buffer.Length);
 
@@ -320,7 +324,9 @@ namespace x2.Tests
                 var event2 = new SampleEvent6();  // has derived
                 event2.SampleCell = cell2;  // derived <= derived
                 Buffer buffer2 = new Buffer();
-                event2.Serialize(new Serializer(buffer2));
+                serializer = new Serializer(buffer2);
+                serializer.Write(event2.GetTypeId());
+                event2.Serialize(serializer);
                 Assert.Greater(buffer2.Length, buffer.Length);
             }
 

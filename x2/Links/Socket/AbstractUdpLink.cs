@@ -268,7 +268,9 @@ namespace x2
             }
 
             txBuffer.Reset();
-            e.Serialize(new Serializer(txBuffer));
+            Serializer serializer = new Serializer(txBuffer);
+            serializer.Write(e.GetTypeId());
+            e.Serialize(serializer);
 
             if (BufferTransform != null)
             {
