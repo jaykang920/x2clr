@@ -2,6 +2,10 @@ Features:
 
 - added support for partial serialization: now a nested cell object is serialized exactly as it should be, even if it is actually an object of derived (bigger) type.
 
+Bugfixes:
+
+- fixed two `*TcpClient` issues reported by @barowa
+
 ## 0.9.1 (2016-11-01)
 
 Improvements:
