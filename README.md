@@ -162,7 +162,7 @@ Documentation
 Contributions
 -------------
 
-We need your contributions! Please read [CONTRIBUTING.md](https://github.com/jaykang920/x2clr/blob/master/CONTRIBUTING.md) before you start.
+We need your contributions! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before you start.
 
 License
 -------
