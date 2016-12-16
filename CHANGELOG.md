@@ -1,3 +1,5 @@
+- changed xpiler and test namespaces
+
 ## 0.9.2 (2016-11-17)
 
 renamed project and assembly names for xpiler and unit test
