@@ -6,7 +6,7 @@
     <ProjectGuid>{4F62C483-01DB-45B7-88A4-28D5B94A17E7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>x2.Tests</RootNamespace>
+    <RootNamespace>x2clr.test</RootNamespace>
     <AssemblyName>x2clr.test</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

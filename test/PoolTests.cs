@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 using x2;
 
-namespace x2.Tests
+namespace x2clr.test
 {
     [TestFixture]
     public class PoolTests

@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 using x2;
 
-namespace x2.Tests
+namespace x2clr.test
 {
     [TestFixture]
     public class BufferTests
@@ -12,7 +12,7 @@ namespace x2.Tests
         [Test]
         public void TestBufferCreation()
         {
-            var buf = new Buffer();
+            var buf = new x2.Buffer();
 
             Assert.IsTrue(IsPowerOfTwo(buf.BlockSize));
             Assert.IsTrue(buf.IsEmpty);

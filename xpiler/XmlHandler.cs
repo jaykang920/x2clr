@@ -4,7 +4,7 @@
 using System;
 using System.Xml;
 
-namespace xpiler
+namespace x2clr.xpiler
 {
     class XmlHandler : Handler
     {

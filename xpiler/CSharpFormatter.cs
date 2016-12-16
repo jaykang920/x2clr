@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace xpiler
+namespace x2clr.xpiler
 {
     class CSharpFormatter : Formatter
     {

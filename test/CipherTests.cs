@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 using x2;
 
-namespace x2.Tests
+namespace x2clr.test
 {
     [TestFixture]
     public class CipherTests
@@ -22,7 +22,7 @@ namespace x2.Tests
             cipher1.FinalizeHandshake(bytes1);
             cipher2.FinalizeHandshake(bytes2);
 
-            Buffer buffer = new Buffer();
+            var buffer = new x2.Buffer();
 
             string text = new String('x', 5300);
             Assert.AreEqual(5300, text.Length);

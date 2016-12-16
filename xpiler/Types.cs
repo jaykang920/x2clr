@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace xpiler
+namespace x2clr.xpiler
 {
     class TypeSpec
     {

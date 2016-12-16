@@ -3,7 +3,7 @@
 
 using System;
 
-namespace xpiler
+namespace x2clr.xpiler
 {
     class Program
     {

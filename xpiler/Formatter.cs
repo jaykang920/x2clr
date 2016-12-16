@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 
-namespace xpiler
+namespace x2clr.xpiler
 {
     /// <summary>
     /// Abstract base class for output file formatters.

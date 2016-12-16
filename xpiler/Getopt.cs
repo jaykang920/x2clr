@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace xpiler
+namespace x2clr.xpiler
 {
     /// <summary>Getopt is a clone of the GNU C getopt.</summary>
     public class Getopt

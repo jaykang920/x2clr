@@ -6,7 +6,7 @@ using System.Text;
 
 using x2;
 
-namespace x2.Tests
+namespace x2clr.test
 {
     public static class SampleConsts
     {

@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 using x2;
 
-namespace x2.Tests
+namespace x2clr.test
 {
     [TestFixture]
     public class SerializerTests
@@ -16,7 +16,7 @@ namespace x2.Tests
             //using (var stream = new MemoryStream())
             {
                 float f;
-                Buffer stream = new Buffer();
+                var stream = new x2.Buffer();
                 Serializer serializer = new Serializer(stream);
                 Deserializer deserializer = new Deserializer(stream);
 
@@ -72,7 +72,7 @@ namespace x2.Tests
             //using (var stream = new MemoryStream())
             {
                 double d;
-                Buffer stream = new Buffer();
+                var stream = new x2.Buffer();
                 Serializer serializer = new Serializer(stream);
                 Deserializer deserializer = new Deserializer(stream);
 
@@ -128,7 +128,7 @@ namespace x2.Tests
             //using (var stream = new MemoryStream())
             {
                 int i, bytes;
-                Buffer stream = new Buffer();
+                var stream = new x2.Buffer();
                 Serializer serializer = new Serializer(stream);
                 Deserializer deserializer = new Deserializer(stream);
 
@@ -189,7 +189,7 @@ namespace x2.Tests
         {
             //using (var stream = new MemoryStream())
             {
-                Buffer stream = new Buffer();
+                var stream = new x2.Buffer();
                 Serializer serializer = new Serializer(stream);
                 Deserializer deserializer = new Deserializer(stream);
 
@@ -276,7 +276,7 @@ namespace x2.Tests
         {
             EventFactory.Register<SampleEvent5>();
 
-            Buffer buffer = new Buffer();
+            var buffer = new x2.Buffer();
 
             var cell1 = new SampleCell1 {  // base
                 Foo = 9,
@@ -323,7 +323,7 @@ namespace x2.Tests
             {
                 var event2 = new SampleEvent6();  // has derived
                 event2.SampleCell = cell2;  // derived <= derived
-                Buffer buffer2 = new Buffer();
+                var buffer2 = new x2.Buffer();
                 serializer = new Serializer(buffer2);
                 serializer.Write(event2.GetTypeId());
                 event2.Serialize(serializer);

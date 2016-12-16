@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 using x2;
 
-namespace x2.Tests
+namespace x2clr.test
 {
     [TestFixture]
     public class FingerprintTests
@@ -282,7 +282,7 @@ namespace x2.Tests
 
             Assert.False(fp2.Equals(fp1));
 
-            Buffer buffer = new Buffer();
+            var buffer = new x2.Buffer();
             fp1.Serialize(new Serializer(buffer));
             buffer.Rewind();
             fp2.Deserialize(new Deserializer(buffer));
