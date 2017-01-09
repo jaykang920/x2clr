@@ -6,7 +6,8 @@ x2clr
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/jaykang920/x2clr/issues)
 
 x2clr is the reference port of [x2](https://github.com/jaykang920/x2) written in
-C# targeting CLR (Common Language Runtime) environments such as .NET or Mono.
+C# targeting CLR (Common Language Runtime) environments such as .NET Framework
+or Mono.
 
 Features
 --------
@@ -14,12 +15,14 @@ Features
 ### Distributable Application Architecture
 
 Writing distributed (including client/server) applications has never been this easy.
-You can flexibly make changes to the deployment topology of your application, while your business logic remains unchanged.
+You can flexibly make changes to the deployment topology of your application,
+while your business logic remains unchanged.
 
 ### Communication Protocol Code Generation
 
 xpiler converts your shared knowledge definitions to corresponding C# source code files.
-Relying on the knowledge shared among application participants, x2clr wire format comes extremely efficient.
+Relying on the knowledge shared among application participants, x2clr wire format
+comes extremely efficient.
 
 ### Advanced Event-Driven Programming Support
 
@@ -44,7 +47,8 @@ Here we develop a simple TCP echo client/server, starting with defining two even
 </x2>
 ```
 
-And we encapsulate our core function (generating echo response) into a case. Please note that this logic case knows nothing about the communication detail.
+And we encapsulate our core function (generating echo response) into a case.
+Please note that this logic case knows nothing about the communication detail.
 
 ```csharp
 public EchoCase : Case
@@ -140,7 +144,8 @@ x2clr can be installed via the [NuGet UI](https://docs.nuget.org/consume/package
 
     PM> Install-Package x2clr
 
-The xpiler converts x2 definition files into corresponding C# source code files. So most probably you will want to install the [x2clr.xpiler](https://www.nuget.org/packages/x2clr.xpiler) too.
+The xpiler converts x2 definition files into corresponding C# source code files.
+So most probably you will want to install the [x2clr.xpiler](https://www.nuget.org/packages/x2clr.xpiler) too.
 
     PM> Install-Package x2clr.xpiler
 
@@ -152,7 +157,8 @@ Zipped archives containing specific tagged versions of the source code are avail
 
 ### Unity3D
 
-If you want to use x2clr in Unity3D, you should build it with the conditional compile constant UNITY_WORKAROUND and drop the DLL into the Assets/Plugin folder.
+If you want to use x2clr in Unity3D, you should build it with the conditional
+compile constant UNITY_WORKAROUND and drop the DLL into the Assets/Plugin folder.
 
 Documentation
 -------------

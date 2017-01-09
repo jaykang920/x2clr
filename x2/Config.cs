@@ -30,18 +30,39 @@ namespace x2
             {
                 public static class SlowHandler
                 {
+                    static SlowHandler()
+                    {
+                        // Default values
+                        LogLevel = LogLevel.Warning;
+                        Threshold = 100;  // in milliseconds
+                    }
+
                     public static LogLevel LogLevel { get; set; }
                     public static int Threshold { get; set; }
                 }
 
                 public static class SlowScope
                 {
+                    static SlowScope()
+                    {
+                        // Default values
+                        LogLevel = LogLevel.Warning;
+                        Threshold = 200;  // in milliseconds
+                    }
+
                     public static LogLevel LogLevel { get; set; }
                     public static int Threshold { get; set; }
                 }
 
                 public static class LongQueue
                 {
+                    static LongQueue()
+                    {
+                        // Default values
+                        LogLevel = LogLevel.Error;
+                        Threshold = 1000;
+                    }
+
                     public static LogLevel LogLevel { get; set; }
                     public static int Threshold { get; set; }
                 }
@@ -54,6 +75,14 @@ namespace x2
         {
             public static class SizeExponent
             {
+                static SizeExponent()
+                {
+                    // Default values
+                    // SizeExponent.Chunk >= SizeExponent.Segment
+                    Chunk = 24;  // 16MB
+                    Segment = 12;  // 4KB
+                }
+
                 /// <summary>
                 /// Gets or sets the buffer chunk size exponent n in 2^n.
                 /// </summary>
@@ -81,6 +110,13 @@ namespace x2
 
             public static class RoomFactor
             {
+                static RoomFactor()
+                {
+                    // Default values
+                    MinLevel = 0;  // x1
+                    MaxLevel = 3;  // x8
+                }
+
                 public static int MinLevel { get; set; }
                 public static int MaxLevel { get; set; }
             }
@@ -88,6 +124,13 @@ namespace x2
 
         public static class Coroutine
         {
+            static Coroutine()
+            {
+                // Default values
+                MaxWaitHandles = 1024;
+                DefaultTimeout = 30.0;  // in seconds
+            }
+
             /// <summary>
             /// Gets or sets the maximum number of wait handles.
             /// </summary>
@@ -101,27 +144,9 @@ namespace x2
         static Config()
         {
             // Default values
-
             LogLevel = LogLevel.Info;
             HeartbeatInterval = 5;  // in seconds
-
-            Flow.Logging.SlowHandler.LogLevel = LogLevel.Warning;
-            Flow.Logging.SlowHandler.Threshold = 100;  // in milliseconds
-            Flow.Logging.SlowScope.LogLevel = LogLevel.Warning;
-            Flow.Logging.SlowScope.Threshold = 200;  // in milliseconds
-            Flow.Logging.LongQueue.LogLevel = LogLevel.Error;
-            Flow.Logging.LongQueue.Threshold = 1000;
-
             MaxLinkHandles = 65536;
-
-            // SizeExponent.Chunk >= SizeExponent.Segment
-            Buffer.SizeExponent.Chunk = 24;  // 16MB
-            Buffer.SizeExponent.Segment = 12;  // 4KB
-            Buffer.RoomFactor.MinLevel = 0;  // x1
-            Buffer.RoomFactor.MaxLevel = 3;  // x8
-
-            Coroutine.MaxWaitHandles = 1024;
-            Coroutine.DefaultTimeout = 30.0;  // in seconds
         }
 
 #if XML_CONFIG
