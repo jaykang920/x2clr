@@ -1,3 +1,4 @@
+- increased the default value for `Config.Coroutine.MaxWaitHandles`
 - changed xpiler and test namespaces
 
 ## 0.9.2 (2016-11-17)
