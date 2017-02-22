@@ -35,7 +35,6 @@ namespace x2
         public override Event Dequeue()
         {
             Event result = null;
-            SpinWait spinWait = new SpinWait();
 
             while (!closing)
             {
@@ -43,7 +42,7 @@ namespace x2
                 {
                     break;
                 }
-                spinWait.SpinOnce();
+                Thread.Sleep(1);
             }
 
             return result;
