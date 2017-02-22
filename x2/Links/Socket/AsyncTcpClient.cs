@@ -80,6 +80,8 @@ namespace x2
         // Completion callback for ConnectAsync
         private void OnConnect(SocketAsyncEventArgs e)
         {
+            if (disposed) { return; }
+
             var socket = (Socket)e.UserToken;
             if (e.SocketError == SocketError.Success)
             {

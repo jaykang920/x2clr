@@ -51,6 +51,8 @@ namespace x2
         // Asynchronous callback for BeginConnect
         private void OnConnect(IAsyncResult asyncResult)
         {
+            if (disposed) { return; }
+
             var socket = (Socket)asyncResult.AsyncState;
             try
             {
