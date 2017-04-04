@@ -283,7 +283,23 @@ namespace x2
 
                 Diag.IncrementEventsSent();
 
-                Log.Debug("{0} {1} sent event {2}", Name, handle, e);
+                if (Log.Handler != null && Config.LogLevel <= LogLevel.Debug)
+                {
+                    // e.ToString() may crash if a composite property (list for example)
+                    // of the event is changed in other threads.
+                    string description;
+                    try
+                    {
+                        description = e.ToString();
+                    }
+                    catch
+                    {
+                        description = e.GetTypeTag().RuntimeType.Name;
+                    }
+
+                    Log.Emit(LogLevel.Debug, "{0} {1} sent event {2}",
+                        Name, handle, description);
+                }
 
                 return;
             }

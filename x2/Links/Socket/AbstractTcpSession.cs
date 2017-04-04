@@ -221,16 +221,12 @@ namespace x2
         {
             hasReceived = true;
 
-            if (e.GetTypeId() != BuiltinEventType.HeartbeatEvent)
-            {
-                Log.Debug("{0} {1} received event {2}",
-                    link.Name, InternalHandle, e);
-            }
-            else
-            {
-                Log.Trace("{0} {1} received event {2}",
-                    link.Name, InternalHandle, e);
-            }
+            LogLevel logLevel = 
+                (e.GetTypeId() == BuiltinEventType.HeartbeatEvent ?
+                LogLevel.Trace : LogLevel.Debug);
+
+            Log.Emit(logLevel, "{0} {1} received event {2}",
+                link.Name, InternalHandle, e);
 
             base.OnEventReceived(e);
         }
@@ -239,15 +235,26 @@ namespace x2
         {
             hasSent = true;
 
-            if (e.GetTypeId() != BuiltinEventType.HeartbeatEvent)
+            LogLevel logLevel =
+                (e.GetTypeId() == BuiltinEventType.HeartbeatEvent ?
+                LogLevel.Trace : LogLevel.Debug);
+
+            if (Log.Handler != null && Config.LogLevel <= logLevel)
             {
-                Log.Debug("{0} {1} sent event {2}",
-                    link.Name, InternalHandle, e);
-            }
-            else
-            {
-                Log.Trace("{0} {1} sent event {2}",
-                    link.Name, InternalHandle, e);
+                // e.ToString() may crash if a composite property (list for example)
+                // of the event is changed in other threads.
+                string description;
+                try
+                {
+                    description = e.ToString();
+                }
+                catch
+                {
+                    description = e.GetTypeTag().RuntimeType.Name;
+                }
+
+                Log.Emit(logLevel, "{0} {1} sent event {2}",
+                    link.Name, InternalHandle, description);
             }
 
             base.OnEventSent(e);
