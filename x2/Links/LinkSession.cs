@@ -663,8 +663,13 @@ namespace x2
                     break;
                 }
 
-                if (!ParseHeader() ||
-                    rxBuffer.Length < lengthToReceive)
+                if (!ParseHeader())
+                {
+                    BeginReceive(true);
+                    return;
+                }
+
+                if (rxBuffer.Length < lengthToReceive)
                 {
                     BeginReceive(false);
                     return;
