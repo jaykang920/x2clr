@@ -302,9 +302,6 @@ namespace x2
         {
             Log.Info("{0} connecting to {1}", Name, endpoint);
 
-            // Reset the retry counter.
-            retryCount = 0;
-
             startTime = DateTime.UtcNow;
 
             ConnectInternal(socket, endpoint);
@@ -406,6 +403,9 @@ namespace x2
         /// </summary>
         protected override void OnConnectInternal(LinkSession session)
         {
+            // Reset the retry counter.
+            retryCount = 0;
+
             var tcpSession = (AbstractTcpSession)session;
             Socket socket = tcpSession.Socket;
 
